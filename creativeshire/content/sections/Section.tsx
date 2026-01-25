@@ -79,7 +79,7 @@ export default function Section({
   id,
   layout,
   features,
-  widgets,
+  children,
 }: SectionProps): ReactNode {
   const layoutStyles = getLayoutStyles(layout)
   const featureStyles = getFeatureStyles(features)
@@ -95,14 +95,7 @@ export default function Section({
       data-justify={layout.justify}
       style={Object.keys(combinedStyles).length > 0 ? combinedStyles : undefined}
     >
-      {widgets.length > 0 ? (
-        widgets.map((widget, index) => (
-          <div key={widget.id ?? `widget-${index}`} data-widget-id={widget.id}>
-            {/* Widget rendering delegated to WidgetRenderer */}
-            {/* Placeholder for widget content */}
-          </div>
-        ))
-      ) : null}
+      {children}
     </section>
   )
 }

@@ -3,15 +3,19 @@
  * Re-exports schema types and defines component-specific interfaces.
  */
 
+import type { ReactNode } from 'react'
 import type { SectionSchema, LayoutConfig } from '../../schema/section'
 import type { FeatureSet } from '../../schema/features'
 import type { WidgetSchema } from '../../schema/widget'
 
 /**
  * Props for the Section component.
- * Extends SectionSchema for direct schema-to-component mapping.
+ * Extends SectionSchema and adds children for rendered widgets.
  */
-export interface SectionProps extends SectionSchema {}
+export interface SectionProps extends SectionSchema {
+  /** Rendered widget children from SectionRenderer */
+  children?: ReactNode
+}
 
 /**
  * Layout style mappings for CSS class generation.
