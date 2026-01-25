@@ -1,0 +1,116 @@
+# Category Mapping for React Best Practices
+#
+# This file defines stable bundle categories that agents reference.
+# When Vercel updates their rules, run `npm run sync:react-rules` to regenerate bundles.
+# Agent contracts reference bundles/*.md - never upstream paths directly.
+#
+# Mapping logic: Rules are matched by filename prefix.
+
+upstream:
+  repo: vercel-labs/agent-skills
+  path: skills/react-best-practices/rules
+  local: ../.claude/skills/vercel-agent-skills-upstream/skills/react-best-practices/rules
+
+bundles:
+  component-rendering:
+    description: React component render optimization (re-renders, memoization, rendering patterns)
+    prefixes:
+      - rerender-
+      - rendering-
+    agents:
+      # Content Layer - Visual components
+      - widget-builder
+      - widget-reviewer
+      - section-builder
+      - section-reviewer
+      - chrome-builder
+      - chrome-reviewer
+      - feature-builder
+      - feature-reviewer
+      # Composites - Multi-component orchestration
+      - widget-composite-builder
+      - widget-composite-reviewer
+      - section-composite-builder
+      - section-composite-reviewer
+      # Experience Layer - Client components (triggers)
+      - trigger-builder
+      - trigger-reviewer
+      # Coordinators (read-only access for recommendations)
+      - technical-director
+
+  server-components:
+    description: Server components, async patterns, and RSC optimization
+    prefixes:
+      - server-
+      - async-
+    agents:
+      - renderer-builder
+      - renderer-reviewer
+      - section-builder
+      - section-reviewer
+      # Page/Preset builders define RSC boundaries
+      - page-builder
+      - page-reviewer
+      - preset-builder
+      - preset-reviewer
+      # Coordinators (read-only access)
+      - technical-director
+
+  client-runtime:
+    description: Client-side events, state management, and advanced patterns
+    prefixes:
+      - client-
+      - advanced-
+    agents:
+      - trigger-builder
+      - trigger-reviewer
+      - driver-builder
+      - driver-reviewer
+      # Provider distributes client-side context
+      - provider-builder
+      - provider-reviewer
+      # Coordinators (read-only access)
+      - technical-director
+
+  bundle-optimization:
+    description: Import optimization and bundle size reduction
+    prefixes:
+      - bundle-
+    agents:
+      # Content Layer
+      - widget-builder
+      - widget-reviewer
+      - section-builder
+      - section-reviewer
+      - chrome-builder
+      - chrome-reviewer
+      - feature-builder
+      - feature-reviewer
+      # Experience Layer - Import utilities
+      - trigger-builder
+      - trigger-reviewer
+      - provider-builder
+      - provider-reviewer
+      # Coordinators (read-only access)
+      - technical-director
+
+  js-performance:
+    description: Pure JavaScript optimization patterns
+    prefixes:
+      - js-
+    agents:
+      # Experience Layer - JS-heavy
+      - behaviour-builder
+      - behaviour-reviewer
+      - driver-builder
+      - driver-reviewer
+      # Composites - JS orchestration
+      - widget-composite-builder
+      - widget-composite-reviewer
+      - section-composite-builder
+      - section-composite-reviewer
+      # Trigger event handling
+      - trigger-builder
+      - trigger-reviewer
+      # Coordinators (read-only access)
+      - technical-director

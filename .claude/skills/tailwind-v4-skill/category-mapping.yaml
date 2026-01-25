@@ -1,0 +1,77 @@
+# Category Mapping for Tailwind CSS v4 Best Practices
+#
+# This file defines stable bundle categories that agents reference.
+# When upstream updates rules, run `npm run sync:tailwind-rules` to regenerate bundles.
+# Agent contracts reference bundles/*.md - never rule paths directly.
+#
+# Mapping logic: Rules are matched by filename prefix.
+
+upstream:
+  repo: tlq5l/tailwindcss-v4-skill
+  path: rules
+  local: .claude/skills/tailwind-v4-skill/rules
+
+bundles:
+  setup-config:
+    description: Tailwind v4 setup, configuration, and CSS-first patterns
+    prefixes:
+      - setup-
+    agents:
+      # Content Layer - Visual components with CSS
+      - widget-builder
+      - widget-reviewer
+      - section-builder
+      - section-reviewer
+      - chrome-builder
+      - chrome-reviewer
+      - feature-builder
+      - feature-reviewer
+      # Composites may have styles.css
+      - widget-composite-builder
+      - widget-composite-reviewer
+      - section-composite-builder
+      - section-composite-reviewer
+      # Coordinators (read-only access)
+      - technical-director
+
+  migration-v3:
+    description: Breaking changes from v3 that require code updates
+    prefixes:
+      - migration-
+    agents:
+      - widget-builder
+      - widget-reviewer
+      - section-builder
+      - section-reviewer
+      - chrome-builder
+      - chrome-reviewer
+      - feature-builder
+      - feature-reviewer
+      # Composites may need migration
+      - widget-composite-builder
+      - widget-composite-reviewer
+      - section-composite-builder
+      - section-composite-reviewer
+      # Coordinators (read-only access)
+      - technical-director
+
+  customization:
+    description: Custom utilities, variants, and theme extension patterns
+    prefixes:
+      - custom-
+    agents:
+      - widget-builder
+      - widget-reviewer
+      - section-builder
+      - section-reviewer
+      - chrome-builder
+      - chrome-reviewer
+      - feature-builder
+      - feature-reviewer
+      # Composites may use custom utilities
+      - widget-composite-builder
+      - widget-composite-reviewer
+      - section-composite-builder
+      - section-composite-reviewer
+      # Coordinators (read-only access)
+      - technical-director

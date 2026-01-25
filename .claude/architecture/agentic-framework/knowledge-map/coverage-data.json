@@ -1,0 +1,3584 @@
+{
+  "generatedAt": "2026-01-25T19:24:27.618Z",
+  "agents": [
+    {
+      "name": "behaviour-builder",
+      "type": "builder",
+      "contractPath": ".claude\\architecture\\agentic-framework\\behaviour-builder.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/builder.spec.md",
+        ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+        ".claude/architecture/creativeshire/components/experience/behaviour.validator.ts",
+        ".claude/architecture/creativeshire/components/experience/driver.spec.md",
+        ".claude/architecture/creativeshire/components/experience/trigger.spec.md",
+        ".claude/architecture/creativeshire/components/experience/types.ts",
+        ".claude/architecture/creativeshire/patterns/common.spec.md",
+        ".claude/skills/react-best-practices/bundles/js-performance.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/builder.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/behaviour.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/driver.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/trigger.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/types.ts",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/patterns/common.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/js-performance.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        "creativeshire/components/experience/behaviour"
+      ],
+      "readScope": [],
+      "domain": "behaviour",
+      "expectedSpec": ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "behaviour-reviewer",
+      "type": "reviewer",
+      "contractPath": ".claude\\architecture\\agentic-framework\\behaviour-reviewer.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+        ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+        ".claude/architecture/creativeshire/components/experience/behaviour.validator.ts",
+        ".claude/architecture/creativeshire/components/experience/driver.spec.md",
+        ".claude/architecture/creativeshire/components/experience/trigger.spec.md",
+        ".claude/skills/react-best-practices/bundles/js-performance.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/behaviour.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/driver.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/trigger.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/js-performance.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "creativeshire/experience/behaviours"
+      ],
+      "domain": "behaviour",
+      "expectedSpec": ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "chrome-analyst",
+      "type": "coordinator",
+      "contractPath": ".claude\\architecture\\agentic-framework\\chrome-analyst.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/analyst.spec.md",
+        ".claude/architecture/creativeshire/components/content/chrome.spec.md",
+        ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+        ".claude/architecture/creativeshire/patterns/common.spec.md",
+        ".claude/architecture/creativeshire/reference/naming.spec.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md",
+        ".claude/skills/tailwind-v4-skill/bundles/setup-config.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/analyst.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/chrome.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/patterns/common.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/reference/naming.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "External",
+        "Internal"
+      ],
+      "domain": null,
+      "expectedSpec": null,
+      "hasRequiredSpec": false
+    },
+    {
+      "name": "chrome-builder",
+      "type": "builder",
+      "contractPath": ".claude\\architecture\\agentic-framework\\chrome-builder.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/builder.spec.md",
+        ".claude/architecture/creativeshire/components/content/chrome.spec.md",
+        ".claude/architecture/creativeshire/components/content/chrome.validator.ts",
+        ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+        ".claude/architecture/creativeshire/components/content/widget.spec.md",
+        ".claude/architecture/creativeshire/components/schema/chrome.ts",
+        ".claude/architecture/creativeshire/patterns/common.spec.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md",
+        ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+        ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+        ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+        ".claude/skills/tailwind-v4-skill/bundles/customization.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/builder.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/chrome.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/chrome.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/schema/chrome.ts",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/patterns/common.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/customization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        "creativeshire/components/content/chrome"
+      ],
+      "readScope": [],
+      "domain": "chrome",
+      "expectedSpec": ".claude/architecture/creativeshire/components/content/chrome.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "chrome-reviewer",
+      "type": "reviewer",
+      "contractPath": ".claude\\architecture\\agentic-framework\\chrome-reviewer.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+        ".claude/architecture/creativeshire/components/content/chrome.spec.md",
+        ".claude/architecture/creativeshire/components/content/chrome.validator.ts",
+        ".claude/architecture/creativeshire/components/content/widget.spec.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md",
+        ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+        ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+        ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+        ".claude/skills/tailwind-v4-skill/bundles/customization.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/chrome.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/chrome.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/customization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "creativeshire/components/content/chrome"
+      ],
+      "domain": "chrome",
+      "expectedSpec": ".claude/architecture/creativeshire/components/content/chrome.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "cleanup-agent",
+      "type": "coordinator",
+      "contractPath": ".claude\\architecture\\agentic-framework\\cleanup-agent.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/coordinator.spec.md",
+        ".claude/tasks/current-sprint.md",
+        ".claude/tasks/backlog.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/coordinator.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/tasks/current-sprint.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/tasks/backlog.md",
+          "isExplicit": true,
+          "isPrimary": true
+        }
+      ],
+      "outputScope": [
+        ".claude/tasks"
+      ],
+      "readScope": [],
+      "domain": null,
+      "expectedSpec": null,
+      "hasRequiredSpec": false
+    },
+    {
+      "name": "contractor",
+      "type": "coordinator",
+      "contractPath": ".claude\\architecture\\agentic-framework\\contractor.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/coordinator.spec.md",
+        ".claude/architecture/agentic-framework/types/builder.spec.md",
+        ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+        ".claude/architecture/agentic-framework/types/analyst.spec.md",
+        ".claude/architecture/agentic-framework/*.agent.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/coordinator.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/agentic-framework/types/builder.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/agentic-framework/types/analyst.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/agentic-framework/*.agent.md",
+          "isExplicit": false,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        ".claude/architecture/agentic-framework"
+      ],
+      "domain": null,
+      "expectedSpec": null,
+      "hasRequiredSpec": false
+    },
+    {
+      "name": "data-analyst",
+      "type": "coordinator",
+      "contractPath": ".claude\\architecture\\agentic-framework\\data-analyst.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/analyst.spec.md",
+        ".claude/architecture/creativeshire/components/site/site.spec.md",
+        ".claude/architecture/creativeshire/layers/site-instance.spec.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/analyst.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/site/site.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/layers/site-instance.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "External",
+        "Internal"
+      ],
+      "domain": null,
+      "expectedSpec": null,
+      "hasRequiredSpec": false
+    },
+    {
+      "name": "driver-builder",
+      "type": "builder",
+      "contractPath": ".claude\\architecture\\agentic-framework\\driver-builder.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/builder.spec.md",
+        ".claude/architecture/creativeshire/components/experience/driver.spec.md",
+        ".claude/architecture/creativeshire/components/experience/driver.validator.ts",
+        ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+        ".claude/architecture/creativeshire/components/experience/trigger.spec.md",
+        ".claude/architecture/creativeshire/components/experience/types.ts",
+        ".claude/architecture/creativeshire/patterns/common.spec.md",
+        ".claude/skills/react-best-practices/bundles/client-runtime.md",
+        ".claude/skills/react-best-practices/bundles/js-performance.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/builder.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/driver.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/driver.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/trigger.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/types.ts",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/patterns/common.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/client-runtime.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/js-performance.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        "creativeshire/components/experience/driver"
+      ],
+      "readScope": [],
+      "domain": "driver",
+      "expectedSpec": ".claude/architecture/creativeshire/components/experience/driver.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "driver-reviewer",
+      "type": "reviewer",
+      "contractPath": ".claude\\architecture\\agentic-framework\\driver-reviewer.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+        ".claude/architecture/creativeshire/components/experience/driver.spec.md",
+        ".claude/architecture/creativeshire/components/experience/driver.validator.ts",
+        ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+        ".claude/architecture/creativeshire/components/experience/provider.spec.md",
+        ".claude/skills/react-best-practices/bundles/client-runtime.md",
+        ".claude/skills/react-best-practices/bundles/js-performance.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/driver.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/driver.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/provider.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/client-runtime.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/js-performance.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "creativeshire/experience/drivers"
+      ],
+      "domain": "driver",
+      "expectedSpec": ".claude/architecture/creativeshire/components/experience/driver.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "experience-analyst",
+      "type": "coordinator",
+      "contractPath": ".claude\\architecture\\agentic-framework\\experience-analyst.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/analyst.spec.md",
+        ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+        ".claude/architecture/creativeshire/components/experience/driver.spec.md",
+        ".claude/architecture/creativeshire/components/experience/trigger.spec.md",
+        ".claude/architecture/creativeshire/patterns/common.spec.md",
+        ".claude/architecture/creativeshire/reference/naming.spec.md",
+        ".claude/skills/react-best-practices/bundles/client-runtime.md",
+        ".claude/skills/react-best-practices/bundles/js-performance.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/analyst.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/driver.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/trigger.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/patterns/common.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/reference/naming.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/client-runtime.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/js-performance.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "External",
+        "Internal"
+      ],
+      "domain": null,
+      "expectedSpec": null,
+      "hasRequiredSpec": false
+    },
+    {
+      "name": "feature-builder",
+      "type": "builder",
+      "contractPath": ".claude\\architecture\\agentic-framework\\feature-builder.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/builder.spec.md",
+        ".claude/architecture/creativeshire/components/content/feature.spec.md",
+        ".claude/architecture/creativeshire/components/content/feature.validator.ts",
+        ".claude/architecture/creativeshire/components/content/widget.spec.md",
+        ".claude/architecture/creativeshire/components/content/section.spec.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md",
+        ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+        ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+        ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+        ".claude/skills/tailwind-v4-skill/bundles/customization.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/builder.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/feature.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/feature.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/customization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        "creativeshire/components/content/feature"
+      ],
+      "readScope": [],
+      "domain": "feature",
+      "expectedSpec": ".claude/architecture/creativeshire/components/content/feature.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "feature-reviewer",
+      "type": "reviewer",
+      "contractPath": ".claude\\architecture\\agentic-framework\\feature-reviewer.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+        ".claude/architecture/creativeshire/components/content/feature.spec.md",
+        ".claude/architecture/creativeshire/components/content/feature.validator.ts",
+        ".claude/architecture/creativeshire/components/content/widget.spec.md",
+        ".claude/architecture/creativeshire/components/content/section.spec.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md",
+        ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+        ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+        ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+        ".claude/skills/tailwind-v4-skill/bundles/customization.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/feature.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/feature.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/customization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "creativeshire/components/content/features"
+      ],
+      "domain": "feature",
+      "expectedSpec": ".claude/architecture/creativeshire/components/content/feature.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "inventory-agent",
+      "type": "coordinator",
+      "contractPath": ".claude\\architecture\\agentic-framework\\inventory-agent.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/coordinator.spec.md",
+        ".claude/architecture/creativeshire/index.spec.md",
+        ".claude/architecture/creativeshire/core/philosophy.spec.md",
+        ".claude/architecture/creativeshire/components/content/widget.spec.md",
+        ".claude/architecture/creativeshire/components/content/section.spec.md",
+        ".claude/architecture/creativeshire/components/content/chrome.spec.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/coordinator.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/index.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/core/philosophy.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/chrome.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        ".claude/tasks",
+        ".claude/development"
+      ],
+      "readScope": [],
+      "domain": null,
+      "expectedSpec": null,
+      "hasRequiredSpec": false
+    },
+    {
+      "name": "layout-analyst",
+      "type": "coordinator",
+      "contractPath": ".claude\\architecture\\agentic-framework\\layout-analyst.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/analyst.spec.md",
+        ".claude/architecture/creativeshire/components/content/widget.spec.md",
+        ".claude/architecture/creativeshire/components/content/section.spec.md",
+        ".claude/architecture/creativeshire/patterns/common.spec.md",
+        ".claude/architecture/creativeshire/reference/naming.spec.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/analyst.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/patterns/common.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/reference/naming.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "External",
+        "Internal"
+      ],
+      "domain": null,
+      "expectedSpec": null,
+      "hasRequiredSpec": false
+    },
+    {
+      "name": "page-builder",
+      "type": "builder",
+      "contractPath": ".claude\\architecture\\agentic-framework\\page-builder.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/builder.spec.md",
+        ".claude/architecture/creativeshire/components/site/site.spec.md",
+        ".claude/architecture/creativeshire/components/site/site.validator.ts",
+        ".claude/architecture/creativeshire/schema/page.ts",
+        ".claude/architecture/creativeshire/content/sections/composites/",
+        ".claude/skills/react-best-practices/bundles/server-components.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/builder.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/site/site.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/site/site.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/schema/page.ts",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/content/sections/composites/",
+          "isExplicit": false,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/server-components.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        "site/pages",
+        "site/config.ts"
+      ],
+      "readScope": [],
+      "domain": "page",
+      "expectedSpec": ".claude/architecture/creativeshire/components/site/site.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "preset-analyst",
+      "type": "coordinator",
+      "contractPath": ".claude\\architecture\\agentic-framework\\preset-analyst.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/analyst.spec.md",
+        ".claude/architecture/creativeshire/components/preset/preset.spec.md",
+        ".claude/architecture/creativeshire/layers/preset.spec.md",
+        ".claude/architecture/creativeshire/components/experience/mode.spec.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/analyst.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/preset/preset.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/layers/preset.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/mode.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "External",
+        "Internal"
+      ],
+      "domain": null,
+      "expectedSpec": null,
+      "hasRequiredSpec": false
+    },
+    {
+      "name": "preset-builder",
+      "type": "builder",
+      "contractPath": ".claude\\architecture\\agentic-framework\\preset-builder.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/builder.spec.md",
+        ".claude/architecture/creativeshire/components/preset/preset.spec.md",
+        ".claude/architecture/creativeshire/components/preset/preset.validator.ts",
+        ".claude/architecture/creativeshire/experience/modes/",
+        ".claude/architecture/creativeshire/experience/experiences/",
+        ".claude/skills/react-best-practices/bundles/server-components.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/builder.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/preset/preset.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/preset/preset.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/experience/modes/",
+          "isExplicit": false,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/experience/experiences/",
+          "isExplicit": false,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/server-components.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        "creativeshire/presets",
+        "creativeshire/experience/modes",
+        "creativeshire/experience/experiences"
+      ],
+      "readScope": [],
+      "domain": "preset",
+      "expectedSpec": ".claude/architecture/creativeshire/components/preset/preset.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "preset-reviewer",
+      "type": "reviewer",
+      "contractPath": ".claude\\architecture\\agentic-framework\\preset-reviewer.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+        ".claude/architecture/creativeshire/components/preset/preset.spec.md",
+        ".claude/architecture/creativeshire/components/preset/preset.validator.ts",
+        ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+        ".claude/architecture/creativeshire/components/experience/trigger.spec.md",
+        ".claude/skills/react-best-practices/bundles/server-components.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/preset/preset.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/preset/preset.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/trigger.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/server-components.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "creativeshire/presets",
+        "creativeshire/experience/modes",
+        "creativeshire/experience/experiences"
+      ],
+      "domain": "preset",
+      "expectedSpec": ".claude/architecture/creativeshire/components/preset/preset.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "project-assistant",
+      "type": "coordinator",
+      "contractPath": ".claude\\architecture\\agentic-framework\\project-assistant.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/coordinator.spec.md",
+        ".claude/architecture/agentic-framework/project-assistant.agent.md",
+        ".claude/tasks/backlog.md",
+        ".claude/architecture/**/*.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/coordinator.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/agentic-framework/project-assistant.agent.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/tasks/backlog.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/**/*.md",
+          "isExplicit": false,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        ".claude/tasks",
+        ".claude/development",
+        ".claude/architecture/**/*.md"
+      ],
+      "readScope": [],
+      "domain": null,
+      "expectedSpec": null,
+      "hasRequiredSpec": false
+    },
+    {
+      "name": "provider-builder",
+      "type": "builder",
+      "contractPath": ".claude\\architecture\\agentic-framework\\provider-builder.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/builder.spec.md",
+        ".claude/architecture/creativeshire/components/experience/provider.spec.md",
+        ".claude/architecture/creativeshire/components/experience/provider.validator.ts",
+        ".claude/architecture/creativeshire/components/experience/driver.spec.md",
+        ".claude/architecture/creativeshire/components/experience/mode.spec.md",
+        ".claude/skills/react-best-practices/bundles/client-runtime.md",
+        ".claude/skills/react-best-practices/bundles/bundle-optimization.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/builder.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/provider.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/provider.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/driver.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/mode.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/client-runtime.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        "creativeshire/components/experience/provider"
+      ],
+      "readScope": [],
+      "domain": "provider",
+      "expectedSpec": ".claude/architecture/creativeshire/components/experience/provider.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "provider-reviewer",
+      "type": "reviewer",
+      "contractPath": ".claude\\architecture\\agentic-framework\\provider-reviewer.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+        ".claude/architecture/creativeshire/components/experience/provider.spec.md",
+        ".claude/architecture/creativeshire/components/experience/provider.validator.ts",
+        ".claude/architecture/creativeshire/components/experience/driver.spec.md",
+        ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+        ".claude/skills/react-best-practices/bundles/client-runtime.md",
+        ".claude/skills/react-best-practices/bundles/bundle-optimization.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/provider.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/provider.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/driver.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/client-runtime.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "creativeshire/experience"
+      ],
+      "domain": "provider",
+      "expectedSpec": ".claude/architecture/creativeshire/components/experience/provider.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "renderer-builder",
+      "type": "builder",
+      "contractPath": ".claude\\architecture\\agentic-framework\\renderer-builder.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/builder.spec.md",
+        ".claude/architecture/creativeshire/components/renderer/renderer.spec.md",
+        ".claude/architecture/creativeshire/components/renderer/renderer.validator.ts",
+        ".claude/architecture/creativeshire/experience/behaviours/resolve.ts",
+        ".claude/architecture/creativeshire/experience/BehaviourWrapper.tsx",
+        ".claude/architecture/creativeshire/schema/*.ts",
+        ".claude/skills/react-best-practices/bundles/server-components.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/builder.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/renderer/renderer.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/renderer/renderer.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/experience/behaviours/resolve.ts",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/experience/BehaviourWrapper.tsx",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/schema/*.ts",
+          "isExplicit": false,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/server-components.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        "creativeshire/renderer"
+      ],
+      "readScope": [],
+      "domain": "renderer",
+      "expectedSpec": ".claude/architecture/creativeshire/components/renderer/renderer.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "renderer-reviewer",
+      "type": "reviewer",
+      "contractPath": ".claude\\architecture\\agentic-framework\\renderer-reviewer.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+        ".claude/architecture/creativeshire/components/renderer/renderer.spec.md",
+        ".claude/architecture/creativeshire/components/renderer/renderer.validator.ts",
+        ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+        ".claude/architecture/creativeshire/layers/renderer.spec.md",
+        ".claude/skills/react-best-practices/bundles/server-components.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/renderer/renderer.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/renderer/renderer.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/layers/renderer.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/server-components.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "creativeshire/renderer"
+      ],
+      "domain": "renderer",
+      "expectedSpec": ".claude/architecture/creativeshire/components/renderer/renderer.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "runtime-validator",
+      "type": "coordinator",
+      "contractPath": ".claude\\architecture\\agentic-framework\\runtime-validator.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/coordinator.spec.md",
+        ".claude/architecture/agentic-framework/runtime-validator.agent.md",
+        ".claude/architecture/creativeshire/index.spec.md",
+        ".claude/architecture/creativeshire/components/content/widget.spec.md",
+        ".claude/architecture/creativeshire/components/content/section.spec.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/coordinator.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/agentic-framework/runtime-validator.agent.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/index.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        ".claude/tasks",
+        ".claude/logs"
+      ],
+      "readScope": [],
+      "domain": null,
+      "expectedSpec": null,
+      "hasRequiredSpec": false
+    },
+    {
+      "name": "schema-builder",
+      "type": "builder",
+      "contractPath": ".claude\\architecture\\agentic-framework\\schema-builder.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/builder.spec.md",
+        ".claude/architecture/creativeshire/components/schema/schema.spec.md",
+        ".claude/architecture/creativeshire/components/schema/schema.validator.ts",
+        ".claude/architecture/creativeshire/components/content/widget.spec.md",
+        ".claude/architecture/creativeshire/components/content/section.spec.md",
+        ".claude/architecture/creativeshire/components/experience/behaviour.spec.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/builder.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/schema/schema.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/schema/schema.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        "creativeshire/schema"
+      ],
+      "readScope": [],
+      "domain": "schema",
+      "expectedSpec": ".claude/architecture/creativeshire/components/schema/schema.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "section-analyst",
+      "type": "coordinator",
+      "contractPath": ".claude\\architecture\\agentic-framework\\section-analyst.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/analyst.spec.md",
+        ".claude/architecture/creativeshire/components/content/section.spec.md",
+        ".claude/architecture/creativeshire/components/content/section-composite.spec.md",
+        ".claude/architecture/creativeshire/patterns/common.spec.md",
+        ".claude/architecture/creativeshire/reference/naming.spec.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md",
+        ".claude/skills/tailwind-v4-skill/bundles/setup-config.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/analyst.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section-composite.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/patterns/common.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/reference/naming.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "External",
+        "Internal"
+      ],
+      "domain": null,
+      "expectedSpec": null,
+      "hasRequiredSpec": false
+    },
+    {
+      "name": "section-builder",
+      "type": "builder",
+      "contractPath": ".claude\\architecture\\agentic-framework\\section-builder.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/builder.spec.md",
+        ".claude/architecture/creativeshire/components/content/section.spec.md",
+        ".claude/architecture/creativeshire/components/content/section.validator.ts",
+        ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+        ".claude/architecture/creativeshire/components/content/widget.spec.md",
+        ".claude/architecture/creativeshire/components/schema/section.ts",
+        ".claude/architecture/creativeshire/patterns/common.spec.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md",
+        ".claude/skills/react-best-practices/bundles/server-components.md",
+        ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+        ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+        ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+        ".claude/skills/tailwind-v4-skill/bundles/customization.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/builder.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/schema/section.ts",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/patterns/common.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/server-components.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/customization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        "creativeshire/components/content/sections"
+      ],
+      "readScope": [],
+      "domain": "section",
+      "expectedSpec": ".claude/architecture/creativeshire/components/content/section.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "section-composite-builder",
+      "type": "builder",
+      "contractPath": ".claude\\architecture\\agentic-framework\\section-composite-builder.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/builder.spec.md",
+        ".claude/architecture/creativeshire/components/content/section-composite.spec.md",
+        ".claude/architecture/creativeshire/components/content/section-composite.validator.ts",
+        ".claude/architecture/creativeshire/patterns/common.spec.md",
+        ".claude/architecture/creativeshire/components/content/section.spec.md",
+        ".claude/architecture/creativeshire/components/content/widget.spec.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md",
+        ".claude/skills/react-best-practices/bundles/js-performance.md",
+        ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+        ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+        ".claude/skills/tailwind-v4-skill/bundles/customization.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/builder.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section-composite.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section-composite.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/patterns/common.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/js-performance.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/customization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        "creativeshire/components/content/sections/composites"
+      ],
+      "readScope": [],
+      "domain": "section-composite",
+      "expectedSpec": ".claude/architecture/creativeshire/components/content/section-composite.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "section-composite-reviewer",
+      "type": "reviewer",
+      "contractPath": ".claude\\architecture\\agentic-framework\\section-composite-reviewer.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+        ".claude/architecture/creativeshire/components/content/section-composite.spec.md",
+        ".claude/architecture/creativeshire/components/content/section-composite.validator.ts",
+        ".claude/architecture/creativeshire/components/content/section.spec.md",
+        ".claude/architecture/creativeshire/components/content/widget-composite.spec.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md",
+        ".claude/skills/react-best-practices/bundles/js-performance.md",
+        ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+        ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+        ".claude/skills/tailwind-v4-skill/bundles/customization.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section-composite.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section-composite.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget-composite.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/js-performance.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/customization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "creativeshire/components/content/sections/composites"
+      ],
+      "domain": "section-composite",
+      "expectedSpec": ".claude/architecture/creativeshire/components/content/section-composite.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "section-reviewer",
+      "type": "reviewer",
+      "contractPath": ".claude\\architecture\\agentic-framework\\section-reviewer.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+        ".claude/architecture/creativeshire/components/content/section.spec.md",
+        ".claude/architecture/creativeshire/components/content/section.validator.ts",
+        ".claude/architecture/creativeshire/components/content/widget.spec.md",
+        ".claude/architecture/creativeshire/components/content/feature.spec.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md",
+        ".claude/skills/react-best-practices/bundles/server-components.md",
+        ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+        ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+        ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+        ".claude/skills/tailwind-v4-skill/bundles/customization.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/feature.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/server-components.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/customization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "creativeshire/components/content/sections"
+      ],
+      "domain": "section",
+      "expectedSpec": ".claude/architecture/creativeshire/components/content/section.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "site-builder",
+      "type": "builder",
+      "contractPath": ".claude\\architecture\\agentic-framework\\site-builder.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/builder.spec.md",
+        ".claude/architecture/creativeshire/components/site/site.spec.md",
+        ".claude/architecture/creativeshire/components/site/site.validator.ts",
+        ".claude/architecture/creativeshire/presets/*.ts",
+        ".claude/architecture/creativeshire/schema/site.ts",
+        ".claude/architecture/creativeshire/content/sections/composites/"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/builder.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/site/site.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/site/site.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/presets/*.ts",
+          "isExplicit": false,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/schema/site.ts",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/content/sections/composites/",
+          "isExplicit": false,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        "site"
+      ],
+      "readScope": [],
+      "domain": "site",
+      "expectedSpec": ".claude/architecture/creativeshire/components/site/site.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "style-analyst",
+      "type": "coordinator",
+      "contractPath": ".claude\\architecture\\agentic-framework\\style-analyst.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/analyst.spec.md",
+        ".claude/architecture/creativeshire/components/content/feature.spec.md",
+        ".claude/architecture/creativeshire/reference/styling.spec.md",
+        ".claude/architecture/creativeshire/reference/css-variables.spec.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/analyst.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/feature.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/reference/styling.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/reference/css-variables.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "External",
+        "Internal"
+      ],
+      "domain": null,
+      "expectedSpec": null,
+      "hasRequiredSpec": false
+    },
+    {
+      "name": "technical-director",
+      "type": "coordinator",
+      "contractPath": ".claude\\architecture\\agentic-framework\\technical-director.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/coordinator.spec.md",
+        ".claude/architecture/creativeshire/index.spec.md",
+        ".claude/architecture/creativeshire/core/philosophy.spec.md",
+        ".claude/architecture/creativeshire/core/contracts.spec.md",
+        ".claude/architecture/creativeshire/layers/*.spec.md",
+        ".claude/architecture/creativeshire/components/**/*.spec.md",
+        ".claude/architecture/agentic-framework/*.agent.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md",
+        ".claude/skills/react-best-practices/bundles/server-components.md",
+        ".claude/skills/react-best-practices/bundles/client-runtime.md",
+        ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+        ".claude/skills/react-best-practices/bundles/js-performance.md",
+        ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+        ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+        ".claude/skills/tailwind-v4-skill/bundles/customization.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/coordinator.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/index.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/core/philosophy.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/core/contracts.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/layers/*.spec.md",
+          "isExplicit": false,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/**/*.spec.md",
+          "isExplicit": false,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/agentic-framework/*.agent.md",
+          "isExplicit": false,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/server-components.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/client-runtime.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/js-performance.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/customization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        ".claude/tasks",
+        ".claude/architecture"
+      ],
+      "readScope": [],
+      "domain": null,
+      "expectedSpec": null,
+      "hasRequiredSpec": false
+    },
+    {
+      "name": "trigger-builder",
+      "type": "builder",
+      "contractPath": ".claude\\architecture\\agentic-framework\\trigger-builder.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/builder.spec.md",
+        ".claude/architecture/creativeshire/components/experience/trigger.spec.md",
+        ".claude/architecture/creativeshire/components/experience/trigger.validator.ts",
+        ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+        ".claude/architecture/creativeshire/components/experience/provider.spec.md",
+        ".claude/architecture/creativeshire/patterns/common.spec.md",
+        ".claude/skills/react-best-practices/bundles/client-runtime.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md",
+        ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+        ".claude/skills/react-best-practices/bundles/js-performance.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/builder.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/trigger.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/trigger.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/behaviour.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/provider.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/patterns/common.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/client-runtime.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/js-performance.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        "creativeshire/components/experience/trigger"
+      ],
+      "readScope": [],
+      "domain": "trigger",
+      "expectedSpec": ".claude/architecture/creativeshire/components/experience/trigger.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "trigger-reviewer",
+      "type": "reviewer",
+      "contractPath": ".claude\\architecture\\agentic-framework\\trigger-reviewer.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+        ".claude/architecture/creativeshire/components/experience/trigger.spec.md",
+        ".claude/architecture/creativeshire/components/experience/trigger.validator.ts",
+        ".claude/architecture/creativeshire/components/experience/provider.spec.md",
+        ".claude/architecture/creativeshire/components/experience/driver.spec.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md",
+        ".claude/skills/react-best-practices/bundles/client-runtime.md",
+        ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+        ".claude/skills/react-best-practices/bundles/js-performance.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/trigger.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/trigger.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/provider.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/experience/driver.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/client-runtime.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/js-performance.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "creativeshire/experience/triggers"
+      ],
+      "domain": "trigger",
+      "expectedSpec": ".claude/architecture/creativeshire/components/experience/trigger.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "widget-analyst",
+      "type": "coordinator",
+      "contractPath": ".claude\\architecture\\agentic-framework\\widget-analyst.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/analyst.spec.md",
+        ".claude/architecture/creativeshire/components/content/widget.spec.md",
+        ".claude/architecture/creativeshire/components/content/widget-composite.spec.md",
+        ".claude/architecture/creativeshire/patterns/common.spec.md",
+        ".claude/architecture/creativeshire/reference/naming.spec.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md",
+        ".claude/skills/tailwind-v4-skill/bundles/setup-config.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/analyst.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget-composite.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/patterns/common.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/reference/naming.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "External",
+        "Internal"
+      ],
+      "domain": null,
+      "expectedSpec": null,
+      "hasRequiredSpec": false
+    },
+    {
+      "name": "widget-builder",
+      "type": "builder",
+      "contractPath": ".claude\\architecture\\agentic-framework\\widget-builder.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/builder.spec.md",
+        ".claude/architecture/creativeshire/components/content/widget.spec.md",
+        ".claude/architecture/creativeshire/components/content/widget.validator.ts",
+        ".claude/architecture/creativeshire/components/content/section.spec.md",
+        ".claude/architecture/creativeshire/components/content/feature.spec.md",
+        ".claude/architecture/creativeshire/components/schema/widget.ts",
+        ".claude/architecture/creativeshire/patterns/common.spec.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md",
+        ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+        ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+        ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+        ".claude/skills/tailwind-v4-skill/bundles/customization.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/builder.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/section.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/feature.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/schema/widget.ts",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/patterns/common.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/customization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        "creativeshire/components/content/widgets"
+      ],
+      "readScope": [],
+      "domain": "widget",
+      "expectedSpec": ".claude/architecture/creativeshire/components/content/widget.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "widget-composite-builder",
+      "type": "builder",
+      "contractPath": ".claude\\architecture\\agentic-framework\\widget-composite-builder.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/builder.spec.md",
+        ".claude/architecture/creativeshire/components/content/widget-composite.spec.md",
+        ".claude/architecture/creativeshire/components/content/widget-composite.validator.ts",
+        ".claude/architecture/creativeshire/components/content/widget.spec.md",
+        ".claude/architecture/creativeshire/patterns/common.spec.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md",
+        ".claude/skills/react-best-practices/bundles/js-performance.md",
+        ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+        ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+        ".claude/skills/tailwind-v4-skill/bundles/customization.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/builder.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget-composite.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget-composite.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/architecture/creativeshire/patterns/common.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/js-performance.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/customization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [
+        "creativeshire/components/content/widgets/composites"
+      ],
+      "readScope": [],
+      "domain": "widget-composite",
+      "expectedSpec": ".claude/architecture/creativeshire/components/content/widget-composite.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "widget-composite-reviewer",
+      "type": "reviewer",
+      "contractPath": ".claude\\architecture\\agentic-framework\\widget-composite-reviewer.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+        ".claude/architecture/creativeshire/components/content/widget-composite.spec.md",
+        ".claude/architecture/creativeshire/components/content/widget-composite.validator.ts",
+        ".claude/architecture/creativeshire/components/content/widget.spec.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md",
+        ".claude/skills/react-best-practices/bundles/js-performance.md",
+        ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+        ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+        ".claude/skills/tailwind-v4-skill/bundles/customization.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget-composite.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget-composite.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/js-performance.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/customization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "creativeshire/components/content/widgets/composites"
+      ],
+      "domain": "widget-composite",
+      "expectedSpec": ".claude/architecture/creativeshire/components/content/widget-composite.spec.md",
+      "hasRequiredSpec": true
+    },
+    {
+      "name": "widget-reviewer",
+      "type": "reviewer",
+      "contractPath": ".claude\\architecture\\agentic-framework\\widget-reviewer.agent.md",
+      "knowledge": [
+        ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+        ".claude/architecture/creativeshire/components/content/widget.spec.md",
+        ".claude/architecture/creativeshire/components/content/widget.validator.ts",
+        ".claude/architecture/creativeshire/components/content/feature.spec.md",
+        ".claude/skills/react-best-practices/bundles/component-rendering.md",
+        ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+        ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+        ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+        ".claude/skills/tailwind-v4-skill/bundles/customization.md"
+      ],
+      "knowledgeDetails": [
+        {
+          "path": ".claude/architecture/agentic-framework/types/reviewer.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget.spec.md",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/widget.validator.ts",
+          "isExplicit": true,
+          "isPrimary": true
+        },
+        {
+          "path": ".claude/architecture/creativeshire/components/content/feature.spec.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/component-rendering.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/react-best-practices/bundles/bundle-optimization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/setup-config.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/migration-v3.md",
+          "isExplicit": true,
+          "isPrimary": false
+        },
+        {
+          "path": ".claude/skills/tailwind-v4-skill/bundles/customization.md",
+          "isExplicit": true,
+          "isPrimary": false
+        }
+      ],
+      "outputScope": [],
+      "readScope": [
+        "creativeshire/components/content/widgets"
+      ],
+      "domain": "widget",
+      "expectedSpec": ".claude/architecture/creativeshire/components/content/widget.spec.md",
+      "hasRequiredSpec": true
+    }
+  ],
+  "files": {
+    ".claude/architecture/creativeshire/components/content/chrome.spec.md": {
+      "knownBy": [
+        "chrome-analyst",
+        "chrome-builder",
+        "chrome-reviewer",
+        "inventory-agent",
+        "project-assistant",
+        "technical-director"
+      ],
+      "explicitlyKnownBy": [
+        "chrome-analyst",
+        "chrome-builder",
+        "chrome-reviewer",
+        "inventory-agent"
+      ],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/content/chrome.validator.ts": {
+      "knownBy": [
+        "chrome-builder",
+        "chrome-reviewer"
+      ],
+      "explicitlyKnownBy": [
+        "chrome-builder",
+        "chrome-reviewer"
+      ],
+      "globKnownBy": [],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/content/feature.spec.md": {
+      "knownBy": [
+        "feature-builder",
+        "feature-reviewer",
+        "project-assistant",
+        "section-reviewer",
+        "style-analyst",
+        "technical-director",
+        "widget-builder",
+        "widget-reviewer"
+      ],
+      "explicitlyKnownBy": [
+        "feature-builder",
+        "feature-reviewer",
+        "section-reviewer",
+        "style-analyst",
+        "widget-builder",
+        "widget-reviewer"
+      ],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/content/feature.validator.ts": {
+      "knownBy": [
+        "feature-builder",
+        "feature-reviewer"
+      ],
+      "explicitlyKnownBy": [
+        "feature-builder",
+        "feature-reviewer"
+      ],
+      "globKnownBy": [],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/content/section-composite.spec.md": {
+      "knownBy": [
+        "project-assistant",
+        "section-analyst",
+        "section-composite-builder",
+        "section-composite-reviewer",
+        "technical-director"
+      ],
+      "explicitlyKnownBy": [
+        "section-analyst",
+        "section-composite-builder",
+        "section-composite-reviewer"
+      ],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/content/section-composite.validator.ts": {
+      "knownBy": [
+        "section-composite-builder",
+        "section-composite-reviewer"
+      ],
+      "explicitlyKnownBy": [
+        "section-composite-builder",
+        "section-composite-reviewer"
+      ],
+      "globKnownBy": [],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/content/section.spec.md": {
+      "knownBy": [
+        "feature-builder",
+        "feature-reviewer",
+        "inventory-agent",
+        "layout-analyst",
+        "project-assistant",
+        "runtime-validator",
+        "schema-builder",
+        "section-analyst",
+        "section-builder",
+        "section-composite-builder",
+        "section-composite-reviewer",
+        "section-reviewer",
+        "technical-director",
+        "widget-builder"
+      ],
+      "explicitlyKnownBy": [
+        "feature-builder",
+        "feature-reviewer",
+        "inventory-agent",
+        "layout-analyst",
+        "runtime-validator",
+        "schema-builder",
+        "section-analyst",
+        "section-builder",
+        "section-composite-builder",
+        "section-composite-reviewer",
+        "section-reviewer",
+        "widget-builder"
+      ],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/content/section.validator.ts": {
+      "knownBy": [
+        "section-builder",
+        "section-reviewer"
+      ],
+      "explicitlyKnownBy": [
+        "section-builder",
+        "section-reviewer"
+      ],
+      "globKnownBy": [],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/content/widget-composite.spec.md": {
+      "knownBy": [
+        "project-assistant",
+        "section-composite-reviewer",
+        "technical-director",
+        "widget-analyst",
+        "widget-composite-builder",
+        "widget-composite-reviewer"
+      ],
+      "explicitlyKnownBy": [
+        "section-composite-reviewer",
+        "widget-analyst",
+        "widget-composite-builder",
+        "widget-composite-reviewer"
+      ],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/content/widget-composite.validator.ts": {
+      "knownBy": [
+        "widget-composite-builder",
+        "widget-composite-reviewer"
+      ],
+      "explicitlyKnownBy": [
+        "widget-composite-builder",
+        "widget-composite-reviewer"
+      ],
+      "globKnownBy": [],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/content/widget.spec.md": {
+      "knownBy": [
+        "chrome-builder",
+        "chrome-reviewer",
+        "feature-builder",
+        "feature-reviewer",
+        "inventory-agent",
+        "layout-analyst",
+        "project-assistant",
+        "runtime-validator",
+        "schema-builder",
+        "section-builder",
+        "section-composite-builder",
+        "section-reviewer",
+        "technical-director",
+        "widget-analyst",
+        "widget-builder",
+        "widget-composite-builder",
+        "widget-composite-reviewer",
+        "widget-reviewer"
+      ],
+      "explicitlyKnownBy": [
+        "chrome-builder",
+        "chrome-reviewer",
+        "feature-builder",
+        "feature-reviewer",
+        "inventory-agent",
+        "layout-analyst",
+        "runtime-validator",
+        "schema-builder",
+        "section-builder",
+        "section-composite-builder",
+        "section-reviewer",
+        "widget-analyst",
+        "widget-builder",
+        "widget-composite-builder",
+        "widget-composite-reviewer",
+        "widget-reviewer"
+      ],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/content/widget.validator.ts": {
+      "knownBy": [
+        "widget-builder",
+        "widget-reviewer"
+      ],
+      "explicitlyKnownBy": [
+        "widget-builder",
+        "widget-reviewer"
+      ],
+      "globKnownBy": [],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/experience/behaviour.spec.md": {
+      "knownBy": [
+        "behaviour-builder",
+        "behaviour-reviewer",
+        "chrome-analyst",
+        "chrome-builder",
+        "driver-builder",
+        "driver-reviewer",
+        "experience-analyst",
+        "preset-reviewer",
+        "project-assistant",
+        "provider-reviewer",
+        "renderer-reviewer",
+        "schema-builder",
+        "section-builder",
+        "technical-director",
+        "trigger-builder"
+      ],
+      "explicitlyKnownBy": [
+        "behaviour-builder",
+        "behaviour-reviewer",
+        "chrome-analyst",
+        "chrome-builder",
+        "driver-builder",
+        "driver-reviewer",
+        "experience-analyst",
+        "preset-reviewer",
+        "provider-reviewer",
+        "renderer-reviewer",
+        "schema-builder",
+        "section-builder",
+        "trigger-builder"
+      ],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/experience/behaviour.validator.ts": {
+      "knownBy": [
+        "behaviour-builder",
+        "behaviour-reviewer"
+      ],
+      "explicitlyKnownBy": [
+        "behaviour-builder",
+        "behaviour-reviewer"
+      ],
+      "globKnownBy": [],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/experience/driver.spec.md": {
+      "knownBy": [
+        "behaviour-builder",
+        "behaviour-reviewer",
+        "driver-builder",
+        "driver-reviewer",
+        "experience-analyst",
+        "project-assistant",
+        "provider-builder",
+        "provider-reviewer",
+        "technical-director",
+        "trigger-reviewer"
+      ],
+      "explicitlyKnownBy": [
+        "behaviour-builder",
+        "behaviour-reviewer",
+        "driver-builder",
+        "driver-reviewer",
+        "experience-analyst",
+        "provider-builder",
+        "provider-reviewer",
+        "trigger-reviewer"
+      ],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/experience/driver.validator.ts": {
+      "knownBy": [
+        "driver-builder",
+        "driver-reviewer"
+      ],
+      "explicitlyKnownBy": [
+        "driver-builder",
+        "driver-reviewer"
+      ],
+      "globKnownBy": [],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/experience/mode.spec.md": {
+      "knownBy": [
+        "preset-analyst",
+        "project-assistant",
+        "provider-builder",
+        "technical-director"
+      ],
+      "explicitlyKnownBy": [
+        "preset-analyst",
+        "provider-builder"
+      ],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/experience/provider.spec.md": {
+      "knownBy": [
+        "driver-reviewer",
+        "project-assistant",
+        "provider-builder",
+        "provider-reviewer",
+        "technical-director",
+        "trigger-builder",
+        "trigger-reviewer"
+      ],
+      "explicitlyKnownBy": [
+        "driver-reviewer",
+        "provider-builder",
+        "provider-reviewer",
+        "trigger-builder",
+        "trigger-reviewer"
+      ],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/experience/provider.validator.ts": {
+      "knownBy": [
+        "provider-builder",
+        "provider-reviewer"
+      ],
+      "explicitlyKnownBy": [
+        "provider-builder",
+        "provider-reviewer"
+      ],
+      "globKnownBy": [],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/experience/trigger.spec.md": {
+      "knownBy": [
+        "behaviour-builder",
+        "behaviour-reviewer",
+        "driver-builder",
+        "experience-analyst",
+        "preset-reviewer",
+        "project-assistant",
+        "technical-director",
+        "trigger-builder",
+        "trigger-reviewer"
+      ],
+      "explicitlyKnownBy": [
+        "behaviour-builder",
+        "behaviour-reviewer",
+        "driver-builder",
+        "experience-analyst",
+        "preset-reviewer",
+        "trigger-builder",
+        "trigger-reviewer"
+      ],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/experience/trigger.validator.ts": {
+      "knownBy": [
+        "trigger-builder",
+        "trigger-reviewer"
+      ],
+      "explicitlyKnownBy": [
+        "trigger-builder",
+        "trigger-reviewer"
+      ],
+      "globKnownBy": [],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/preset/preset.spec.md": {
+      "knownBy": [
+        "preset-analyst",
+        "preset-builder",
+        "preset-reviewer",
+        "project-assistant",
+        "technical-director"
+      ],
+      "explicitlyKnownBy": [
+        "preset-analyst",
+        "preset-builder",
+        "preset-reviewer"
+      ],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/preset/preset.validator.ts": {
+      "knownBy": [
+        "preset-builder",
+        "preset-reviewer"
+      ],
+      "explicitlyKnownBy": [
+        "preset-builder",
+        "preset-reviewer"
+      ],
+      "globKnownBy": [],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/renderer/renderer.spec.md": {
+      "knownBy": [
+        "project-assistant",
+        "renderer-builder",
+        "renderer-reviewer",
+        "technical-director"
+      ],
+      "explicitlyKnownBy": [
+        "renderer-builder",
+        "renderer-reviewer"
+      ],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/renderer/renderer.validator.ts": {
+      "knownBy": [
+        "renderer-builder",
+        "renderer-reviewer"
+      ],
+      "explicitlyKnownBy": [
+        "renderer-builder",
+        "renderer-reviewer"
+      ],
+      "globKnownBy": [],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/schema/schema.spec.md": {
+      "knownBy": [
+        "project-assistant",
+        "schema-builder",
+        "technical-director"
+      ],
+      "explicitlyKnownBy": [
+        "schema-builder"
+      ],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/schema/schema.validator.ts": {
+      "knownBy": [
+        "schema-builder"
+      ],
+      "explicitlyKnownBy": [
+        "schema-builder"
+      ],
+      "globKnownBy": [],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/site/site.spec.md": {
+      "knownBy": [
+        "data-analyst",
+        "page-builder",
+        "project-assistant",
+        "site-builder",
+        "technical-director"
+      ],
+      "explicitlyKnownBy": [
+        "data-analyst",
+        "page-builder",
+        "site-builder"
+      ],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/components/site/site.validator.ts": {
+      "knownBy": [
+        "page-builder",
+        "site-builder"
+      ],
+      "explicitlyKnownBy": [
+        "page-builder",
+        "site-builder"
+      ],
+      "globKnownBy": [],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/core/contracts.spec.md": {
+      "knownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "explicitlyKnownBy": [
+        "technical-director"
+      ],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/core/extension.spec.md": {
+      "knownBy": [
+        "project-assistant"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/core/glossary.spec.md": {
+      "knownBy": [
+        "project-assistant"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/core/philosophy.spec.md": {
+      "knownBy": [
+        "inventory-agent",
+        "project-assistant",
+        "technical-director"
+      ],
+      "explicitlyKnownBy": [
+        "inventory-agent",
+        "technical-director"
+      ],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/core/platform.spec.md": {
+      "knownBy": [
+        "project-assistant"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/diagrams/index.spec.md": {
+      "knownBy": [
+        "project-assistant"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/index.spec.md": {
+      "knownBy": [
+        "inventory-agent",
+        "project-assistant",
+        "runtime-validator",
+        "technical-director"
+      ],
+      "explicitlyKnownBy": [
+        "inventory-agent",
+        "runtime-validator",
+        "technical-director"
+      ],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/layers/content.spec.md": {
+      "knownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/layers/experience.spec.md": {
+      "knownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/layers/interface.spec.md": {
+      "knownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/layers/preset.spec.md": {
+      "knownBy": [
+        "preset-analyst",
+        "project-assistant",
+        "technical-director"
+      ],
+      "explicitlyKnownBy": [
+        "preset-analyst"
+      ],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/layers/renderer.spec.md": {
+      "knownBy": [
+        "project-assistant",
+        "renderer-reviewer",
+        "technical-director"
+      ],
+      "explicitlyKnownBy": [
+        "renderer-reviewer"
+      ],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/layers/schema.spec.md": {
+      "knownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/layers/site-instance.spec.md": {
+      "knownBy": [
+        "data-analyst",
+        "project-assistant",
+        "technical-director"
+      ],
+      "explicitlyKnownBy": [
+        "data-analyst"
+      ],
+      "globKnownBy": [
+        "project-assistant",
+        "technical-director"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/patterns/anti-patterns.spec.md": {
+      "knownBy": [
+        "project-assistant"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/patterns/common.spec.md": {
+      "knownBy": [
+        "behaviour-builder",
+        "chrome-analyst",
+        "chrome-builder",
+        "driver-builder",
+        "experience-analyst",
+        "layout-analyst",
+        "project-assistant",
+        "section-analyst",
+        "section-builder",
+        "section-composite-builder",
+        "trigger-builder",
+        "widget-analyst",
+        "widget-builder",
+        "widget-composite-builder"
+      ],
+      "explicitlyKnownBy": [
+        "behaviour-builder",
+        "chrome-analyst",
+        "chrome-builder",
+        "driver-builder",
+        "experience-analyst",
+        "layout-analyst",
+        "section-analyst",
+        "section-builder",
+        "section-composite-builder",
+        "trigger-builder",
+        "widget-analyst",
+        "widget-builder",
+        "widget-composite-builder"
+      ],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/patterns/data-fetching.spec.md": {
+      "knownBy": [
+        "project-assistant"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/patterns/hydration.spec.md": {
+      "knownBy": [
+        "project-assistant"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/patterns/performance.spec.md": {
+      "knownBy": [
+        "project-assistant"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/reference/caching.spec.md": {
+      "knownBy": [
+        "project-assistant"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/reference/css-variables.spec.md": {
+      "knownBy": [
+        "project-assistant",
+        "style-analyst"
+      ],
+      "explicitlyKnownBy": [
+        "style-analyst"
+      ],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/reference/file-patterns.spec.md": {
+      "knownBy": [
+        "project-assistant"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/reference/folders.spec.md": {
+      "knownBy": [
+        "project-assistant"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/reference/naming.spec.md": {
+      "knownBy": [
+        "chrome-analyst",
+        "experience-analyst",
+        "layout-analyst",
+        "project-assistant",
+        "section-analyst",
+        "widget-analyst"
+      ],
+      "explicitlyKnownBy": [
+        "chrome-analyst",
+        "experience-analyst",
+        "layout-analyst",
+        "section-analyst",
+        "widget-analyst"
+      ],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/reference/styling.spec.md": {
+      "knownBy": [
+        "project-assistant",
+        "style-analyst"
+      ],
+      "explicitlyKnownBy": [
+        "style-analyst"
+      ],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/reference/tech-stack.spec.md": {
+      "knownBy": [
+        "project-assistant"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/testing/integration.spec.md": {
+      "knownBy": [
+        "project-assistant"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/testing/strategy.spec.md": {
+      "knownBy": [
+        "project-assistant"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/testing/unit.spec.md": {
+      "knownBy": [
+        "project-assistant"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    },
+    ".claude/architecture/creativeshire/testing/visual.spec.md": {
+      "knownBy": [
+        "project-assistant"
+      ],
+      "explicitlyKnownBy": [],
+      "globKnownBy": [
+        "project-assistant"
+      ],
+      "writableBy": [],
+      "readableBy": []
+    }
+  },
+  "stats": {
+    "totalAgents": 41,
+    "totalFiles": 59,
+    "coveredFiles": 59,
+    "uncoveredFiles": 0,
+    "coveragePercent": 100,
+    "explicitlyCoveredFiles": 39,
+    "explicitCoveragePercent": 66,
+    "globOnlyFiles": 20
+  },
+  "specialistCompleteness": {
+    "totalBuilders": 15,
+    "buildersWithSpec": 15,
+    "builderPercent": 100,
+    "totalReviewers": 12,
+    "reviewersWithSpec": 12,
+    "reviewerPercent": 100,
+    "overallPercent": 100,
+    "agentsMissingSpecs": []
+  },
+  "uncovered": []
+}

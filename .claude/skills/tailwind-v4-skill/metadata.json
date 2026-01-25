@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "organization": "Community",
+  "date": "January 2026",
+  "abstract": "Comprehensive styling guide for Tailwind CSS v4 applications, designed for AI agents and LLMs. Contains 21 rules across 3 categories, covering CSS-first configuration, new directives (@theme, @utility, @variant, @source), migration from v3, and anti-patterns to avoid. Each rule includes detailed explanations with incorrect vs. correct code examples.",
+  "upstream": "https://github.com/tlq5l/tailwindcss-v4-skill",
+  "references": [
+    "https://tailwindcss.com/docs/upgrade-guide",
+    "https://tailwindcss.com/docs/theme",
+    "https://tailwindcss.com/docs/functions-and-directives",
+    "https://tailwindcss.com/docs/detecting-classes-in-source-files",
+    "https://tailwindcss.com/blog/tailwindcss-v4"
+  ]
+}
