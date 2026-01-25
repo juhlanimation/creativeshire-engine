@@ -1,0 +1,4 @@
+@import 'tailwindcss';
+
+@source '../creativeshire/**/*.tsx';
+@source '../app/**/*.tsx';
