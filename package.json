@@ -1,5 +1,5 @@
 {
-  "name": "bishoy-gendi-portfolio",
+  "name": "creativeshire-engine",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,10 +10,13 @@
     "sync:react-rules": "npx tsx .claude/scripts/sync-react-best-practices.ts"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
     "gsap": "^3.14.1",
     "next": "16.0.8",
     "react": "19.2.1",
-    "react-dom": "19.2.1"
+    "react-dom": "19.2.1",
+    "tailwind-merge": "^3.4.0",
+    "zustand": "^5.0.10"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

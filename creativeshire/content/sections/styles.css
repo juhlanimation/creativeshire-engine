@@ -1,0 +1,79 @@
+/**
+ * Section base styles.
+ * CSS variables are READ from drivers - never SET here.
+ */
+
+.section {
+  /* Animation CSS variables with fallbacks */
+  transform: translateY(var(--section-y, 0));
+  z-index: var(--section-z, 0);
+  opacity: var(--section-opacity, 1);
+
+  /* Base sizing - fill parent */
+  width: 100%;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Layout type: flex */
+.section[data-layout="flex"] {
+  display: flex;
+}
+
+/* Layout type: grid */
+.section[data-layout="grid"] {
+  display: grid;
+}
+
+/* Layout type: stack (vertical flex) */
+.section[data-layout="stack"] {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Direction modifiers for flex/stack */
+.section[data-direction="row"] {
+  flex-direction: row;
+}
+
+.section[data-direction="column"] {
+  flex-direction: column;
+}
+
+/* Alignment modifiers */
+.section[data-align="start"] {
+  align-items: flex-start;
+}
+
+.section[data-align="center"] {
+  align-items: center;
+}
+
+.section[data-align="end"] {
+  align-items: flex-end;
+}
+
+.section[data-align="stretch"] {
+  align-items: stretch;
+}
+
+/* Justify modifiers */
+.section[data-justify="start"] {
+  justify-content: flex-start;
+}
+
+.section[data-justify="center"] {
+  justify-content: center;
+}
+
+.section[data-justify="end"] {
+  justify-content: flex-end;
+}
+
+.section[data-justify="between"] {
+  justify-content: space-between;
+}
+
+.section[data-justify="around"] {
+  justify-content: space-around;
+}
