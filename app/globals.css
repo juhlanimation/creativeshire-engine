@@ -2,3 +2,17 @@
 
 @source '../creativeshire/**/*.tsx';
 @source '../app/**/*.tsx';
+@source '../site/**/*.tsx';
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+/*
+ * Base styles - matches create-next-app defaults
+ */
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
