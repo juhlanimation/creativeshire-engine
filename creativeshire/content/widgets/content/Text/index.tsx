@@ -5,8 +5,8 @@
  * Content Layer (L1) - no scroll listeners or viewport units.
  */
 
-import { memo, forwardRef, type CSSProperties } from 'react'
-import type { TextProps, TextElement } from './types'
+import React, { memo, forwardRef, type CSSProperties } from 'react'
+import type { TextProps } from './types'
 import './styles.css'
 
 /**
@@ -57,7 +57,9 @@ const Text = memo(forwardRef<HTMLElement, TextProps>(function Text(
 
   return (
     <Element
-      ref={ref as any}
+      // Dynamic element type requires ref cast for polymorphic components
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ref={ref as React.Ref<any>}
       className={className ? `text-widget ${className}` : 'text-widget'}
       style={Object.keys(styles).length > 0 ? styles : undefined}
       data-behaviour={dataBehaviour}
