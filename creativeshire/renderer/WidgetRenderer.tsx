@@ -97,6 +97,7 @@ export function WidgetRenderer({
   index,
 }: WidgetRendererProps): ReactNode {
   // Look up widget component from registry
+  // Registry returns stable component references, not new components
   const Component = getWidget(widget.type)
 
   // Return error fallback for unknown widget types
@@ -132,6 +133,7 @@ export function WidgetRenderer({
   // Render the widget component
   const rendered = (
     <ErrorBoundary widgetType={widget.type}>
+      {/* eslint-disable-next-line react-hooks/static-components -- Component from registry is stable */}
       <Component {...componentProps}>{children}</Component>
     </ErrorBoundary>
   )

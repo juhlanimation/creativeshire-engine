@@ -46,6 +46,8 @@ export function DriverProvider({ children }: DriverProviderProps): ReactNode {
   useEffect(() => {
     const d = new NoopDriver()
     d.start()
+    // Valid initialization pattern - setState on mount to trigger re-render with driver
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDriver(d)
 
     return () => {

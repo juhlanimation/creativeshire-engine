@@ -31,7 +31,7 @@ export function SiteRenderer({ site, page }: SiteRendererProps) {
   if (!mode) {
     return (
       <div data-error={`Unknown mode: ${modeId}`}>
-        Error: Unknown experience mode "{modeId}"
+        Error: Unknown experience mode &quot;{modeId}&quot;
       </div>
     )
   }
