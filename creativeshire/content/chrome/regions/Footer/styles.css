@@ -1,0 +1,115 @@
+/**
+ * Footer chrome component styles.
+ * Uses CSS variables with fallbacks for animation support.
+ */
+
+.footer-chrome {
+  /* Animation CSS variables with fallbacks (set by behaviours) */
+  transform: translateY(var(--footer-y, 0));
+  opacity: var(--footer-opacity, 1);
+
+  /* Layout */
+  width: 100%;
+  padding: 80px 32px 48px;
+  background-color: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
+}
+
+/* Mobile: Single column stacked */
+.footer-chrome__content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Section styling */
+.footer-chrome__section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Section headings */
+.footer-chrome__heading {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 900;
+  color: white;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+/* Navigation links */
+.footer-chrome__nav-link {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: white;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.footer-chrome__nav-link:hover {
+  text-decoration: underline;
+}
+
+/* Contact/Studio links */
+.footer-chrome__link {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: white;
+  text-decoration: none;
+}
+
+.footer-chrome__link:hover {
+  text-decoration: underline;
+}
+
+/* Social links */
+.footer-chrome__social-link {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: white;
+  text-decoration: none;
+  text-transform: lowercase;
+}
+
+.footer-chrome__social-link:hover {
+  text-decoration: underline;
+}
+
+/* Copyright */
+.footer-chrome__copyright {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: white;
+  margin: 32px 0 0;
+}
+
+/* Tablet+ (768px): Three-column layout */
+@media (min-width: 768px) {
+  .footer-chrome__content {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 64px;
+  }
+
+  .footer-chrome__section {
+    flex: 1;
+  }
+}
+
+/* Desktop (1024px+): Increased padding */
+@media (min-width: 1024px) {
+  .footer-chrome {
+    padding: 80px 96px 48px;
+  }
+}
+
+/* Behaviour targeting */
+.footer-chrome[data-behaviour] {
+  will-change: transform, opacity;
+}

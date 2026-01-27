@@ -5,6 +5,11 @@
 
 import type { ComponentType } from 'react'
 import Text from './content/Text'
+import HeroTitle from './content/HeroTitle'
+import ScrollIndicator from './content/ScrollIndicator'
+import LogoMarquee from './content/LogoMarquee'
+import VideoThumbnail from './content/VideoThumbnail'
+import ProjectCard from './content/ProjectCard'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Widget props vary by type
 type WidgetComponent = ComponentType<any>
@@ -14,6 +19,11 @@ type WidgetComponent = ComponentType<any>
  */
 export const widgetRegistry: Record<string, WidgetComponent> = {
   Text,
+  HeroTitle,
+  ScrollIndicator,
+  LogoMarquee,
+  VideoThumbnail,
+  ProjectCard,
 }
 
 /**

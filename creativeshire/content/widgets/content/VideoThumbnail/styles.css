@@ -1,0 +1,69 @@
+/**
+ * VideoThumbnail widget styles.
+ * Uses CSS variables with fallbacks for animation support.
+ */
+
+.video-thumbnail-widget {
+  /* Animation CSS variables with fallbacks (set by behaviours) */
+  transform: translateY(calc(var(--y, 0) * 1px));
+  opacity: var(--opacity, 1);
+
+  /* Layout - container for aspect ratio */
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #000;
+}
+
+/* Thumbnail image */
+.video-thumbnail-widget__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+/* WATCH overlay container */
+.video-thumbnail-widget__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+/* WATCH label */
+.video-thumbnail-widget__label {
+  font-family: Arial, system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.25px;
+}
+
+/* Hover states (desktop) */
+@media (hover: hover) {
+  .video-thumbnail-widget:hover .video-thumbnail-widget__image {
+    transform: scale(1.03);
+  }
+
+  .video-thumbnail-widget:hover .video-thumbnail-widget__overlay {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Focus state */
+.video-thumbnail-widget:focus-visible {
+  outline: 2px solid #0066ff;
+  outline-offset: 2px;
+}
+
+/* Behaviour targeting */
+.video-thumbnail-widget[data-behaviour] {
+  will-change: transform, opacity;
+}
