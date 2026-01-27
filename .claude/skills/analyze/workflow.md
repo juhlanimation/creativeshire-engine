@@ -2,163 +2,154 @@
 
 > `/analyze <url>` | `/analyze <path>` | `/analyze "description"`
 
-Analyzes external references and creates analysis files. Does NOT create backlog items.
+Analyzes references and creates analysis files mirroring Creativeshire component structure.
 
 ## Pre-Flight
 
 ```bash
-git checkout main
-git pull origin main
+git checkout main && git pull origin main
 ```
-
-## Input Types
-
-| Input | Detection | Example |
-|-------|-----------|---------|
-| Website | Starts with `http://` or `https://` | `https://example.com` |
-| Path | Local path | `./my-project` |
-| Description | Quoted string | `"portfolio with parallax"` |
 
 ## Workflow
 
-### 0. Get Analysis Name
+### 1. Get Analysis Name
 
-**Always ask the user for the project/analysis name:**
+Ask user for project name → `.claude/analyze/{name}/`
 
-```markdown
-What name should I use for this analysis?
-(e.g., "portfolio", "agency-site", "landing-page")
+### 2. Capture Reference (Always-Record Approach)
+
+**IMPORTANT:** Start GIF recording BEFORE any interaction to capture all transitions.
+
+#### Step 1: Start Recording
+```
+mcp__claude-in-chrome__gif_creator → start_recording
 ```
 
-This becomes `{name}` in `.claude/analyze/{name}/`.
+#### Step 2: Systematic Exploration
+While recording, perform these in order:
 
-**Check for existing analysis:**
-```bash
-ls .claude/analyze/{name}/ 2>/dev/null
+1. **Full page scroll** - Scroll top to bottom slowly to capture scroll-triggered animations
+2. **Click every interactive element:**
+   - All buttons and CTAs
+   - All cards/thumbnails
+   - Navigation links
+   - Modal triggers
+3. **Open/close all modals** - Click to open, then close each one
+4. **Hover states** - Hover over cards, buttons, links (pause briefly on each)
+5. **Test any forms** - Focus inputs, see validation states
+
+#### Step 3: Stop & Export
+```
+mcp__claude-in-chrome__gif_creator → stop_recording
+mcp__claude-in-chrome__gif_creator → export (download: true)
 ```
 
-If exists, ask:
-```markdown
-Analysis already exists at `.claude/analyze/{name}/`.
+#### Step 4: Review GIF
+Watch the exported GIF to identify:
+- Transition types (scale, fade, slide, clip-path)
+- Animation durations
+- Easing curves
+- Micro-interactions missed during live viewing
 
-Options:
-1. Overwrite existing analysis
-2. Use different name
-3. Cancel
-```
+#### Step 5: Re-record Specifics (if needed)
+If a transition needs closer inspection, record just that interaction.
 
-### 1. Capture Reference
+### 3. Static Analysis
 
-**For URLs (requires Chrome MCP):**
-```
-mcp__claude-in-chrome__tabs_context_mcp
-mcp__claude-in-chrome__tabs_create_mcp
-mcp__claude-in-chrome__navigate → URL
-mcp__claude-in-chrome__computer → screenshot
-mcp__claude-in-chrome__read_page → DOM structure
-```
-
-Scroll through page to observe:
-- Layout and sections
-- Animations and interactions
-- Navigation and chrome elements
-
-**For paths:**
-- Scan directory structure
-- Identify framework (React, Vue, etc.)
-- Find component and style files
-
-**For descriptions:**
-- Extract key concepts
-- Use domain expertise to infer patterns
-
-### 2. Component Identification
-
-Break down into Creativeshire layers:
-
-**Content Layer:**
-| Component | Look For |
-|-----------|----------|
-| Widgets | Atomic elements (text, images, buttons, cards) |
-| Sections | Scrollable groups of widgets |
-| Chrome | Persistent UI (header, footer, overlays) |
-
-**Experience Layer:**
-| Component | Look For |
-|-----------|----------|
-| Behaviours | Animations (fade, parallax, scroll-driven) |
-| Drivers | CSS variable application patterns |
-| Triggers | Event handlers (scroll, click, hover) |
-
-### 3. Architecture Mapping
-
-For each identified component:
-1. Check if similar exists in codebase
-2. Determine component type using creativeshire specs index
-3. Note dependencies between components
-4. Read relevant spec to understand patterns
+After GIF capture, also gather:
+- DOM structure (`read_page`)
+- Screenshots of key states
+- CSS/JS inspection for animation definitions
 
 ### 4. Create Analysis Files
 
-Create analysis files in `.claude/analyze/{name}/`:
+Structure mirrors Creativeshire components:
 
 ```
 .claude/analyze/{name}/
-├── SUMMARY.md       # Overall summary with source URL and build order
-├── sections.md      # Section patterns identified
-├── widgets.md       # Widget components identified
-├── chrome.md        # Persistent UI elements
-├── experience.md    # Animations/interactions
-└── styles.md        # Design tokens
+├── SUMMARY.md
+├── widget/
+├── widget-composite/
+├── section/
+├── section-composite/
+├── chrome/
+├── feature/
+├── behaviour/
+├── driver/
+├── trigger/
+└── mode/
 ```
 
-**Example:** Analyzing `https://stripe.com` as "stripe":
-```
-.claude/analyze/stripe/
+Only create folders that have components.
+
+#### Behaviour File Template
+```markdown
+# {BehaviourName}
+
+**Purpose:** What it does
+**Trigger:** What initiates it (click, scroll, hover, etc.)
+
+## Animation
+- Type: scale / fade / slide / clip-path / etc.
+- Duration: ~Xms
+- Easing: ease-out / spring / linear / etc.
+- Direction: in / out / both
+
+## States
+- Initial state
+- Active/open state
+- Exit state (if different from initial)
+
+## Implementation Notes
+- Technical observations from GIF review
 ```
 
 ### 5. Commit
 
 ```bash
 git add .claude/analyze/{name}/
-git commit -m "analyze: {name}
-
-Co-Authored-By: Claude <noreply@anthropic.com>"
+git commit -m "analyze: {name}"
 ```
 
-## Output Format
+## Interaction Checklist
+
+- [ ] Started GIF recording before ANY interaction
+- [ ] Scrolled entire page (slow, steady)
+- [ ] Clicked ALL interactive elements
+- [ ] Opened/closed ALL modals
+- [ ] Tested hover states
+- [ ] Exported and reviewed GIF
+- [ ] Documented all observed transitions in behaviour/ files
+- [ ] Re-recorded specific transitions if needed
+
+## Output
 
 ```markdown
 ## Analyzed: {name}
 
-**Source:** URL or description
+**Source:** URL
 
-### Identified Components
+### Components
+- widget/: [list]
+- section/: [list]
+- chrome/: [list]
+- behaviour/: [list]
 
-**Content:**
-- Widgets: [list]
-- Sections: [list]
-- Chrome: [list]
+### Transitions Captured
+- [list all transitions observed in GIF]
 
-**Experience:**
-- Behaviours: [list]
-- Triggers: [list]
+### Needs Follow-up
+- [any unclear transitions needing re-recording]
 
-### Suggested Build Order
-
-1. Widgets (no dependencies)
-2. Sections (depend on widgets)
-3. Experience (after content)
-
-Next: `/plan {name}` to create backlog items
+Next: `/plan {name}`
 ```
 
-## Analysis Checklist
+## Why Always-Record?
 
-- [ ] All visible widgets identified
-- [ ] Section boundaries marked
-- [ ] Chrome elements noted (header, footer, overlays)
-- [ ] Animations/interactions catalogued
-- [ ] Dependencies mapped
-- [ ] Build order suggested
-- [ ] Analysis files created in `.claude/analyze/{name}/`
+Screenshots show **state**. GIFs show **motion**.
+
+By recording the entire exploration session:
+1. We capture transitions we didn't anticipate
+2. We can review at our own pace
+3. We don't miss micro-interactions
+4. We have visual reference for implementation
