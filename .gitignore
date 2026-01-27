@@ -9,7 +9,6 @@ dist/
 # Local settings
 .claude/settings.local.json
 .claude/logs/
-.claude/tasks/
 .claude/_material/
 
 # IDE
