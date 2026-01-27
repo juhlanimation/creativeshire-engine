@@ -19,6 +19,10 @@
 10. [Content Updates During Animation](#10-content-updates-during-animation)
 11. [Example: Stacking Scroll](#11-example-stacking-scroll)
 12. [The Mental Model](#12-the-mental-model)
+13. [React Hooks](#13-react-hooks)
+14. [Data Fetching](#14-data-fetching)
+15. [Modals and Overlays](#15-modals-and-overlays)
+16. [Implementation Status](#16-implementation-status)
 
 ---
 
@@ -963,6 +967,345 @@ CSS Variables are the BRIDGE
 
 ---
 
+## 13. React Hooks
+
+Hooks belong in specific locations based on their purpose.
+
+### Hook Locations
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                 │
+│   L1 HOOKS (Content)                L2 HOOKS (Experience)       │
+│   ══════════════════                ═════════════════════       │
+│                                                                 │
+│   Inside widgets:                   experience/triggers/:       │
+│   • useState (UI state)             • useScrollProgress.ts      │
+│   • useRef (DOM refs)               • useViewport.ts            │
+│   • useMemo / useCallback           • useIntersection.ts        │
+│                                     • usePointer.ts             │
+│   Inside chrome:                                                │
+│   • useState (nav state)            experience/*.tsx:           │
+│   • useRef                          • useExperience()           │
+│                                     • useDriver()               │
+│                                                                 │
+│   NO CENTRAL lib/hooks/ FOLDER      Triggers update store,      │
+│   Hooks live WITH their component   not React state             │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Where Hooks Live (Per Spec)
+
+| Hook Type | Location |
+|-----------|----------|
+| Widget UI state | `content/widgets/{type}/{Name}/index.tsx` |
+| Chrome UI state | `content/chrome/regions/{Name}/index.tsx` |
+| Overlay state | `content/chrome/overlays/{Name}/index.tsx` |
+| L2 Triggers | `experience/triggers/use{Name}.ts` |
+| Context hooks | `experience/ExperienceProvider.tsx`, `experience/DriverProvider.tsx` |
+| Interface hooks | `interface/useEngineController.ts` |
+
+### The Key Rule
+
+```
+L1 hooks → CAN cause re-renders (normal React)
+L2 hooks → Should NOT cause re-renders for animation
+           They update the Zustand store, driver reads it
+```
+
+### Example: Accordion with Local State
+
+```tsx
+// content/widgets/layout/Accordion/index.tsx
+function Accordion({ items }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null)  // L1 hook
+
+  return (
+    <div>
+      {items.map((item, i) => (
+        <div key={i}>
+          <button onClick={() => setOpenIndex(openIndex === i ? null : i)}>
+            {item.title}
+          </button>
+          {openIndex === i && <div>{item.content}</div>}
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+### Example: L2 Trigger
+
+```typescript
+// experience/triggers/useScrollProgress.ts
+function useScrollProgress(store: StoreApi<ExperienceState>) {
+  useEffect(() => {
+    const handleScroll = () => {
+      const progress = window.scrollY / (document.body.scrollHeight - window.innerHeight)
+      store.setState({ scrollProgress: progress })  // Updates store, NOT React state
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [store])
+}
+```
+
+---
+
+## 14. Data Fetching
+
+Data fetching is **purely L1** - it's about what content exists, not how it animates.
+
+### Where Fetching Happens
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                 │
+│   app/                              DATA LAYER (above L1/L2)    │
+│   ────                              ════════════════════════    │
+│                                                                 │
+│   layout.tsx    ──► fetch site config                           │
+│   page.tsx      ──► fetch page data                             │
+│   [route]/      ──► fetch route-specific data                   │
+│                                                                 │
+│   Server Components fetch, then pass to SiteRenderer            │
+│                                                                 │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│   Inside Widgets (L1)               For client-side fetching    │
+│   ───────────────────               ────────────────────────    │
+│                                                                 │
+│   React Query, SWR, or use()        When data changes after     │
+│   inside the widget component       initial render              │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### The Pattern
+
+```tsx
+// app/page.tsx - Server Component
+export default async function HomePage() {
+  const site = await getSiteConfig()        // Fetch at top
+  const page = await getPageData('home')    // Fetch at top
+
+  return <SiteRenderer site={site} page={page} />  // Pass down
+}
+
+// L1/L2 don't know or care where data came from
+// They just receive it as props/schema
+```
+
+### Fetching Locations
+
+| Pattern | Location | Layer |
+|---------|----------|-------|
+| Server Components | `app/page.tsx`, `app/layout.tsx` | Above L1/L2 |
+| React Query / SWR | Inside widgets | L1 |
+| Server Actions | `app/actions/` or colocated | L1 (mutations) |
+
+---
+
+## 15. Modals and Overlays
+
+Modals are **Chrome (overlay type)** with both L1 content AND L2 animation.
+
+### Where Modals Live
+
+```
+content/chrome/overlays/
+├── Modal/
+│   ├── index.tsx          # The modal component
+│   ├── types.ts           # ModalProps, ModalContent
+│   └── store.ts           # useModalStore (Zustand) - COLOCATED
+├── Cursor/
+│   └── index.tsx
+└── Loader/
+    └── index.tsx
+```
+
+### Modal Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                 │
+│   MODAL = CHROME (overlay) + L1 CONTENT + L2 ANIMATION          │
+│                                                                 │
+│   ┌─────────────────────────────────────────────────────────┐   │
+│   │  Portal (renders at body level)                         │   │
+│   │                                                         │   │
+│   │  ┌─────────────────────────────────────────────────┐    │   │
+│   │  │  Backdrop (L2 animated)                         │    │   │
+│   │  │  --backdrop-opacity: 0 → 1                      │    │   │
+│   │  │                                                 │    │   │
+│   │  │  ┌─────────────────────────────────────────┐    │    │   │
+│   │  │  │  ModalWrapper (L2 animated)             │    │    │   │
+│   │  │  │  --modal-y, --modal-opacity, --modal-scale   │    │   │
+│   │  │  │                                         │    │    │   │
+│   │  │  │  ┌─────────────────────────────────┐    │    │    │   │
+│   │  │  │  │  Modal Content (L1)             │    │    │    │   │
+│   │  │  │  │  - Title, Body, Actions         │    │    │    │   │
+│   │  │  │  └─────────────────────────────────┘    │    │    │   │
+│   │  │  │                                         │    │    │   │
+│   │  │  └─────────────────────────────────────────┘    │    │   │
+│   │  │                                                 │    │   │
+│   │  └─────────────────────────────────────────────────┘    │   │
+│   │                                                         │   │
+│   └─────────────────────────────────────────────────────────┘   │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Modal Store (Colocated)
+
+```typescript
+// content/chrome/overlays/Modal/store.ts
+import { create } from 'zustand'
+
+interface ModalState {
+  isOpen: boolean
+  content: React.ReactNode | null
+  open: (content: React.ReactNode) => void
+  close: () => void
+}
+
+export const useModalStore = create<ModalState>((set) => ({
+  isOpen: false,
+  content: null,
+  open: (content) => set({ isOpen: true, content }),
+  close: () => set({ isOpen: false, content: null }),
+}))
+```
+
+### How ChromeRenderer Uses It
+
+```tsx
+// renderer/ChromeRenderer.tsx
+export function ChromeRenderer({ position }) {
+  if (position === 'overlays') {
+    return (
+      <>
+        <Modal />      {/* From content/chrome/overlays/Modal */}
+        <Cursor />     {/* From content/chrome/overlays/Cursor */}
+        <Loader />     {/* From content/chrome/overlays/Loader */}
+      </>
+    )
+  }
+  // ... header/footer
+}
+```
+
+### Opening Modal from Any Widget
+
+```tsx
+// Any widget can import and use the modal store
+import { useModalStore } from '@/creativeshire/content/chrome/overlays/Modal/store'
+
+function ProjectCard({ project }) {
+  const openModal = useModalStore((s) => s.open)
+
+  return (
+    <div onClick={() => openModal(<ProjectDetail project={project} />)}>
+      <Image src={project.thumbnail} />
+    </div>
+  )
+}
+```
+
+### Key Points
+
+- Modal component lives in `content/chrome/overlays/Modal/`
+- Modal store is **colocated** with the component (not in a central folder)
+- Rendered via `ChromeRenderer` with `position="overlays"`
+- L1 decides what's in the modal, L2 animates open/close
+
+---
+
+## 16. Implementation Status
+
+What's in the spec vs what's actually built.
+
+### Current State
+
+```
+creativeshire/
+│
+├── schema/                    ✅ BUILT
+│   ├── site.ts, page.ts
+│   ├── section.ts, widget.ts
+│   ├── chrome.ts, features.ts
+│   └── experience.ts
+│
+├── content/
+│   ├── widgets/
+│   │   └── content/Text/      ✅ BUILT (1 widget)
+│   ├── sections/              ⚠️  EXISTS (types only)
+│   ├── features/              ⚠️  EXISTS (types only)
+│   └── chrome/                ❌ NOT BUILT
+│       ├── regions/           ❌ NOT BUILT
+│       └── overlays/          ❌ NOT BUILT
+│
+├── experience/
+│   ├── ExperienceProvider     ✅ BUILT
+│   ├── DriverProvider         ✅ BUILT
+│   ├── modes/stacking/        ✅ BUILT
+│   ├── behaviours/            ✅ BUILT (wrapper, resolve, registry)
+│   ├── drivers/NoopDriver     ✅ BUILT
+│   └── triggers/              ❌ NOT BUILT
+│
+├── renderer/
+│   ├── SiteRenderer           ✅ BUILT
+│   ├── PageRenderer           ✅ BUILT
+│   ├── SectionRenderer        ✅ BUILT
+│   ├── WidgetRenderer         ✅ BUILT
+│   └── ChromeRenderer         ✅ BUILT
+│
+├── interface/                 ❌ NOT BUILT
+│
+└── presets/                   ❌ NOT BUILT
+```
+
+```
+app/
+└── (routing)                  ⚠️  MINIMAL
+
+lib/
+└── utils.ts                   ✅ BUILT (cn utility only)
+```
+
+### Summary Table
+
+| Folder | In Spec | Built | Notes |
+|--------|---------|-------|-------|
+| `schema/` | Yes | ✅ | All types defined |
+| `content/widgets/` | Yes | ⚠️ | Only Text widget |
+| `content/sections/` | Yes | ⚠️ | Types only |
+| `content/chrome/` | Yes | ❌ | Not started |
+| `content/features/` | Yes | ⚠️ | Types only |
+| `experience/modes/` | Yes | ✅ | Stacking mode |
+| `experience/behaviours/` | Yes | ✅ | Infrastructure |
+| `experience/drivers/` | Yes | ✅ | NoopDriver |
+| `experience/triggers/` | Yes | ❌ | Not started |
+| `renderer/` | Yes | ✅ | All renderers |
+| `interface/` | Yes | ❌ | Not started |
+| `presets/` | Yes | ❌ | Not started |
+
+### What's NOT in the Spec
+
+These folders do **not** exist in the architecture:
+
+| Folder | Status |
+|--------|--------|
+| `lib/hooks/` | ❌ Not in spec - hooks live with components |
+| `lib/stores/` | ❌ Not in spec - stores are colocated |
+
+The architecture uses **colocation** - hooks and stores live with the components that use them, not in central folders.
+
+---
+
 ## See Also
 
 - [Philosophy](./core/philosophy.spec.md) - Core principles
@@ -970,3 +1313,4 @@ CSS Variables are the BRIDGE
 - [Content Layer](./layers/content.spec.md) - L1 details
 - [Provider Spec](./components/experience/provider.spec.md) - Context distribution
 - [Behaviour Spec](./components/experience/behaviour.spec.md) - Compute functions
+- [Folders Reference](./reference/folders.spec.md) - Complete folder structure
