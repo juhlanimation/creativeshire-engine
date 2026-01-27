@@ -73,26 +73,33 @@ After GIF capture, also gather:
 
 ### 4. Create Analysis Files
 
-Structure mirrors Creativeshire components:
+Structure mirrors Creativeshire layers exactly:
 
 ```
 .claude/analyze/{name}/
 ├── SUMMARY.md
-├── assets/                    # Screenshots and GIFs for reference
+├── assets/                      # Screenshots and GIFs
 │   ├── {name}-exploration.gif
-│   ├── hero.png
-│   ├── modal-open.png
-│   └── ...
-├── widget/
-├── widget-composite/
-├── section/
-├── section-composite/
-├── chrome/
-├── feature/
-├── behaviour/
-├── driver/
-├── trigger/
-└── mode/
+│   └── *.png
+├── content/
+│   ├── widget/
+│   ├── widget-composite/
+│   ├── section/
+│   ├── section-composite/
+│   ├── chrome/
+│   ├── feature/
+│   └── layout-widget/
+├── experience/
+│   ├── behaviour/
+│   ├── chrome-behaviour/
+│   ├── driver/
+│   ├── mode/
+│   ├── provider/
+│   └── trigger/
+├── renderer/
+├── schema/
+├── preset/
+└── site/
 ```
 
 Only create folders that have components.
@@ -102,7 +109,7 @@ Only create folders that have components.
 # {ComponentName}
 
 **Purpose:** What it does
-**Screenshot:** `../assets/{screenshot-name}.png`
+**Screenshot:** `../../assets/{screenshot-name}.png`
 
 ## Props / Structure
 ...
@@ -117,7 +124,7 @@ Only create folders that have components.
 
 **Purpose:** What it does
 **Trigger:** What initiates it (click, scroll, hover, etc.)
-**GIF Reference:** `../assets/{name}-exploration.gif` @ ~Xs
+**GIF Reference:** `../../assets/{name}-exploration.gif` @ ~Xs
 
 ## Animation
 - Type: scale / fade / slide / clip-path / etc.
@@ -143,8 +150,8 @@ git commit -m "analyze: {name}"
 ### Screenshots
 - **Maximum 1 per component** - Keep focused, not bloated
 - Save as PNG
-- Name matches component: `widget/hero-title.md` → `assets/hero-title.png`
-- Reference in markdown: `**Screenshot:** ../assets/hero-title.png`
+- Name matches component: `content/widget/hero-title.md` → `assets/hero-title.png`
+- Reference in markdown: `**Screenshot:** ../../assets/hero-title.png`
 
 ### GIFs
 - **1 exploration GIF** for the entire site: `{name}-exploration.gif`
@@ -159,7 +166,7 @@ git commit -m "analyze: {name}"
 - [ ] Tested hover states
 - [ ] Exported GIF to assets/
 - [ ] Captured key screenshots to assets/
-- [ ] Documented all observed transitions in behaviour/ files
+- [ ] Documented all observed transitions in experience/behaviour/ files
 - [ ] Referenced assets in component markdown files
 
 ## Output
@@ -174,10 +181,10 @@ git commit -m "analyze: {name}"
 - Screenshots: [list]
 
 ### Components
-- widget/: [list]
-- section/: [list]
-- chrome/: [list]
-- behaviour/: [list]
+- content/widget/: [list]
+- content/section/: [list]
+- content/chrome/: [list]
+- experience/behaviour/: [list]
 
 ### Transitions Captured
 - [list all transitions observed in GIF]

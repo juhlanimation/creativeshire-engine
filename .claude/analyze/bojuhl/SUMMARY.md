@@ -5,7 +5,7 @@
 
 ## Components
 
-### widget/
+### content/widget/
 | Name | Description |
 |------|-------------|
 | hero-title | Stacked role typography with gradients |
@@ -14,7 +14,7 @@
 | gallery-thumbnail | Compact project preview |
 | video-player | Modal video with custom controls |
 
-### section/
+### content/section/
 | Name | Description |
 |------|-------------|
 | hero | Full-viewport with scroll-driven backgrounds |
@@ -24,13 +24,13 @@
 | project-gallery | Horizontal thumbnail carousel |
 | footer | Multi-column navigation + contact |
 
-### chrome/
+### content/chrome/
 | Name | Description |
 |------|-------------|
 | floating-contact | Fixed top-right CTA |
 | scroll-indicator | "(SCROLL)" hint in hero |
 
-### behaviour/
+### experience/behaviour/
 | Name | Description |
 |------|-------------|
 | scroll-background | Hero background transition on scroll |
