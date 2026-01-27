@@ -60,7 +60,7 @@ Task(
 TASK: Review WIDGET-003 - Horizontal Gallery Widget
 
 COMPONENT TYPE: Widget
-SPEC: specs/components/content/widget.spec.md
+SPEC: .claude/architecture/creativeshire/components/content/widget.spec.md
 
 FILES TO REVIEW:
 - widgets/horizontal-gallery/horizontal-gallery.widget.tsx

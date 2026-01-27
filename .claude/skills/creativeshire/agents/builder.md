@@ -24,29 +24,29 @@ When task mentions... → Read this spec:
 ### Content Layer
 | Component | Spec Path |
 |-----------|-----------|
-| Widget | `../specs/components/content/widget.spec.md` |
-| Widget composite | `../specs/components/content/widget-composite.spec.md` |
-| Section | `../specs/components/content/section.spec.md` |
-| Section composite | `../specs/components/content/section-composite.spec.md` |
-| Chrome (header, footer, sidebar) | `../specs/components/content/chrome.spec.md` |
-| Feature (spacing, background) | `../specs/components/content/feature.spec.md` |
+| Widget | `.claude/architecture/creativeshire/components/content/widget.spec.md` |
+| Widget composite | `.claude/architecture/creativeshire/components/content/widget-composite.spec.md` |
+| Section | `.claude/architecture/creativeshire/components/content/section.spec.md` |
+| Section composite | `.claude/architecture/creativeshire/components/content/section-composite.spec.md` |
+| Chrome (header, footer, sidebar) | `.claude/architecture/creativeshire/components/content/chrome.spec.md` |
+| Feature (spacing, background) | `.claude/architecture/creativeshire/components/content/feature.spec.md` |
 
 ### Experience Layer
 | Component | Spec Path |
 |-----------|-----------|
-| Behaviour | `../specs/components/experience/behaviour.spec.md` |
-| Driver | `../specs/components/experience/driver.spec.md` |
-| Trigger | `../specs/components/experience/trigger.spec.md` |
-| Provider | `../specs/components/experience/provider.spec.md` |
-| Mode | `../specs/components/experience/mode.spec.md` |
+| Behaviour | `.claude/architecture/creativeshire/components/experience/behaviour.spec.md` |
+| Driver | `.claude/architecture/creativeshire/components/experience/driver.spec.md` |
+| Trigger | `.claude/architecture/creativeshire/components/experience/trigger.spec.md` |
+| Provider | `.claude/architecture/creativeshire/components/experience/provider.spec.md` |
+| Mode | `.claude/architecture/creativeshire/components/experience/mode.spec.md` |
 
 ### Other Layers
 | Component | Spec Path |
 |-----------|-----------|
-| Schema/Types | `../specs/components/schema/schema.spec.md` |
-| Renderer | `../specs/components/renderer/renderer.spec.md` |
-| Preset | `../specs/components/preset/preset.spec.md` |
-| Site config | `../specs/components/site/site.spec.md` |
+| Schema/Types | `.claude/architecture/creativeshire/components/schema/schema.spec.md` |
+| Renderer | `.claude/architecture/creativeshire/components/renderer/renderer.spec.md` |
+| Preset | `.claude/architecture/creativeshire/components/preset/preset.spec.md` |
+| Site config | `.claude/architecture/creativeshire/components/site/site.spec.md` |
 
 ## Before Writing Code
 
@@ -100,7 +100,7 @@ Return a summary of work done:
 ```
 Task: Build a VideoPlayer widget
 
-1. Read spec: ../specs/components/content/widget.spec.md
+1. Read spec: .claude/architecture/creativeshire/components/content/widget.spec.md
 2. Find existing: Glob for *.widget.tsx → found ImageGallery, TextBlock
 3. Read patterns: ImageGallery uses Frame pattern
 4. Implement: Create video-player.widget.tsx following patterns

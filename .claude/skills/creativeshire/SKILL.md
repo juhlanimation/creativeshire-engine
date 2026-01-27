@@ -87,48 +87,48 @@ When building a specific component, read its spec:
 ### Content Layer
 | Component | Spec |
 |-----------|------|
-| Widget | `specs/components/content/widget.spec.md` |
-| Widget Composite | `specs/components/content/widget-composite.spec.md` |
-| Section | `specs/components/content/section.spec.md` |
-| Section Composite | `specs/components/content/section-composite.spec.md` |
-| Chrome | `specs/components/content/chrome.spec.md` |
-| Feature | `specs/components/content/feature.spec.md` |
+| Widget | `.claude/architecture/creativeshire/components/content/widget.spec.md` |
+| Widget Composite | `.claude/architecture/creativeshire/components/content/widget-composite.spec.md` |
+| Section | `.claude/architecture/creativeshire/components/content/section.spec.md` |
+| Section Composite | `.claude/architecture/creativeshire/components/content/section-composite.spec.md` |
+| Chrome | `.claude/architecture/creativeshire/components/content/chrome.spec.md` |
+| Feature | `.claude/architecture/creativeshire/components/content/feature.spec.md` |
 
 ### Experience Layer
 | Component | Spec |
 |-----------|------|
-| Behaviour | `specs/components/experience/behaviour.spec.md` |
-| Driver | `specs/components/experience/driver.spec.md` |
-| Trigger | `specs/components/experience/trigger.spec.md` |
-| Provider | `specs/components/experience/provider.spec.md` |
-| Mode | `specs/components/experience/mode.spec.md` |
+| Behaviour | `.claude/architecture/creativeshire/components/experience/behaviour.spec.md` |
+| Driver | `.claude/architecture/creativeshire/components/experience/driver.spec.md` |
+| Trigger | `.claude/architecture/creativeshire/components/experience/trigger.spec.md` |
+| Provider | `.claude/architecture/creativeshire/components/experience/provider.spec.md` |
+| Mode | `.claude/architecture/creativeshire/components/experience/mode.spec.md` |
 
 ### Other Layers
 | Component | Spec |
 |-----------|------|
-| Schema | `specs/components/schema/schema.spec.md` |
-| Renderer | `specs/components/renderer/renderer.spec.md` |
-| Preset | `specs/components/preset/preset.spec.md` |
-| Site | `specs/components/site/site.spec.md` |
+| Schema | `.claude/architecture/creativeshire/components/schema/schema.spec.md` |
+| Renderer | `.claude/architecture/creativeshire/components/renderer/renderer.spec.md` |
+| Preset | `.claude/architecture/creativeshire/components/preset/preset.spec.md` |
+| Site | `.claude/architecture/creativeshire/components/site/site.spec.md` |
 
 ## Core Principles
 
 Read these for architectural understanding:
 
-- `specs/core/philosophy.spec.md` - Content/experience separation
-- `specs/core/contracts.spec.md` - Layer boundaries
-- `specs/patterns/common.spec.md` - Frame pattern, CSS variable bridge
-- `specs/patterns/anti-patterns.spec.md` - What NOT to do
+- `.claude/architecture/creativeshire/core/philosophy.spec.md` - Content/experience separation
+- `.claude/architecture/creativeshire/core/contracts.spec.md` - Layer boundaries
+- `.claude/architecture/creativeshire/patterns/common.spec.md` - Frame pattern, CSS variable bridge
+- `.claude/architecture/creativeshire/patterns/anti-patterns.spec.md` - What NOT to do
 
 ## Layer Reference
 
 For layer-level understanding:
 
-- `specs/layers/schema.spec.md` - Type definitions
-- `specs/layers/content.spec.md` - Static content rendering
-- `specs/layers/experience.spec.md` - Animation and interaction
-- `specs/layers/renderer.spec.md` - Schema to React mapping
-- `specs/layers/preset.spec.md` - Bundled configurations
+- `.claude/architecture/creativeshire/layers/schema.spec.md` - Type definitions
+- `.claude/architecture/creativeshire/layers/content.spec.md` - Static content rendering
+- `.claude/architecture/creativeshire/layers/experience.spec.md` - Animation and interaction
+- `.claude/architecture/creativeshire/layers/renderer.spec.md` - Schema to React mapping
+- `.claude/architecture/creativeshire/layers/preset.spec.md` - Bundled configurations
 
 ## Validation
 

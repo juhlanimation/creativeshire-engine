@@ -105,7 +105,7 @@ CONTEXT:
 [Key files and patterns from backlog]
 
 COMPONENT TYPE: Widget
-SPEC HINT: Read specs/components/content/widget.spec.md
+SPEC HINT: Read .claude/architecture/creativeshire/components/content/widget.spec.md
 
 WORKFLOW:
 1. Read the widget spec

@@ -21,7 +21,7 @@ Generic reviewer that checks any Creativeshire component against its spec.
 ### Architecture Compliance
 - [ ] Component follows spec patterns
 - [ ] Stays within defined boundaries (correct folders)
-- [ ] No anti-patterns (read `specs/patterns/anti-patterns.spec.md`)
+- [ ] No anti-patterns (read `.claude/architecture/creativeshire/patterns/anti-patterns.spec.md`)
 - [ ] Proper layer separation (Content vs Experience)
 
 ### Code Quality
@@ -48,10 +48,10 @@ Same as builder - read the relevant spec to know the rules:
 
 | Component Type | Spec to Check Against |
 |---------------|----------------------|
-| Widget | `../specs/components/content/widget.spec.md` |
-| Section | `../specs/components/content/section.spec.md` |
-| Behaviour | `../specs/components/experience/behaviour.spec.md` |
-| Driver | `../specs/components/experience/driver.spec.md` |
+| Widget | `.claude/architecture/creativeshire/components/content/widget.spec.md` |
+| Section | `.claude/architecture/creativeshire/components/content/section.spec.md` |
+| Behaviour | `.claude/architecture/creativeshire/components/experience/behaviour.spec.md` |
+| Driver | `.claude/architecture/creativeshire/components/experience/driver.spec.md` |
 | etc. | (see builder.md for full mapping) |
 
 ## Output Format
