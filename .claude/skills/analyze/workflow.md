@@ -300,78 +300,171 @@ mcp__claude-in-chrome__find (query: "search bar", tabId)        # Find elements 
 mcp__claude-in-chrome__javascript_tool (action: "javascript_exec", text: "...", tabId)  # Execute JS
 ```
 
-## Parallel Agent Strategy
+## Mobile-First Agent Strategy
 
-Analyze with **2 agents per breakpoint** (Content + Experience), all writing to the SAME component files.
+Analyze **sequentially** by breakpoint: Mobile → Tablet → Desktop.
 
-### Breakpoints
+Each breakpoint builds on the previous, noting differences.
 
-| Name | Width | Viewport |
-|------|-------|----------|
-| `desktop` | 1440px | 1440×900 |
-| `tablet` | 768px | 768×1024 |
-| `mobile` | 375px | 375×812 |
+### Breakpoints (Mobile-First Order)
+
+| Order | Name | Width | Viewport |
+|-------|------|-------|----------|
+| 1 | `mobile` | 375px | 375×812 |
+| 2 | `tablet` | 768px | 768×1024 |
+| 3 | `desktop` | 1440px | 1440×900 |
 
 ### Architecture
 
 ```
 Parent Agent (orchestrator)
 ├── Creates folder structure
-├── Spawns 6 agents in parallel:
-│   ├── Desktop Content Agent  → appends desktop layout to content/ files
-│   ├── Desktop Experience Agent → writes experience/, captures {name}-desktop.gif
-│   ├── Tablet Content Agent   → appends tablet layout to content/ files
-│   ├── Tablet Experience Agent → captures {name}-tablet.gif, notes responsive diffs
-│   ├── Mobile Content Agent   → appends mobile layout to content/ files
-│   └── Mobile Experience Agent → captures {name}-mobile.gif, notes mobile behaviors
-└── Merges outputs, creates SUMMARY.md
+│
+├── PHASE 1: Mobile (2 agents in parallel)
+│   ├── Mobile Content Agent   → creates content/ files with mobile layout
+│   └── Mobile Experience Agent → creates experience/ files, captures {name}-mobile.gif
+│   └── WAIT for both to complete
+│
+├── PHASE 2: Tablet (2 agents in parallel)
+│   ├── Tablet Content Agent   → appends tablet layout to existing content/ files
+│   └── Tablet Experience Agent → appends to experience/, captures {name}-tablet.gif
+│   └── WAIT for both to complete
+│
+├── PHASE 3: Desktop (2 agents in parallel)
+│   ├── Desktop Content Agent  → appends desktop layout to existing content/ files
+│   └── Desktop Experience Agent → appends to experience/, captures {name}-desktop.gif
+│   └── WAIT for both to complete
+│
+└── Creates SUMMARY.md
 ```
 
-### Content Agent Prompt
+### Mobile Content Agent Prompt (PHASE 1 - Creates Files)
 
 ```
-You are analyzing {url} for CONTENT STRUCTURE at {breakpoint} breakpoint.
+You are analyzing {url} for CONTENT STRUCTURE at MOBILE breakpoint.
+This is the FIRST phase - you CREATE the component files.
 
-## Breakpoint: {breakpoint} ({width}×{height})
+## Breakpoint: mobile (375×812)
 ## Output: .claude/analyze/{name}/content/
 
 ## Your Scope
-- widget/ - Document widget layout at this breakpoint
-- section/ - Document section layout at this breakpoint
-- chrome/ - Document chrome at this breakpoint
+- widget/ - Document widget layout at mobile
+- section/ - Document section layout at mobile
+- chrome/ - Document chrome at mobile
+
+## Instructions
+1. Get Chrome tab: tabs_context_mcp (createIfEmpty: true) → tabs_create_mcp
+2. Resize window: resize_window (width: 375, height: 812, tabId)
+3. Navigate to {url}
+4. For each component, screenshot and CREATE its markdown file
+5. Save screenshots as: {component}-mobile.png to assets/
+
+## File Format (CREATE new file)
+# {ComponentName}
+
+**Purpose:** What it does
+**Visible:** mobile, tablet, desktop  ← Update if hidden at any breakpoint
+
+## Layout
+
+### Mobile (375px)
+**Screenshot:** `../../assets/{component}-mobile.png`
+- Columns:
+- Spacing:
+- Typography:
+- Child visibility:
+```
+
+### Tablet/Desktop Content Agent Prompt (PHASE 2-3 - Append or Create)
+
+```
+You are analyzing {url} for CONTENT STRUCTURE at {breakpoint} breakpoint.
+This is PHASE {phase} - you APPEND to existing files OR CREATE if component didn't exist at smaller breakpoints.
+
+## Breakpoint: {breakpoint} ({width}×{height})
+## Output: .claude/analyze/{name}/content/
 
 ## Instructions
 1. Get Chrome tab: tabs_context_mcp (createIfEmpty: true) → tabs_create_mcp
 2. Resize window: resize_window (width: {width}, height: {height}, tabId)
 3. Navigate to {url}
-4. For each component, screenshot and document the {breakpoint} layout
-5. Save screenshots as: {component}-{breakpoint}.png
+4. For each component visible at this breakpoint:
+   - If file EXISTS → APPEND the {breakpoint} section
+   - If file DOESN'T EXIST → CREATE it (component only appears at this breakpoint+)
+5. Save screenshots as: {component}-{breakpoint}.png to assets/
+6. Update **Visible:** line to reflect which breakpoints show this component
 
-## File Format
-For each component, create/append to its markdown file:
-
+## For EXISTING files (APPEND)
 ### {Breakpoint} ({width}px)
 **Screenshot:** `../../assets/{component}-{breakpoint}.png`
 - Columns:
 - Spacing:
 - Typography:
-- Visibility: (hidden/shown elements)
+- Child visibility:
+- Changes from mobile: (what's different)
 
-IMPORTANT: Each component gets ONE file with ALL breakpoints documented.
+## For NEW components (CREATE)
+# {ComponentName}
+
+**Purpose:** What it does
+**Visible:** {breakpoint}, desktop  ← Only larger breakpoints
+
+## Layout
+
+### {Breakpoint} ({width}px)
+**Screenshot:** `../../assets/{component}-{breakpoint}.png`
+- Columns:
+- Spacing:
+- Note: Not visible on smaller breakpoints
 ```
 
-### Experience Agent Prompt
+### Mobile Experience Agent Prompt (PHASE 1 - Creates Files)
+
+```
+You are analyzing {url} for EXPERIENCE/BEHAVIOR at MOBILE breakpoint.
+This is the FIRST phase - you CREATE the behaviour files.
+
+## Breakpoint: mobile (375×812)
+## Output: .claude/analyze/{name}/experience/
+## GIF: .claude/analyze/{name}/assets/{name}-mobile.gif
+
+## Instructions
+1. Get Chrome tab: tabs_context_mcp (createIfEmpty: true) → tabs_create_mcp
+2. Resize window: resize_window (width: 375, height: 812, tabId)
+3. START GIF RECORDING
+4. Navigate to {url}
+5. Test systematically:
+   - Scroll slowly
+   - TAP all interactive elements (no hover on mobile)
+   - Open/close modals, menus
+   - Test hamburger menu if present
+6. Export GIF as {name}-mobile.gif
+
+## File Format (CREATE new file)
+# {BehaviourName}
+
+**Purpose:** What it does
+**Trigger:** tap / scroll / swipe
+**GIF Reference:** `../../assets/{name}-mobile.gif` @ ~Xs
+
+## Animation
+- Type:
+- Duration:
+- Easing:
+
+## Responsive Notes
+- Mobile: tap-triggered
+```
+
+### Tablet/Desktop Experience Agent Prompt (PHASE 2-3 - Append or Create)
 
 ```
 You are analyzing {url} for EXPERIENCE/BEHAVIOR at {breakpoint} breakpoint.
+This is PHASE {phase} - you APPEND to existing files OR CREATE if behaviour didn't exist at smaller breakpoints.
 
 ## Breakpoint: {breakpoint} ({width}×{height})
 ## Output: .claude/analyze/{name}/experience/
 ## GIF: .claude/analyze/{name}/assets/{name}-{breakpoint}.gif
-
-## Your Scope
-- behaviour/ - Document animations
-- trigger/ - Document interaction triggers
 
 ## Instructions
 1. Get Chrome tab: tabs_context_mcp (createIfEmpty: true) → tabs_create_mcp
@@ -380,24 +473,38 @@ You are analyzing {url} for EXPERIENCE/BEHAVIOR at {breakpoint} breakpoint.
 4. Navigate to {url}
 5. Test systematically:
    - Scroll slowly
-   - Hover/tap ALL interactive elements
-   - MOVE MOUSE AWAY for hover-off
+   - HOVER all interactive elements (hover works at tablet/desktop)
+   - MOVE MOUSE AWAY for hover-off states
    - Open/close modals, menus
-   - Mobile: test touch gestures
 6. Export GIF as {name}-{breakpoint}.gif
+7. For each behaviour:
+   - If file EXISTS → APPEND responsive notes
+   - If file DOESN'T EXIST → CREATE it (behaviour only exists at this breakpoint+)
 
-## File Format
-For each behaviour, note breakpoint-specific differences:
+## For EXISTING files (APPEND to Responsive Notes)
+- {Breakpoint}: hover-triggered, 300ms (or note differences from mobile)
+
+## For NEW behaviours (CREATE)
+# {BehaviourName}
+
+**Purpose:** What it does
+**Trigger:** hover / click
+**GIF Reference:** `../../assets/{name}-{breakpoint}.gif` @ ~Xs
+**Visible:** {breakpoint}, desktop  ← Only at larger breakpoints
+
+## Animation
+- Type:
+- Duration:
+- Easing:
 
 ## Responsive Notes
-- Desktop: hover-triggered, 300ms
-- Tablet: hover-triggered (same)
-- Mobile: tap-triggered, instant
+- Mobile: N/A (not present)
+- {Breakpoint}: hover-triggered
 ```
 
-### Why This Structure?
+### Why Mobile-First?
 
-1. **Mirrors Creativeshire** - Analysis folder = implementation folder structure
-2. **Responsive is a property** - Not a separate hierarchy
-3. **One file per component** - All breakpoint info in one place
-4. **Easier to build from** - Builder reads one file, sees all responsive rules
+1. **Standard practice** - Build up from mobile baseline
+2. **Avoids race conditions** - Sequential phases, no file conflicts
+3. **Clear diffs** - Each breakpoint notes "changes from mobile"
+4. **Catches visibility** - Mobile creates, others note what's added/hidden
