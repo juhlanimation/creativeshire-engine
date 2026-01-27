@@ -38,27 +38,37 @@ While recording, perform these in order:
 4. **Hover states** - Hover over cards, buttons, links (pause briefly on each)
 5. **Test any forms** - Focus inputs, see validation states
 
-#### Step 3: Stop & Export
+#### Step 3: Stop & Export GIF
 ```
 mcp__claude-in-chrome__gif_creator → stop_recording
-mcp__claude-in-chrome__gif_creator → export (download: true)
+mcp__claude-in-chrome__gif_creator → export (download: true, filename: "{name}-exploration.gif")
 ```
 
-#### Step 4: Review GIF
+Save the GIF to `.claude/analyze/{name}/assets/`
+
+#### Step 4: Capture Key Screenshots
+Take screenshots of important states and save to `assets/`:
+- Hero section
+- Each unique section
+- Modal open states
+- Hover states
+- Any unique UI patterns
+
+```
+mcp__claude-in-chrome__computer → screenshot
+```
+
+#### Step 5: Review GIF
 Watch the exported GIF to identify:
 - Transition types (scale, fade, slide, clip-path)
 - Animation durations
 - Easing curves
 - Micro-interactions missed during live viewing
 
-#### Step 5: Re-record Specifics (if needed)
-If a transition needs closer inspection, record just that interaction.
-
 ### 3. Static Analysis
 
 After GIF capture, also gather:
 - DOM structure (`read_page`)
-- Screenshots of key states
 - CSS/JS inspection for animation definitions
 
 ### 4. Create Analysis Files
@@ -68,6 +78,11 @@ Structure mirrors Creativeshire components:
 ```
 .claude/analyze/{name}/
 ├── SUMMARY.md
+├── assets/                    # Screenshots and GIFs for reference
+│   ├── {name}-exploration.gif
+│   ├── hero.png
+│   ├── modal-open.png
+│   └── ...
 ├── widget/
 ├── widget-composite/
 ├── section/
@@ -82,12 +97,27 @@ Structure mirrors Creativeshire components:
 
 Only create folders that have components.
 
+#### Component File Template
+```markdown
+# {ComponentName}
+
+**Purpose:** What it does
+**Screenshot:** `../assets/{screenshot-name}.png`
+
+## Props / Structure
+...
+
+## Visual Treatment
+...
+```
+
 #### Behaviour File Template
 ```markdown
 # {BehaviourName}
 
 **Purpose:** What it does
 **Trigger:** What initiates it (click, scroll, hover, etc.)
+**GIF Reference:** `../assets/{name}-exploration.gif` @ ~Xs
 
 ## Animation
 - Type: scale / fade / slide / clip-path / etc.
@@ -99,9 +129,6 @@ Only create folders that have components.
 - Initial state
 - Active/open state
 - Exit state (if different from initial)
-
-## Implementation Notes
-- Technical observations from GIF review
 ```
 
 ### 5. Commit
@@ -111,6 +138,18 @@ git add .claude/analyze/{name}/
 git commit -m "analyze: {name}"
 ```
 
+## Asset Guidelines
+
+### Screenshots
+- Save as PNG for quality
+- Name descriptively: `hero.png`, `modal-video-open.png`, `hover-card.png`
+- Reference in markdown: `**Screenshot:** ../assets/hero.png`
+
+### GIFs
+- Main exploration GIF: `{name}-exploration.gif`
+- Specific transition GIFs: `{transition-name}.gif`
+- Reference with timestamp: `GIF @ ~5s` for specific moments
+
 ## Interaction Checklist
 
 - [ ] Started GIF recording before ANY interaction
@@ -118,9 +157,10 @@ git commit -m "analyze: {name}"
 - [ ] Clicked ALL interactive elements
 - [ ] Opened/closed ALL modals
 - [ ] Tested hover states
-- [ ] Exported and reviewed GIF
+- [ ] Exported GIF to assets/
+- [ ] Captured key screenshots to assets/
 - [ ] Documented all observed transitions in behaviour/ files
-- [ ] Re-recorded specific transitions if needed
+- [ ] Referenced assets in component markdown files
 
 ## Output
 
@@ -128,6 +168,10 @@ git commit -m "analyze: {name}"
 ## Analyzed: {name}
 
 **Source:** URL
+
+### Assets
+- Exploration GIF: `assets/{name}-exploration.gif`
+- Screenshots: [list]
 
 ### Components
 - widget/: [list]
@@ -138,18 +182,12 @@ git commit -m "analyze: {name}"
 ### Transitions Captured
 - [list all transitions observed in GIF]
 
-### Needs Follow-up
-- [any unclear transitions needing re-recording]
-
 Next: `/plan {name}`
 ```
 
-## Why Always-Record?
+## Why Store Assets?
 
-Screenshots show **state**. GIFs show **motion**.
-
-By recording the entire exploration session:
-1. We capture transitions we didn't anticipate
-2. We can review at our own pace
-3. We don't miss micro-interactions
-4. We have visual reference for implementation
+1. **Visual reference for builders** - See exactly what to replicate
+2. **GIF shows motion** - Static docs can't convey timing/easing
+3. **Persistent documentation** - Reference survives across sessions
+4. **Diff-able progress** - Compare before/after implementation
