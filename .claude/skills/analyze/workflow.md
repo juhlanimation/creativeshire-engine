@@ -78,9 +78,13 @@ Structure mirrors Creativeshire layers exactly:
 ```
 .claude/analyze/{name}/
 ├── SUMMARY.md
-├── assets/                      # Screenshots and GIFs
-│   ├── {name}-exploration.gif
-│   └── *.png
+├── assets/
+│   ├── {name}-desktop.gif          # Desktop exploration GIF
+│   ├── {name}-tablet.gif           # Tablet exploration GIF
+│   ├── {name}-mobile.gif           # Mobile exploration GIF
+│   ├── {component}-desktop.png     # Component at desktop
+│   ├── {component}-tablet.png      # Component at tablet
+│   └── {component}-mobile.png      # Component at mobile
 ├── content/
 │   ├── widget/
 │   ├── widget-composite/
@@ -104,12 +108,32 @@ Structure mirrors Creativeshire layers exactly:
 
 Only create folders that have components.
 
-#### Component File Template
+#### Component File Template (with Responsive)
+
 ```markdown
 # {ComponentName}
 
 **Purpose:** What it does
-**Screenshot:** `../../assets/{screenshot-name}.png`
+
+## Layout
+
+### Desktop (1440px)
+**Screenshot:** `../../assets/{component}-desktop.png`
+- Columns: 2
+- Spacing: 64px gap
+- Typography: 48px heading
+
+### Tablet (768px)
+**Screenshot:** `../../assets/{component}-tablet.png`
+- Columns: 1
+- Spacing: 32px gap
+- Typography: 36px heading
+
+### Mobile (375px)
+**Screenshot:** `../../assets/{component}-mobile.png`
+- Columns: 1
+- Spacing: 24px gap
+- Typography: 28px heading
 
 ## Props / Structure
 ...
@@ -119,12 +143,13 @@ Only create folders that have components.
 ```
 
 #### Behaviour File Template
+
 ```markdown
 # {BehaviourName}
 
 **Purpose:** What it does
 **Trigger:** What initiates it (click, scroll, hover, etc.)
-**GIF Reference:** `../../assets/{name}-exploration.gif` @ ~Xs
+**GIF Reference:** `../../assets/{name}-desktop.gif` @ ~Xs
 
 ## Animation
 - Type: scale / fade / slide / clip-path / etc.
@@ -136,6 +161,11 @@ Only create folders that have components.
 - Initial state
 - Active/open state
 - Exit state (if different from initial)
+
+## Responsive Notes
+- Desktop: hover-triggered
+- Tablet: hover-triggered (same as desktop)
+- Mobile: tap-triggered (no hover)
 ```
 
 ### 5. Commit
@@ -148,13 +178,16 @@ git commit -m "analyze: {name}"
 ## Asset Guidelines
 
 ### Screenshots
-- **Maximum 1 per component** - Keep focused, not bloated
+- **Naming:** `{component}-{breakpoint}.png` (e.g., `hero-desktop.png`, `hero-mobile.png`)
+- **Maximum 1 per breakpoint per component** - Keep focused, not bloated
 - Save as PNG
-- Name matches component: `content/widget/hero-title.md` → `assets/hero-title.png`
-- Reference in markdown: `**Screenshot:** ../../assets/hero-title.png`
+- Reference in markdown under appropriate breakpoint section
 
 ### GIFs
-- **1 exploration GIF** for the entire site: `{name}-exploration.gif`
+- **1 exploration GIF per breakpoint:**
+  - `{name}-desktop.gif`
+  - `{name}-tablet.gif`
+  - `{name}-mobile.gif`
 - Reference with timestamp: `GIF @ ~5s` for specific moments
 
 ## Interaction Checklist
@@ -177,7 +210,9 @@ git commit -m "analyze: {name}"
 **Source:** URL
 
 ### Assets
-- Exploration GIF: `assets/{name}-exploration.gif`
+- Desktop GIF: `assets/{name}-desktop.gif`
+- Tablet GIF: `assets/{name}-tablet.gif`
+- Mobile GIF: `assets/{name}-mobile.gif`
 - Screenshots: [list]
 
 ### Components
@@ -242,9 +277,9 @@ mcp__claude-in-chrome__gif_creator (action: "export", download: true, filename: 
 
 ### Responsive Testing
 ```
-mcp__claude-in-chrome__resize_window (width: 375, height: 812, tabId)   # Mobile
-mcp__claude-in-chrome__resize_window (width: 768, height: 1024, tabId)  # Tablet
 mcp__claude-in-chrome__resize_window (width: 1440, height: 900, tabId)  # Desktop
+mcp__claude-in-chrome__resize_window (width: 768, height: 1024, tabId)  # Tablet
+mcp__claude-in-chrome__resize_window (width: 375, height: 812, tabId)   # Mobile
 ```
 
 ### DOM Inspection
@@ -256,7 +291,7 @@ mcp__claude-in-chrome__javascript_tool (action: "javascript_exec", text: "...", 
 
 ## Parallel Agent Strategy
 
-Analyze **per-page, per-breakpoint** with **6 agents per page**.
+Analyze with **2 agents per breakpoint** (Content + Experience), all writing to the SAME component files.
 
 ### Breakpoints
 
@@ -270,44 +305,15 @@ Analyze **per-page, per-breakpoint** with **6 agents per page**.
 
 ```
 Parent Agent (orchestrator)
-├── Discovers all pages/routes
-└── For EACH page, spawns 6 agents in parallel:
-    ├── Desktop Content Agent  → desktop/content/
-    ├── Desktop Experience Agent → desktop/experience/
-    ├── Tablet Content Agent   → tablet/content/
-    ├── Tablet Experience Agent → tablet/experience/
-    ├── Mobile Content Agent   → mobile/content/
-    └── Mobile Experience Agent → mobile/experience/
-```
-
-### Folder Structure
-
-```
-.claude/analyze/{name}/
-├── SUMMARY.md
-├── pages/
-│   └── {page}/
-│       ├── desktop/
-│       │   ├── assets/
-│       │   │   └── {page}-desktop-experience.gif
-│       │   ├── content/
-│       │   │   ├── widget/
-│       │   │   └── section/
-│       │   └── experience/
-│       │       ├── behaviour/
-│       │       └── trigger/
-│       ├── tablet/
-│       │   ├── assets/
-│       │   ├── content/
-│       │   └── experience/
-│       └── mobile/
-│           ├── assets/
-│           ├── content/
-│           └── experience/
-└── site/                    # Shared across all pages/breakpoints
-    ├── chrome/              # Global nav, footer (note responsive variants)
-    ├── mode/                # Dark mode, reduced motion
-    └── preset/              # Shared component presets
+├── Creates folder structure
+├── Spawns 6 agents in parallel:
+│   ├── Desktop Content Agent  → appends desktop layout to content/ files
+│   ├── Desktop Experience Agent → writes experience/, captures {name}-desktop.gif
+│   ├── Tablet Content Agent   → appends tablet layout to content/ files
+│   ├── Tablet Experience Agent → captures {name}-tablet.gif, notes responsive diffs
+│   ├── Mobile Content Agent   → appends mobile layout to content/ files
+│   └── Mobile Experience Agent → captures {name}-mobile.gif, notes mobile behaviors
+└── Merges outputs, creates SUMMARY.md
 ```
 
 ### Content Agent Prompt
@@ -315,41 +321,32 @@ Parent Agent (orchestrator)
 ```
 You are analyzing {url} for CONTENT STRUCTURE at {breakpoint} breakpoint.
 
-## Page: {page}
 ## Breakpoint: {breakpoint} ({width}×{height})
-## Output: .claude/analyze/{name}/pages/{page}/{breakpoint}/content/
+## Output: .claude/analyze/{name}/content/
 
 ## Your Scope
-- widget/ - UI components visible at this breakpoint
-- section/ - Page sections and their layout at this breakpoint
-- chrome/ - Page-specific chrome (if different from global)
-
-## DO NOT analyze
-- Animations, transitions, hover effects (Experience Agent's job)
-- Other breakpoints (separate agents handle those)
+- widget/ - Document widget layout at this breakpoint
+- section/ - Document section layout at this breakpoint
+- chrome/ - Document chrome at this breakpoint
 
 ## Instructions
 1. Get Chrome tab: tabs_context_mcp (createIfEmpty: true) → tabs_create_mcp
 2. Resize window: resize_window (width: {width}, height: {height}, tabId)
 3. Navigate to {url}
-4. Scroll page, screenshot each unique section
-5. Note layout differences from other breakpoints
-6. Create markdown files (max 1 screenshot per component)
+4. For each component, screenshot and document the {breakpoint} layout
+5. Save screenshots as: {component}-{breakpoint}.png
 
-## File Template
-# {ComponentName}
+## File Format
+For each component, create/append to its markdown file:
 
-**Purpose:** What it does
-**Breakpoint:** {breakpoint}
-**Screenshot:** ../../assets/{page}-{breakpoint}-{component}.png
-
-## Layout ({breakpoint})
+### {Breakpoint} ({width}px)
+**Screenshot:** `../../assets/{component}-{breakpoint}.png`
 - Columns:
 - Spacing:
-- Visibility:
+- Typography:
+- Visibility: (hidden/shown elements)
 
-## Props
-...
+IMPORTANT: Each component gets ONE file with ALL breakpoints documented.
 ```
 
 ### Experience Agent Prompt
@@ -357,20 +354,13 @@ You are analyzing {url} for CONTENT STRUCTURE at {breakpoint} breakpoint.
 ```
 You are analyzing {url} for EXPERIENCE/BEHAVIOR at {breakpoint} breakpoint.
 
-## Page: {page}
 ## Breakpoint: {breakpoint} ({width}×{height})
-## Output: .claude/analyze/{name}/pages/{page}/{breakpoint}/experience/
-## GIF: .claude/analyze/{name}/pages/{page}/{breakpoint}/assets/{page}-{breakpoint}-experience.gif
+## Output: .claude/analyze/{name}/experience/
+## GIF: .claude/analyze/{name}/assets/{name}-{breakpoint}.gif
 
 ## Your Scope
-- behaviour/ - Animations at this breakpoint
-- trigger/ - What initiates (click, scroll, hover, touch)
-- driver/ - Animation drivers
-- chrome-behaviour/ - Nav behaviors (hamburger menu on mobile, etc.)
-
-## DO NOT analyze
-- Static content (Content Agent's job)
-- Other breakpoints (separate agents handle those)
+- behaviour/ - Document animations
+- trigger/ - Document interaction triggers
 
 ## Instructions
 1. Get Chrome tab: tabs_context_mcp (createIfEmpty: true) → tabs_create_mcp
@@ -382,64 +372,21 @@ You are analyzing {url} for EXPERIENCE/BEHAVIOR at {breakpoint} breakpoint.
    - Hover/tap ALL interactive elements
    - MOVE MOUSE AWAY for hover-off
    - Open/close modals, menus
-   - Mobile: test hamburger menu, swipe gestures
-6. Export GIF
-7. Note breakpoint-specific behaviors
+   - Mobile: test touch gestures
+6. Export GIF as {name}-{breakpoint}.gif
 
-## File Template
-# {BehaviourName}
+## File Format
+For each behaviour, note breakpoint-specific differences:
 
-**Purpose:** What it does
-**Breakpoint:** {breakpoint}
-**Trigger:** click / scroll / hover / tap
-**GIF:** ../../assets/{page}-{breakpoint}-experience.gif @ ~Xs
-
-## Animation
-- Type: scale / fade / slide
-- Duration: ~Xms
-- Easing: ease-out / spring
-
-## Breakpoint Notes
-- Desktop: ...
-- Tablet: ...
-- Mobile: ...
+## Responsive Notes
+- Desktop: hover-triggered, 300ms
+- Tablet: hover-triggered (same)
+- Mobile: tap-triggered, instant
 ```
 
-### Orchestrator Flow
+### Why This Structure?
 
-```python
-BREAKPOINTS = [
-    ("desktop", 1440, 900),
-    ("tablet", 768, 1024),
-    ("mobile", 375, 812),
-]
-
-# 1. Discover pages
-pages = ["home", "about", "projects"]
-
-# 2. Spawn 6 agents per page (all in parallel)
-for page in pages:
-    for breakpoint, width, height in BREAKPOINTS:
-        Task(prompt=CONTENT_AGENT.format(
-            page=page, breakpoint=breakpoint, width=width, height=height
-        ))
-        Task(prompt=EXPERIENCE_AGENT.format(
-            page=page, breakpoint=breakpoint, width=width, height=height
-        ))
-
-# 3. After all complete, create SUMMARY.md comparing breakpoints
-```
-
-### Agent Count
-
-| Pages | Breakpoints | Agents per Page | Total Agents |
-|-------|-------------|-----------------|--------------|
-| 1 | 3 | 6 | 6 |
-| 3 | 3 | 6 | 18 |
-| 5 | 3 | 6 | 30 |
-
-### Why Per-Breakpoint?
-1. **Responsive differences** - Layouts, nav patterns, touch vs hover
-2. **Context isolation** - Each breakpoint is independent
-3. **Mobile-specific behaviors** - Hamburger menus, swipe, tap
-4. **Parallel execution** - All breakpoints analyzed simultaneously
+1. **Mirrors Creativeshire** - Analysis folder = implementation folder structure
+2. **Responsive is a property** - Not a separate hierarchy
+3. **One file per component** - All breakpoint info in one place
+4. **Easier to build from** - Builder reads one file, sees all responsive rules
