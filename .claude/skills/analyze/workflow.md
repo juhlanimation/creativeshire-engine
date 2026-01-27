@@ -256,86 +256,160 @@ mcp__claude-in-chrome__javascript_tool (action: "javascript_exec", text: "...", 
 
 ## Parallel Agent Strategy
 
-Spawn **two focused agents** in parallel, each with their own Chrome tab:
+Analyze **per-page** with **two agents per page** running in parallel.
 
-### Content Agent
-**Focus:** Static structure (widgets, sections, chrome)
-**Tools:** Screenshots only, no GIF
-**Output:** `content/` folder
+### Architecture
+
+```
+Parent Agent (orchestrator)
+├── Discovers all pages/routes
+└── For EACH page, spawns in parallel:
+    ├── Content Agent (own Chrome tab) → screenshots → content/
+    └── Experience Agent (own Chrome tab) → GIF → experience/
+```
+
+### Folder Structure (Multi-Page Sites)
+
+```
+.claude/analyze/{name}/
+├── SUMMARY.md
+├── pages/
+│   ├── home/
+│   │   ├── assets/
+│   │   │   ├── home-content.png
+│   │   │   └── home-experience.gif
+│   │   ├── content/
+│   │   │   ├── widget/
+│   │   │   └── section/
+│   │   └── experience/
+│   │       ├── behaviour/
+│   │       └── trigger/
+│   ├── about/
+│   │   └── ...
+│   └── projects/
+│       └── ...
+└── site/                    # Site-wide (shared across pages)
+    ├── chrome/              # Global nav, footer
+    ├── mode/                # Dark mode, reduced motion
+    └── preset/              # Shared component presets
+```
+
+### Folder Structure (Single-Page Sites)
+
+```
+.claude/analyze/{name}/
+├── SUMMARY.md
+├── assets/
+├── content/
+├── experience/
+└── site/
+```
+
+### Content Agent Prompt
 
 ```
 You are analyzing {url} for CONTENT STRUCTURE only.
 
+## Page: {page_name}
+## Output: .claude/analyze/{name}/pages/{page_name}/content/
+
 ## Your Scope
-- content/widget/ - Individual UI components
-- content/section/ - Page sections
-- content/chrome/ - Persistent UI (nav, footer, floating elements)
-- content/widget-composite/ - Composed widgets
-- content/section-composite/ - Composed sections
+- widget/ - Individual UI components (buttons, cards, inputs)
+- section/ - Page sections (hero, features, testimonials)
+- chrome/ - Page-specific chrome (if different from global)
+- widget-composite/ - Composed widgets
+- section-composite/ - Composed sections
 
 ## DO NOT analyze
-- Animations, transitions, hover effects (that's the Experience Agent's job)
+- Animations, transitions, hover effects
 - Click behaviors, scroll triggers
+- These are the Experience Agent's job
 
 ## Instructions
-1. Create your own Chrome tab: tabs_context_mcp (createIfEmpty: true) → tabs_create_mcp
+1. Get Chrome tab: tabs_context_mcp (createIfEmpty: true) → tabs_create_mcp
 2. Navigate to {url}
-3. Scroll through page taking screenshots of each unique section
-4. Use read_page to inspect DOM structure
-5. Create markdown files in content/ folders
-6. Use screenshots (max 1 per component)
+3. Scroll page, screenshot each unique section
+4. Use read_page for DOM structure
+5. Create markdown files (max 1 screenshot per component)
 
-## Output
-Write files to: .claude/analyze/{name}/content/
+## File Template
+# {ComponentName}
+**Purpose:** What it does
+**Screenshot:** ../../assets/{page}-{component}.png
+
+## Props
+...
+
+## Visual Treatment
+...
 ```
 
-### Experience Agent
-**Focus:** Dynamic behaviors (animations, transitions, interactions)
-**Tools:** GIF recording, hover testing, click testing
-**Output:** `experience/` folder
+### Experience Agent Prompt
 
 ```
 You are analyzing {url} for EXPERIENCE/BEHAVIOR only.
 
+## Page: {page_name}
+## Output: .claude/analyze/{name}/pages/{page_name}/experience/
+## GIF: .claude/analyze/{name}/pages/{page_name}/assets/{page_name}-experience.gif
+
 ## Your Scope
-- experience/behaviour/ - Animations, transitions
-- experience/trigger/ - What initiates behaviors (click, scroll, hover)
-- experience/driver/ - Animation drivers (scroll position, time, user input)
-- experience/mode/ - Site-wide modes (dark mode, reduced motion)
-- experience/chrome-behaviour/ - Chrome-specific behaviors
+- behaviour/ - Animations, transitions
+- trigger/ - What initiates (click, scroll, hover)
+- driver/ - Animation drivers (scroll %, time, input)
+- chrome-behaviour/ - Nav/footer behaviors
 
 ## DO NOT analyze
-- Static content structure (that's the Content Agent's job)
-- Visual styling, typography, colors
+- Static content, typography, colors
+- That's the Content Agent's job
 
 ## Instructions
-1. Create your own Chrome tab: tabs_context_mcp (createIfEmpty: true) → tabs_create_mcp
-2. Start GIF recording BEFORE navigating
+1. Get Chrome tab: tabs_context_mcp (createIfEmpty: true) → tabs_create_mcp
+2. START GIF RECORDING FIRST
 3. Navigate to {url}
 4. Test systematically:
-   - Scroll slowly (capture scroll-triggered animations)
-   - Hover on ALL interactive elements (move mouse away to trigger hover-off)
-   - Click modals/overlays (open AND close)
-   - Test responsive breakpoints (375, 768, 1440)
-5. Export GIF to assets/
-6. Create markdown files in experience/ folders
-7. Reference GIF timestamps for each behavior
+   - Scroll slowly (scroll-triggered animations)
+   - Hover ALL interactive elements
+   - MOVE MOUSE AWAY to trigger hover-off
+   - Click modals (open AND close)
+   - Test responsive: 375px, 768px, 1440px
+5. Export GIF
+6. Create markdown files with GIF timestamps
 
-## Output
-Write files to: .claude/analyze/{name}/experience/
-Export GIF to: .claude/analyze/{name}/assets/{name}-experience.gif
+## File Template
+# {BehaviourName}
+**Purpose:** What it does
+**Trigger:** click / scroll / hover / load
+**GIF:** ../../assets/{page}-experience.gif @ ~Xs
+
+## Animation
+- Type: scale / fade / slide / clip-path
+- Duration: ~Xms
+- Easing: ease-out / spring
+
+## States
+- Initial:
+- Active:
+- Exit:
 ```
 
-### Spawning Both Agents
+### Orchestrator Flow
 
-```javascript
-// In parent agent, spawn BOTH in parallel:
-Task(subagent_type: "general-purpose", prompt: CONTENT_AGENT_PROMPT)
-Task(subagent_type: "general-purpose", prompt: EXPERIENCE_AGENT_PROMPT)
+```python
+# 1. Discover pages
+pages = ["home", "about", "projects"]  # or detect from nav/sitemap
+
+# 2. Spawn agents for each page (all in parallel)
+for page in pages:
+    Task(prompt=CONTENT_AGENT.format(page=page))
+    Task(prompt=EXPERIENCE_AGENT.format(page=page))
+
+# 3. After all complete, create SUMMARY.md
 ```
 
-### Why Two Agents?
-1. **Reduced context** - Each agent focuses on half the work
-2. **Parallel execution** - Both run simultaneously
-3. **Clear boundaries** - No overlap in responsibilities
-4. **Separate Chrome tabs** - Each agent has independent browser state
+### Why Per-Page + Two Agents?
+1. **Context efficiency** - Even single pages exhaust context
+2. **Maximum parallelism** - All pages analyzed simultaneously
+3. **Clear boundaries** - Content vs Experience, per page
+4. **Independent Chrome tabs** - No state conflicts
+5. **Incremental results** - Each page completes independently
