@@ -224,6 +224,153 @@ destroy() {
 }
 ```
 
+## Testing
+
+> **Required.** Drivers manage lifecycle and DOM updates — test them.
+
+### What to Test
+
+| Test | Required | Why |
+|------|----------|-----|
+| `register()` adds target to Map | ✓ | Core lifecycle |
+| `unregister()` removes target | ✓ | Prevents leaks |
+| `destroy()` clears Map + removes listeners | ✓ | Full cleanup |
+| Uses `setProperty()` only | ✓ | CSS variable contract |
+| Passive scroll listener | ✓ | Performance |
+
+### Test Location
+
+```
+creativeshire/experience/drivers/
+├── ScrollDriver.ts
+├── ScrollDriver.test.ts    # Co-located test file
+├── GSAPDriver.ts
+└── GSAPDriver.test.ts
+```
+
+### Test Template
+
+```typescript
+// drivers/ScrollDriver.test.ts
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { ScrollDriver } from './ScrollDriver'
+
+describe('ScrollDriver', () => {
+  let driver: ScrollDriver
+  let el: HTMLElement
+  let setPropertySpy: ReturnType<typeof vi.spyOn>
+
+  beforeEach(() => {
+    driver = new ScrollDriver()
+    el = document.createElement('div')
+    setPropertySpy = vi.spyOn(el.style, 'setProperty')
+  })
+
+  afterEach(() => {
+    driver.destroy()
+  })
+
+  describe('register()', () => {
+    it('adds target to internal Map', () => {
+      const behaviour = {
+        id: 'test',
+        compute: () => ({ '--y': 0 }),
+        requires: [],
+        cssTemplate: ''
+      }
+      driver.register('id-1', el, behaviour, {})
+      // Verify by checking unregister doesn't throw
+      expect(() => driver.unregister('id-1')).not.toThrow()
+    })
+  })
+
+  describe('unregister()', () => {
+    it('removes target from Map', () => {
+      const behaviour = {
+        id: 'test',
+        compute: () => ({ '--y': 0 }),
+        requires: [],
+        cssTemplate: ''
+      }
+      driver.register('id-1', el, behaviour, {})
+      driver.unregister('id-1')
+      // Should be safe to unregister again (no-op)
+      expect(() => driver.unregister('id-1')).not.toThrow()
+    })
+  })
+
+  describe('destroy()', () => {
+    it('clears all targets', () => {
+      const behaviour = {
+        id: 'test',
+        compute: () => ({ '--y': 0 }),
+        requires: [],
+        cssTemplate: ''
+      }
+      driver.register('id-1', el, behaviour, {})
+      driver.register('id-2', el, behaviour, {})
+      driver.destroy()
+      // Multiple destroy calls should be safe
+      expect(() => driver.destroy()).not.toThrow()
+    })
+  })
+
+  describe('CSS variable contract', () => {
+    it('sets CSS variables via setProperty', async () => {
+      const behaviour = {
+        id: 'test',
+        compute: () => ({ '--test-value': 42 }),
+        requires: [],
+        cssTemplate: ''
+      }
+      driver.register('id-1', el, behaviour, {})
+
+      // Wait for animation frame
+      await new Promise(r => requestAnimationFrame(r))
+
+      expect(setPropertySpy).toHaveBeenCalledWith('--test-value', '42')
+    })
+
+    it('converts values to strings', async () => {
+      const behaviour = {
+        id: 'test',
+        compute: () => ({ '--number': 123, '--float': 0.5 }),
+        requires: [],
+        cssTemplate: ''
+      }
+      driver.register('id-1', el, behaviour, {})
+
+      await new Promise(r => requestAnimationFrame(r))
+
+      expect(setPropertySpy).toHaveBeenCalledWith('--number', '123')
+      expect(setPropertySpy).toHaveBeenCalledWith('--float', '0.5')
+    })
+  })
+})
+```
+
+### Definition of Done
+
+A driver is complete when:
+
+- [ ] All tests pass: `npm test -- drivers/{name}`
+- [ ] `register()`/`unregister()`/`destroy()` lifecycle tested
+- [ ] CSS variable contract verified
+- [ ] No memory leaks (listeners removed in destroy)
+- [ ] No TypeScript errors
+
+### Running Tests
+
+```bash
+# Single driver
+npm test -- drivers/ScrollDriver
+
+# All drivers
+npm test -- drivers/
+```
+
+---
+
 ## Integration
 
 | Interacts With | Direction | How |
@@ -238,3 +385,60 @@ destroy() {
 Validated by: `./driver.validator.ts`
 
 Rules in "Must/Must Not" map 1:1 to validator checks.
+
+---
+
+## Example: Simplest Site
+
+> Minimal example traced through all domain layers. See other specs for the full flow.
+
+The simplest site uses a scroll driver to apply CSS variables from the `fade-in` behaviour.
+
+### Driver in the Animation Pipeline
+
+```
+User scrolls
+       │
+       ▼
+Trigger (intersection) ─────► Store (sectionVisibility: 0.7)
+       │
+       ▼
+Driver.tick() ─────► behaviour.compute({ sectionVisibility: 0.7 })
+       │
+       ▼
+CSS Variables: { '--opacity': 1, '--y': 0 }
+       │
+       ▼
+Driver.update() ─────► element.style.setProperty('--opacity', '1')
+       │
+       ▼
+Widget CSS reads var(--opacity, 0) ─────► Renders at full opacity
+```
+
+### Driver Applies fade-in Behaviour
+
+```typescript
+// Inside driver tick loop
+this.targets.forEach(({ element, behaviour, options }) => {
+  // Get current state from store
+  const state = { sectionVisibility: store.getState().sectionVisibility }
+
+  // Behaviour computes CSS variables
+  const vars = behaviour.compute(state, options)
+  // { '--opacity': 1, '--y': 0 }
+
+  // Driver applies to DOM
+  Object.entries(vars).forEach(([key, value]) => {
+    element.style.setProperty(key, String(value))
+  })
+})
+```
+
+### Connection to Other Specs
+
+| Spec | Role in Example |
+|------|-----------------|
+| [Mode Spec](./mode.spec.md) | `reveal` mode creates store with `sectionVisibility` |
+| [Behaviour Spec](./behaviour.spec.md) | `fade-in` computes `--opacity`, `--y` |
+| [Widget Spec](../content/widget.spec.md) | Widgets read CSS variables via `var()` |
+| [Site Spec](../site/site.spec.md) | Selects mode that determines driver behaviour |

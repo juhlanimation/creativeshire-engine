@@ -229,6 +229,79 @@ export function useDriver(): DriverContextValue {
 | useState for mode | State creates sync issues | Use props directly (source of truth) |
 | Silent context failures | Callers crash mysteriously | Throw with helpful message in hooks |
 
+## Testing
+
+> **Required.** Providers manage lifecycle and context — test them.
+
+### What to Test
+
+| Test | Required | Why |
+|------|----------|-----|
+| useExperience throws without provider | ✓ | Error handling |
+| useDriver throws without provider | ✓ | Error handling |
+| Driver created in useEffect | ✓ | Lifecycle correctness |
+| Driver destroyed on unmount | ✓ | Cleanup verification |
+| Context provides correct values | ✓ | Data flow |
+
+### Test Location
+
+```
+creativeshire/experience/
+├── ExperienceProvider.tsx
+├── ExperienceProvider.test.tsx
+├── DriverProvider.tsx
+└── DriverProvider.test.tsx
+```
+
+### Test Template
+
+```typescript
+// Pattern for ALL provider tests
+describe('{Name}Provider', () => {
+  // 1. Hook throws without provider
+  it('use{Name} throws without provider', () => {
+    expect(() => renderHook(() => use{Name}())).toThrow('must be used within')
+  })
+
+  // 2. Hook returns context with provider
+  it('returns context value with provider', () => {
+    const wrapper = ({ children }) => <{Name}Provider>{children}</{Name}Provider>
+    const { result } = renderHook(() => use{Name}(), { wrapper })
+    expect(result.current).toBeDefined()
+  })
+
+  // 3. For DriverProvider: cleanup on unmount
+  it('calls destroy on unmount (DriverProvider)', () => {
+    const mockDestroy = vi.fn()
+    vi.mock('./drivers/ScrollDriver', () => ({
+      ScrollDriver: () => ({ destroy: mockDestroy })
+    }))
+    const { unmount } = renderHook(() => useDriver(), { wrapper: DriverProvider })
+    unmount()
+    expect(mockDestroy).toHaveBeenCalled()
+  })
+})
+```
+
+### Definition of Done
+
+A provider is complete when:
+
+- [ ] All tests pass: `npm test -- experience/*Provider`
+- [ ] Hook throws helpful error when context missing
+- [ ] Cleanup verified
+- [ ] No TypeScript errors
+
+### Running Tests
+
+```bash
+# Providers
+npm test -- experience/ExperienceProvider
+npm test -- experience/DriverProvider
+```
+
+---
+
 ## Integration
 
 | Interacts With | Direction | How |
@@ -243,3 +316,94 @@ export function useDriver(): DriverContextValue {
 Validated by: `./provider.validator.ts`
 
 Rules in "Must/Must Not" map 1:1 to validator checks.
+
+---
+
+## Example: Simplest Site
+
+> Minimal example traced through all domain layers. See other specs for the full flow.
+
+The simplest site uses providers to distribute the `reveal` mode and driver access.
+
+### Provider Setup in Layout
+
+```typescript
+// app/layout.tsx
+import { ExperienceProvider } from '@/creativeshire/experience/ExperienceProvider'
+import { DriverProvider } from '@/creativeshire/experience/DriverProvider'
+import { loadMode } from '@/creativeshire/experience/modes/registry'
+import { siteConfig } from '@/site/config'
+
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  // Load mode from site config (reveal mode)
+  const mode = await loadMode(siteConfig.experience.mode)
+  const store = mode.createStore(siteConfig.experience.options)
+
+  return (
+    <html>
+      <body>
+        <ExperienceProvider mode={mode} store={store}>
+          <DriverProvider>
+            {children}
+          </DriverProvider>
+        </ExperienceProvider>
+      </body>
+    </html>
+  )
+}
+```
+
+### BehaviourWrapper Uses Both Contexts
+
+```typescript
+// experience/BehaviourWrapper.tsx
+import { useEffect, useRef } from 'react'
+import { useExperience } from './ExperienceProvider'
+import { useDriver } from './DriverProvider'
+import { resolveBehaviour } from './behaviours/resolve'
+
+export function BehaviourWrapper({ behaviourId, children }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const { mode } = useExperience()
+  const { register, unregister } = useDriver()
+
+  const behaviour = resolveBehaviour(behaviourId, mode)
+
+  useEffect(() => {
+    if (!ref.current || !behaviour) return
+
+    const id = crypto.randomUUID()
+    register(id, ref.current, behaviour, {})
+
+    return () => unregister(id)
+  }, [behaviour, register, unregister])
+
+  return <div ref={ref}>{children}</div>
+}
+```
+
+### Provider Hierarchy in Data Flow
+
+```
+ExperienceProvider (mode: reveal, store)
+       │
+       ├── mode.defaults.section = 'fade-in'
+       │
+       └── DriverProvider (driver instance)
+                 │
+                 ├── BehaviourWrapper uses both contexts
+                 │         │
+                 │         ├── useExperience() → mode
+                 │         └── useDriver() → register/unregister
+                 │
+                 └── Sections and Widgets rendered inside
+```
+
+### Connection to Other Specs
+
+| Spec | Role in Example |
+|------|-----------------|
+| [Site Spec](../site/site.spec.md) | Provides `siteConfig.experience.mode` |
+| [Mode Spec](./mode.spec.md) | `loadMode('reveal')` returns mode config |
+| [Driver Spec](./driver.spec.md) | DriverProvider creates ScrollDriver |
+| [Behaviour Spec](./behaviour.spec.md) | BehaviourWrapper resolves + registers behaviours |

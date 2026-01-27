@@ -48,6 +48,7 @@
 |------|-----------|
 | [widget.spec.md](components/content/widget.spec.md) | Atomic content units (Text, Image, Button, etc.) |
 | [widget-composite.spec.md](components/content/widget-composite.spec.md) | Factory functions that create widget trees |
+| [layout-widget.spec.md](components/content/layout-widget.spec.md) | Layout widgets (Stack, Flex, Grid, Carousel, Tabs) |
 | [section.spec.md](components/content/section.spec.md) | Scrollable groups of widgets |
 | [section-composite.spec.md](components/content/section-composite.spec.md) | Factory functions that create section presets |
 | [chrome.spec.md](components/content/chrome.spec.md) | Persistent UI (navigation, overlays) |
@@ -64,12 +65,14 @@
 | [mode.spec.md](components/experience/mode.spec.md) | Bundles of behaviours and triggers |
 | [provider.spec.md](components/experience/provider.spec.md) | React context providers for experience state |
 | [infrastructure.spec.md](components/experience/infrastructure.spec.md) | Registries, resolution logic, BehaviourWrapper |
+| [chrome-behaviour.spec.md](components/experience/chrome-behaviour.spec.md) | Chrome-specific behaviours (header, footer, cursor) |
 
 ### components/renderer/ — Renderer Contracts
 
 | File | Describes |
 |------|-----------|
 | [renderer.spec.md](components/renderer/renderer.spec.md) | Schema-to-component mapping |
+| [registry.spec.md](components/renderer/registry.spec.md) | Widget registry auto-discovery and resolution |
 
 ### components/schema/ — Schema Contracts
 
@@ -95,6 +98,8 @@
 |------|-----------|
 | [common.spec.md](patterns/common.spec.md) | Proven solutions: Frame pattern, CSS variable bridge, cleanup |
 | [anti-patterns.spec.md](patterns/anti-patterns.spec.md) | What to avoid: scroll in widgets, viewport units, React state for animation |
+| [analytics-integration.spec.md](patterns/analytics-integration.spec.md) | Analytics patterns: page views, events, consent, lazy loading |
+| [error-handling.spec.md](patterns/error-handling.spec.md) | Error boundaries, fallback UI, recovery patterns |
 
 ### testing/ — Testing Guides
 
@@ -115,6 +120,10 @@
 | [tech-stack.spec.md](reference/tech-stack.spec.md) | Core technologies and versions |
 | [tech-stack/styling.md](reference/tech-stack/styling.md) | Tailwind vs CSS variables, design tokens, `cn()` utility |
 | [tech-stack/caching.md](reference/tech-stack/caching.md) | Next.js 16 cache components, profiles, revalidation |
+| [accessibility.spec.md](reference/accessibility.spec.md) | ARIA, keyboard nav, focus management, reduced motion |
+| [metadata.spec.md](reference/metadata.spec.md) | SEO, Open Graph, JSON-LD, sitemap generation |
+| [responsive-design.spec.md](reference/responsive-design.spec.md) | Breakpoints, responsive props, layout adaptation |
+| [development-workflow.spec.md](reference/development-workflow.spec.md) | HMR, debugging, React DevTools, profiling |
 
 ### diagrams/ — Visual References
 
@@ -135,7 +144,9 @@
 | Check before creating something new | [extension.spec.md](core/extension.spec.md) |
 | Find existing CSS variables | [tech-stack/styling.md](reference/tech-stack/styling.md#css-variable-catalog) |
 | Build a widget | [widget.spec.md](components/content/widget.spec.md) |
+| Build a layout widget | [layout-widget.spec.md](components/content/layout-widget.spec.md) |
 | Build animation | [behaviour.spec.md](components/experience/behaviour.spec.md) |
+| Build chrome behaviour | [chrome-behaviour.spec.md](components/experience/chrome-behaviour.spec.md) |
 | Create an experience | [experience.spec.md](components/experience/experience.spec.md) |
 | Create a preset | [preset.spec.md](components/preset/preset.spec.md) |
 | Configure a site instance | [site.spec.md](components/site/site.spec.md) |
@@ -144,3 +155,10 @@
 | See diagrams | [diagrams/index.md](diagrams/index.md) |
 | Know when to use Tailwind vs CSS vars | [tech-stack/styling.md](reference/tech-stack/styling.md) |
 | Add caching to data functions | [tech-stack/caching.md](reference/tech-stack/caching.md) |
+| Make it accessible | [accessibility.spec.md](reference/accessibility.spec.md) |
+| Add SEO/metadata | [metadata.spec.md](reference/metadata.spec.md) |
+| Handle responsive design | [responsive-design.spec.md](reference/responsive-design.spec.md) |
+| Debug during development | [development-workflow.spec.md](reference/development-workflow.spec.md) |
+| Add analytics | [analytics-integration.spec.md](patterns/analytics-integration.spec.md) |
+| Handle errors gracefully | [error-handling.spec.md](patterns/error-handling.spec.md) |
+| Understand widget registry | [registry.spec.md](components/renderer/registry.spec.md) |

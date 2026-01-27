@@ -329,6 +329,47 @@ interface WidgetSchema {
 }
 ```
 
+## Testing
+
+> **Compile-time verification.** Schemas are types — use TypeScript for validation.
+
+### Testing Approach
+
+| Aspect | Method | Why |
+|--------|--------|-----|
+| Type correctness | `tsc --noEmit` | Compile-time safety |
+| No runtime exports | Static analysis | Schema purity |
+| Barrel exports | Type checking | All types accessible |
+
+### What to Verify
+
+- [ ] `tsc --noEmit` passes with no errors
+- [ ] All schema files export only types/interfaces
+- [ ] No `const`, `function`, or `class` exports
+- [ ] Barrel `index.ts` re-exports all types
+- [ ] No circular dependencies
+
+### Definition of Done
+
+A schema file is complete when:
+
+- [ ] `tsc --noEmit` passes
+- [ ] Exports only types/interfaces
+- [ ] No runtime imports
+- [ ] Exported from barrel
+
+### Running Validation
+
+```bash
+# TypeScript check
+npx tsc --noEmit
+
+# Custom validator
+npm run validate -- schema/
+```
+
+---
+
 ## Integration
 
 | Interacts With | Direction | How |

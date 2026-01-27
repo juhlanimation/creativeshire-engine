@@ -1,6 +1,6 @@
 # Backlog
 
-> Items to build. Created by `/plan` and `/analyze`.
+> Items to build. Created by `/plan`.
 
 ## Format
 

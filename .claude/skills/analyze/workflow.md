@@ -86,61 +86,82 @@ Only create folders that have components.
 **Type:** widget | section | chrome | layout-widget
 **Visible:** desktop, tablet (hidden on mobile)
 
-## Layout
+## Layout (Observed Defaults → Props)
+
+> **Note for builders:** All layout values below are **observed defaults**.
+> Implementation MUST expose these as customizable props with these as default values.
 
 ### Mobile (375px)
 **Screenshot:** `../../assets/{component}-mobile.png`
-- Columns: 1
-- Gap: 16px
-- Padding: 24px
-- Max-width: 100%
+- Columns: 1 → `columns.mobile`
+- Gap: 16px → `gap.mobile`
+- Padding: 24px → `padding.mobile`
+- Max-width: 100% → `maxWidth.mobile`
 - Child visibility: subtitle hidden
 
 ### Tablet (768px)
 **Screenshot:** `../../assets/{component}-tablet.png`
-- Columns: 1
-- Gap: 24px
-- Padding: 48px
+- Columns: 1 → `columns.tablet`
+- Gap: 24px → `gap.tablet`
+- Padding: 48px → `padding.tablet`
 - Child visibility: all visible
 - Changes: increased spacing
 
 ### Desktop (1440px)
 **Screenshot:** `../../assets/{component}-desktop.png`
-- Columns: 2
-- Gap: 32px
-- Padding: 64px
-- Max-width: 1200px
+- Columns: 2 → `columns.desktop`
+- Gap: 32px → `gap.desktop`
+- Padding: 64px → `padding.desktop`
+- Max-width: 1200px → `maxWidth.desktop`
 - Child visibility: all visible
 - Changes: 2-column layout
 
-## Visual Treatment
+## Visual Treatment (Observed Defaults → Props)
+
+> **Note for builders:** Colors, typography, and effects are **observed defaults**.
+> Expose as props or use design tokens that can be overridden.
 
 ### Colors
-- Background: #0a0a0a (dark)
-- Text primary: #ffffff
-- Text secondary: #a1a1aa
-- Accent: #3b82f6
+- Background: #0a0a0a → `bg`
+- Text primary: #ffffff → `textColor`
+- Text secondary: #a1a1aa → `textMuted`
+- Accent: #3b82f6 → `accent`
 
 ### Typography
-- Heading: font-title, 48px/1.1, 700
-- Body: font-sans, 16px/1.6, 400
+- Heading: font-title, 48px/1.1, 700 → `headingSize`, `headingWeight`
+- Body: font-sans, 16px/1.6, 400 → `bodySize`
 
 ### Effects
-- Border-radius: 12px
-- Shadow: 0 4px 24px rgba(0,0,0,0.1)
-- Border: 1px solid rgba(255,255,255,0.1)
+- Border-radius: 12px → `rounded`
+- Shadow: 0 4px 24px rgba(0,0,0,0.1) → `shadow`
+- Border: 1px solid rgba(255,255,255,0.1) → `border`
 
 ## Props / Data Schema
 
 ```typescript
 interface {ComponentName}Props {
+  // Content (required)
   title: string
   subtitle?: string
   items: Array<{
     id: string
     label: string
   }>
+
+  // Layout (responsive defaults from analysis)
+  gap?: ResponsiveValue<string>      // default: { mobile: '16px', tablet: '24px', desktop: '32px' }
+  padding?: ResponsiveValue<string>  // default: { mobile: '24px', tablet: '48px', desktop: '64px' }
+  columns?: ResponsiveValue<number>  // default: { mobile: 1, tablet: 1, desktop: 2 }
+  maxWidth?: ResponsiveValue<string> // default: { mobile: '100%', desktop: '1200px' }
+
+  // Visual (theme defaults from analysis)
+  bg?: string           // default: '#0a0a0a'
+  textColor?: string    // default: '#ffffff'
+  accent?: string       // default: '#3b82f6'
+  rounded?: string      // default: '12px'
 }
+
+type ResponsiveValue<T> = T | { mobile?: T; tablet?: T; desktop?: T }
 ```
 
 ## Interaction States
@@ -171,22 +192,25 @@ interface {ComponentName}Props {
 **Type:** behaviour | chrome-behaviour | trigger | driver | mode
 **Applies to:** Which components use this behaviour
 
-## Trigger
-- Event: scroll | click | hover | tap | load | intersection
+## Trigger (Observed Defaults → Props)
+- Event: scroll | click | hover | tap | load | intersection → `trigger`
 - Target: element selector or description
-- Threshold: 0.5 (for intersection)
+- Threshold: 0.5 → `threshold`
 
-## Animation
+## Animation (Observed Defaults → Props)
+
+> **Note for builders:** All timing/animation values are **observed defaults**.
+> Implementation MUST expose these as customizable props.
 
 ### Keyframes
-- From: opacity 0, translateY(20px)
-- To: opacity 1, translateY(0)
+- From: opacity 0, translateY(20px) → `from`
+- To: opacity 1, translateY(0) → `to`
 
 ### Timing
-- Duration: 300ms
-- Easing: cubic-bezier(0.4, 0, 0.2, 1) | ease-out | spring
-- Delay: 0ms
-- Stagger: 50ms (if multiple elements)
+- Duration: 300ms → `duration`
+- Easing: cubic-bezier(0.4, 0, 0.2, 1) → `easing`
+- Delay: 0ms → `delay`
+- Stagger: 50ms → `stagger`
 
 ### CSS Variables Set
 - `--element-opacity`: 0 → 1
@@ -207,6 +231,26 @@ interface {ComponentName}Props {
 - Mobile: tap-triggered, 200ms duration
 - Tablet: hover-triggered, 300ms duration
 - Desktop: hover-triggered, 300ms duration
+
+## Props Schema
+
+```typescript
+interface {BehaviourName}Props {
+  // Trigger
+  trigger?: 'scroll' | 'click' | 'hover' | 'tap' | 'load' | 'intersection'  // default: observed
+  threshold?: number                                                         // default: 0.5
+
+  // Animation timing (responsive defaults from analysis)
+  duration?: ResponsiveValue<number>  // default: { mobile: 200, tablet: 300, desktop: 300 }
+  easing?: string                     // default: 'cubic-bezier(0.4, 0, 0.2, 1)'
+  delay?: number                      // default: 0
+  stagger?: number                    // default: 50
+
+  // Keyframes
+  from?: Record<string, string | number>  // default: { opacity: 0, y: 20 }
+  to?: Record<string, string | number>    // default: { opacity: 1, y: 0 }
+}
+```
 
 ## Dependencies
 - Requires: ScrollTrigger (trigger)
@@ -318,58 +362,7 @@ Next: `/plan {name}`
 
 ## Chrome Tool Reference
 
-### Setup
-```
-mcp__claude-in-chrome__tabs_context_mcp (createIfEmpty: true)  # Get/create tab context
-mcp__claude-in-chrome__tabs_create_mcp                          # Create new tab
-```
-
-### Navigation & Viewing
-```
-mcp__claude-in-chrome__navigate (url, tabId)                    # Go to URL
-mcp__claude-in-chrome__computer (action: "screenshot", tabId)   # Capture screen
-mcp__claude-in-chrome__computer (action: "key", text: "Home")   # Keyboard input
-```
-
-### Scrolling
-```
-mcp__claude-in-chrome__computer (action: "scroll", coordinate: [x, y], scroll_direction: "down", scroll_amount: 5, tabId)
-```
-
-### Hover States
-**CRITICAL:** Mouse must MOVE to trigger hover-off states.
-```
-mcp__claude-in-chrome__computer (action: "hover", coordinate: [x, y], tabId)  # Hover on element
-mcp__claude-in-chrome__computer (action: "hover", coordinate: [0, 0], tabId)  # Move away to trigger hover-off
-mcp__claude-in-chrome__computer (action: "screenshot", tabId)                  # Capture result
-```
-
-### Clicking
-```
-mcp__claude-in-chrome__computer (action: "left_click", coordinate: [x, y], tabId)
-```
-
-### GIF Recording
-```
-mcp__claude-in-chrome__gif_creator (action: "start_recording", tabId)
-# ... perform interactions ...
-mcp__claude-in-chrome__gif_creator (action: "stop_recording", tabId)
-mcp__claude-in-chrome__gif_creator (action: "export", download: true, filename: "name.gif", tabId)
-```
-
-### Responsive Testing
-```
-mcp__claude-in-chrome__resize_window (width: 1440, height: 900, tabId)  # Desktop
-mcp__claude-in-chrome__resize_window (width: 768, height: 1024, tabId)  # Tablet
-mcp__claude-in-chrome__resize_window (width: 375, height: 812, tabId)   # Mobile
-```
-
-### DOM Inspection
-```
-mcp__claude-in-chrome__read_page (tabId)                        # Get accessibility tree
-mcp__claude-in-chrome__find (query: "search bar", tabId)        # Find elements by description
-mcp__claude-in-chrome__javascript_tool (action: "javascript_exec", text: "...", tabId)  # Execute JS
-```
+See [reference/chrome-tools.md](reference/chrome-tools.md) for browser automation commands.
 
 ## Mobile-First Agent Strategy
 
@@ -609,28 +602,6 @@ This is PHASE {phase} - you APPEND to existing files OR CREATE if behaviour didn
 2. **Avoids race conditions** - Sequential phases, no file conflicts
 3. **Clear diffs** - Each breakpoint notes "changes from mobile"
 4. **Catches visibility** - Mobile creates, others note what's added/hidden
-
-## When to Use Each Folder
-
-| Folder | Use When | Example |
-|--------|----------|---------|
-| `content/widget/` | Atomic UI component | Button, Card, Logo |
-| `content/widget-composite/` | Factory that creates widget trees | HeroComposite creates title + subtitle + CTA |
-| `content/section/` | Scrollable page region | HeroSection, AboutSection |
-| `content/section-composite/` | Factory that creates section presets | ProjectGridComposite |
-| `content/chrome/` | Page-specific chrome override | Different nav on landing page |
-| `content/feature/` | Static styling pattern | Gradient background, spacing system |
-| `content/layout-widget/` | Layout pattern | Grid, Stack, Carousel |
-| `experience/behaviour/` | Animation function | FadeIn, SlideUp, Parallax |
-| `experience/chrome-behaviour/` | Chrome animation | HeaderHide, FooterReveal |
-| `experience/driver/` | CSS variable applicator | ScrollDriver applies --scroll-y |
-| `experience/mode/` | Behaviour bundle | "Parallax mode", "Reveal mode" |
-| `experience/trigger/` | Event handler | ScrollTrigger, ClickTrigger |
-| `schema/` | Data structure pattern | ProjectSchema, TestimonialSchema |
-| `preset/` | Overall site config | "Portfolio preset", "Agency preset" |
-| `site/chrome/` | Global chrome defaults | Main nav, footer (same on all pages) |
-| `site/pages/` | Page structure notes | Page list, routing |
-| `site/data/` | Content data pattern | Projects array, social links |
 
 ## Verification Checklist
 

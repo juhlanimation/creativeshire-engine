@@ -9,10 +9,28 @@ Quick fixes. Skips planning.
 ```bash
 git checkout main
 git pull origin main
-git checkout -b fix/$(date +%Y-%m-%d)-description
+
+# Store branch name (use consistent name throughout)
+BRANCH="fix/$(date +%Y-%m-%d)-description"
+git checkout -b $BRANCH
 ```
 
+**Note:** Replace `description` with a short kebab-case summary (e.g., `fix-typo-header`).
+
 ## Workflow
+
+### 0. Pre-Fix Validation
+
+**Verify target file exists:**
+```bash
+ls [path]
+```
+
+If not found:
+```markdown
+File `[path]` not found. Please verify the path.
+```
+Stop here.
 
 ### 1. Identify
 
@@ -40,15 +58,18 @@ npx tsc --noEmit
 ### 4. Commit and Merge
 
 ```bash
+# Get current branch name
+BRANCH=$(git branch --show-current)
+
 git add -A
 git commit -m "fix(scope): description
 
 Co-Authored-By: Claude <noreply@anthropic.com>"
 
 git checkout main
-git merge fix/$(date +%Y-%m-%d)-description
+git merge $BRANCH --no-ff -m "Merge $BRANCH"
 git push origin main
-git branch -d fix/$(date +%Y-%m-%d)-description
+git branch -d $BRANCH
 ```
 
 ## Output Format
@@ -75,8 +96,9 @@ Recommended: Use `/plan` for better tracking
 
 To abort:
 ```bash
+BRANCH=$(git branch --show-current)
 git checkout main
-git branch -D fix/$(date +%Y-%m-%d)-description
+git branch -D $BRANCH
 ```
 
 Then run `/plan` to properly scope the work.

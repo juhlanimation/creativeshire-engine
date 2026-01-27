@@ -146,62 +146,16 @@ SiteRenderer
 
 ## Behaviour Resolution
 
-Renderers resolve behaviours using a three-step cascade.
+Renderers resolve behaviours using a three-step cascade. See [experience.spec.md](./experience.spec.md#behaviour-resolution) for the priority rules.
 
-```
-Widget/Section schema
-        │
-        ▼
-Has explicit 'none'?
-    │
-    ├── YES → No wrapper
-    │
-    └── NO → Has explicit behaviour?
-              │
-              ├── YES → Use that behaviour
-              │
-              └── NO → Check mode.defaults[type]
-                        │
-                        ├── Has default → Use default
-                        │
-                        └── No default → No wrapper
-```
+| Priority | Condition | Result |
+|----------|-----------|--------|
+| 1 | `behaviour: 'none'` | No wrapper |
+| 2 | Explicit behaviour | Use that behaviour |
+| 3 | Mode has default | Use mode default |
+| 4 | No default | No wrapper |
 
-### Resolution Function
-
-```typescript
-// creativeshire/experience/behaviours/resolve.ts
-function resolveBehaviour(
-  schema: { behaviour?: string | BehaviourConfig },
-  type: string,
-  mode: Mode
-): { behaviour: Behaviour; options: Record<string, any> } | null {
-
-  if (schema.behaviour === 'none') return null
-
-  if (schema.behaviour) {
-    const id = typeof schema.behaviour === 'string'
-      ? schema.behaviour
-      : schema.behaviour.id
-    const options = typeof schema.behaviour === 'object'
-      ? schema.behaviour.options ?? {}
-      : {}
-
-    return {
-      behaviour: behaviourRegistry[id],
-      options
-    }
-  }
-
-  const defaultId = mode.defaults[type] ?? mode.defaults.section
-  if (!defaultId || defaultId === 'none') return null
-
-  return {
-    behaviour: behaviourRegistry[defaultId],
-    options: {}
-  }
-}
-```
+The `resolveBehaviour()` function in `experience/behaviours/resolve.ts` implements this cascade, returning `{ behaviour, options }` or `null`.
 
 ---
 

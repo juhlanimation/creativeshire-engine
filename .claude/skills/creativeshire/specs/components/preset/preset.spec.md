@@ -74,63 +74,25 @@ interface PresetChromeConfig {
 
 ### Mode
 
-```typescript
-// modes/types.ts
-interface Mode {
-  id: string
-  name: string
-  description: string
-  provides: string[]                    // State fields the store exposes
-  createStore: (options?: Record<string, any>) => StoreApi<any>
-  triggers: TriggerConfig[]             // Triggers to initialize
-  defaults: {
-    section: string                     // Default for all sections
-    [widgetType: string]: string        // Default per widget type
-  }
-  options: Record<string, OptionConfig>
-}
+See [Mode Spec](../experience/mode.spec.md) for full interface definition.
 
-interface TriggerConfig {
-  type: string              // Trigger identifier
-  target: string            // Store field to update
-  options?: Record<string, any>
-}
-```
+Key fields: `id`, `provides` (state fields), `createStore`, `triggers`, `defaults` (section/widget behaviours).
 
 ### Experience
 
-```typescript
-// experiences/types.ts
-interface ExperienceDefinition {
-  id: string
-  name: string
-  mode: ModeId                          // Underlying mode for state
-  wrappers: {
-    byPosition?: { first?: WrapperRule; last?: WrapperRule }
-    byType?: { [sectionType: string]: WrapperRule }
-    default: WrapperRule
-  }
-  appendedSections?: AppendedSection[]
-  allowBehaviourOverride: boolean
-}
+See [Mode Spec](../experience/mode.spec.md) for Experience interface.
 
-interface WrapperRule {
-  behaviour: BehaviourId
-  required: boolean        // Cannot delete section
-  positionLocked: boolean  // Cannot reorder section
-  options?: Record<string, any>
-}
-```
+Key fields: `mode` (underlying mode), `wrappers` (byPosition, byType, default), `allowBehaviourOverride`.
 
 ## Available Modes
 
-| Mode | Provides | Default Section | Use Case |
-|------|----------|-----------------|----------|
-| `static` | Nothing | `none` | Clean, fast, no animations |
-| `parallax` | scrollProgress, scrollVelocity, sectionProgress | `scroll-stack` | Depth-based scroll |
-| `reveal` | sectionVisibility | `scroll-stack` | Animate on scroll into view |
-| `slideshow` | currentSlide, slideProgress | `slide-stack` | Full-screen slides |
-| `cinematic` | scrollProgress, chapter | `scroll-stack` | Complex storytelling |
+| Mode | Provides | Default Page | Default Section | Use Case |
+|------|----------|--------------|-----------------|----------|
+| `static` | Nothing | `none` | `none` | Clean, fast, no animations |
+| `parallax` | scrollProgress, scrollVelocity, sectionProgress | `page-fade` | `scroll-stack` | Depth-based scroll |
+| `reveal` | sectionVisibility | `page-fade` | `scroll-stack` | Animate on scroll into view |
+| `slideshow` | currentSlide, slideProgress | `page-crossfade` | `slide-stack` | Full-screen slides |
+| `cinematic` | scrollProgress, chapter | `page-fade` | `scroll-stack` | Complex storytelling |
 
 ## Available Presets
 
@@ -192,6 +154,25 @@ interface WrapperRule {
 | 16 | Non-critical libs deferred | `checkDeferredThirdParty` | `*.tsx` |
 
 ## Behaviour Resolution Flow
+
+### Page Transitions
+
+```
+Page schema
+        |
+        v
+Has explicit transition?
+    |
+    +-- YES --> Use page.transition (enter/exit)
+    |
+    +-- NO --> Check mode.defaults.page
+              |
+              +-- Has default --> Use mode default
+              |
+              +-- No default --> Instant (no transition)
+```
+
+### Sections and Widgets
 
 ```
 Widget/Section schema
@@ -276,6 +257,7 @@ export const {name}Mode: Mode = {
     { type: 'intersection', target: 'sections' }
   ],
   defaults: {
+    page: 'page-fade',
     section: 'scroll-stack',
     Image: 'depth-layer',
     Text: 'fade-on-scroll'
@@ -309,76 +291,19 @@ export const {name}Experience: ExperienceDefinition = {
 
 ## Bundle Optimization
 
-### Lazy Mode Loading
+See [Registry Spec](../renderer/registry.spec.md#bundle-implications) for detailed bundle strategies.
 
-Modes bundle behaviours, drivers, and store logic. Loading all modes eagerly bloats the initial bundle. Load only the selected mode.
+**Key patterns:**
+- Use dynamic imports for modes: `() => import('./mode')`
+- Eager-load core widgets, lazy-load heavy ones
+- Use `optimizePackageImports` or direct paths (avoid barrel files)
 
-#### Pattern: Dynamic Mode Import
-
-```typescript
-// modes/registry.ts
-export const modeRegistry = {
-  static: () => import('./static'),
-  parallax: () => import('./parallax'),
-  reveal: () => import('./reveal'),
-  cinematic: () => import('./cinematic'),
-} as const
-
-export type ModeId = keyof typeof modeRegistry
-```
-
-#### Pattern: Mode Provider with Lazy Loading
-
-```typescript
-// experience/ModeProvider.tsx
-'use client'
-import { Suspense, lazy, useMemo } from 'react'
-import { modeRegistry, ModeId } from './modes/registry'
-
-interface ModeProviderProps {
-  modeId: ModeId
-  children: React.ReactNode
-}
-
-export function ModeProvider({ modeId, children }: ModeProviderProps) {
-  // Create lazy component for selected mode
-  const ModeComponent = useMemo(() => {
-    return lazy(async () => {
-      const mod = await modeRegistry[modeId]()
-      return { default: mod.ModeProvider }
-    })
-  }, [modeId])
-
-  return (
-    <Suspense fallback={<ModeLoadingFallback />}>
-      <ModeComponent>{children}</ModeComponent>
-    </Suspense>
-  )
-}
-
-function ModeLoadingFallback() {
-  // Render children immediately with no animations
-  // Mode hydrates once loaded
-  return null
-}
-```
-
-#### Validation Rules
-
-| # | Rule | Check |
-|---|------|-------|
-| 11 | Modes use dynamic import | `import('./mode')` not `import from` |
-| 12 | Mode registry doesn't import eagerly | Factory pattern |
-| 13 | Unused modes not in bundle | Bundle analysis |
-
-#### Bundle Impact
-
-| Approach | Initial Bundle | When Mode Loads |
-|----------|----------------|-----------------|
+| Approach | Initial Bundle | When Loaded |
+|----------|----------------|-------------|
 | Eager (all modes) | ~50KB | Immediate |
-| Lazy (selected mode) | ~5KB | +20-100ms on first use |
+| Lazy (selected mode) | ~5KB | +20-100ms |
 
-**Rule:** Use lazy loading unless the site uses only one mode permanently.
+**Rule:** Use lazy loading unless site uses only one mode permanently.
 
 ---
 
@@ -396,6 +321,92 @@ function ModeLoadingFallback() {
 | Eager analytics import | Blocks hydration | `dynamic(() => import(), { ssr: false })` |
 | No preload on user intent | Slow perceived load | Preload on hover/focus for heavy modules |
 
+## Testing
+
+> **Recommended.** Presets bundle configuration — test structure and references.
+
+### What to Test
+
+| Test | Required | Why |
+|------|----------|-----|
+| Exports named preset | ✓ | Registry lookup |
+| Has experience.mode | ✓ | Mode selection |
+| Chrome regions defined | ✓ | Chrome resolution |
+| Pages have structure | ✓ | Routing works |
+| Behaviours reference exist | ✓ | Resolution works |
+
+### Test Location
+
+```
+creativeshire/presets/{name}/
+├── index.ts
+└── index.test.ts    # Preset validation
+```
+
+### Test Template
+
+```typescript
+// presets/showcase/index.test.ts
+import { describe, it, expect } from 'vitest'
+import { showcasePreset } from './index'
+import { modeRegistry } from '@/creativeshire/experience/modes/registry'
+import { behaviourRegistry } from '@/creativeshire/experience/behaviours/registry'
+
+describe('showcasePreset', () => {
+  describe('structure', () => {
+    it('has required experience config', () => {
+      expect(showcasePreset.experience).toBeDefined()
+      expect(showcasePreset.experience.mode).toBeDefined()
+    })
+
+    it('has chrome configuration', () => {
+      expect(showcasePreset.chrome).toBeDefined()
+      expect(showcasePreset.chrome.regions).toBeDefined()
+    })
+
+    it('has at least one page', () => {
+      expect(Object.keys(showcasePreset.pages).length).toBeGreaterThan(0)
+    })
+  })
+
+  describe('references', () => {
+    it('mode exists in registry', () => {
+      const modeId = showcasePreset.experience.mode
+      expect(modeRegistry[modeId]).toBeDefined()
+    })
+
+    it('default behaviours exist', () => {
+      const behaviours = showcasePreset.behaviours ?? {}
+      Object.values(behaviours).forEach(behaviourId => {
+        expect(behaviourRegistry.has(behaviourId)).toBe(true)
+      })
+    })
+  })
+})
+```
+
+### Definition of Done
+
+A preset is complete when:
+
+- [ ] All tests pass: `npm test -- presets/{name}`
+- [ ] Mode reference valid
+- [ ] Behaviour references valid
+- [ ] Chrome configured
+- [ ] At least one page defined
+
+### Running Tests
+
+```bash
+# Single preset
+npm test -- presets/showcase
+
+# All presets
+npm test -- presets/
+```
+
+---
+
 ## Integration
 
 | Interacts With | Direction | How |
@@ -411,3 +422,19 @@ function ModeLoadingFallback() {
 Validated by: `./preset.validator.ts`
 
 Rules in "Must/Must Not" map 1:1 to validator checks.
+
+---
+
+## Example: Simplest Site
+
+See [Site Spec - Simplest Site Example](../site/site.spec.md#example-simplest-site-end-to-end) for the complete end-to-end flow.
+
+**Quick summary:**
+1. Site extends `starterPreset`, overrides `mode: 'reveal'`
+2. `revealMode` provides `sectionVisibility` state
+3. Sections use `fade-in` behaviour by default
+4. Widgets render with CSS variables from behaviour compute
+
+```
+Preset → Mode → Triggers → Store → Behaviour → CSS Variables → Widget
+```

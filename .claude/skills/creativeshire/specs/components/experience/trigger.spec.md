@@ -80,6 +80,7 @@ function use{Name}(options?: {Name}Options): void
 | `resize` | `window.resize` | Viewport dimensions |
 | `keyboard` | `keydown` / `keyup` | Key state map |
 | `cursor` | `mousemove` | x, y coordinates |
+| `reduced-motion` | `prefers-reduced-motion` | Boolean preference |
 
 ## Data Flow
 
@@ -226,81 +227,169 @@ export function useHoverState(options: HoverStateOptions): {
 
 ## Anti-Patterns
 
-### Don't: Return values
+| Anti-Pattern | Problem | Correct Approach |
+|--------------|---------|------------------|
+| Return values | Causes React re-renders | Write to store, return void |
+| DOM manipulation | Bypasses Driver layer | Write to store, let driver handle DOM |
+| Non-passive listeners | Blocks scrolling | `{ passive: true }` for scroll/touch |
+| Missing cleanup | Memory leak | Return cleanup function from useEffect |
+| Missing SSR guard | Server crash | `if (typeof window === 'undefined') return` |
+
+## Testing
+
+> **Required.** Triggers manage event lifecycle and store updates — test them.
+
+### What to Test
+
+| Test | Required | Why |
+|------|----------|-----|
+| Store updates on event | ✓ | Core contract |
+| Cleanup removes listeners | ✓ | Prevents memory leaks |
+| Passive listener option | ✓ | Performance requirement |
+| SSR guard present | ✓ | Server safety |
+| Throttling works | ✓ | High-frequency events |
+
+### Test Location
+
+```
+creativeshire/experience/triggers/
+├── useScrollProgress.ts
+├── useScrollProgress.test.ts    # Co-located test file
+├── useHoverState.ts
+└── useHoverState.test.ts
+```
+
+### Test Template
 
 ```typescript
-// WRONG - Returning values causes React re-renders
-function useScrollProgress(): number {
-  const [progress, setProgress] = useState(0)
-  return progress
+// triggers/use{Name}.test.ts - Pattern for ALL trigger tests
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { renderHook, act } from '@testing-library/react'
+
+// 1. Mock store with appropriate setter
+const mockStoreSetter = vi.fn()
+vi.mock('../ExperienceProvider', () => ({
+  useExperienceStore: (selector: any) => selector({ setXxx: mockStoreSetter })
+}))
+
+describe('use{Name}', () => {
+  // 2. Spy on event listeners (observation triggers)
+  let addSpy: ReturnType<typeof vi.spyOn>
+  let removeSpy: ReturnType<typeof vi.spyOn>
+
+  beforeEach(() => {
+    mockStoreSetter.mockClear()
+    addSpy = vi.spyOn(window, 'addEventListener')
+    removeSpy = vi.spyOn(window, 'removeEventListener')
+  })
+
+  afterEach(() => { addSpy.mockRestore(); removeSpy.mockRestore() })
+
+  // 3. Required tests for observation triggers:
+  it('adds listener on mount with passive: true', () => {
+    renderHook(() => useXxx())
+    expect(addSpy).toHaveBeenCalledWith('eventname', expect.any(Function),
+      expect.objectContaining({ passive: true }))
+  })
+
+  it('removes listener on unmount', () => {
+    const { unmount } = renderHook(() => useXxx())
+    unmount()
+    expect(removeSpy).toHaveBeenCalledWith('eventname', expect.any(Function))
+  })
+
+  it('updates store on event', () => {
+    renderHook(() => useXxx())
+    act(() => { window.dispatchEvent(new Event('eventname')) })
+    expect(mockStoreSetter).toHaveBeenCalled()
+  })
+
+  // 4. Additional tests for action triggers:
+  // - Test returned handlers (onMouseEnter, onMouseLeave, etc.)
+  // - Test delay/timeout cleanup on unmount
+})
+```
+
+### Definition of Done
+
+A trigger is complete when:
+
+- [ ] All tests pass: `npm test -- triggers/{name}`
+- [ ] Event subscription/cleanup tested
+- [ ] Store updates verified
+- [ ] Passive listeners verified (observation triggers)
+- [ ] No memory leaks (cleanup tested)
+- [ ] No TypeScript errors
+
+### Running Tests
+
+```bash
+# Single trigger
+npm test -- triggers/useScrollProgress
+
+# All triggers
+npm test -- triggers/
+```
+
+---
+
+## Accessibility
+
+### prefers-reduced-motion Trigger
+
+Users can indicate they prefer reduced motion via OS settings. This trigger monitors that preference and updates the store.
+
+```typescript
+// triggers/usePrefersReducedMotion.ts
+import { useEffect } from 'react'
+import { useExperienceStore } from '../ExperienceProvider'
+
+export function usePrefersReducedMotion(): void {
+  const setPrefersReducedMotion = useExperienceStore(s => s.setPrefersReducedMotion)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+
+    // Set initial value
+    setPrefersReducedMotion(mediaQuery.matches)
+
+    // Listen for changes
+    const handler = (e: MediaQueryListEvent) => {
+      setPrefersReducedMotion(e.matches)
+    }
+
+    mediaQuery.addEventListener('change', handler)
+    return () => mediaQuery.removeEventListener('change', handler)
+  }, [setPrefersReducedMotion])
 }
+```
 
-// CORRECT - Write to store
-function useScrollProgress(): void {
-  const setScrollProgress = useExperienceStore(s => s.setScrollProgress)
+### Mode Integration
+
+Modes must include `prefersReducedMotion` in their store:
+
+```typescript
+// modes/parallax/index.ts
+const parallaxMode: Mode = {
+  id: 'parallax',
+  provides: ['scrollProgress', 'prefersReducedMotion'],
+  createStore: (set) => ({
+    scrollProgress: 0,
+    prefersReducedMotion: false,
+    setScrollProgress: (v) => set({ scrollProgress: v }),
+    setPrefersReducedMotion: (v) => set({ prefersReducedMotion: v })
+  }),
+  triggers: ['scroll-progress', 'reduced-motion']
 }
 ```
 
-**Why:** Returning values creates state that triggers re-renders on every update.
+**Testing:** Follow the test template pattern. Mock `matchMedia` and verify:
+1. Sets initial value on mount
+2. Updates store when preference changes
 
-### Don't: Manipulate DOM
-
-```typescript
-// WRONG - Direct DOM manipulation
-const handler = (e: MouseEvent) => {
-  element.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`
-}
-
-// CORRECT - Write to store, let driver handle DOM
-const handler = (e: MouseEvent) => {
-  setCursor({ x: e.clientX, y: e.clientY })
-}
-```
-
-**Why:** Triggers must not bypass the Driver layer. Data flows through store.
-
-### Don't: Non-passive listeners
-
-```typescript
-// WRONG - Blocks scrolling
-window.addEventListener('scroll', handler)
-
-// CORRECT - Non-blocking
-window.addEventListener('scroll', handler, { passive: true })
-```
-
-**Why:** Non-passive listeners can block scroll for preventDefault handling.
-
-### Don't: Missing cleanup
-
-```typescript
-// WRONG - Memory leak
-useEffect(() => {
-  window.addEventListener('scroll', handler, { passive: true })
-}, [])
-
-// CORRECT - Always return cleanup
-useEffect(() => {
-  window.addEventListener('scroll', handler, { passive: true })
-  return () => window.removeEventListener('scroll', handler)
-}, [])
-```
-
-### Don't: Missing SSR guard
-
-```typescript
-// WRONG - Crashes on server
-useEffect(() => {
-  window.addEventListener('scroll', handler)
-}, [])
-
-// CORRECT - SSR safe
-useEffect(() => {
-  if (typeof window === 'undefined') return
-  window.addEventListener('scroll', handler, { passive: true })
-  return () => window.removeEventListener('scroll', handler)
-}, [])
-```
+---
 
 ## Integration
 
@@ -316,3 +405,78 @@ useEffect(() => {
 Validated by: `./trigger.validator.ts`
 
 Rules in "Must/Must Not" map 1:1 to validator checks.
+
+---
+
+## Example: Simplest Site
+
+> Minimal example traced through all domain layers. See other specs for the full flow.
+
+The simplest site uses the `intersection` trigger to track section visibility.
+
+### Intersection Trigger
+
+Watches when sections enter the viewport and updates store.
+
+```typescript
+// triggers/useIntersection.ts
+import { useEffect } from 'react'
+import { useExperienceStore } from '../ExperienceProvider'
+
+export function useIntersection(options?: { threshold?: number }): void {
+  const setSectionVisibility = useExperienceStore(s => s.setSectionVisibility)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          const sectionId = entry.target.getAttribute('data-section-id')
+          if (sectionId) {
+            setSectionVisibility(sectionId, entry.intersectionRatio)
+          }
+        })
+      },
+      { threshold: options?.threshold ?? 0.3 }
+    )
+
+    // Observe all sections
+    document.querySelectorAll('[data-section-id]').forEach(el => {
+      observer.observe(el)
+    })
+
+    return () => observer.disconnect()
+  }, [setSectionVisibility, options?.threshold])
+}
+```
+
+### Position in Data Flow
+
+```
+User scrolls
+       │
+       ▼
+IntersectionObserver fires
+       │
+       ▼
+useIntersection trigger ─────► Store (sectionVisibility: 0.7)
+       │                              │
+       ▼                              ▼
+(Trigger returns void)        Driver reads store
+                                      │
+                                      ▼
+                              fadeIn.compute()
+                                      │
+                                      ▼
+                              CSS Variables applied
+```
+
+### Connection to Other Specs
+
+| Spec | Role in Example |
+|------|-----------------|
+| [Mode Spec](./mode.spec.md) | `reveal` mode configures intersection trigger |
+| [Behaviour Spec](./behaviour.spec.md) | `fade-in` reads `sectionVisibility` from store |
+| [Driver Spec](./driver.spec.md) | Driver calls `behaviour.compute()` with store state |
+| [Provider Spec](./provider.spec.md) | Provider distributes store to triggers |

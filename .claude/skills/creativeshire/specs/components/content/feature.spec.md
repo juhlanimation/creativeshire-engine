@@ -236,6 +236,97 @@ export function applyTypography(feature?: TypographyFeature): CSSProperties {
 
 **Why:** Pure functions with static output are composable and predictable.
 
+## Testing
+
+> **Required.** Features are pure functions — test them.
+
+### What to Test
+
+| Test | Required | Why |
+|------|----------|-----|
+| Returns CSSProperties | ✓ | Core contract |
+| Handles undefined input | ✓ | Graceful defaults |
+| Pure function (same input = same output) | ✓ | Composability |
+| No transitions/animations in output | ✓ | Static only |
+
+### Test Location
+
+```
+creativeshire/components/content/features/
+├── spacing.ts
+├── spacing.test.ts    # Co-located test file
+├── typography.ts
+├── typography.test.ts
+└── index.test.ts      # Integration test
+```
+
+### Test Template
+
+```typescript
+// typography.test.ts
+import { describe, it, expect } from 'vitest'
+import { applyTypography } from './typography'
+
+describe('applyTypography', () => {
+  it('returns empty object for undefined', () => {
+    expect(applyTypography(undefined)).toEqual({})
+  })
+
+  it('maps size token to CSS value', () => {
+    expect(applyTypography({ size: 'xl' }).fontSize).toBe('1.25rem')
+  })
+
+  it('is pure (same input = same output)', () => {
+    const input = { size: 'lg', weight: 'semibold' }
+    expect(applyTypography(input)).toEqual(applyTypography(input))
+  })
+
+  it('returns no animation properties', () => {
+    const result = applyTypography({ size: 'xl', weight: 'bold' })
+    expect(result.transition).toBeUndefined()
+    expect(result.animation).toBeUndefined()
+  })
+})
+
+// index.test.ts - Integration test
+describe('useFeatures', () => {
+  it('combines all feature categories', () => {
+    const result = useFeatures({
+      spacing: { padding: '1rem' },
+      typography: { size: 'lg' },
+      background: { color: '#fff' }
+    })
+    expect(result.padding).toBe('1rem')
+    expect(result.fontSize).toBeDefined()
+  })
+
+  it('returns empty object for undefined', () => {
+    expect(useFeatures(undefined)).toEqual({})
+  })
+})
+```
+
+### Definition of Done
+
+A feature is complete when:
+
+- [ ] All tests pass: `npm test -- features/{name}`
+- [ ] Returns valid CSSProperties
+- [ ] No animations in output
+- [ ] No TypeScript errors
+
+### Running Tests
+
+```bash
+# Single feature
+npm test -- features/typography
+
+# All features
+npm test -- features/
+```
+
+---
+
 ## Integration
 
 | Interacts With | Direction | How |

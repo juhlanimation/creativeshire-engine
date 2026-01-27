@@ -168,7 +168,7 @@ export function createProjectCard(props: ProjectCardProps): WidgetSchema {
   return {
     type: "Flex",
     props: { direction: "column", gap: 16 },
-    children: [
+    widgets: [
       {
         type: "Image",
         props: { src: props.thumbnail, alt: props.title },
@@ -235,7 +235,7 @@ export function createHeroSection(props: HeroProps): SectionSchema {
       {
         type: "Stack",
         props: { align: "center", justify: "center" },
-        children: [
+        widgets: [
           {
             type: "Text",
             props: { content: props.heading, variant: "h1" },

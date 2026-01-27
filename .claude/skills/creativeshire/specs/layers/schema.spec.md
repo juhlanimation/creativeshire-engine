@@ -75,7 +75,19 @@ interface SiteSchema {
 
 interface ExperienceConfig {
   mode: string
-  options?: Record<string, any>
+  options?: {
+    intensity?: number     // Animation intensity multiplier (0-1)
+    damping?: number       // Physics damping factor
+    threshold?: number     // Activation threshold
+    [key: string]: unknown // Mode-specific additional options
+  }
+}
+
+// Default behaviour assignments per mode
+interface ModeDefaults {
+  page?: string                            // Default page transition behaviour
+  section: string                          // Required: default section behaviour
+  [widgetType: string]: string | undefined // Per-widget-type defaults (e.g., Image: 'depth-layer')
 }
 
 // schema/page.ts
@@ -145,6 +157,25 @@ interface OverlaySchema {
   widget: WidgetSchema
   behaviour?: string | BehaviourConfig
 }
+
+// Trigger conditions for overlays and interactions
+type TriggerCondition =
+  | { type: 'scroll'; threshold: number }   // Scroll position threshold (0-1)
+  | { type: 'click'; target?: string }      // Click event, optional target selector
+  | { type: 'hover'; target?: string }      // Hover event, optional target selector
+  | { type: 'timer'; delay: number }        // Time delay in milliseconds
+  | { type: 'visibility'; threshold?: number } // IntersectionObserver threshold
+  | { type: 'load' }                        // Page load complete
+```
+
+### Page Reference
+
+```typescript
+// schema/page.ts
+interface PageReference {
+  id: string    // Unique identifier for the page
+  slug: string  // URL slug for routing
+}
 ```
 
 ### Features and Experience
@@ -170,6 +201,40 @@ interface BehaviourConfig {
 }
 
 type CSSVariables = Record<`--${string}`, string | number>
+```
+
+---
+
+## Barrel Exports
+
+The `schema/index.ts` file exports all schema types for consumption by other layers.
+
+```typescript
+// schema/index.ts
+export type {
+  // Site and Page
+  SiteSchema,
+  ExperienceConfig,
+  ModeDefaults,
+  PageSchema,
+  PageReference,
+
+  // Section and Widget
+  SectionSchema,
+  LayoutConfig,
+  WidgetSchema,
+
+  // Chrome
+  ChromeSchema,
+  RegionSchema,
+  OverlaySchema,
+  TriggerCondition,
+
+  // Features and Experience
+  FeatureSet,
+  BehaviourConfig,
+  CSSVariables,
+}
 ```
 
 ---

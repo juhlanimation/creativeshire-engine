@@ -8,6 +8,40 @@ Widget composites assemble pre-configured widget trees from domain-specific prop
 
 **Key distinction:** Composites return schema data. They never return React elements.
 
+## Widget vs Widget Composite
+
+| Aspect | Widget | Widget Composite |
+|--------|--------|------------------|
+| **What it is** | React component | Factory function |
+| **Returns** | JSX (renders DOM) | `WidgetSchema` (data) |
+| **File extension** | `index.tsx` | `index.ts` (no JSX) |
+| **Has CSS** | Yes, `styles.css` | No CSS files |
+| **Registered** | Yes, in widgetRegistry | No registration needed |
+| **Creates** | New DOM element type | Combination of existing widgets |
+
+### When to Create a Widget Composite
+
+```
+Can it be expressed as a TREE of existing widgets?
+        │
+        ├─ YES → Widget Composite
+        │        Domain props → WidgetSchema tree
+        │
+        └─ NO  → New Widget (see widget.spec.md)
+                 Needs new DOM element or browser API
+```
+
+### Catalog Growth
+
+Widget composites emerge from site analysis:
+
+1. `/analyze` identifies a repeating pattern (e.g., team member cards)
+2. Check: Can this be composed from existing widgets?
+3. YES → Create composite: `createTeamMember({ name, role, image })`
+4. The composite translates domain props to widget tree
+
+**The catalog grows based on real patterns, not pre-defined lists.**
+
 ## Concepts
 
 | Term | Definition |
@@ -179,6 +213,124 @@ export interface ProjectCardProps {
 ```
 
 **Why:** The composite translates domain concepts into widget schema.
+
+## Testing
+
+> **Recommended.** Composites are pure functions — test schema output.
+
+### What to Test
+
+| Test | Required | Why |
+|------|----------|-----|
+| Returns valid WidgetSchema | ✓ | Core contract |
+| Root type is layout widget | ✓ | Structural requirement |
+| Props map to widget props | ✓ | Domain translation |
+| Handles optional props | ✓ | Graceful defaults |
+
+### Test Location
+
+```
+creativeshire/components/content/widgets/composites/{Name}/
+├── index.ts
+└── index.test.ts    # Co-located test file
+```
+
+### Test Template
+
+```typescript
+// {Name}/index.test.ts
+import { describe, it, expect } from 'vitest'
+import { create{Name} } from './index'
+
+describe('create{Name}', () => {
+  describe('schema structure', () => {
+    it('returns a WidgetSchema with layout root', () => {
+      const schema = create{Name}({
+        title: 'Test Title',
+        image: '/test.jpg'
+      })
+
+      expect(schema.type).toMatch(/^(Stack|Flex|Grid)$/)
+      expect(schema.widgets).toBeDefined()
+      expect(Array.isArray(schema.widgets)).toBe(true)
+    })
+
+    it('maps domain props to widget props', () => {
+      const schema = create{Name}({
+        title: 'Project Name',
+        image: '/hero.jpg'
+      })
+
+      // Find image widget
+      const imageWidget = schema.widgets?.find(w => w.type === 'Image')
+      expect(imageWidget?.props?.src).toBe('/hero.jpg')
+
+      // Find text widget
+      const textWidget = schema.widgets?.find(w => w.type === 'Text')
+      expect(textWidget?.props?.content).toBe('Project Name')
+    })
+  })
+
+  describe('optional props', () => {
+    it('handles missing optional props', () => {
+      const schema = create{Name}({
+        title: 'Minimal',
+        image: '/min.jpg'
+        // tags omitted
+      })
+
+      expect(() => schema).not.toThrow()
+      expect(schema.type).toBeDefined()
+    })
+
+    it('includes optional widgets when props provided', () => {
+      const schema = create{Name}({
+        title: 'Full',
+        image: '/full.jpg',
+        tags: ['react', 'typescript']
+      })
+
+      // Verify tags render as Badge widgets
+      const flatWidgets = JSON.stringify(schema)
+      expect(flatWidgets).toContain('Badge')
+    })
+  })
+
+  describe('no React dependency', () => {
+    it('returns plain object, not JSX', () => {
+      const schema = create{Name}({
+        title: 'Test',
+        image: '/test.jpg'
+      })
+
+      expect(typeof schema).toBe('object')
+      expect(schema.$$typeof).toBeUndefined() // JSX marker
+    })
+  })
+})
+```
+
+### Definition of Done
+
+A widget composite is complete when:
+
+- [ ] All tests pass: `npm test -- composites/{Name}`
+- [ ] Returns valid WidgetSchema structure
+- [ ] All widget types exist in registry
+- [ ] No TypeScript errors
+- [ ] No React imports in source
+
+### Running Tests
+
+```bash
+# Single composite
+npm test -- composites/ProjectCard
+
+# All composites
+npm test -- composites/
+```
+
+---
 
 ## Integration
 

@@ -4,8 +4,8 @@
 
 | Command | Use |
 |---------|-----|
-| `/plan [desc]` | Create backlog items |
-| `/analyze <url>` | Analyze reference, create backlog |
+| `/analyze <url>` | Analyze reference → `.claude/analyze/{name}/{domain}/` |
+| `/plan [desc]` | Create backlog from analysis or description |
 | `/build [item]` | Implement from backlog |
 | `/validate [item]` | Quality gate, merge to main |
 | `/fix [path] "desc"` | Quick fix |
@@ -14,24 +14,43 @@
 
 | Topic | Location |
 |-------|----------|
-| **Architecture** | [.claude/skills/creativeshire/SKILL.md](.claude/skills/creativeshire/SKILL.md) |
-| **Folder Structure** | [.claude/skills/creativeshire/specs/reference/folders.spec.md](.claude/skills/creativeshire/specs/reference/folders.spec.md) |
-| **Naming Conventions** | [.claude/skills/creativeshire/specs/reference/naming.spec.md](.claude/skills/creativeshire/specs/reference/naming.spec.md) |
-| **Tech Stack** | [.claude/skills/creativeshire/specs/reference/tech-stack.spec.md](.claude/skills/creativeshire/specs/reference/tech-stack.spec.md) |
-| **Backlog** | [.claude/tasks/backlog.md](.claude/tasks/backlog.md) |
-| **Current Sprint** | [.claude/tasks/current-sprint.md](.claude/tasks/current-sprint.md) |
+| **Architecture** | [SKILL.md](.claude/skills/creativeshire/SKILL.md) |
+| **All Specs** | [specs/index.spec.md](.claude/skills/creativeshire/specs/index.spec.md) |
+| **Backlog** | [backlog.md](.claude/tasks/backlog.md) |
 
 ## Workflow
 
 ```
-/plan or /analyze → backlog.md → /build → sprint branch → /validate → main
+/analyze → /plan → backlog.md → /build → /validate → main
 ```
+
+## Top-Down Analysis
+
+Always work **SITE → PAGE → SECTION → WIDGET**. Never start with atoms.
+
+```
+SITE     Mode (parallax, reveal) + Chrome (nav, footer)
+PAGE     Transitions + Chrome overrides
+SECTION  Purpose + Behaviour + Features
+WIDGET   Compose from registry first, create only if missing
+```
+
+**Why:** Matches perception, finds patterns early, avoids unneeded widgets.
+
+## Self-Improvement
+
+**Goal:** Build ANY site with ease.
+
+1. Follow specs → Question when blocked → Propose improvements → Update on approval
+2. Trigger: Spec gap, unnecessary complexity, repeated workaround, inexpressible pattern
+
+**Propose format:** `Current → Issue → Proposed → Impact`
 
 ## Branches
 
-- `sprint/YYYY-MM-DD` - Active sprint work
-- `fix/YYYY-MM-DD-desc` - Quick fixes
+- `sprint/{summary}` - Feature work
+- `fix/{desc}` - Quick fixes
 
 ## Learned Rules
 
-<!-- Add rules here when Claude makes repeated mistakes -->
+<!-- Add patterns here when mistakes repeat -->

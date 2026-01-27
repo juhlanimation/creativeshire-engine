@@ -110,19 +110,16 @@ A **Mode** bundles animation configuration: state availability, default behaviou
 A **Behaviour** transforms state into CSS variables. Runs every frame.
 
 ```typescript
-// experience/behaviours/types.ts
 interface Behaviour {
   id: string
   requires: string[]
-  compute: (state, options) => CSSVariables
+  compute: (state, options) => CSSVariables  // Returns Record<`--${string}`, string | number>
   cssTemplate: string
   options?: Record<string, OptionConfig>
 }
-
-type CSSVariables = Record<`--${string}`, string | number>
 ```
 
-The type enforces `--prefixed` keys only. No accidental property clobbering.
+The type enforces `--prefixed` keys only. See [contracts.spec.md](../core/contracts.spec.md#css-variable-contract) for full contract details.
 
 ### Behaviour Resolution
 

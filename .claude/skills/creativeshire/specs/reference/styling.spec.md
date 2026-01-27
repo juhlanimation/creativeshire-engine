@@ -322,20 +322,15 @@ Variants are type-safe. Default values defined once. `className` prop allows ove
 
 ## CSS Variable Catalog
 
-> Before creating a new CSS variable, check this catalog. See [Extension Principle](../../core/extension.spec.md).
+> See [css-variables.spec.md](./css-variables.spec.md) for the complete catalog of all CSS variables including animation, section, behaviour-specific, chrome, widget-scoped, and theme variables.
 
-### Animation Variables
+**Quick reference for common animation variables:**
 
-Variables set by behaviours/drivers, consumed by widget CSS.
-
-| Variable | Range | Fallback | Set By | Purpose |
-|----------|-------|----------|--------|---------|
-| `--y` | `0` to `containerHeight` | `0` | scroll-stack behaviour | Vertical position (px) |
-| `--opacity` | `0` to `1` | `1` | depth-layer, fade behaviours | Element visibility |
-| `--scale` | `0.8` to `1.2` | `1` | zoom behaviour | Transform scale |
-| `--z-index` | `0` to `sectionCount` | `0` | scroll-stack behaviour | Stacking order |
-| `--blur` | `0` to `10` | `0` | depth-layer behaviour | Blur amount (px) |
-| `--rotate` | `-15` to `15` | `0` | tilt behaviour | Rotation (deg) |
+| Variable | Fallback | Purpose |
+|----------|----------|---------|
+| `--y` | `0` | Vertical position (px multiplier) |
+| `--opacity` | `1` | Element visibility |
+| `--scale` | `1` | Transform scale |
 
 **CSS usage pattern:**
 
@@ -343,55 +338,8 @@ Variables set by behaviours/drivers, consumed by widget CSS.
 .widget-wrapper {
   transform: translateY(calc(var(--y, 0) * 1px)) scale(var(--scale, 1));
   opacity: var(--opacity, 1);
-  z-index: var(--z-index, 0);
-  filter: blur(calc(var(--blur, 0) * 1px));
 }
 ```
-
-### Component-Scoped Variables
-
-Variables scoped to specific widgets. Prefix with component name.
-
-| Variable | Range | Fallback | Component | Purpose |
-|----------|-------|----------|-----------|---------|
-| `--card-opacity` | `0` to `1` | `1` | Card | Card visibility |
-| `--card-y` | px value | `0` | Card | Card vertical offset |
-| `--card-scale` | `0.9` to `1` | `1` | Card | Card scale |
-| `--card-z-index` | integer | `1` | Card | Card stacking |
-| `--divider-color` | color | `#e5e7eb` | Divider | Line color |
-| `--divider-thickness` | px value | `1px` | Divider | Line width |
-| `--button-hover-color` | color | `currentColor` | Button | Hover state |
-| `--credits-opacity` | `0` to `1` | `1` | CreditsCard | Fade effect |
-
-### Theme Variables
-
-System-level variables in `globals.css`. Not animated.
-
-| Variable | Purpose | Light | Dark |
-|----------|---------|-------|------|
-| `--background` | Page background | `#ffffff` | `#0a0a0a` |
-| `--foreground` | Primary text | `#171717` | `#ededed` |
-| `--primary` | Action color | defined | defined |
-| `--muted` | Secondary surfaces | defined | defined |
-| `--border` | Border color | defined | defined |
-| `--radius` | Border radius base | `0.5rem` | `0.5rem` |
-
-### Adding New Variables
-
-Follow [Extension Principle](../../core/extension.spec.md):
-
-1. **Check catalog** - Does a variable already serve this purpose?
-2. **Check similar** - Can an existing variable's range expand?
-3. **Create if needed** - Add to this catalog with all fields
-4. **Use fallback** - Always provide SSR-safe default
-
-**Naming rules:**
-
-| Scope | Pattern | Example |
-|-------|---------|---------|
-| Global animation | `--{property}` | `--y`, `--opacity` |
-| Component-scoped | `--{component}-{property}` | `--card-opacity` |
-| Theme token | `--{semantic-name}` | `--background`, `--primary` |
 
 ---
 

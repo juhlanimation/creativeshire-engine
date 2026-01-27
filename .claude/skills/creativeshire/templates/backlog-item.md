@@ -12,6 +12,7 @@ Use this **exact format** when creating backlog items in `.claude/tasks/backlog.
 - **Estimate:** S | M | L | XL
 - **Dependencies:** DOMAIN-XXX | None
 - **Added:** YYYY-MM-DD
+- **References:** Skills/specs to consult
 - **Description:** What needs to be done
 - **Context:** Key files, patterns to follow
 - **Approach:** How to implement
@@ -65,6 +66,7 @@ Use this **exact format** when creating backlog items in `.claude/tasks/backlog.
 - **Estimate:** M
 - **Dependencies:** None
 - **Added:** 2026-01-27
+- **References:** [widget.spec.md](specs/components/content/widget.spec.md), [composition-patterns](../../composition-patterns/SKILL.md)
 - **Description:** Create video background widget for hero sections
 - **Context:** See existing BackgroundImage widget for patterns
 - **Approach:**

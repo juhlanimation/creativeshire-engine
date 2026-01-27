@@ -19,12 +19,18 @@ Implements backlog items with validation.
 
 ```bash
 # If on main, create sprint branch
-git checkout -b sprint/$(date +%Y-%m-%d)
+git checkout -b sprint/{summary}
 
 # If already on sprint/*, stay there
 # Start dev server
 npm run dev
 ```
+
+**Branch naming:**
+- Use kebab-case summary of what's being built
+- Examples: `sprint/hero-widgets`, `sprint/gallery-section`, `sprint/parallax-behaviours`
+- For single items: `sprint/widget-003-video-player`
+- For ranges: `sprint/widget-001-to-005`
 
 **Branch behavior:**
 - On `main` → Create new sprint branch
@@ -32,14 +38,60 @@ npm run dev
 
 ## Workflow
 
-### 1. Read Backlog Item
+### 0. Pre-Build Validation
+
+**Verify item exists in backlog:**
+```bash
+grep "DOMAIN-XXX" .claude/tasks/backlog.md
+```
+
+If not found:
+```markdown
+Item `DOMAIN-XXX` not found in backlog.
+
+Run `/plan` first to add it.
+```
+Stop here.
+
+**Verify dependencies are completed:**
+```bash
+# For each dependency, check if in completed/
+grep "DEP-XXX" .claude/tasks/completed/index.md
+```
+
+If dependency not completed:
+```markdown
+Dependency `DEP-XXX` not yet completed.
+
+Build dependencies first: `/build DEP-XXX`
+```
+Stop here.
+
+**Verify dev server is running:**
+```
+nextjs_index → Should return server on port 3000
+```
+
+If not running:
+```bash
+npm run dev
+```
+
+### 1. Update Sprint File
+
+Update `.claude/tasks/current-sprint.md`:
+- Set branch name
+- Set state to `building`
+- Add item to table with status `in_progress`, iteration `1`
+
+### 2. Read Backlog Item
 
 From `.claude/tasks/backlog.md`:
 - Understand requirements
 - Note dependencies
 - Check acceptance criteria
 
-### 2. Read Relevant Spec
+### 3. Read Relevant Spec
 
 Based on component type, read from creativeshire skill:
 
@@ -57,7 +109,7 @@ Also read:
 - `../creativeshire/specs/patterns/common.spec.md` for patterns
 - `../creativeshire/specs/patterns/anti-patterns.spec.md` for what to avoid
 
-### 3. Find Existing Examples
+### 4. Find Existing Examples
 
 Search for similar components:
 ```
@@ -68,7 +120,7 @@ creativeshire/components/experience/behaviours/
 
 Follow existing patterns for consistency.
 
-### 4. Implement
+### 5. Implement
 
 Follow the spec rules:
 - Use correct file structure
@@ -76,7 +128,7 @@ Follow the spec rules:
 - Apply required patterns
 - Export from index files
 
-### 5. Validate
+### 6. Validate
 
 **Type check (automatic via hook):**
 ```bash
@@ -96,7 +148,11 @@ nextjs_call(port="3000", toolName="get_errors") → Check errors
 
 **Max 3 attempts.** If still failing after 3 attempts, ask user.
 
-### 6. Commit
+### 7. Commit & Update Sprint
+
+Update `.claude/tasks/current-sprint.md`:
+- Mark item as `completed` in table
+- Clear active item section (or set next item)
 
 ```bash
 git add -A
@@ -166,10 +222,20 @@ Options:
 
 When resuming (`/build continue`):
 
-1. Read sprint state
-2. Find in-progress item
-3. Check current iteration
-4. Resume at last checkpoint
+1. **Check current branch:**
+   ```bash
+   git branch --show-current
+   # Should be sprint/*
+   ```
+
+2. **Read sprint file:** `.claude/tasks/current-sprint.md`
+   - Find item marked `in_progress`
+   - Check iteration count
+   - Read last error/blocker
+
+3. **Resume implementation:**
+   - If iteration < 3: Continue fixing
+   - If iteration = 3: Ask user for guidance
 
 ## Output Format
 
@@ -181,7 +247,7 @@ When resuming (`/build continue`):
 - **Files:**
   - `creativeshire/components/content/widgets/MyWidget/MyWidget.tsx`
   - `creativeshire/components/content/widgets/MyWidget/index.ts`
-- **Branch:** sprint/2026-01-27
+- **Branch:** sprint/widget-003-video-player
 
 Next: `/validate WIDGET-003` or `/build WIDGET-004`
 ```

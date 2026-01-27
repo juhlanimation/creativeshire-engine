@@ -225,6 +225,154 @@ export function WidgetRenderer({ widget }: WidgetRendererProps) {
 | Skip ErrorBoundary wrapping | One widget crash takes down page | Wrap each component in ErrorBoundary |
 | Hardcode component imports | Prevents extensibility | Use registry lookup pattern |
 
+## Composite Expansion
+
+**Key concept:** Composites expand at definition time (module import), not render time.
+
+```
+Definition Time                   Render Time
+───────────────                   ───────────
+createGallerySection({...}) →     Renderer receives plain
+  returns SectionSchema           WidgetSchema[] objects
+```
+
+**Renderers never see composite functions.** By the time a page definition is imported, all nested composites have already executed and returned plain data:
+
+```typescript
+// ✅ What renderer receives (already expanded)
+section.widgets = [
+  { type: 'Card', props: {...}, widgets: [...] },
+  { type: 'Card', props: {...}, widgets: [...] }
+]
+```
+
+**Type validation:** Check registry before rendering unknown types:
+
+```typescript
+const Component = widgetRegistry.get(widget.type)
+if (!Component) {
+  return <div className="widget-error">Unknown: {widget.type}</div>
+}
+```
+
+Nesting depth is unlimited. Each composite executes synchronously and returns plain schema data. See [Widget Composite Spec](../content/widget-composite.spec.md) for composite implementation details.
+
+## Testing
+
+> **Browser-based + unit.** Test resolution logic; validate rendering visually.
+
+### What to Test
+
+| Test | Method | Why |
+|------|--------|-----|
+| Behaviour resolution | Unit test | Pure function logic |
+| Registry lookup | Unit test | Component mapping |
+| ErrorBoundary catches | Unit test | Error isolation |
+| Nested rendering | Browser | Visual structure |
+
+### Test Location
+
+```
+creativeshire/renderer/
+├── SectionRenderer.tsx
+├── WidgetRenderer.tsx
+├── resolveBehaviour.ts
+├── resolveBehaviour.test.ts    # Resolution logic
+└── WidgetRenderer.test.tsx     # Component tests
+```
+
+### Test Template (Behaviour Resolution)
+
+```typescript
+// resolveBehaviour.test.ts
+import { describe, it, expect } from 'vitest'
+import { resolveBehaviour } from './resolveBehaviour'
+
+describe('resolveBehaviour', () => {
+  const mockMode = {
+    defaults: { section: 'scroll-stack', Image: 'depth-layer' }
+  }
+
+  it('returns null for explicit none', () => {
+    const result = resolveBehaviour({ behaviour: 'none' }, 'section', mockMode)
+    expect(result).toBeNull()
+  })
+
+  it('uses explicit behaviour', () => {
+    const result = resolveBehaviour(
+      { behaviour: 'fade-on-scroll' },
+      'section',
+      mockMode
+    )
+    expect(result?.behaviour).toBe('fade-on-scroll')
+  })
+
+  it('falls back to mode default for section', () => {
+    const result = resolveBehaviour({}, 'section', mockMode)
+    expect(result?.behaviour).toBe('scroll-stack')
+  })
+
+  it('uses widget type default', () => {
+    const result = resolveBehaviour({}, 'Image', mockMode)
+    expect(result?.behaviour).toBe('depth-layer')
+  })
+
+  it('returns null when no default exists', () => {
+    const result = resolveBehaviour({}, 'UnknownType', mockMode)
+    expect(result).toBeNull()
+  })
+})
+```
+
+### Test Template (WidgetRenderer)
+
+```typescript
+// WidgetRenderer.test.tsx
+import { describe, it, expect, vi } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import { WidgetRenderer } from './WidgetRenderer'
+
+// Mock registry
+vi.mock('@/content/registry', () => ({
+  widgetRegistry: new Map([
+    ['Text', ({ content }) => <p>{content}</p>]
+  ])
+}))
+
+describe('WidgetRenderer', () => {
+  it('renders known widget type', () => {
+    render(
+      <WidgetRenderer widget={{ type: 'Text', props: { content: 'Hello' } }} />
+    )
+    expect(screen.getByText('Hello')).toBeInTheDocument()
+  })
+
+  it('shows error for unknown type', () => {
+    render(
+      <WidgetRenderer widget={{ type: 'Unknown' }} />
+    )
+    expect(screen.getByText(/Unknown widget/)).toBeInTheDocument()
+  })
+})
+```
+
+### Definition of Done
+
+A renderer is complete when:
+
+- [ ] Resolution tests pass
+- [ ] ErrorBoundary wrapping verified
+- [ ] Unknown type fallback works
+- [ ] No TypeScript errors
+
+### Running Tests
+
+```bash
+npm test -- renderer/
+```
+
+---
+
 ## Integration
 
 | Interacts With | Direction | How |

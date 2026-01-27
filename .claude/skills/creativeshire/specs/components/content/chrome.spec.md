@@ -270,6 +270,134 @@ return createPortal(content, document.body)
 
 **Why:** Portals ensure overlays render above all page content.
 
+## Testing
+
+> **Browser-based validation.** Chrome components are persistent UI — validate visually.
+
+### Testing Approach
+
+| Aspect | Method | Why |
+|--------|--------|-----|
+| Region positioning | Browser | Fixed positioning must be visual |
+| Overlay portals | Browser | Portal rendering needs real DOM |
+| CSS variable fallbacks | Disable driver | Ensure chrome visible without driver |
+| Resolution logic | Unit test | Merge logic is pure function |
+
+### What to Unit Test
+
+| Test | Location |
+|------|----------|
+| Chrome resolution | `chrome/resolve.test.ts` |
+| Inherit/hidden logic | `chrome/resolve.test.ts` |
+
+### Test Template (Resolution Logic)
+
+```typescript
+// chrome/resolve.test.ts
+import { describe, it, expect } from 'vitest'
+import { resolveChrome } from './resolve'
+
+describe('resolveChrome', () => {
+  it('uses site chrome when page has no overrides', () => {
+    const site = { regions: { header: { widgets: [] } } }
+    const page = {}
+
+    const result = resolveChrome(site, page)
+    expect(result.regions.header).toEqual(site.regions.header)
+  })
+
+  it('hides region when page says hidden', () => {
+    const site = { regions: { header: { widgets: [] } } }
+    const page = { regions: { header: 'hidden' } }
+
+    const result = resolveChrome(site, page)
+    expect(result.regions.header).toBeUndefined()
+  })
+
+  it('uses page override when provided', () => {
+    const site = { regions: { header: { widgets: [{ type: 'Logo' }] } } }
+    const page = { regions: { header: { widgets: [{ type: 'Nav' }] } } }
+
+    const result = resolveChrome(site, page)
+    expect(result.regions.header?.widgets[0].type).toBe('Nav')
+  })
+})
+```
+
+### Validation Checklist
+
+- [ ] Header renders at top of viewport
+- [ ] Footer renders at bottom of viewport
+- [ ] Overlays render above all content (z-index)
+- [ ] Portals attach to document.body
+- [ ] CSS fallbacks work without driver
+
+### Definition of Done
+
+A chrome component is complete when:
+
+- [ ] Renders in correct position
+- [ ] No console errors
+- [ ] Resolution logic tested (if applicable)
+- [ ] Validator passes: `npm run validate -- chrome/`
+
+---
+
+## Accessibility
+
+### Landmark Regions
+
+Use semantic elements with ARIA roles:
+
+| Region | Element | Role | Additional |
+|--------|---------|------|------------|
+| Header | `<header>` | `banner` | Contains `<nav aria-label="Main navigation">` |
+| Footer | `<footer>` | `contentinfo` | - |
+| Sidebar | `<aside>` | `complementary` | `aria-label="Sidebar"` |
+
+### Skip Links
+
+```typescript
+// Chrome.tsx - Provide keyboard skip navigation
+<a href="#main-content" className="skip-link">Skip to main content</a>
+<Header schema={resolved.regions.header} />
+<main id="main-content" tabIndex={-1}>{/* Page content */}</main>
+```
+
+```css
+.skip-link { position: absolute; top: -40px; z-index: 10000; }
+.skip-link:focus { top: 0; }
+```
+
+### Modal Focus Trapping
+
+Modals must:
+1. Store previous focus on open
+2. Focus the modal container
+3. Trap Tab cycling within focusable elements
+4. Close on Escape
+5. Restore previous focus on close
+6. Use `role="dialog"`, `aria-modal="true"`, `aria-labelledby`
+
+### Overlay Accessibility
+
+| Overlay | ARIA | Why |
+|---------|------|-----|
+| Cursor | `aria-hidden="true"` `role="presentation"` | Decorative, hide from AT |
+| Loader | `role="status"` `aria-live="polite"` `aria-busy` | Announce state changes |
+
+### Validation Rules (Accessibility)
+
+| # | Rule | Function | Files |
+|---|------|----------|-------|
+| 7 | Header has role="banner" | `checkHeaderLandmark` | `Header.tsx` |
+| 8 | Footer has role="contentinfo" | `checkFooterLandmark` | `Footer.tsx` |
+| 9 | Skip link present | `checkSkipLink` | `Chrome.tsx` |
+| 10 | Modals have aria-modal | `checkModalAccessibility` | `ModalContainer.tsx` |
+| 11 | Decorative overlays aria-hidden | `checkOverlayHidden` | `Cursor.tsx` |
+
+---
+
 ## Integration
 
 | Interacts With | Direction | How |

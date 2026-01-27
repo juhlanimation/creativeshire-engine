@@ -12,6 +12,35 @@ Quality gate before merging to main.
 | `/validate all` | Validate all ready items |
 | `/validate` | Health check (if no active sprint) |
 
+## Pre-Validation
+
+**Verify on sprint branch (for item validation):**
+```bash
+BRANCH=$(git branch --show-current)
+```
+
+If validating specific item and not on `sprint/*`:
+```markdown
+Not on a sprint branch. Currently on `$BRANCH`.
+
+Run `/build DOMAIN-XXX` first to implement on a sprint branch.
+```
+Stop here.
+
+**Verify item was built:**
+```bash
+# Check git log for feat(DOMAIN-XXX) commit
+git log --oneline | grep "feat(DOMAIN-XXX)"
+```
+
+If no commits found:
+```markdown
+No build commits found for `DOMAIN-XXX`.
+
+Run `/build DOMAIN-XXX` first.
+```
+Stop here.
+
 ## Validation Pipeline
 
 ### 1. TypeScript Check
@@ -118,7 +147,7 @@ git branch -d $BRANCH
 
 ## Archive Format
 
-Create `completed/DOMAIN-XXX.md`:
+Create `.claude/tasks/completed/DOMAIN-XXX.md`:
 
 ```markdown
 # DOMAIN-XXX: [Title]
@@ -146,7 +175,7 @@ Brief description of what was done.
 - **What could improve:** [description]
 ```
 
-Update `completed/index.md` with new entry.
+Update `.claude/tasks/completed/index.md` with new entry.
 
 ## Retake Handling
 

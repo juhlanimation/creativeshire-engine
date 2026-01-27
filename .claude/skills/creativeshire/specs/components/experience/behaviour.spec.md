@@ -128,6 +128,8 @@ export type BehaviourConfig = string | { id: string; options?: Record<string, an
 
 > Behaviours WRITE these. Widgets READ them via CSS.
 
+### Section/Widget Behaviours
+
 | Variable | Behaviour | Fallback |
 |----------|-----------|----------|
 | `--section-y` | scroll-stack | `0` |
@@ -136,6 +138,17 @@ export type BehaviourConfig = string | { id: string; options?: Record<string, an
 | `--depth-y` | depth-layer | `0` |
 | `--clip-progress` | mask-reveal | `100` |
 | `--fade-opacity` | fade-on-scroll | `1` |
+
+### Page Transition Behaviours
+
+| Behaviour | Effect | Variables |
+|-----------|--------|-----------|
+| `page-fade` | Fade in/out | `--page-opacity` |
+| `page-slide-left` | Slide from/to left | `--page-x`, `--page-opacity` |
+| `page-slide-right` | Slide from/to right | `--page-x`, `--page-opacity` |
+| `page-slide-up` | Slide from/to top | `--page-y`, `--page-opacity` |
+| `page-crossfade` | Crossfade with previous | `--page-opacity`, `--page-scale` |
+| `none` | Instant swap | (none) |
 
 ```css
 /* Widget reads variables set by behaviour */
@@ -291,6 +304,219 @@ const userById = new Map(users.map(u => [u.id, u]))
 const getUser = (id) => userById.get(id)
 ```
 
+## Testing
+
+> **Required.** Behaviours have pure `compute()` functions — test them.
+
+### What to Test
+
+| Test | Required | Why |
+|------|----------|-----|
+| `compute()` returns CSS variables | ✓ | Core contract |
+| All keys are `--prefixed` | ✓ | Type safety |
+| Values are strings or numbers | ✓ | CSS compatibility |
+| Pure function (same input = same output) | ✓ | No side effects |
+| Edge cases (0, 1, negative progress) | ✓ | Boundary conditions |
+
+### Test Location
+
+```
+creativeshire/experience/behaviours/{behaviour-name}/
+├── index.ts
+└── index.test.ts    # Co-located test file
+```
+
+### Test Template
+
+```typescript
+// {behaviour-name}/index.test.ts
+import { describe, it, expect } from 'vitest'
+import behaviour from './index'
+
+describe(behaviour.id, () => {
+  describe('compute()', () => {
+    it('returns CSS variables with -- prefix', () => {
+      const result = behaviour.compute(
+        { scrollProgress: 0.5, sectionProgress: 0.5 },
+        {}
+      )
+      Object.keys(result).forEach(key => {
+        expect(key).toMatch(/^--/)
+      })
+    })
+
+    it('returns strings or numbers only', () => {
+      const result = behaviour.compute(
+        { scrollProgress: 0.5, sectionProgress: 0.5 },
+        {}
+      )
+      Object.values(result).forEach(value => {
+        expect(['string', 'number']).toContain(typeof value)
+      })
+    })
+
+    it('is pure (same input = same output)', () => {
+      const state = { scrollProgress: 0.5, sectionProgress: 0.5 }
+      const options = { intensity: 1 }
+      expect(behaviour.compute(state, options))
+        .toEqual(behaviour.compute(state, options))
+    })
+
+    it('handles edge cases', () => {
+      // Progress at 0
+      expect(() => behaviour.compute({ scrollProgress: 0 }, {})).not.toThrow()
+      // Progress at 1
+      expect(() => behaviour.compute({ scrollProgress: 1 }, {})).not.toThrow()
+      // Empty options
+      expect(() => behaviour.compute({ scrollProgress: 0.5 }, {})).not.toThrow()
+    })
+  })
+
+  describe('cssTemplate', () => {
+    it('has fallbacks for all variables', () => {
+      const vars = behaviour.cssTemplate.match(/var\(--[^)]+\)/g) || []
+      vars.forEach(v => {
+        expect(v).toMatch(/var\(--[\w-]+,\s*.+\)/)
+      })
+    })
+
+    it('includes will-change', () => {
+      expect(behaviour.cssTemplate).toContain('will-change')
+    })
+  })
+
+  describe('metadata', () => {
+    it('has required fields', () => {
+      expect(behaviour.id).toMatch(/^[a-z][a-z0-9-]*$/)
+      expect(Array.isArray(behaviour.requires)).toBe(true)
+      expect(typeof behaviour.compute).toBe('function')
+      expect(typeof behaviour.cssTemplate).toBe('string')
+    })
+  })
+})
+```
+
+### Definition of Done
+
+A behaviour is complete when:
+
+- [ ] All tests pass: `npm test -- behaviours/{name}`
+- [ ] `compute()` tested with edge cases
+- [ ] `cssTemplate` fallbacks verified
+- [ ] No TypeScript errors
+
+### Running Tests
+
+```bash
+# Single behaviour
+npm test -- behaviours/depth-layer
+
+# All behaviours
+npm test -- behaviours/
+```
+
+---
+
+## Accessibility
+
+### Respecting prefers-reduced-motion
+
+Behaviours must respect the user's motion preference. When `prefersReducedMotion` is true, return static (non-animated) values.
+
+```typescript
+// behaviours/fade-in/index.ts
+import { Behaviour } from '../types'
+
+const fadeIn: Behaviour = {
+  id: 'fade-in',
+  name: 'Fade In',
+  requires: ['sectionVisibility', 'prefersReducedMotion'],
+
+  compute: (state, options) => {
+    // Respect reduced motion preference
+    if (state.prefersReducedMotion) {
+      return {
+        '--opacity': 1,
+        '--y': 0
+      }
+    }
+
+    const visibility = state.sectionVisibility ?? 0
+    const distance = options?.distance ?? 20
+    const progress = Math.min(1, visibility * 1.5)
+
+    return {
+      '--opacity': progress,
+      '--y': (1 - progress) * distance
+    }
+  },
+
+  cssTemplate: `
+    opacity: var(--opacity, 1);
+    transform: translateY(calc(var(--y, 0) * 1px));
+    will-change: opacity, transform;
+  `
+}
+
+export default fadeIn
+```
+
+### Pattern: Reduced Motion Fallback
+
+All behaviours should follow this pattern:
+
+```typescript
+compute: (state, options) => {
+  // 1. Check reduced motion FIRST
+  if (state.prefersReducedMotion) {
+    return {
+      '--opacity': 1,  // Fully visible
+      '--y': 0,        // No offset
+      '--scale': 1     // Full size
+    }
+  }
+
+  // 2. Normal animation logic
+  return computeAnimatedValues(state, options)
+}
+```
+
+### Test for Reduced Motion
+
+```typescript
+// behaviours/fade-in/index.test.ts
+describe('fadeIn behaviour', () => {
+  describe('accessibility', () => {
+    it('returns static values when prefersReducedMotion is true', () => {
+      const result = fadeIn.compute(
+        { sectionVisibility: 0, prefersReducedMotion: true },
+        {}
+      )
+      expect(result['--opacity']).toBe(1)
+      expect(result['--y']).toBe(0)
+    })
+
+    it('returns animated values when prefersReducedMotion is false', () => {
+      const result = fadeIn.compute(
+        { sectionVisibility: 0, prefersReducedMotion: false },
+        {}
+      )
+      expect(result['--opacity']).toBe(0)
+      expect(result['--y']).toBe(20)
+    })
+  })
+})
+```
+
+### Validation Rules (Accessibility)
+
+| # | Rule | Function |
+|---|------|----------|
+| 16 | Behaviour requires 'prefersReducedMotion' | `checkReducedMotionRequired` |
+| 17 | Compute checks prefersReducedMotion | `checkReducedMotionHandled` |
+
+---
+
 ## Integration
 
 | Interacts With | Direction | How |
@@ -306,3 +532,110 @@ const getUser = (id) => userById.get(id)
 Validated by: `./behaviour.validator.ts`
 
 Rules in "Must/Must Not" map 1:1 to validator checks.
+
+---
+
+## Example: Simplest Site
+
+> Minimal example traced through all domain layers. See other specs for the full flow.
+
+The simplest site uses the `fade-in` behaviour for sections:
+
+### fade-in Behaviour
+
+Fades and slides content as it enters the viewport.
+
+```typescript
+// behaviours/fade-in/index.ts
+import { Behaviour } from '../types'
+
+const fadeIn: Behaviour = {
+  id: 'fade-in',
+  name: 'Fade In',
+  description: 'Fades and slides content into view',
+  requires: ['sectionVisibility'],
+
+  compute: (state, options) => {
+    const visibility = state.sectionVisibility ?? 0
+    const distance = options?.distance ?? 20
+    const progress = Math.min(1, visibility * 1.5)  // Slightly accelerated
+
+    return {
+      '--opacity': progress,
+      '--y': (1 - progress) * distance
+    }
+  },
+
+  cssTemplate: `
+    opacity: var(--opacity, 0);
+    transform: translateY(calc(var(--y, 20) * 1px));
+    will-change: opacity, transform;
+  `,
+
+  options: {
+    distance: {
+      type: 'range',
+      label: 'Slide Distance',
+      default: 20,
+      min: 0,
+      max: 100,
+      step: 5
+    }
+  }
+}
+
+export default fadeIn
+```
+
+### Usage in Section Composites
+
+The Hero and About sections use this behaviour (see [Section Composite Spec](../content/section-composite.spec.md)):
+
+```typescript
+// sections/composites/Hero/index.ts
+return {
+  id: props.id ?? 'hero',
+  layout: { type: 'stack', align: 'center', gap: 24 },
+  behaviour: 'fade-in',  // ← Uses fade-in behaviour
+  widgets: [/* Text, Text, Button */]
+}
+```
+
+### Data Flow
+
+```
+BehaviourState                  CSS Variables              Visual Result
+────────────────────────────────────────────────────────────────────────
+{ sectionVisibility: 0.5 }  →  { '--opacity': 0.75,   →  50% opacity,
+                                  '--y': 5 }               5px offset
+
+{ sectionVisibility: 1.0 }  →  { '--opacity': 1,      →  Fully visible,
+                                  '--y': 0 }               no offset
+```
+
+### Test for fade-in
+
+```typescript
+// behaviours/fade-in/index.test.ts
+import { describe, it, expect } from 'vitest'
+import fadeIn from './index'
+
+describe('fadeIn behaviour', () => {
+  it('returns 0 opacity when not visible', () => {
+    const result = fadeIn.compute({ sectionVisibility: 0 }, {})
+    expect(result['--opacity']).toBe(0)
+    expect(result['--y']).toBe(20)  // Full offset
+  })
+
+  it('returns full opacity when fully visible', () => {
+    const result = fadeIn.compute({ sectionVisibility: 1 }, {})
+    expect(result['--opacity']).toBe(1)
+    expect(result['--y']).toBe(0)  // No offset
+  })
+
+  it('respects distance option', () => {
+    const result = fadeIn.compute({ sectionVisibility: 0 }, { distance: 50 })
+    expect(result['--y']).toBe(50)
+  })
+})
+```

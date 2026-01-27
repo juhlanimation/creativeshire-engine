@@ -194,6 +194,42 @@ const section: SectionSchema = {
 
 **Why:** IDs enable anchor navigation and section targeting.
 
+## Testing
+
+> **Browser-based validation.** Sections render layout structure — validate visually.
+
+### Testing Approach
+
+| Aspect | Method | Why |
+|--------|--------|-----|
+| Layout rendering | Browser | CSS layout issues not caught by unit tests |
+| Widget composition | Visual inspection | Verify correct widget nesting |
+| CSS variable fallbacks | Disable driver, check SSR | Ensure fallbacks work |
+| Anchor linking | Manual navigation | Verify `id` attribute works |
+
+### Validation Checklist
+
+When building a section, verify:
+
+- [ ] Renders in browser without errors
+- [ ] Layout applies correctly (flex/grid/stack)
+- [ ] Widgets render in correct order
+- [ ] CSS fallbacks work (section visible without driver)
+- [ ] Anchor link (`#section-id`) scrolls to section
+- [ ] No viewport units in styles
+
+### Definition of Done
+
+A section is complete when:
+
+- [ ] Renders correctly in browser
+- [ ] No console errors/warnings
+- [ ] Layout configuration applies
+- [ ] TypeScript compiles without errors
+- [ ] Validator passes: `npm run validate -- sections/`
+
+---
+
 ## Integration
 
 | Interacts With | Direction | How |

@@ -84,6 +84,7 @@ export interface TriggerConfig {
 }
 
 export interface ModeDefaults {
+  page?: string                   // Default page transition (enter/exit)
   section: string                 // Default behaviour for all sections
   [widgetType: string]: string    // Default behaviour per widget type
 }
@@ -101,100 +102,60 @@ export interface OptionConfig {
 
 ## Built-in Modes
 
-| Mode | Provides | Default Section | Use Case |
-|------|----------|-----------------|----------|
-| `static` | (none) | `none` | Clean, fast, no animations |
-| `parallax` | scrollProgress, scrollVelocity, sectionProgress | `scroll-stack` | Depth-based scroll effects |
-| `reveal` | sectionVisibility | `scroll-stack` | Animate on scroll into view |
-| `slideshow` | currentSlide, slideProgress | `slide-stack` | Full-screen slides |
-| `cinematic` | scrollProgress, chapter | `scroll-stack` | Complex storytelling |
+| Mode | Provides | Default Page | Default Section | Use Case |
+|------|----------|--------------|-----------------|----------|
+| `static` | (none) | `none` | `none` | Clean, fast, no animations |
+| `parallax` | scrollProgress, scrollVelocity, sectionProgress | `page-fade` | `scroll-stack` | Depth-based scroll effects |
+| `reveal` | sectionVisibility | `page-fade` | `scroll-stack` | Animate on scroll into view |
+| `slideshow` | currentSlide, slideProgress | `page-crossfade` | `slide-stack` | Full-screen slides |
+| `cinematic` | scrollProgress, chapter | `page-fade` | `scroll-stack` | Complex storytelling |
 
-### static Mode
-
-No animation state. Fastest render path.
+### Mode Examples
 
 ```typescript
-// modes/static/index.ts
+// static - No animation, fastest render
 export const staticMode: Mode = {
-  id: 'static',
-  name: 'Static',
-  description: 'No animations, fastest rendering',
-  provides: [],
-  createStore: () => createStore(() => ({})),
-  triggers: [],
-  defaults: {
-    section: 'none'
-  },
-  options: {}
+  id: 'static', provides: [], triggers: [],
+  defaults: { page: 'none', section: 'none' },
+  createStore: () => createStore(() => ({}))
 }
-```
 
-### parallax Mode
-
-Scroll-based animation with depth layers.
-
-```typescript
-// modes/parallax/index.ts
+// parallax - Depth-based scroll effects
 export const parallaxMode: Mode = {
   id: 'parallax',
-  name: 'Parallax',
-  description: 'Depth-based scroll effects',
   provides: ['scrollProgress', 'scrollVelocity', 'sectionProgress'],
-  createStore: (options) => createParallaxStore(options),
   triggers: [
     { type: 'scroll-progress', target: 'scrollProgress' },
     { type: 'scroll-velocity', target: 'scrollVelocity' },
     { type: 'section-progress', target: 'sectionProgress' }
   ],
-  defaults: {
-    section: 'scroll-stack',
-    Image: 'depth-layer'
-  },
-  options: {
-    damping: {
-      type: 'number',
-      default: 0.1,
-      label: 'Scroll Damping',
-      min: 0,
-      max: 1
-    }
-  }
+  defaults: { page: 'page-fade', section: 'scroll-stack', Image: 'depth-layer' },
+  options: { damping: { type: 'number', default: 0.1, min: 0, max: 1 } }
 }
-```
 
-### reveal Mode
-
-Animate elements when they enter viewport.
-
-```typescript
-// modes/reveal/index.ts
+// reveal - Animate on scroll into view
 export const revealMode: Mode = {
   id: 'reveal',
-  name: 'Reveal',
-  description: 'Animate on scroll into view',
   provides: ['sectionVisibility'],
-  createStore: (options) => createRevealStore(options),
-  triggers: [
-    { type: 'intersection', target: 'sectionVisibility', options: { threshold: 0.3 } }
-  ],
-  defaults: {
-    section: 'scroll-stack',
-    Text: 'fade-in',
-    Image: 'slide-in'
-  },
-  options: {
-    threshold: {
-      type: 'number',
-      default: 0.3,
-      label: 'Visibility Threshold',
-      min: 0,
-      max: 1
-    }
-  }
+  triggers: [{ type: 'intersection', target: 'sectionVisibility', options: { threshold: 0.3 } }],
+  defaults: { page: 'page-fade', section: 'scroll-stack', Text: 'fade-in', Image: 'slide-in' },
+  options: { threshold: { type: 'number', default: 0.3, min: 0, max: 1 } }
 }
 ```
 
 ## Mode Resolution
+
+### Page Transitions
+
+When navigating between pages:
+
+```
+1. Page has explicit transition → Use it
+2. Mode has page default → Use mode default
+3. No default → Instant swap (no transition)
+```
+
+### Sections and Widgets
 
 When rendering a section or widget:
 
@@ -357,6 +318,145 @@ export function getModeIds(): string[] {
 | `behaviour` | Consumes | Behaviours consume state from mode's store |
 | `trigger` | Initializes | Mode's `triggers` config initializes triggers |
 | `driver` | Reads | Driver reads store created by mode |
+
+## Testing
+
+> **Recommended.** Modes are configuration objects — test structure and store factory.
+
+### What to Test
+
+| Test | Required | Why |
+|------|----------|-----|
+| Mode exports correctly | ✓ | Registry expects named export |
+| Has required fields | ✓ | Interface compliance |
+| Store factory creates store | ✓ | Core functionality |
+| Triggers reference valid types | ✓ | Runtime safety |
+| Default behaviours exist | ✓ | Resolution works |
+
+### Test Location
+
+```
+creativeshire/experience/modes/{name}/
+├── index.ts
+├── store.ts
+└── index.test.ts    # Co-located test file
+```
+
+### Test Template
+
+```typescript
+// modes/{name}/index.test.ts
+describe('{name}Mode', () => {
+  it('has required fields', () => {
+    expect(mode.id).toBeDefined()
+    expect(mode.provides).toBeInstanceOf(Array)
+    expect(typeof mode.createStore).toBe('function')
+    expect(mode.defaults.section).toBeDefined()
+  })
+
+  it('provides matches store fields', () => {
+    const state = mode.createStore().getState()
+    mode.provides.forEach(field => expect(field in state).toBe(true))
+  })
+
+  it('store has getState/setState/subscribe', () => {
+    const store = mode.createStore()
+    expect(store.getState).toBeDefined()
+    expect(store.setState).toBeDefined()
+  })
+
+  it('triggers have type and target', () => {
+    mode.triggers.forEach(t => {
+      expect(t.type).toBeDefined()
+      expect(t.target).toBeDefined()
+    })
+  })
+})
+```
+
+### Definition of Done
+
+A mode is complete when:
+
+- [ ] All tests pass: `npm test -- modes/{name}`
+- [ ] Interface compliance verified
+- [ ] Store factory works
+- [ ] No TypeScript errors
+- [ ] No React/DOM imports in mode definition
+
+### Running Tests
+
+```bash
+# Single mode
+npm test -- modes/parallax
+
+# All modes
+npm test -- modes/
+```
+
+---
+
+## Example: Simplest Site
+
+> Minimal example traced through all domain layers. See other specs for the full flow.
+
+The simplest site uses the `reveal` mode for scroll-triggered animations.
+
+### Why reveal Mode
+
+For a simple landing page:
+- Sections fade in as they scroll into view
+- No complex parallax depth calculations
+- Single state field: `sectionVisibility`
+
+### Site Config Using reveal
+
+```typescript
+// site/config.ts
+import { starterPreset } from '@/creativeshire/presets/starter'
+
+export const siteConfig: SiteSchema = {
+  id: 'my-portfolio',
+  experience: {
+    ...starterPreset.experience,
+    mode: 'reveal'  // ← Selects reveal mode
+  },
+  chrome: { ...starterPreset.chrome },
+  pages: [{ id: 'home', slug: '/' }]
+}
+```
+
+### How State Flows
+
+```
+User scrolls
+    │
+    ▼
+Trigger (intersection) ─────► Store (sectionVisibility: 0.7)
+                                       │
+                                       ▼
+                              Behaviour (fade-in.compute)
+                                       │
+                                       ▼
+                              CSS Variables (--opacity: 1, --y: 0)
+                                       │
+                                       ▼
+                              Driver (setProperty)
+                                       │
+                                       ▼
+                              Widget (renders with opacity/transform)
+```
+
+### Connection to Other Specs
+
+| Spec | Role in Example |
+|------|-----------------|
+| [Site Spec](../site/site.spec.md) | Selects `mode: 'reveal'` |
+| [Behaviour Spec](./behaviour.spec.md) | `fade-in` consumes `sectionVisibility` |
+| [Section Composite Spec](../content/section-composite.spec.md) | Sections declare `behaviour: 'fade-in'` |
+| [Widget Spec](../content/widget.spec.md) | Widgets read CSS variables |
+
+---
 
 ## See Also
 
