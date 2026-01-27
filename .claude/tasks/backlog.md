@@ -436,3 +436,34 @@ See [template](../skills/creativeshire/templates/backlog-item.md) for item forma
   - [ ] Click feedback
   - [ ] Smooth transitions
   - [ ] Passes tsc --noEmit
+
+---
+
+### Preset
+
+#### [PRESET-001] Bojuhl Preset
+
+- **Type:** Feature
+- **Priority:** P0
+- **Estimate:** M
+- **Dependencies:** WIDGET-001, WIDGET-002, WIDGET-003, WIDGET-004, WIDGET-005, SECTION-001, SECTION-002, SECTION-003, SECTION-004, CHROME-001, CHROME-002, BEHAVIOUR-001, BEHAVIOUR-002, BEHAVIOUR-003, BEHAVIOUR-004, BEHAVIOUR-005, BEHAVIOUR-006, BEHAVIOUR-007, BEHAVIOUR-008
+- **Added:** 2026-01-27
+- **References:** [preset.spec.md](../skills/creativeshire/specs/components/preset/preset.spec.md)
+- **Description:** Preset that assembles all bojuhl components into a complete, swappable site configuration
+- **Context:** Analysis at `.claude/analyze/bojuhl/`, built components in `creativeshire/`
+- **Approach:**
+  1. Create preset folder `creativeshire/presets/bojuhl/`
+  2. Define `site.ts` with experience mode (stacking) and behaviour defaults
+  3. Create `pages/home.ts` using section composites (createHeroSection, createAboutSection, createFeaturedProjectsSection, createOtherProjectsSection)
+  4. Create `chrome/footer.ts` and `chrome/floating-contact.ts` configurations
+  5. Export `bojuhlPreset` from `index.ts`
+  6. Update `site/config.ts` to extend `bojuhlPreset`
+  7. Update `site/pages/home.ts` to use preset page with bojuhl content data
+- **Acceptance Criteria:**
+  - [ ] Preset exports `bojuhlPreset: SitePreset`
+  - [ ] All section composites used (Hero, About, FeaturedProjects, OtherProjects)
+  - [ ] Chrome configured (Footer region, FloatingContact overlay)
+  - [ ] `site/config.ts` extends preset with spread syntax
+  - [ ] Site renders visually matching bojuhl.com reference
+  - [ ] Easy to swap: changing preset in config switches entire site
+  - [ ] Passes tsc --noEmit

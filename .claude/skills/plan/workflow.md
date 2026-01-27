@@ -178,3 +178,64 @@ Split into multiple backlog items with dependencies:
 #### [SECTION-005] Gallery section
 - **Dependencies:** WIDGET-010, WIDGET-011
 ```
+
+## Site Reference Plans (CRITICAL)
+
+When planning from a site reference (`/plan {name}/{domain}`), **ALWAYS** include a final PRESET item that assembles the site.
+
+### Why
+
+Components alone don't make a site. The preset:
+1. Bundles mode, chrome, and page templates
+2. Wires section composites with real content
+3. Enables easy site swapping via `siteConfig` extension
+
+### Required Final Item
+
+After all component items (widgets, sections, behaviours, chrome), add:
+
+```markdown
+#### [PRESET-XXX] {SiteName} Preset
+
+- **Type:** Feature
+- **Priority:** P0
+- **Estimate:** M
+- **Dependencies:** All component items (WIDGET-*, SECTION-*, CHROME-*, BEHAVIOUR-*)
+- **Added:** YYYY-MM-DD
+- **References:** [preset.spec.md](specs/components/preset/preset.spec.md)
+- **Description:** Preset that assembles all components into a complete site
+- **Context:** Analysis at `.claude/analyze/{name}/`
+- **Approach:**
+  1. Create preset in `creativeshire/presets/{name}/`
+  2. Define `site.ts` with experience mode and behaviour defaults
+  3. Create page templates in `pages/` using section composites
+  4. Configure chrome regions and overlays
+  5. Export named preset constant
+  6. Update `site/config.ts` to extend preset
+  7. Update `site/pages/*.ts` to use preset page templates with real content
+- **Acceptance Criteria:**
+  - [ ] Preset exports `{name}Preset: SitePreset`
+  - [ ] All section composites used in page templates
+  - [ ] Chrome configured (footer, overlays)
+  - [ ] `site/config.ts` extends preset
+  - [ ] Site renders matching reference analysis
+  - [ ] Passes tsc --noEmit
+```
+
+### Example
+
+For `/plan portfolio/bojuhl.com`:
+
+```
+Components:
+WIDGET-001 HeroTitle          (no deps)
+WIDGET-002 ScrollIndicator    (no deps)
+CHROME-001 Footer             (no deps)
+SECTION-001 HeroSection       (depends: WIDGET-001, WIDGET-002)
+...
+
+Assembly (LAST):
+PRESET-001 Bojuhl Preset      (depends: ALL above)
+```
+
+The PRESET item ensures `/build` completes with a working site, not just components.

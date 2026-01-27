@@ -53,4 +53,4 @@ WIDGET   Compose from registry first, create only if missing
 
 ## Learned Rules
 
-<!-- Add patterns here when mistakes repeat -->
+1. **Site plans need PRESET assembly:** When `/plan {site}`, always add a final PRESET item that wires components into a working site. Components alone don't render - the preset bundles them into `site/config.ts` and `site/pages/*.ts`.

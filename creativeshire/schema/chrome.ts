@@ -25,10 +25,15 @@ export interface TriggerCondition {
 /**
  * Schema for a chrome region (header, footer, sidebar).
  * Regions occupy fixed screen positions.
+ * Supports either widget-based or component-based definition.
  */
 export interface RegionSchema {
-  /** Widgets contained in this region */
-  widgets: WidgetSchema[]
+  /** Widgets contained in this region (widget-based approach) */
+  widgets?: WidgetSchema[]
+  /** Component name to render (component-based approach) */
+  component?: string
+  /** Props to pass to component (component-based approach) */
+  props?: Record<string, SerializableValue>
   /** Behaviour configuration for animation */
   behaviour?: BehaviourConfig
   /** Additional behaviour options */
@@ -38,12 +43,19 @@ export interface RegionSchema {
 /**
  * Schema for a chrome overlay (cursor, loader, modal).
  * Overlays float above all content.
+ * Supports either widget-based or component-based definition.
  */
 export interface OverlaySchema {
   /** Trigger condition for showing/hiding */
   trigger?: TriggerCondition
-  /** Widget to render as overlay content */
-  widget: WidgetSchema
+  /** Widget to render as overlay content (widget-based approach) */
+  widget?: WidgetSchema
+  /** Component name to render (component-based approach) */
+  component?: string
+  /** Props to pass to component (component-based approach) */
+  props?: Record<string, SerializableValue>
+  /** Position for floating overlays */
+  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
   /** Behaviour configuration for animation */
   behaviour?: BehaviourConfig
 }
@@ -59,12 +71,8 @@ export interface ChromeSchema {
     footer?: RegionSchema
     sidebar?: RegionSchema
   }
-  /** Overlay definitions */
-  overlays?: {
-    cursor?: OverlaySchema
-    loader?: OverlaySchema
-    modal?: OverlaySchema
-  }
+  /** Overlay definitions - supports both standard and custom overlays */
+  overlays?: Record<string, OverlaySchema>
 }
 
 /**

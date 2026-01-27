@@ -17,7 +17,8 @@ See [workflow.md](workflow.md) for detailed steps.
 2. Understand the request
 3. Explore codebase for context
 4. Create backlog item(s) using template from creativeshire skill
-5. Commit to main
+5. **For site references:** Add final PRESET item that assembles the site
+6. Commit to main
 
 ## Output
 

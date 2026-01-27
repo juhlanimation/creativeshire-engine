@@ -8,6 +8,7 @@ import Text from './content/Text'
 import HeroTitle from './content/HeroTitle'
 import ScrollIndicator from './content/ScrollIndicator'
 import LogoMarquee from './content/LogoMarquee'
+import Video from './content/Video'
 import VideoThumbnail from './content/VideoThumbnail'
 import ProjectCard from './content/ProjectCard'
 
@@ -22,6 +23,7 @@ export const widgetRegistry: Record<string, WidgetComponent> = {
   HeroTitle,
   ScrollIndicator,
   LogoMarquee,
+  Video,
   VideoThumbnail,
   ProjectCard,
 }
