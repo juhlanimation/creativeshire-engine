@@ -141,13 +141,13 @@ git commit -m "analyze: {name}"
 ## Asset Guidelines
 
 ### Screenshots
-- Save as PNG for quality
-- Name descriptively: `hero.png`, `modal-video-open.png`, `hover-card.png`
-- Reference in markdown: `**Screenshot:** ../assets/hero.png`
+- **Maximum 1 per component** - Keep focused, not bloated
+- Save as PNG
+- Name matches component: `widget/hero-title.md` → `assets/hero-title.png`
+- Reference in markdown: `**Screenshot:** ../assets/hero-title.png`
 
 ### GIFs
-- Main exploration GIF: `{name}-exploration.gif`
-- Specific transition GIFs: `{transition-name}.gif`
+- **1 exploration GIF** for the entire site: `{name}-exploration.gif`
 - Reference with timestamp: `GIF @ ~5s` for specific moments
 
 ## Interaction Checklist
