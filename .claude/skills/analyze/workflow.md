@@ -254,15 +254,88 @@ mcp__claude-in-chrome__find (query: "search bar", tabId)        # Find elements 
 mcp__claude-in-chrome__javascript_tool (action: "javascript_exec", text: "...", tabId)  # Execute JS
 ```
 
-## Parallelization Strategy
+## Parallel Agent Strategy
 
-For large sites, spawn multiple agents to reduce context usage:
+Spawn **two focused agents** in parallel, each with their own Chrome tab:
 
-| Agent | Responsibility |
-|-------|---------------|
-| `scroll-agent` | Full page scroll, capture scroll-triggered animations |
-| `interaction-agent` | Click CTAs, open/close modals |
-| `hover-agent` | Test all hover states (cards, links, buttons) |
-| `responsive-agent` | Test mobile/tablet/desktop breakpoints |
+### Content Agent
+**Focus:** Static structure (widgets, sections, chrome)
+**Tools:** Screenshots only, no GIF
+**Output:** `content/` folder
 
-Each agent exports findings to a shared analysis folder.
+```
+You are analyzing {url} for CONTENT STRUCTURE only.
+
+## Your Scope
+- content/widget/ - Individual UI components
+- content/section/ - Page sections
+- content/chrome/ - Persistent UI (nav, footer, floating elements)
+- content/widget-composite/ - Composed widgets
+- content/section-composite/ - Composed sections
+
+## DO NOT analyze
+- Animations, transitions, hover effects (that's the Experience Agent's job)
+- Click behaviors, scroll triggers
+
+## Instructions
+1. Create your own Chrome tab: tabs_context_mcp (createIfEmpty: true) → tabs_create_mcp
+2. Navigate to {url}
+3. Scroll through page taking screenshots of each unique section
+4. Use read_page to inspect DOM structure
+5. Create markdown files in content/ folders
+6. Use screenshots (max 1 per component)
+
+## Output
+Write files to: .claude/analyze/{name}/content/
+```
+
+### Experience Agent
+**Focus:** Dynamic behaviors (animations, transitions, interactions)
+**Tools:** GIF recording, hover testing, click testing
+**Output:** `experience/` folder
+
+```
+You are analyzing {url} for EXPERIENCE/BEHAVIOR only.
+
+## Your Scope
+- experience/behaviour/ - Animations, transitions
+- experience/trigger/ - What initiates behaviors (click, scroll, hover)
+- experience/driver/ - Animation drivers (scroll position, time, user input)
+- experience/mode/ - Site-wide modes (dark mode, reduced motion)
+- experience/chrome-behaviour/ - Chrome-specific behaviors
+
+## DO NOT analyze
+- Static content structure (that's the Content Agent's job)
+- Visual styling, typography, colors
+
+## Instructions
+1. Create your own Chrome tab: tabs_context_mcp (createIfEmpty: true) → tabs_create_mcp
+2. Start GIF recording BEFORE navigating
+3. Navigate to {url}
+4. Test systematically:
+   - Scroll slowly (capture scroll-triggered animations)
+   - Hover on ALL interactive elements (move mouse away to trigger hover-off)
+   - Click modals/overlays (open AND close)
+   - Test responsive breakpoints (375, 768, 1440)
+5. Export GIF to assets/
+6. Create markdown files in experience/ folders
+7. Reference GIF timestamps for each behavior
+
+## Output
+Write files to: .claude/analyze/{name}/experience/
+Export GIF to: .claude/analyze/{name}/assets/{name}-experience.gif
+```
+
+### Spawning Both Agents
+
+```javascript
+// In parent agent, spawn BOTH in parallel:
+Task(subagent_type: "general-purpose", prompt: CONTENT_AGENT_PROMPT)
+Task(subagent_type: "general-purpose", prompt: EXPERIENCE_AGENT_PROMPT)
+```
+
+### Why Two Agents?
+1. **Reduced context** - Each agent focuses on half the work
+2. **Parallel execution** - Both run simultaneously
+3. **Clear boundaries** - No overlap in responsibilities
+4. **Separate Chrome tabs** - Each agent has independent browser state
