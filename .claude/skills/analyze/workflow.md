@@ -114,6 +114,7 @@ Only create folders that have components.
 # {ComponentName}
 
 **Purpose:** What it does
+**Visible:** desktop, tablet (hidden on mobile)  ← CRITICAL: track visibility
 
 ## Layout
 
@@ -122,18 +123,23 @@ Only create folders that have components.
 - Columns: 2
 - Spacing: 64px gap
 - Typography: 48px heading
+- Child visibility: all visible
 
 ### Tablet (768px)
 **Screenshot:** `../../assets/{component}-tablet.png`
 - Columns: 1
 - Spacing: 32px gap
 - Typography: 36px heading
+- Child visibility: all visible
 
 ### Mobile (375px)
+**Visible:** NO (hidden at this breakpoint)
+- OR if visible:
 **Screenshot:** `../../assets/{component}-mobile.png`
 - Columns: 1
 - Spacing: 24px gap
 - Typography: 28px heading
+- Child visibility: subtitle hidden
 
 ## Props / Structure
 ...
@@ -141,6 +147,11 @@ Only create folders that have components.
 ## Visual Treatment
 ...
 ```
+
+**IMPORTANT:** Always check and document:
+- Is this component visible at each breakpoint?
+- Are any child elements hidden at certain breakpoints?
+- Does the component transform into something else? (e.g., nav → hamburger menu)
 
 #### Behaviour File Template
 
