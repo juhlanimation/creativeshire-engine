@@ -2,7 +2,7 @@
 
 > `/analyze <url>` | `/analyze <path>` | `/analyze "description"`
 
-Analyzes external references and creates backlog items.
+Analyzes external references and creates analysis files. Does NOT create backlog items.
 
 ## Pre-Flight
 
@@ -20,6 +20,32 @@ git pull origin main
 | Description | Quoted string | `"portfolio with parallax"` |
 
 ## Workflow
+
+### 0. Get Analysis Name
+
+**Always ask the user for the project/analysis name:**
+
+```markdown
+What name should I use for this analysis?
+(e.g., "portfolio", "agency-site", "landing-page")
+```
+
+This becomes `{name}` in `.claude/analyze/{name}/`.
+
+**Check for existing analysis:**
+```bash
+ls .claude/analyze/{name}/ 2>/dev/null
+```
+
+If exists, ask:
+```markdown
+Analysis already exists at `.claude/analyze/{name}/`.
+
+Options:
+1. Overwrite existing analysis
+2. Use different name
+3. Cancel
+```
 
 ### 1. Capture Reference
 
@@ -72,42 +98,30 @@ For each identified component:
 3. Note dependencies between components
 4. Read relevant spec to understand patterns
 
-### 4. Create Analysis Files (Optional)
+### 4. Create Analysis Files
 
-Create analysis files in `.claude/analysis/`:
+Create analysis files in `.claude/analyze/{name}/`:
 
 ```
-.claude/analysis/
+.claude/analyze/{name}/
+├── SUMMARY.md       # Overall summary with source URL and build order
 ├── sections.md      # Section patterns identified
 ├── widgets.md       # Widget components identified
 ├── chrome.md        # Persistent UI elements
 ├── experience.md    # Animations/interactions
-├── styles.md        # Design tokens
-└── SUMMARY.md       # Overall summary with build order
+└── styles.md        # Design tokens
 ```
 
-### 5. Backlog Creation
-
-Read template: `../creativeshire/templates/backlog-item.md`
-
-Create items grouped by layer and ordered by dependencies:
-
-```markdown
-## Content Components (build first)
-- [WIDGET-001] Video player component
-- [WIDGET-002] Project card with hover
-- [SECTION-001] Hero section (depends on WIDGET-001)
-
-## Experience Components (build after content)
-- [BEHAVIOUR-001] Scroll-driven parallax
-- [BEHAVIOUR-002] Hover scale effect
+**Example:** Analyzing `https://stripe.com` as "stripe":
+```
+.claude/analyze/stripe/
 ```
 
-### 6. Commit
+### 5. Commit
 
 ```bash
-git add .claude/tasks/backlog.md .claude/analysis/
-git commit -m "plan: analyze [reference-name], add items to backlog
+git add .claude/analyze/{name}/
+git commit -m "analyze: {name}
 
 Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
@@ -115,28 +129,28 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ## Output Format
 
 ```markdown
-## Analyzed: [Reference Name]
+## Analyzed: {name}
 
 **Source:** URL or description
 
 ### Identified Components
 
-**Content (build first):**
-- [WIDGET-001] Hero text with gradient
-- [WIDGET-002] Project card with hover
-- [SECTION-001] Hero section
+**Content:**
+- Widgets: [list]
+- Sections: [list]
+- Chrome: [list]
 
-**Experience (build after content):**
-- [BEHAVIOUR-001] Scroll-driven parallax
-- [BEHAVIOUR-002] Hover scale effect
+**Experience:**
+- Behaviours: [list]
+- Triggers: [list]
 
-### Build Order
+### Suggested Build Order
 
-1. WIDGET-001, WIDGET-002 (no dependencies, parallel)
-2. SECTION-001 (needs WIDGET-001)
-3. BEHAVIOUR-001, BEHAVIOUR-002 (experience layer)
+1. Widgets (no dependencies)
+2. Sections (depend on widgets)
+3. Experience (after content)
 
-Next: `/build WIDGET-001` (start with no dependencies)
+Next: `/plan {name}` to create backlog items
 ```
 
 ## Analysis Checklist
@@ -146,5 +160,5 @@ Next: `/build WIDGET-001` (start with no dependencies)
 - [ ] Chrome elements noted (header, footer, overlays)
 - [ ] Animations/interactions catalogued
 - [ ] Dependencies mapped
-- [ ] Build order determined
-- [ ] Backlog items created with correct prefixes
+- [ ] Build order suggested
+- [ ] Analysis files created in `.claude/analyze/{name}/`
