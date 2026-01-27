@@ -1,46 +1,89 @@
 # Analysis: bojuhl
 
-**Source:** https://bojuhl.com
-**Framework:** Next.js (Turbopack) + Vercel
+**Source:** https://www.bojuhl.com
+**Pages Analyzed:** Single-page site (home with #hero, #about, #projects sections)
+**Date:** 2026-01-27
 
-## Components
+## Pages
 
-### content/widget/
-| Name | Description |
-|------|-------------|
-| hero-title | Stacked role typography with gradients |
-| client-logo | Brand logo for marquee |
-| project-card | Featured project with alternating layout |
-| gallery-thumbnail | Compact project preview |
-| video-player | Modal video with custom controls |
+| Page | GIFs |
+|------|------|
+| home | home-mobile.gif, home-tablet.gif*, home-desktop.gif* |
 
-### content/section/
-| Name | Description |
-|------|-------------|
-| hero | Full-viewport with scroll-driven backgrounds |
-| about | Split layout (bio + portrait) |
-| logo-marquee | Infinite horizontal logo scroll |
-| featured-projects | Alternating project cards |
-| project-gallery | Horizontal thumbnail carousel |
-| footer | Multi-column navigation + contact |
+*Note: Tablet and desktop GIFs exported to browser Downloads folder - move to assets/
 
-### content/chrome/
-| Name | Description |
-|------|-------------|
-| floating-contact | Fixed top-right CTA |
-| scroll-indicator | "(SCROLL)" hint in hero |
+## Components Found
 
-### experience/behaviour/
-| Name | Description |
-|------|-------------|
-| scroll-background | Hero background transition on scroll |
-| marquee | Infinite horizontal scroll animation |
-| video-modal | Click-triggered video overlay |
+### Site Chrome (site/chrome/)
+| Component | Purpose |
+|-----------|---------|
+| footer.md | Global footer with navigation, contact, and studio info |
+| floating-contact.md | Floating "How can I help you?" CTA (fixed on tablet/desktop) |
 
-## Build Order
+### Content (content/)
 
-1. widget/ → 2. section/ → 3. chrome/ → 4. behaviour/
+| Type | Components |
+|------|------------|
+| section/ | hero, about, featured-projects, other-projects |
+| widget/ | hero-title, project-card, scroll-indicator, video-thumbnail, logo-marquee |
 
-## Next
+### Experience (experience/)
 
-`/plan bojuhl` to create backlog items.
+| Type | Components |
+|------|------------|
+| behaviour/ | scroll-background-slideshow, hero-text-color-transition, project-card-hover, scroll-indicator, video-modal, logo-marquee, floating-contact-cta, gallery-thumbnail-expand |
+
+## Responsive Summary
+
+| Component | Mobile | Tablet | Desktop |
+|-----------|--------|--------|---------|
+| hero | visible | visible | visible |
+| about | visible | visible | visible |
+| featured-projects | visible | visible | visible |
+| other-projects | **hidden** | visible | visible |
+| logo-marquee | **hidden** | visible | visible |
+| floating-contact | inline | fixed | fixed |
+| footer | 1-col | 3-col | 3-col |
+
+## Key Design Patterns
+
+### Typography
+- **Headings:** Inter (weight 900), uppercase
+- **Body:** Plus Jakarta Sans (weight 400-500)
+- **Mobile hero titles:** 32px → **Tablet:** 47px → **Desktop:** 60-72px (fluid)
+
+### Colors
+- **Background:** Black (#000) / White (#fff)
+- **Accent:** Purple (rgb(153,51,255))
+- **Text effect:** `mix-blend-mode: difference` for dynamic color
+
+### Layout Patterns
+- **Hero:** Full viewport video background with scroll-triggered slideshow
+- **About:** Single column (mobile) → Two column (tablet+)
+- **Featured Projects:** Stacked (mobile) → Alternating two-column (tablet+)
+- **Other Projects:** Hidden (mobile) → Horizontal gallery (tablet+)
+
+### Animation Patterns
+- **Scroll-triggered:** Background slideshow, color transitions
+- **Hover-triggered:** Project card expansion, gallery thumbnail expand
+- **Continuous:** Logo marquee animation
+- **Modal:** Video player fullscreen overlay
+
+## Build Order Recommendation
+
+1. **site/chrome/** - Global footer, floating contact
+2. **content/widget/** - hero-title, scroll-indicator, project-card, video-thumbnail, logo-marquee
+3. **content/section/** - hero, about, featured-projects, other-projects
+4. **experience/behaviour/** - scroll-background-slideshow, hero-text-color-transition, video-modal, project-card-hover, logo-marquee, gallery-thumbnail-expand
+
+## Technical Notes
+
+- Uses Tailwind CSS with responsive prefixes (`md:`, `lg:`)
+- Video backgrounds with object-fit: cover
+- mix-blend-mode for text color effects
+- Intersection Observer likely for scroll-triggered animations
+- No framework-specific patterns detected (appears to be vanilla or lightweight)
+
+## Next Steps
+
+Run `/plan bojuhl` to create backlog items from this analysis.
