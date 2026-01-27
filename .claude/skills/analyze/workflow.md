@@ -16,7 +16,21 @@ git checkout main && git pull origin main
 
 Ask user for project name → `.claude/analyze/{name}/`
 
-### 2. Capture Reference (Always-Record Approach)
+### 2. Page Discovery (Crawl)
+
+Before analyzing, discover all pages on the site.
+
+```
+1. Get Chrome tab context
+2. Navigate to root URL
+3. Extract all internal navigation links
+4. Check for sitemap.xml if available
+5. Ask user to confirm/add pages
+```
+
+**Output:** List of pages to analyze (e.g., `/`, `/about`, `/work`, `/contact`)
+
+### 3. Capture Reference (Always-Record Approach)
 
 **IMPORTANT:** Start GIF recording BEFORE any interaction to capture all transitions.
 
@@ -79,32 +93,34 @@ Structure mirrors Creativeshire layers exactly:
 .claude/analyze/{name}/
 ├── SUMMARY.md
 ├── assets/
-│   ├── {name}-desktop.gif          # Desktop exploration GIF
-│   ├── {name}-tablet.gif           # Tablet exploration GIF
-│   ├── {name}-mobile.gif           # Mobile exploration GIF
-│   ├── {component}-desktop.png     # Component at desktop
-│   ├── {component}-tablet.png      # Component at tablet
-│   └── {component}-mobile.png      # Component at mobile
+│   ├── {page}-{breakpoint}.gif     # Page exploration GIF per breakpoint
+│   └── {component}-{breakpoint}.png # Component screenshot per breakpoint
 ├── content/
-│   ├── widget/
-│   ├── widget-composite/
-│   ├── section/
-│   ├── section-composite/
-│   ├── chrome/
-│   ├── feature/
-│   └── layout-widget/
+│   ├── widget/                     # Atomic content units
+│   ├── widget-composite/           # Widget factory patterns
+│   ├── section/                    # Page sections
+│   ├── section-composite/          # Section factory patterns
+│   ├── chrome/                     # PAGE-SPECIFIC chrome overrides
+│   ├── feature/                    # Static styling patterns
+│   └── layout-widget/              # Layout patterns (Stack, Grid, etc.)
 ├── experience/
-│   ├── behaviour/
-│   ├── chrome-behaviour/
-│   ├── driver/
-│   ├── mode/
-│   ├── provider/
-│   └── trigger/
-├── renderer/
-├── schema/
-├── preset/
+│   ├── behaviour/                  # Animation functions
+│   ├── chrome-behaviour/           # Chrome-specific animations
+│   ├── driver/                     # CSS variable applicators
+│   ├── mode/                       # Behaviour bundles (parallax, reveal)
+│   ├── provider/                   # React context patterns
+│   └── trigger/                    # Event handlers (scroll, click)
+├── schema/                         # Data structure patterns observed
+├── preset/                         # Overall site configuration pattern
 └── site/
+    ├── chrome/                     # GLOBAL chrome (nav, footer) - site defaults
+    ├── pages/                      # Page structure notes
+    └── data/                       # Data patterns observed
 ```
+
+**Chrome placement:**
+- `site/chrome/` → Global defaults (same across all pages)
+- `content/chrome/` → Page-specific overrides (if any)
 
 Only create folders that have components.
 
@@ -302,9 +318,56 @@ mcp__claude-in-chrome__javascript_tool (action: "javascript_exec", text: "...", 
 
 ## Mobile-First Agent Strategy
 
-Analyze **sequentially** by breakpoint: Mobile → Tablet → Desktop.
+Analyze **sequentially**: Pages one at a time, breakpoints mobile-first.
 
-Each breakpoint builds on the previous, noting differences.
+### Full Flow
+
+```
+Parent Agent (orchestrator)
+│
+├── 1. Page Discovery
+│   └── Crawl site, get list of pages
+│
+├── 2. Create folder structure
+│
+├── 3. Analyze Site-Level Chrome (FIRST)
+│   └── Global nav, footer → site/chrome/
+│
+├── 4. FOR EACH PAGE (one at a time):
+│   │
+│   ├── PHASE 1: Mobile (2 agents in parallel)
+│   │   ├── Mobile Content Agent   → creates/appends content/ files
+│   │   └── Mobile Experience Agent → creates/appends experience/, captures {page}-mobile.gif
+│   │   └── WAIT
+│   │
+│   ├── PHASE 2: Tablet (2 agents in parallel)
+│   │   ├── Tablet Content Agent   → appends to content/ files
+│   │   └── Tablet Experience Agent → appends to experience/, captures {page}-tablet.gif
+│   │   └── WAIT
+│   │
+│   └── PHASE 3: Desktop (2 agents in parallel)
+│       ├── Desktop Content Agent  → appends to content/ files
+│       └── Desktop Experience Agent → appends to experience/, captures {page}-desktop.gif
+│       └── WAIT
+│
+├── 5. Verify all files exist in correct folders
+│
+└── 6. Create SUMMARY.md
+```
+
+### Component Deduplication
+
+When analyzing subsequent pages:
+1. **Check existing** - Does this widget/section already exist from previous page?
+2. **If exists** - Note page-specific variations (if any), don't recreate
+3. **If new** - Create file, component only appears on this page
+
+### Error Recovery
+
+If an agent fails:
+1. Manager agent receives error notification
+2. If possible, spawn new agent to retry that specific task
+3. If not recoverable, continue and note in SUMMARY.md what's missing
 
 ### Breakpoints (Mobile-First Order)
 
@@ -313,30 +376,6 @@ Each breakpoint builds on the previous, noting differences.
 | 1 | `mobile` | 375px | 375×812 |
 | 2 | `tablet` | 768px | 768×1024 |
 | 3 | `desktop` | 1440px | 1440×900 |
-
-### Architecture
-
-```
-Parent Agent (orchestrator)
-├── Creates folder structure
-│
-├── PHASE 1: Mobile (2 agents in parallel)
-│   ├── Mobile Content Agent   → creates content/ files with mobile layout
-│   └── Mobile Experience Agent → creates experience/ files, captures {name}-mobile.gif
-│   └── WAIT for both to complete
-│
-├── PHASE 2: Tablet (2 agents in parallel)
-│   ├── Tablet Content Agent   → appends tablet layout to existing content/ files
-│   └── Tablet Experience Agent → appends to experience/, captures {name}-tablet.gif
-│   └── WAIT for both to complete
-│
-├── PHASE 3: Desktop (2 agents in parallel)
-│   ├── Desktop Content Agent  → appends desktop layout to existing content/ files
-│   └── Desktop Experience Agent → appends to experience/, captures {name}-desktop.gif
-│   └── WAIT for both to complete
-│
-└── Creates SUMMARY.md
-```
 
 ### Mobile Content Agent Prompt (PHASE 1 - Creates Files)
 
@@ -508,3 +547,38 @@ This is PHASE {phase} - you APPEND to existing files OR CREATE if behaviour didn
 2. **Avoids race conditions** - Sequential phases, no file conflicts
 3. **Clear diffs** - Each breakpoint notes "changes from mobile"
 4. **Catches visibility** - Mobile creates, others note what's added/hidden
+
+## When to Use Each Folder
+
+| Folder | Use When | Example |
+|--------|----------|---------|
+| `content/widget/` | Atomic UI component | Button, Card, Logo |
+| `content/widget-composite/` | Factory that creates widget trees | HeroComposite creates title + subtitle + CTA |
+| `content/section/` | Scrollable page region | HeroSection, AboutSection |
+| `content/section-composite/` | Factory that creates section presets | ProjectGridComposite |
+| `content/chrome/` | Page-specific chrome override | Different nav on landing page |
+| `content/feature/` | Static styling pattern | Gradient background, spacing system |
+| `content/layout-widget/` | Layout pattern | Grid, Stack, Carousel |
+| `experience/behaviour/` | Animation function | FadeIn, SlideUp, Parallax |
+| `experience/chrome-behaviour/` | Chrome animation | HeaderHide, FooterReveal |
+| `experience/driver/` | CSS variable applicator | ScrollDriver applies --scroll-y |
+| `experience/mode/` | Behaviour bundle | "Parallax mode", "Reveal mode" |
+| `experience/trigger/` | Event handler | ScrollTrigger, ClickTrigger |
+| `schema/` | Data structure pattern | ProjectSchema, TestimonialSchema |
+| `preset/` | Overall site config | "Portfolio preset", "Agency preset" |
+| `site/chrome/` | Global chrome defaults | Main nav, footer (same on all pages) |
+| `site/pages/` | Page structure notes | Page list, routing |
+| `site/data/` | Content data pattern | Projects array, social links |
+
+## Verification Checklist
+
+After all agents complete, verify:
+
+- [ ] All discovered pages have been analyzed
+- [ ] Each component file exists in correct folder
+- [ ] All breakpoints documented in each file
+- [ ] GIFs exist: `{page}-{breakpoint}.gif`
+- [ ] Screenshots named: `{component}-{breakpoint}.png`
+- [ ] Global chrome in `site/chrome/`
+- [ ] Page chrome overrides in `content/chrome/` (if any)
+- [ ] No duplicate components (shared components documented once)
