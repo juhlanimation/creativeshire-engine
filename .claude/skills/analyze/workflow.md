@@ -256,160 +256,190 @@ mcp__claude-in-chrome__javascript_tool (action: "javascript_exec", text: "...", 
 
 ## Parallel Agent Strategy
 
-Analyze **per-page** with **two agents per page** running in parallel.
+Analyze **per-page, per-breakpoint** with **6 agents per page**.
+
+### Breakpoints
+
+| Name | Width | Viewport |
+|------|-------|----------|
+| `desktop` | 1440px | 1440×900 |
+| `tablet` | 768px | 768×1024 |
+| `mobile` | 375px | 375×812 |
 
 ### Architecture
 
 ```
 Parent Agent (orchestrator)
 ├── Discovers all pages/routes
-└── For EACH page, spawns in parallel:
-    ├── Content Agent (own Chrome tab) → screenshots → content/
-    └── Experience Agent (own Chrome tab) → GIF → experience/
+└── For EACH page, spawns 6 agents in parallel:
+    ├── Desktop Content Agent  → desktop/content/
+    ├── Desktop Experience Agent → desktop/experience/
+    ├── Tablet Content Agent   → tablet/content/
+    ├── Tablet Experience Agent → tablet/experience/
+    ├── Mobile Content Agent   → mobile/content/
+    └── Mobile Experience Agent → mobile/experience/
 ```
 
-### Folder Structure (Multi-Page Sites)
+### Folder Structure
 
 ```
 .claude/analyze/{name}/
 ├── SUMMARY.md
 ├── pages/
-│   ├── home/
-│   │   ├── assets/
-│   │   │   ├── home-content.png
-│   │   │   └── home-experience.gif
-│   │   ├── content/
-│   │   │   ├── widget/
-│   │   │   └── section/
-│   │   └── experience/
-│   │       ├── behaviour/
-│   │       └── trigger/
-│   ├── about/
-│   │   └── ...
-│   └── projects/
-│       └── ...
-└── site/                    # Site-wide (shared across pages)
-    ├── chrome/              # Global nav, footer
+│   └── {page}/
+│       ├── desktop/
+│       │   ├── assets/
+│       │   │   └── {page}-desktop-experience.gif
+│       │   ├── content/
+│       │   │   ├── widget/
+│       │   │   └── section/
+│       │   └── experience/
+│       │       ├── behaviour/
+│       │       └── trigger/
+│       ├── tablet/
+│       │   ├── assets/
+│       │   ├── content/
+│       │   └── experience/
+│       └── mobile/
+│           ├── assets/
+│           ├── content/
+│           └── experience/
+└── site/                    # Shared across all pages/breakpoints
+    ├── chrome/              # Global nav, footer (note responsive variants)
     ├── mode/                # Dark mode, reduced motion
     └── preset/              # Shared component presets
-```
-
-### Folder Structure (Single-Page Sites)
-
-```
-.claude/analyze/{name}/
-├── SUMMARY.md
-├── assets/
-├── content/
-├── experience/
-└── site/
 ```
 
 ### Content Agent Prompt
 
 ```
-You are analyzing {url} for CONTENT STRUCTURE only.
+You are analyzing {url} for CONTENT STRUCTURE at {breakpoint} breakpoint.
 
-## Page: {page_name}
-## Output: .claude/analyze/{name}/pages/{page_name}/content/
+## Page: {page}
+## Breakpoint: {breakpoint} ({width}×{height})
+## Output: .claude/analyze/{name}/pages/{page}/{breakpoint}/content/
 
 ## Your Scope
-- widget/ - Individual UI components (buttons, cards, inputs)
-- section/ - Page sections (hero, features, testimonials)
+- widget/ - UI components visible at this breakpoint
+- section/ - Page sections and their layout at this breakpoint
 - chrome/ - Page-specific chrome (if different from global)
-- widget-composite/ - Composed widgets
-- section-composite/ - Composed sections
 
 ## DO NOT analyze
-- Animations, transitions, hover effects
-- Click behaviors, scroll triggers
-- These are the Experience Agent's job
+- Animations, transitions, hover effects (Experience Agent's job)
+- Other breakpoints (separate agents handle those)
 
 ## Instructions
 1. Get Chrome tab: tabs_context_mcp (createIfEmpty: true) → tabs_create_mcp
-2. Navigate to {url}
-3. Scroll page, screenshot each unique section
-4. Use read_page for DOM structure
-5. Create markdown files (max 1 screenshot per component)
+2. Resize window: resize_window (width: {width}, height: {height}, tabId)
+3. Navigate to {url}
+4. Scroll page, screenshot each unique section
+5. Note layout differences from other breakpoints
+6. Create markdown files (max 1 screenshot per component)
 
 ## File Template
 # {ComponentName}
+
 **Purpose:** What it does
-**Screenshot:** ../../assets/{page}-{component}.png
+**Breakpoint:** {breakpoint}
+**Screenshot:** ../../assets/{page}-{breakpoint}-{component}.png
+
+## Layout ({breakpoint})
+- Columns:
+- Spacing:
+- Visibility:
 
 ## Props
-...
-
-## Visual Treatment
 ...
 ```
 
 ### Experience Agent Prompt
 
 ```
-You are analyzing {url} for EXPERIENCE/BEHAVIOR only.
+You are analyzing {url} for EXPERIENCE/BEHAVIOR at {breakpoint} breakpoint.
 
-## Page: {page_name}
-## Output: .claude/analyze/{name}/pages/{page_name}/experience/
-## GIF: .claude/analyze/{name}/pages/{page_name}/assets/{page_name}-experience.gif
+## Page: {page}
+## Breakpoint: {breakpoint} ({width}×{height})
+## Output: .claude/analyze/{name}/pages/{page}/{breakpoint}/experience/
+## GIF: .claude/analyze/{name}/pages/{page}/{breakpoint}/assets/{page}-{breakpoint}-experience.gif
 
 ## Your Scope
-- behaviour/ - Animations, transitions
-- trigger/ - What initiates (click, scroll, hover)
-- driver/ - Animation drivers (scroll %, time, input)
-- chrome-behaviour/ - Nav/footer behaviors
+- behaviour/ - Animations at this breakpoint
+- trigger/ - What initiates (click, scroll, hover, touch)
+- driver/ - Animation drivers
+- chrome-behaviour/ - Nav behaviors (hamburger menu on mobile, etc.)
 
 ## DO NOT analyze
-- Static content, typography, colors
-- That's the Content Agent's job
+- Static content (Content Agent's job)
+- Other breakpoints (separate agents handle those)
 
 ## Instructions
 1. Get Chrome tab: tabs_context_mcp (createIfEmpty: true) → tabs_create_mcp
-2. START GIF RECORDING FIRST
-3. Navigate to {url}
-4. Test systematically:
-   - Scroll slowly (scroll-triggered animations)
-   - Hover ALL interactive elements
-   - MOVE MOUSE AWAY to trigger hover-off
-   - Click modals (open AND close)
-   - Test responsive: 375px, 768px, 1440px
-5. Export GIF
-6. Create markdown files with GIF timestamps
+2. Resize window: resize_window (width: {width}, height: {height}, tabId)
+3. START GIF RECORDING
+4. Navigate to {url}
+5. Test systematically:
+   - Scroll slowly
+   - Hover/tap ALL interactive elements
+   - MOVE MOUSE AWAY for hover-off
+   - Open/close modals, menus
+   - Mobile: test hamburger menu, swipe gestures
+6. Export GIF
+7. Note breakpoint-specific behaviors
 
 ## File Template
 # {BehaviourName}
+
 **Purpose:** What it does
-**Trigger:** click / scroll / hover / load
-**GIF:** ../../assets/{page}-experience.gif @ ~Xs
+**Breakpoint:** {breakpoint}
+**Trigger:** click / scroll / hover / tap
+**GIF:** ../../assets/{page}-{breakpoint}-experience.gif @ ~Xs
 
 ## Animation
-- Type: scale / fade / slide / clip-path
+- Type: scale / fade / slide
 - Duration: ~Xms
 - Easing: ease-out / spring
 
-## States
-- Initial:
-- Active:
-- Exit:
+## Breakpoint Notes
+- Desktop: ...
+- Tablet: ...
+- Mobile: ...
 ```
 
 ### Orchestrator Flow
 
 ```python
+BREAKPOINTS = [
+    ("desktop", 1440, 900),
+    ("tablet", 768, 1024),
+    ("mobile", 375, 812),
+]
+
 # 1. Discover pages
-pages = ["home", "about", "projects"]  # or detect from nav/sitemap
+pages = ["home", "about", "projects"]
 
-# 2. Spawn agents for each page (all in parallel)
+# 2. Spawn 6 agents per page (all in parallel)
 for page in pages:
-    Task(prompt=CONTENT_AGENT.format(page=page))
-    Task(prompt=EXPERIENCE_AGENT.format(page=page))
+    for breakpoint, width, height in BREAKPOINTS:
+        Task(prompt=CONTENT_AGENT.format(
+            page=page, breakpoint=breakpoint, width=width, height=height
+        ))
+        Task(prompt=EXPERIENCE_AGENT.format(
+            page=page, breakpoint=breakpoint, width=width, height=height
+        ))
 
-# 3. After all complete, create SUMMARY.md
+# 3. After all complete, create SUMMARY.md comparing breakpoints
 ```
 
-### Why Per-Page + Two Agents?
-1. **Context efficiency** - Even single pages exhaust context
-2. **Maximum parallelism** - All pages analyzed simultaneously
-3. **Clear boundaries** - Content vs Experience, per page
-4. **Independent Chrome tabs** - No state conflicts
-5. **Incremental results** - Each page completes independently
+### Agent Count
+
+| Pages | Breakpoints | Agents per Page | Total Agents |
+|-------|-------------|-----------------|--------------|
+| 1 | 3 | 6 | 6 |
+| 3 | 3 | 6 | 18 |
+| 5 | 3 | 6 | 30 |
+
+### Why Per-Breakpoint?
+1. **Responsive differences** - Layouts, nav patterns, touch vs hover
+2. **Context isolation** - Each breakpoint is independent
+3. **Mobile-specific behaviors** - Hamburger menus, swipe, tap
+4. **Parallel execution** - All breakpoints analyzed simultaneously
