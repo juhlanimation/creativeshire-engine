@@ -1,81 +1,86 @@
 ---
 name: creativeshire
-description: Build websites using the Creativeshire layered architecture. Separates Content (widgets, sections, chrome) from Experience (behaviours, drivers, triggers). Use when building components, adding animations, or configuring presets.
+description: Creativeshire engine architecture. Reference when building widgets, sections, behaviours, drivers, triggers, chrome, presets, or other engine components.
+user-invocable: false
 ---
 
-# Creativeshire Engine
+# Creativeshire Architecture
 
 Layered architecture separating **Content** (what renders) from **Experience** (how it animates).
 
-## When to Use
+## Specs Index
 
-- Building components (widgets, sections, chrome, features)
-- Adding animations/interactions (behaviours, drivers, triggers)
-- Configuring presets and modes
-- Understanding architecture boundaries
+Read the relevant spec before implementing any component.
 
-## Commands
+### Core Concepts
 
-| Command | When | Reference |
-|---------|------|-----------|
-| `/plan` | New feature, investigation | [workflows/plan.md](workflows/plan.md) |
-| `/build` | Implement from backlog | [workflows/build.md](workflows/build.md) |
-| `/validate` | Review and merge | [workflows/validate.md](workflows/validate.md) |
-| `/fix` | Quick fix, known cause | [workflows/fix.md](workflows/fix.md) |
-
-## Component Specs
-
-Read the relevant spec before building:
+| Topic | Spec |
+|-------|------|
+| Philosophy | [specs/core/philosophy.spec.md](specs/core/philosophy.spec.md) |
+| Contracts | [specs/core/contracts.spec.md](specs/core/contracts.spec.md) |
+| Glossary | [specs/core/glossary.spec.md](specs/core/glossary.spec.md) |
+| Extension | [specs/core/extension.spec.md](specs/core/extension.spec.md) |
 
 ### Content Layer
+
 | Component | Spec |
 |-----------|------|
-| Widget | [widget.spec.md](.claude/architecture/creativeshire/components/content/widget.spec.md) |
-| Section | [section.spec.md](.claude/architecture/creativeshire/components/content/section.spec.md) |
-| Chrome | [chrome.spec.md](.claude/architecture/creativeshire/components/content/chrome.spec.md) |
-| Feature | [feature.spec.md](.claude/architecture/creativeshire/components/content/feature.spec.md) |
+| Widget | [specs/components/content/widget.spec.md](specs/components/content/widget.spec.md) |
+| Widget Composite | [specs/components/content/widget-composite.spec.md](specs/components/content/widget-composite.spec.md) |
+| Section | [specs/components/content/section.spec.md](specs/components/content/section.spec.md) |
+| Section Composite | [specs/components/content/section-composite.spec.md](specs/components/content/section-composite.spec.md) |
+| Chrome | [specs/components/content/chrome.spec.md](specs/components/content/chrome.spec.md) |
+| Feature | [specs/components/content/feature.spec.md](specs/components/content/feature.spec.md) |
 
 ### Experience Layer
+
 | Component | Spec |
 |-----------|------|
-| Behaviour | [behaviour.spec.md](.claude/architecture/creativeshire/components/experience/behaviour.spec.md) |
-| Driver | [driver.spec.md](.claude/architecture/creativeshire/components/experience/driver.spec.md) |
-| Trigger | [trigger.spec.md](.claude/architecture/creativeshire/components/experience/trigger.spec.md) |
+| Behaviour | [specs/components/experience/behaviour.spec.md](specs/components/experience/behaviour.spec.md) |
+| Driver | [specs/components/experience/driver.spec.md](specs/components/experience/driver.spec.md) |
+| Trigger | [specs/components/experience/trigger.spec.md](specs/components/experience/trigger.spec.md) |
+| Mode | [specs/components/experience/mode.spec.md](specs/components/experience/mode.spec.md) |
+| Provider | [specs/components/experience/provider.spec.md](specs/components/experience/provider.spec.md) |
 
-### Other
+### Other Components
+
 | Component | Spec |
 |-----------|------|
-| Schema | [schema.spec.md](.claude/architecture/creativeshire/components/schema/schema.spec.md) |
-| Preset | [preset.spec.md](.claude/architecture/creativeshire/components/preset/preset.spec.md) |
+| Schema | [specs/components/schema/schema.spec.md](specs/components/schema/schema.spec.md) |
+| Preset | [specs/components/preset/preset.spec.md](specs/components/preset/preset.spec.md) |
+| Site | [specs/components/site/site.spec.md](specs/components/site/site.spec.md) |
+| Renderer | [specs/components/renderer/renderer.spec.md](specs/components/renderer/renderer.spec.md) |
 
-## Core Principles
+### Patterns
 
-| Topic | Reference |
-|-------|-----------|
-| Philosophy | [philosophy.spec.md](.claude/architecture/creativeshire/core/philosophy.spec.md) |
-| Patterns | [common.spec.md](.claude/architecture/creativeshire/patterns/common.spec.md) |
-| Anti-patterns | [anti-patterns.spec.md](.claude/architecture/creativeshire/patterns/anti-patterns.spec.md) |
+| Topic | Spec |
+|-------|------|
+| Common Patterns | [specs/patterns/common.spec.md](specs/patterns/common.spec.md) |
+| Anti-Patterns | [specs/patterns/anti-patterns.spec.md](specs/patterns/anti-patterns.spec.md) |
 
-## Build Process
+### Reference
 
-1. **Read spec** for the component type
-2. **Find existing** similar components for patterns
-3. **Implement** following spec boundaries
-4. **Validate** with `npx tsc --noEmit`
-5. **Check runtime** at localhost:3000
+| Topic | Spec |
+|-------|------|
+| Folders | [specs/reference/folders.spec.md](specs/reference/folders.spec.md) |
+| File Patterns | [specs/reference/file-patterns.spec.md](specs/reference/file-patterns.spec.md) |
+| Naming | [specs/reference/naming.spec.md](specs/reference/naming.spec.md) |
+| Styling | [specs/reference/styling.spec.md](specs/reference/styling.spec.md) |
+| Caching | [specs/reference/caching.spec.md](specs/reference/caching.spec.md) |
 
-## File Paths
+## Output Templates
 
-| Component | Path |
-|-----------|------|
-| Widgets | `creativeshire/components/content/widgets/` |
-| Sections | `creativeshire/components/content/sections/` |
-| Chrome | `creativeshire/components/content/chrome/` |
-| Behaviours | `creativeshire/components/experience/behaviours/` |
-| Drivers | `creativeshire/components/experience/drivers/` |
-| Schema | `creativeshire/schema/` |
+| Template | Use For |
+|----------|---------|
+| [templates/backlog-item.md](templates/backlog-item.md) | Creating backlog entries |
 
-## Related Skills
+## Quick Lookup
 
-- [react-best-practices](../react-best-practices/SKILL.md) - React optimization
-- [tailwind-v4-skill](../tailwind-v4-skill/SKILL.md) - Tailwind CSS v4
+| I need to... | Read |
+|--------------|------|
+| Understand core rules | [specs/core/philosophy.spec.md](specs/core/philosophy.spec.md) |
+| Build a widget | [specs/components/content/widget.spec.md](specs/components/content/widget.spec.md) |
+| Build animation | [specs/components/experience/behaviour.spec.md](specs/components/experience/behaviour.spec.md) |
+| Create a preset | [specs/components/preset/preset.spec.md](specs/components/preset/preset.spec.md) |
+| Know folder layout | [specs/reference/folders.spec.md](specs/reference/folders.spec.md) |
+| See what to avoid | [specs/patterns/anti-patterns.spec.md](specs/patterns/anti-patterns.spec.md) |

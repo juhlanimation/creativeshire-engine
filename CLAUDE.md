@@ -1,15 +1,15 @@
 # Creativeshire Engine
 
-**Agentic framework for building websites with Claude Code.**
+**Skill-based framework for building websites with Claude Code.**
 
 ## Commands
 
 | Command | Use When |
 |---------|----------|
-| `/plan [desc]` | New feature, investigation, unknown scope |
-| `/plan analyze <url>` | Analyze reference site, create backlog |
-| `/build [item]` | Implement from backlog (supports parallel builds) |
-| `/validate` | Review and merge sprint to main |
+| `/plan [desc]` | New feature, create backlog items |
+| `/analyze <url>` | Analyze reference site, create backlog |
+| `/build [item]` | Implement from backlog |
+| `/validate [item]` | Quality gate before merge |
 | `/fix [path] "what"` | Quick fix, known cause |
 
 ## Quick Start
@@ -18,65 +18,49 @@
 # Copy .claude/ folder to your project
 cp -r .claude/ /path/to/your/project/
 
-# Start planning
-/plan analyze https://example.com
+# Analyze a reference site
+/analyze https://example.com
+
+# Or plan a feature
+/plan horizontal image gallery
+
+# Build from backlog
+/build WIDGET-001
 ```
 
-## Architecture
-
-### Skill-Based (Anthropic Agent Skills Model)
-
-| Folder | Purpose |
-|--------|---------|
-| `.claude/skills/creativeshire/` | Main engine skill |
-| `.claude/skills/creativeshire/SKILL.md` | Entry point (progressive disclosure) |
-| `.claude/skills/creativeshire/agents/` | 5 generic agent definitions |
-| `.claude/skills/creativeshire/workflows/` | Workflow docs (plan, build, validate, fix) |
-| `.claude/skills/creativeshire/specs/` | Component and layer specs |
-| `.claude/skills/react-best-practices/` | React optimization patterns |
-| `.claude/skills/tailwind-v4/` | Tailwind CSS v4 patterns |
-
-### Agents (5 Generic Types)
-
-| Agent | Purpose |
-|-------|---------|
-| `builder` | Build any component (reads relevant spec) |
-| `reviewer` | Review for compliance (read-only) |
-| `coordinator` | Plan and delegate to other agents |
-| `analyst` | Analyze references, create backlog |
-| `validator` | Runtime checks (page loads, no errors) |
-
-## Parallel Builds
-
-The framework supports wave-based parallel builds:
+## Skills Structure
 
 ```
-/build WIDGET-001 to WIDGET-003, SECTION-001
-
-Dependencies parsed from backlog:
-  WIDGET-001: None
-  WIDGET-002: None
-  SECTION-001: WIDGET-001, WIDGET-002
-
-Waves:
-  Wave 1: [WIDGET-001, WIDGET-002] → parallel
-  Wave 2: [SECTION-001] → after wave 1
-```
-
-## Workflow
-
-```
-/plan → backlog.md → /build → sprint branch → /validate → merge to main
+.claude/skills/
+├── creativeshire/          # Architecture knowledge (user-invocable: false)
+│   ├── SKILL.md            # Specs index
+│   ├── specs/              # Component specifications
+│   │   ├── components/     # Widget, section, behaviour specs
+│   │   ├── patterns/       # Common patterns, anti-patterns
+│   │   └── core/           # Philosophy, contracts
+│   └── templates/          # Output format templates
+│
+├── plan/                   # /plan command
+├── analyze/                # /analyze command
+├── build/                  # /build command
+├── validate/               # /validate command
+└── fix/                    # /fix command
 ```
 
 ## Progressive Disclosure
 
 Claude loads context as needed:
 
-1. **SKILL.md** - Quick reference, component mapping
-2. **workflows/** - Detailed workflow steps
-3. **agents/** - Agent capabilities and constraints
-4. **specs/** - Full component specifications
+1. **Command SKILL.md** - Entry point, quick reference
+2. **workflow.md** - Detailed steps (if needed)
+3. **creativeshire specs** - Architecture rules (when building specific component)
+4. **templates** - Output formats (when producing output)
+
+## Workflow
+
+```
+/analyze or /plan → backlog.md → /build → sprint branch → /validate → main
+```
 
 ## Branches
 
@@ -89,7 +73,6 @@ Claude loads context as needed:
 
 ## For Projects Using This Engine
 
-Your project structure:
 ```
 your-project/
 ├── .claude/              # Copy from this repo
@@ -98,15 +81,6 @@ your-project/
 ├── app/                  # Next.js routing
 └── CLAUDE.md             # Project-specific instructions
 ```
-
-## Legacy Structure
-
-The old 41-agent model is preserved in:
-- `.claude/settings.old.json` - Old settings backup
-- `.claude/architecture/agentic-framework/` - Old agent contracts
-- `.claude/commands/` - Old command files
-
-To restore: `cp .claude/settings.old.json .claude/settings.json`
 
 ## Learned Rules
 
