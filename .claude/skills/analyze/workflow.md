@@ -30,62 +30,15 @@ Before analyzing, discover all pages on the site.
 
 **Output:** List of pages to analyze (e.g., `/`, `/about`, `/work`, `/contact`)
 
-### 3. Capture Reference (Always-Record Approach)
+### 3. Create Folder Structure
 
-**IMPORTANT:** Start GIF recording BEFORE any interaction to capture all transitions.
+Create the analysis folder structure before spawning agents.
 
-#### Step 1: Start Recording
-```
-mcp__claude-in-chrome__gif_creator → start_recording
-```
+### 4. Run Parallel Agents
 
-#### Step 2: Systematic Exploration
-While recording, perform these in order:
+See "Mobile-First Agent Strategy" section below for agent prompts and flow.
 
-1. **Full page scroll** - Scroll top to bottom slowly to capture scroll-triggered animations
-2. **Click every interactive element:**
-   - All buttons and CTAs
-   - All cards/thumbnails
-   - Navigation links
-   - Modal triggers
-3. **Open/close all modals** - Click to open, then close each one
-4. **Hover states** - Hover over cards, buttons, links (pause briefly on each)
-5. **Test any forms** - Focus inputs, see validation states
-
-#### Step 3: Stop & Export GIF
-```
-mcp__claude-in-chrome__gif_creator → stop_recording
-mcp__claude-in-chrome__gif_creator → export (download: true, filename: "{name}-exploration.gif")
-```
-
-Save the GIF to `.claude/analyze/{name}/assets/`
-
-#### Step 4: Capture Key Screenshots
-Take screenshots of important states and save to `assets/`:
-- Hero section
-- Each unique section
-- Modal open states
-- Hover states
-- Any unique UI patterns
-
-```
-mcp__claude-in-chrome__computer → screenshot
-```
-
-#### Step 5: Review GIF
-Watch the exported GIF to identify:
-- Transition types (scale, fade, slide, clip-path)
-- Animation durations
-- Easing curves
-- Micro-interactions missed during live viewing
-
-### 3. Static Analysis
-
-After GIF capture, also gather:
-- DOM structure (`read_page`)
-- CSS/JS inspection for animation definitions
-
-### 4. Create Analysis Files
+### 5. Create Analysis Files
 
 Structure mirrors Creativeshire layers exactly:
 
@@ -130,44 +83,84 @@ Only create folders that have components.
 # {ComponentName}
 
 **Purpose:** What it does
-**Visible:** desktop, tablet (hidden on mobile)  ← CRITICAL: track visibility
+**Type:** widget | section | chrome | layout-widget
+**Visible:** desktop, tablet (hidden on mobile)
 
 ## Layout
 
-### Desktop (1440px)
-**Screenshot:** `../../assets/{component}-desktop.png`
-- Columns: 2
-- Spacing: 64px gap
-- Typography: 48px heading
-- Child visibility: all visible
+### Mobile (375px)
+**Screenshot:** `../../assets/{component}-mobile.png`
+- Columns: 1
+- Gap: 16px
+- Padding: 24px
+- Max-width: 100%
+- Child visibility: subtitle hidden
 
 ### Tablet (768px)
 **Screenshot:** `../../assets/{component}-tablet.png`
 - Columns: 1
-- Spacing: 32px gap
-- Typography: 36px heading
+- Gap: 24px
+- Padding: 48px
 - Child visibility: all visible
+- Changes: increased spacing
 
-### Mobile (375px)
-**Visible:** NO (hidden at this breakpoint)
-- OR if visible:
-**Screenshot:** `../../assets/{component}-mobile.png`
-- Columns: 1
-- Spacing: 24px gap
-- Typography: 28px heading
-- Child visibility: subtitle hidden
-
-## Props / Structure
-...
+### Desktop (1440px)
+**Screenshot:** `../../assets/{component}-desktop.png`
+- Columns: 2
+- Gap: 32px
+- Padding: 64px
+- Max-width: 1200px
+- Child visibility: all visible
+- Changes: 2-column layout
 
 ## Visual Treatment
-...
+
+### Colors
+- Background: #0a0a0a (dark)
+- Text primary: #ffffff
+- Text secondary: #a1a1aa
+- Accent: #3b82f6
+
+### Typography
+- Heading: font-title, 48px/1.1, 700
+- Body: font-sans, 16px/1.6, 400
+
+### Effects
+- Border-radius: 12px
+- Shadow: 0 4px 24px rgba(0,0,0,0.1)
+- Border: 1px solid rgba(255,255,255,0.1)
+
+## Props / Data Schema
+
+```typescript
+interface {ComponentName}Props {
+  title: string
+  subtitle?: string
+  items: Array<{
+    id: string
+    label: string
+  }>
+}
+```
+
+## Interaction States
+- Default: opacity 1
+- Hover: scale 1.02, shadow increase
+- Active: scale 0.98
+- Focus: ring 2px accent color
+
+## Accessibility
+- Role: region | article | navigation
+- ARIA: aria-label="{purpose}"
+- Keyboard: Tab navigable, Enter activates
 ```
 
 **IMPORTANT:** Always check and document:
 - Is this component visible at each breakpoint?
 - Are any child elements hidden at certain breakpoints?
 - Does the component transform into something else? (e.g., nav → hamburger menu)
+- What are the exact color values?
+- What are the actual spacing/sizing values?
 
 #### Behaviour File Template
 
@@ -175,29 +168,58 @@ Only create folders that have components.
 # {BehaviourName}
 
 **Purpose:** What it does
-**Trigger:** What initiates it (click, scroll, hover, etc.)
-**GIF Reference:** `../../assets/{name}-desktop.gif` @ ~Xs
+**Type:** behaviour | chrome-behaviour | trigger | driver | mode
+**Applies to:** Which components use this behaviour
+
+## Trigger
+- Event: scroll | click | hover | tap | load | intersection
+- Target: element selector or description
+- Threshold: 0.5 (for intersection)
 
 ## Animation
-- Type: scale / fade / slide / clip-path / etc.
-- Duration: ~Xms
-- Easing: ease-out / spring / linear / etc.
-- Direction: in / out / both
+
+### Keyframes
+- From: opacity 0, translateY(20px)
+- To: opacity 1, translateY(0)
+
+### Timing
+- Duration: 300ms
+- Easing: cubic-bezier(0.4, 0, 0.2, 1) | ease-out | spring
+- Delay: 0ms
+- Stagger: 50ms (if multiple elements)
+
+### CSS Variables Set
+- `--element-opacity`: 0 → 1
+- `--element-y`: 20 → 0
 
 ## States
-- Initial state
-- Active/open state
-- Exit state (if different from initial)
+| State | Properties |
+|-------|------------|
+| Initial | opacity: 0, y: 20px |
+| Active | opacity: 1, y: 0 |
+| Exit | opacity: 0, y: -20px (if different) |
+
+## GIF References
+- Mobile: `../../assets/{page}-mobile.gif` @ ~Xs
+- Desktop: `../../assets/{page}-desktop.gif` @ ~Xs
 
 ## Responsive Notes
-- Desktop: hover-triggered
-- Tablet: hover-triggered (same as desktop)
-- Mobile: tap-triggered (no hover)
+- Mobile: tap-triggered, 200ms duration
+- Tablet: hover-triggered, 300ms duration
+- Desktop: hover-triggered, 300ms duration
+
+## Dependencies
+- Requires: ScrollTrigger (trigger)
+- Used by: HeroSection, AboutSection
 ```
 
-### 5. Commit
+### 6. Verify & Commit
 
 ```bash
+# Verify files exist
+ls .claude/analyze/{name}/
+
+# Commit
 git add .claude/analyze/{name}/
 git commit -m "analyze: {name}"
 ```
@@ -211,11 +233,13 @@ git commit -m "analyze: {name}"
 - Reference in markdown under appropriate breakpoint section
 
 ### GIFs
-- **1 exploration GIF per breakpoint:**
-  - `{name}-desktop.gif`
-  - `{name}-tablet.gif`
-  - `{name}-mobile.gif`
+- **1 exploration GIF per page per breakpoint:**
+  - `{page}-mobile.gif`
+  - `{page}-tablet.gif`
+  - `{page}-desktop.gif`
+- Example: `home-mobile.gif`, `about-desktop.gif`
 - Reference with timestamp: `GIF @ ~5s` for specific moments
+- **Saving:** GIFs export to browser Downloads → move to `assets/` folder
 
 ## Interaction Checklist
 
@@ -229,27 +253,58 @@ git commit -m "analyze: {name}"
 - [ ] Documented all observed transitions in experience/behaviour/ files
 - [ ] Referenced assets in component markdown files
 
-## Output
+## Output (SUMMARY.md)
 
 ```markdown
-## Analyzed: {name}
+# Analysis: {name}
 
-**Source:** URL
+**Source:** {url}
+**Pages Analyzed:** {list of pages}
+**Date:** {date}
 
-### Assets
-- Desktop GIF: `assets/{name}-desktop.gif`
-- Tablet GIF: `assets/{name}-tablet.gif`
-- Mobile GIF: `assets/{name}-mobile.gif`
-- Screenshots: [list]
+## Pages
 
-### Components
-- content/widget/: [list]
-- content/section/: [list]
-- content/chrome/: [list]
-- experience/behaviour/: [list]
+| Page | GIFs |
+|------|------|
+| home | home-mobile.gif, home-tablet.gif, home-desktop.gif |
+| about | about-mobile.gif, about-tablet.gif, about-desktop.gif |
 
-### Transitions Captured
-- [list all transitions observed in GIF]
+## Components Found
+
+### Site Chrome (site/chrome/)
+- header.md - Global navigation
+- footer.md - Global footer
+
+### Content (content/)
+| Type | Components |
+|------|------------|
+| widget/ | hero-title, project-card, client-logo |
+| section/ | hero, about, featured-projects |
+| layout-widget/ | project-grid, logo-marquee |
+| chrome/ | (page overrides if any) |
+
+### Experience (experience/)
+| Type | Components |
+|------|------------|
+| behaviour/ | fade-in, parallax-scroll, hover-scale |
+| trigger/ | scroll-trigger, click-trigger |
+| chrome-behaviour/ | header-hide, footer-reveal |
+
+## Responsive Summary
+
+| Component | Mobile | Tablet | Desktop |
+|-----------|--------|--------|---------|
+| hero | visible | visible | visible |
+| sidebar | hidden | hidden | visible |
+| logo-marquee | visible | visible | visible |
+
+## Build Order Recommendation
+
+1. site/chrome/ (global nav, footer)
+2. content/widget/ (atomic components)
+3. content/section/ (composed from widgets)
+4. experience/behaviour/ (animations)
+5. experience/trigger/ (event handlers)
 
 Next: `/plan {name}`
 ```
@@ -330,30 +385,39 @@ Parent Agent (orchestrator)
 │
 ├── 2. Create folder structure
 │
-├── 3. Analyze Site-Level Chrome (FIRST)
-│   └── Global nav, footer → site/chrome/
-│
-├── 4. FOR EACH PAGE (one at a time):
+├── 3. FOR EACH PAGE (one at a time):
 │   │
 │   ├── PHASE 1: Mobile (2 agents in parallel)
-│   │   ├── Mobile Content Agent   → creates/appends content/ files
-│   │   └── Mobile Experience Agent → creates/appends experience/, captures {page}-mobile.gif
+│   │   ├── Mobile Content Agent
+│   │   │   ├── Creates content/ files (widget, section, layout-widget)
+│   │   │   ├── FIRST PAGE: Creates site/chrome/ (global nav, footer)
+│   │   │   └── If page has chrome override → content/chrome/
+│   │   └── Mobile Experience Agent
+│   │       ├── Creates experience/ files (behaviour, trigger, driver)
+│   │       └── Captures {page}-mobile.gif
 │   │   └── WAIT
 │   │
 │   ├── PHASE 2: Tablet (2 agents in parallel)
-│   │   ├── Tablet Content Agent   → appends to content/ files
+│   │   ├── Tablet Content Agent → appends to content/, site/chrome/
 │   │   └── Tablet Experience Agent → appends to experience/, captures {page}-tablet.gif
 │   │   └── WAIT
 │   │
 │   └── PHASE 3: Desktop (2 agents in parallel)
-│       ├── Desktop Content Agent  → appends to content/ files
+│       ├── Desktop Content Agent → appends to content/, site/chrome/
 │       └── Desktop Experience Agent → appends to experience/, captures {page}-desktop.gif
 │       └── WAIT
 │
-├── 5. Verify all files exist in correct folders
+├── 4. Verify all files exist in correct folders
 │
-└── 6. Create SUMMARY.md
+├── 5. Create SUMMARY.md
+│
+└── 6. Commit
 ```
+
+**Chrome handling:**
+- **First page analysis** → Content Agent creates `site/chrome/` (global nav, footer)
+- **Subsequent pages** → Content Agent checks if chrome differs, if so creates `content/chrome/` override
+- Chrome is part of Content Agent scope, not a separate agent
 
 ### Component Deduplication
 
@@ -384,34 +448,32 @@ You are analyzing {url} for CONTENT STRUCTURE at MOBILE breakpoint.
 This is the FIRST phase - you CREATE the component files.
 
 ## Breakpoint: mobile (375×812)
-## Output: .claude/analyze/{name}/content/
+## Output: .claude/analyze/{name}/
 
 ## Your Scope
-- widget/ - Document widget layout at mobile
-- section/ - Document section layout at mobile
-- chrome/ - Document chrome at mobile
+- content/widget/ - Atomic UI components
+- content/section/ - Page sections
+- content/layout-widget/ - Layout patterns (grids, stacks)
+- site/chrome/ - GLOBAL chrome (nav, footer) - create on FIRST PAGE only
+- content/chrome/ - Page-specific chrome overrides (if different from global)
 
 ## Instructions
 1. Get Chrome tab: tabs_context_mcp (createIfEmpty: true) → tabs_create_mcp
 2. Resize window: resize_window (width: 375, height: 812, tabId)
 3. Navigate to {url}
-4. For each component, screenshot and CREATE its markdown file
+4. Analyze and screenshot each component
 5. Save screenshots as: {component}-mobile.png to assets/
+6. CHROME HANDLING:
+   - If this is the FIRST page: Create site/chrome/header.md, site/chrome/footer.md
+   - If chrome differs from global: Create content/chrome/{override}.md
 
-## File Format (CREATE new file)
-# {ComponentName}
-
-**Purpose:** What it does
-**Visible:** mobile, tablet, desktop  ← Update if hidden at any breakpoint
-
-## Layout
-
-### Mobile (375px)
-**Screenshot:** `../../assets/{component}-mobile.png`
-- Columns:
-- Spacing:
-- Typography:
-- Child visibility:
+## File Format
+Use the Component File Template (see above) with full details:
+- Layout values (columns, gap, padding)
+- Visual treatment (colors, typography, effects)
+- Props/data schema
+- Interaction states
+- Accessibility requirements
 ```
 
 ### Tablet/Desktop Content Agent Prompt (PHASE 2-3 - Append or Create)
@@ -572,13 +634,25 @@ This is PHASE {phase} - you APPEND to existing files OR CREATE if behaviour didn
 
 ## Verification Checklist
 
-After all agents complete, verify:
+After all agents complete, orchestrator verifies:
 
 - [ ] All discovered pages have been analyzed
 - [ ] Each component file exists in correct folder
-- [ ] All breakpoints documented in each file
-- [ ] GIFs exist: `{page}-{breakpoint}.gif`
-- [ ] Screenshots named: `{component}-{breakpoint}.png`
-- [ ] Global chrome in `site/chrome/`
-- [ ] Page chrome overrides in `content/chrome/` (if any)
-- [ ] No duplicate components (shared components documented once)
+- [ ] All 3 breakpoints documented in each file (mobile, tablet, desktop)
+- [ ] GIFs exist for each page: `{page}-mobile.gif`, `{page}-tablet.gif`, `{page}-desktop.gif`
+- [ ] Screenshots named correctly: `{component}-{breakpoint}.png`
+- [ ] Global chrome documented in `site/chrome/`
+- [ ] Page chrome overrides in `content/chrome/` (if any differ from global)
+- [ ] No duplicate components (shared components documented once, not per-page)
+- [ ] Component files have complete details:
+  - [ ] Layout values (columns, gap, padding, max-width)
+  - [ ] Visual treatment (colors, typography, effects)
+  - [ ] Props/data schema
+  - [ ] Interaction states
+  - [ ] Accessibility notes
+- [ ] Behaviour files have complete details:
+  - [ ] Keyframes (from/to states)
+  - [ ] Timing (duration, easing, delay, stagger)
+  - [ ] CSS variables set
+  - [ ] Dependencies
+- [ ] SUMMARY.md created with build order recommendation
