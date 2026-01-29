@@ -1,6 +1,14 @@
 /**
  * Mode types for the Experience layer.
- * Re-exports Mode interface from parent types for convenience.
+ * Re-exports Mode interface and related types from parent types for convenience.
  */
 
-export type { Mode, ExperienceState } from '../types'
+export type {
+  Mode,
+  ModeState,
+  ModeOptions,
+  ModeDefaults,
+  ModeOptionConfig,
+  ModeTriggerConfig,
+  ExperienceState,
+} from '../types'

@@ -2,6 +2,14 @@
  * Modes barrel export.
  */
 
-export type { Mode, ExperienceState } from './types'
+export type {
+  Mode,
+  ModeState,
+  ModeOptions,
+  ModeDefaults,
+  ModeOptionConfig,
+  ModeTriggerConfig,
+  ExperienceState,
+} from './types'
 export { registerMode, getMode, getModeIds } from './registry'
 export { stackingMode } from './stacking'
