@@ -614,6 +614,18 @@
 |------|--------------------------|
 | | |
 
+### Cross-Component Misalignments
+
+| # | Issue | Spec Says | Actually | Severity |
+|---|-------|-----------|----------|----------|
+| 1 | Video layer placement | Primitive (atomic, no state) | Composite with useState, L2 hooks | HIGH |
+| 2 | Widget-specific effect naming | Named by MECHANISM (fade, scale) | Named by WIDGET (contact-reveal, thumbnail-expand) | MEDIUM |
+| 3 | LogoLink complexity | Composites have local state/hooks | LogoLink is pure presentational, no state | LOW |
+| 4 | Animation/interaction behaviours | Only scroll/, hover/, visibility/ | animation/marquee exists, interaction/ missing | LOW |
+| 5 | VideoPlayer effects missing | Effects have CSS files | button-hover, controls-fade, scrubber-fade, media-crossfade have no CSS | HIGH |
+| 6 | Section folder naming | `sections/composites/` | `sections/patterns/` (better name) | LOW |
+| 7 | Effect colocation inconsistent | Widget effects colocated OR in effects/ | VideoPlayer effects are orphaned (referenced but undefined) | HIGH |
+
 ---
 
 ## IMPLEMENTATION TASKS
@@ -648,18 +660,29 @@
 | TASK-017 | `behaviours/hover/expand.ts` | Remove widget-specific state reads (hoveredThumbnailIndex) |
 | TASK-018 | `behaviours/BehaviourWrapper.tsx` | Add driver integration and cleanup return from useEffect |
 
+### Priority 2.5: Cross-Component Alignment (Should Fix)
+
+| Task | Files | Description |
+|------|-------|-------------|
+| TASK-027 | `composite/Video/`, `CLAUDE.md` | Decision: Move Video to primitives (remove hooks) OR update spec to list as composite |
+| TASK-028 | `composite/VideoPlayer/styles.css` | Create missing effect CSS (button-hover, controls-fade, scrubber-fade, media-crossfade) |
+| TASK-029 | Widget-specific effects | Rename: contact-reveal→text-flip, thumbnail-expand→scale-expand, cursor-label→label-follow |
+| TASK-030 | `composite/LogoLink/` | Evaluate: Move to primitives (no state needed) OR make a factory function |
+| TASK-031 | `CLAUDE.md`, `behaviours/` | Document animation/ folder; add interaction/ folder for toggle behaviours |
+| TASK-032 | `specs/reference/folders.spec.md` | Update line 57: change `composites/` to `patterns/` for sections |
+
 ### Priority 3: Cleanup (Nice to Have)
 
 | Task | Files | Description |
 |------|-------|-------------|
-| TASK-019 | `composite/*/styles.css` | Remove CSS files from composites (spec says no CSS in composites) |
-| TASK-020 | `primitives/Button/styles.css` | Add `:focus-visible` accessibility styling |
-| TASK-021 | `primitives/Icon/index.tsx`, `primitives/Icon/types.ts` | Add `decorative` and `label` props for semantic icons |
-| TASK-022 | `primitives/Link/`, `primitives/Video/` | Create missing Link and Video primitives |
-| TASK-023 | `presets/bojuhl/chrome/footer.ts` | Migrate from component-based to widget-based chrome (preferred) |
-| TASK-024 | `modes/types.ts` | Move Mode interface definition here instead of re-exporting |
-| TASK-025 | `behaviours/scroll/progress.ts` | Add `will-change` to cssTemplate |
-| TASK-026 | `renderer/SectionRenderer.tsx` | Refactor custom scroll-fade to use resolveBehaviour() pattern |
+| TASK-033 | `composite/*/styles.css` | Remove CSS files from composites (spec says no CSS in composites) |
+| TASK-034 | `primitives/Button/styles.css` | Add `:focus-visible` accessibility styling |
+| TASK-035 | `primitives/Icon/index.tsx`, `primitives/Icon/types.ts` | Add `decorative` and `label` props for semantic icons |
+| TASK-036 | `primitives/Link/` | Create missing Link primitive |
+| TASK-037 | `presets/bojuhl/chrome/footer.ts` | Migrate from component-based to widget-based chrome (preferred) |
+| TASK-038 | `modes/types.ts` | Move Mode interface definition here instead of re-exporting |
+| TASK-039 | `behaviours/scroll/progress.ts` | Add `will-change` to cssTemplate |
+| TASK-040 | `renderer/SectionRenderer.tsx` | Refactor custom scroll-fade to use resolveBehaviour() pattern |
 
 ### Implementation Order
 
@@ -675,8 +698,9 @@
 |--------|-------|
 | Total Files | ~164 |
 | Verified | 98 |
-| Issues Found | 66 |
-| Tasks Generated | Pending |
+| Issues Found | 70 |
+| Cross-Component Misalignments | 7 |
+| Tasks Generated | 40 |
 
 ### Issues by Phase
 
@@ -707,3 +731,5 @@
 6. **Primitives**: Remove calc(var(--y)), add useMemo, remove onClick from Button
 7. **Sections styles.css**: Extract Bojuhl CSS to preset, remove viewport units
 8. **Modes**: Extend Mode interface to match spec (add 5 missing fields)
+9. **Video alignment**: Either move to primitives (remove L2 hooks) OR update spec
+10. **VideoPlayer effects**: Create missing CSS (button-hover, controls-fade, etc.)
