@@ -4,6 +4,7 @@
  */
 
 import type { CSSProperties } from 'react'
+import type { WidgetSchema } from '@/creativeshire/schema'
 
 /**
  * Props for the Box layout widget.
@@ -33,6 +34,6 @@ export interface BoxProps {
   'data-effect'?: string
   /** Data attribute for marquee track */
   'data-marquee-track'?: boolean
-  /** Child widgets */
-  children?: React.ReactNode
+  /** Child widgets - schema-driven rendering */
+  widgets?: WidgetSchema[]
 }

@@ -3,7 +3,8 @@
  * 2D grid layout using CSS Grid.
  */
 
-import type { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties } from 'react'
+import type { WidgetSchema } from '@/creativeshire/schema'
 
 /**
  * Props for the Grid layout widget.
@@ -29,6 +30,6 @@ export interface GridProps {
   'data-behaviour'?: string
   /** Data attribute for effect binding */
   'data-effect'?: string
-  /** Child widgets */
-  children?: ReactNode
+  /** Child widgets - schema-driven rendering */
+  widgets?: WidgetSchema[]
 }

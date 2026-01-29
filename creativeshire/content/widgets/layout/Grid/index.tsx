@@ -6,6 +6,7 @@
  */
 
 import React, { memo, forwardRef, type CSSProperties } from 'react'
+import { WidgetRenderer } from '@/creativeshire/renderer/WidgetRenderer'
 import type { GridProps } from './types'
 import './styles.css'
 
@@ -76,7 +77,7 @@ const Grid = memo(forwardRef<HTMLDivElement, GridProps>(function Grid(
     className,
     'data-behaviour': dataBehaviour,
     'data-effect': dataEffect,
-    children
+    widgets
   },
   ref
 ) {
@@ -91,7 +92,9 @@ const Grid = memo(forwardRef<HTMLDivElement, GridProps>(function Grid(
       data-behaviour={dataBehaviour}
       data-effect={dataEffect}
     >
-      {children}
+      {widgets?.map((widget, index) => (
+        <WidgetRenderer key={widget.id ?? index} widget={widget} />
+      ))}
     </div>
   )
 }))

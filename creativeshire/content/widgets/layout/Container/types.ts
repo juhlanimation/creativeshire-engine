@@ -3,7 +3,8 @@
  * Max-width wrapper for constraining content width.
  */
 
-import type { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties } from 'react'
+import type { WidgetSchema } from '@/creativeshire/schema'
 
 /**
  * Props for the Container layout widget.
@@ -25,6 +26,6 @@ export interface ContainerProps {
   'data-behaviour'?: string
   /** Data attribute for effect binding */
   'data-effect'?: string
-  /** Child widgets */
-  children?: ReactNode
+  /** Child widgets - schema-driven rendering */
+  widgets?: WidgetSchema[]
 }

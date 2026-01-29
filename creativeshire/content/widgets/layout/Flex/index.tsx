@@ -6,6 +6,7 @@
  */
 
 import React, { memo, forwardRef, type CSSProperties } from 'react'
+import { WidgetRenderer } from '@/creativeshire/renderer/WidgetRenderer'
 import type { FlexProps } from './types'
 import './styles.css'
 
@@ -71,7 +72,7 @@ const Flex = memo(forwardRef<HTMLDivElement, FlexProps>(function Flex(
     'data-behaviour': dataBehaviour,
     'data-effect': dataEffect,
     'data-marquee-track': dataMarqueeTrack,
-    children
+    widgets
   },
   ref
 ) {
@@ -88,7 +89,9 @@ const Flex = memo(forwardRef<HTMLDivElement, FlexProps>(function Flex(
       data-effect={dataEffect}
       data-marquee-track={dataMarqueeTrack ? '' : undefined}
     >
-      {children}
+      {widgets?.map((widget, index) => (
+        <WidgetRenderer key={widget.id ?? index} widget={widget} />
+      ))}
     </div>
   )
 }))

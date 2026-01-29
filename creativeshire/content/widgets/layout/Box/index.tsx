@@ -6,6 +6,7 @@
  */
 
 import React, { memo, forwardRef, type CSSProperties } from 'react'
+import { WidgetRenderer } from '@/creativeshire/renderer/WidgetRenderer'
 import type { BoxProps } from './types'
 import './styles.css'
 
@@ -53,7 +54,7 @@ const Box = memo(forwardRef<HTMLDivElement, BoxProps>(function Box(
     'data-behaviour': dataBehaviour,
     'data-effect': dataEffect,
     'data-marquee-track': dataMarqueeTrack,
-    children
+    widgets
   },
   ref
 ) {
@@ -69,7 +70,9 @@ const Box = memo(forwardRef<HTMLDivElement, BoxProps>(function Box(
       data-effect={dataEffect}
       data-marquee-track={dataMarqueeTrack ? '' : undefined}
     >
-      {children}
+      {widgets?.map((widget, index) => (
+        <WidgetRenderer key={widget.id ?? index} widget={widget} />
+      ))}
     </div>
   )
 }))

@@ -3,7 +3,8 @@
  * Two-column split layout for hero sections, sidebars, etc.
  */
 
-import type { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties } from 'react'
+import type { WidgetSchema } from '@/creativeshire/schema'
 
 /**
  * Common split ratios.
@@ -32,6 +33,6 @@ export interface SplitProps {
   'data-behaviour'?: string
   /** Data attribute for effect binding */
   'data-effect'?: string
-  /** Child widgets (expects exactly 2 children) */
-  children?: ReactNode
+  /** Child widgets - schema-driven rendering (expects exactly 2 widgets) */
+  widgets?: WidgetSchema[]
 }

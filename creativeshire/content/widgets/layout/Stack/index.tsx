@@ -8,6 +8,7 @@
  */
 
 import React, { memo, forwardRef, type CSSProperties } from 'react'
+import { WidgetRenderer } from '@/creativeshire/renderer/WidgetRenderer'
 import type { StackProps } from './types'
 import './styles.css'
 
@@ -51,7 +52,7 @@ const Stack = memo(forwardRef<HTMLDivElement, StackProps>(function Stack(
     className,
     'data-behaviour': dataBehaviour,
     'data-effect': dataEffect,
-    children
+    widgets
   },
   ref
 ) {
@@ -66,7 +67,9 @@ const Stack = memo(forwardRef<HTMLDivElement, StackProps>(function Stack(
       data-behaviour={dataBehaviour}
       data-effect={dataEffect}
     >
-      {children}
+      {widgets?.map((widget, index) => (
+        <WidgetRenderer key={widget.id ?? index} widget={widget} />
+      ))}
     </div>
   )
 }))

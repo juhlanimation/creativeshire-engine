@@ -3,7 +3,8 @@
  * Vertical stack layout (shorthand for Flex column).
  */
 
-import type { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties } from 'react'
+import type { WidgetSchema } from '@/creativeshire/schema'
 
 /**
  * Props for the Stack layout widget.
@@ -23,6 +24,6 @@ export interface StackProps {
   'data-behaviour'?: string
   /** Data attribute for effect binding */
   'data-effect'?: string
-  /** Child widgets */
-  children?: ReactNode
+  /** Child widgets - schema-driven rendering */
+  widgets?: WidgetSchema[]
 }

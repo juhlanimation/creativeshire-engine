@@ -8,6 +8,7 @@
  */
 
 import React, { memo, forwardRef, type CSSProperties } from 'react'
+import { WidgetRenderer } from '@/creativeshire/renderer/WidgetRenderer'
 import type { ContainerProps } from './types'
 import './styles.css'
 
@@ -58,7 +59,7 @@ const Container = memo(forwardRef<HTMLDivElement, ContainerProps>(function Conta
     className,
     'data-behaviour': dataBehaviour,
     'data-effect': dataEffect,
-    children
+    widgets
   },
   ref
 ) {
@@ -73,7 +74,9 @@ const Container = memo(forwardRef<HTMLDivElement, ContainerProps>(function Conta
       data-behaviour={dataBehaviour}
       data-effect={dataEffect}
     >
-      {children}
+      {widgets?.map((widget, index) => (
+        <WidgetRenderer key={widget.id ?? index} widget={widget} />
+      ))}
     </div>
   )
 }))

@@ -8,6 +8,7 @@
  */
 
 import React, { memo, forwardRef, type CSSProperties } from 'react'
+import { WidgetRenderer } from '@/creativeshire/renderer/WidgetRenderer'
 import type { SplitProps, SplitRatio } from './types'
 import './styles.css'
 
@@ -91,7 +92,7 @@ const Split = memo(forwardRef<HTMLDivElement, SplitProps>(function Split(
     className,
     'data-behaviour': dataBehaviour,
     'data-effect': dataEffect,
-    children
+    widgets
   },
   ref
 ) {
@@ -106,7 +107,9 @@ const Split = memo(forwardRef<HTMLDivElement, SplitProps>(function Split(
       data-behaviour={dataBehaviour}
       data-effect={dataEffect}
     >
-      {children}
+      {widgets?.map((widget, index) => (
+        <WidgetRenderer key={widget.id ?? index} widget={widget} />
+      ))}
     </div>
   )
 }))
