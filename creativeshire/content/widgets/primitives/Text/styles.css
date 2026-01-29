@@ -5,7 +5,7 @@
 
 .text-widget {
   /* Animation CSS variables with fallbacks (set by behaviours) */
-  transform: translateY(calc(var(--y, 0) * 1px));
+  transform: translateY(var(--y, 0px));
   opacity: var(--opacity, 1);
 
   /* Default styling */

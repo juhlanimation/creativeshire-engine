@@ -5,7 +5,7 @@
 
 .button-widget {
   /* Animation CSS variables with fallbacks (set by behaviours) */
-  transform: translateY(calc(var(--y, 0) * 1px));
+  transform: translateY(var(--y, 0px));
   opacity: var(--opacity, 1);
 
   /* Default styling */
@@ -44,6 +44,17 @@
 .button-widget:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Focus state - remove default outline, rely on :focus-visible */
+.button-widget:focus {
+  outline: none;
+}
+
+/* Keyboard focus indicator (accessibility) */
+.button-widget:focus-visible {
+  outline: 2px solid var(--color-focus, currentColor);
+  outline-offset: 2px;
 }
 
 /* Enable will-change only when behaviour is attached */
