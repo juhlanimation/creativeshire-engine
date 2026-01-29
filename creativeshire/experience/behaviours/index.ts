@@ -25,13 +25,6 @@ import './visibility'
 import './animation'
 
 // ============================================
-// Specialized behaviours (keep as-is)
-// ============================================
-
-// Reveal patterns (well-structured)
-import './reveal'
-
-// ============================================
 // Types
 // ============================================
 export type { Behaviour, BehaviourRegistry } from './types'
