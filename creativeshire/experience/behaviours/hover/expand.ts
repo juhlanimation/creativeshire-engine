@@ -22,7 +22,7 @@ interface HoverExpandOptions {
 const hoverExpand: Behaviour = {
   id: 'hover/expand',
   name: 'Hover Expand',
-  requires: ['prefersReducedMotion'],
+  requires: ['isHovered', 'hoveredThumbnailIndex', 'thumbnailIndex', 'prefersReducedMotion'],
 
   compute: (state, options) => {
     // Support both direct hover state and indexed hover tracking

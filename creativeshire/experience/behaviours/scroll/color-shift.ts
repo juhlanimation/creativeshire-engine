@@ -20,7 +20,7 @@ const DEFAULT_COLOR_PALETTE = [
 const scrollColorShift: Behaviour = {
   id: 'scroll/color-shift',
   name: 'Scroll Color Shift',
-  requires: ['prefersReducedMotion'],
+  requires: ['--bg-index', 'prefersReducedMotion'],
 
   compute: (state, options) => {
     // Get current index from state (set by scroll/image-cycle or similar)

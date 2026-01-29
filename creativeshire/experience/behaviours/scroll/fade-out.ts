@@ -15,6 +15,7 @@ import { registerBehaviour } from '../registry'
 const scrollFadeOut: Behaviour = {
   id: 'scroll/fade-out',
   name: 'Scroll Fade Out',
+  requires: ['sectionVisibility', 'prefersReducedMotion'],
 
   compute: (state) => {
     const { sectionVisibility, prefersReducedMotion } = state

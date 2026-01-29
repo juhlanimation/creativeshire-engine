@@ -28,7 +28,7 @@ interface HoverScaleOptions {
 const hoverScale: Behaviour = {
   id: 'hover/scale',
   name: 'Hover Scale',
-  requires: ['prefersReducedMotion'],
+  requires: ['isHovered', 'isPressed', 'prefersReducedMotion'],
 
   compute: (state, options) => {
     const isHovered = (state.isHovered as boolean) ?? false

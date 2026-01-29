@@ -29,7 +29,7 @@ interface HoverRevealOptions {
 const hoverReveal: Behaviour = {
   id: 'hover/reveal',
   name: 'Hover Reveal',
-  requires: ['prefersReducedMotion'],
+  requires: ['isHovered', 'isPressed', 'prefersReducedMotion'],
 
   compute: (state, options) => {
     const isHovered = (state.isHovered as boolean) ?? false
