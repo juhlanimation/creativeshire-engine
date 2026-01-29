@@ -24,6 +24,9 @@ import './visibility'
 // Animation triggers (continuous/looping)
 import './animation'
 
+// Interaction triggers (click/tap toggle)
+import './interaction'
+
 // ============================================
 // Types
 // ============================================
@@ -70,3 +73,6 @@ export { visibilityFadeIn } from './visibility'
 
 // Animation behaviours
 export { animationMarquee } from './animation'
+
+// Interaction behaviours
+export { interactionToggle } from './interaction'

@@ -73,6 +73,7 @@ creativeshire/
 │   │   ├── scroll/        progress, direction, velocity
 │   │   ├── hover/         state (--hover: 0|1)
 │   │   ├── visibility/    in-view (--visible: 0|1)
+│   │   ├── animation/     continuous (marquee, pulse)
 │   │   └── interaction/   toggle (--active: 0|1)
 │   ├── effects/           Named by MECHANISM
 │   │   ├── fade.css       Opacity (single file)
