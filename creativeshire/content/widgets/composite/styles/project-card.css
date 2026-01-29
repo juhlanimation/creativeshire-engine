@@ -1,8 +1,11 @@
 /**
- * ProjectCard composite styles.
- * Matched to bojuhl.com source: project-card.tsx
+ * ProjectCard factory composite styles.
+ * Styles for the widget tree produced by createProjectCard().
  *
- * Reference classes from source:
+ * Note: Factory composites return WidgetSchema (no CSS in factory folder).
+ * Styles live here in composite/styles/ and are imported via globals.css.
+ *
+ * Reference: bojuhl.com project-card.tsx
  * - Thumbnail: w-full md:w-[55vw] shrink-0 min-w-0
  * - Gap: gap-4 md:gap-2 (16px / 8px)
  * - Metadata: text-[10px] opacity-60 gap-x-8 gap-y-1 mt-2

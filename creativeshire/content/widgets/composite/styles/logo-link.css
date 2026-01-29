@@ -1,6 +1,9 @@
 /**
- * LogoLink widget styles.
- * Structure only - animations handled by effects.
+ * LogoLink factory composite styles.
+ * Styles for the widget tree produced by createLogoLink().
+ *
+ * Note: Factory composites return WidgetSchema (no CSS in factory folder).
+ * Styles live here in composite/styles/ and are imported via globals.css.
  *
  * Architecture:
  * - Content (L1): Structure only (no transitions)
