@@ -27,5 +27,7 @@ export const stackingMode: Mode = {
       isScrolling: false,
       prefersReducedMotion: false,
       sectionVisibilities: {},
+      cursorX: 0,
+      cursorY: 0,
     })),
 }

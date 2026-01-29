@@ -17,6 +17,10 @@ export interface ExperienceState {
   prefersReducedMotion: boolean
   /** Section visibility ratios (0-1) keyed by section ID */
   sectionVisibilities: Record<string, number>
+  /** Cursor X position in viewport pixels */
+  cursorX: number
+  /** Cursor Y position in viewport pixels */
+  cursorY: number
 }
 
 /**

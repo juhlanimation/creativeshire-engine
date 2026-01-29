@@ -2,7 +2,10 @@
 
 /**
  * CursorLabel overlay - shows "ENTER" text near cursor when hovering links.
- * Content Layer (L1) but uses client-side events for interactivity.
+ * Content Layer (L1) - renders based on store values.
+ *
+ * Cursor position comes from useCursorPosition trigger (L2).
+ * Hover detection uses event delegation for link matching.
  *
  * Reference: bojuhl.com cursor-label.tsx
  * - 10px font, uppercase, tracking-wide
@@ -12,6 +15,8 @@
 
 import { useEffect, useState, useCallback, memo } from 'react'
 import { createPortal } from 'react-dom'
+import { useStore } from 'zustand'
+import { useExperience } from '../../../../experience'
 import './styles.css'
 
 interface CursorLabelProps {
@@ -27,6 +32,7 @@ interface CursorLabelProps {
 
 /**
  * CursorLabel overlay component.
+ * Reads cursor position from experience store (set by useCursorPosition trigger).
  * Uses event delegation to detect hover on links matching targetSelector.
  */
 const CursorLabel = memo(function CursorLabel({
@@ -35,22 +41,21 @@ const CursorLabel = memo(function CursorLabel({
   offsetX = 24,
   offsetY = 8
 }: CursorLabelProps) {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [isVisible, setIsVisible] = useState(false)
   const [mounted, setMounted] = useState(false)
 
   // Check for touch device
   const [isTouchDevice, setIsTouchDevice] = useState(false)
 
+  // Read cursor position from experience store (set by useCursorPosition trigger)
+  const { store } = useExperience()
+  const cursorX = useStore(store, (state) => state.cursorX)
+  const cursorY = useStore(store, (state) => state.cursorY)
+
   useEffect(() => {
     setMounted(true)
     // Detect touch device
     setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0)
-  }, [])
-
-  // Track mouse position
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    setMousePos({ x: e.clientX, y: e.clientY })
   }, [])
 
   // Handle hover state via event delegation
@@ -74,16 +79,16 @@ const CursorLabel = memo(function CursorLabel({
   useEffect(() => {
     if (!mounted || isTouchDevice) return
 
-    document.addEventListener('mousemove', handleMouseMove)
+    // Hover detection via event delegation
+    // Note: mousemove is handled by useCursorPosition trigger in L2
     document.addEventListener('mouseover', handleMouseOver)
     document.addEventListener('mouseout', handleMouseOut)
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseover', handleMouseOver)
       document.removeEventListener('mouseout', handleMouseOut)
     }
-  }, [mounted, isTouchDevice, handleMouseMove, handleMouseOver, handleMouseOut])
+  }, [mounted, isTouchDevice, handleMouseOver, handleMouseOut])
 
   // Don't render on server or touch devices
   if (!mounted || isTouchDevice) {
@@ -94,7 +99,7 @@ const CursorLabel = memo(function CursorLabel({
     <div
       className="cursor-label"
       style={{
-        transform: `translate(${mousePos.x + offsetX}px, ${mousePos.y + offsetY}px)`,
+        transform: `translate(${cursorX + offsetX}px, ${cursorY + offsetY}px)`,
         opacity: isVisible ? 1 : 0
       }}
       data-effect="cursor-label"

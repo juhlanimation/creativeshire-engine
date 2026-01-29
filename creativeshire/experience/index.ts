@@ -18,6 +18,7 @@ export {
   useIntersection,
   usePrefersReducedMotion,
   useViewport,
+  useCursorPosition,
 } from './triggers'
 export type { TriggerConfig, TriggerProps } from './triggers'
 

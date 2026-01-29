@@ -17,6 +17,7 @@ import {
   useIntersection,
   usePrefersReducedMotion,
   useViewport,
+  useCursorPosition,
 } from './triggers'
 
 export interface TriggerInitializerProps {
@@ -32,6 +33,7 @@ export interface TriggerInitializerProps {
  * - useIntersection: section visibility ratios
  * - usePrefersReducedMotion: a11y motion preference
  * - useViewport: viewport dimensions
+ * - useCursorPosition: cursor x, y coordinates
  */
 export function TriggerInitializer({ children }: TriggerInitializerProps): ReactNode {
   const { store } = useExperience()
@@ -41,6 +43,7 @@ export function TriggerInitializer({ children }: TriggerInitializerProps): React
   useIntersection({ store })
   usePrefersReducedMotion({ store })
   useViewport({ store })
+  useCursorPosition({ store })
 
   return children
 }
