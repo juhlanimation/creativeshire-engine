@@ -4,6 +4,8 @@
  */
 
 import type { ReactNode } from 'react'
+// ARCHITECTURE EXCEPTION: Type imports from drivers/ are allowed for overlay animations.
+// See Modal/index.tsx for full rationale.
 import type { RevealType, UseGsapRevealOptions } from '@/creativeshire/experience/drivers/gsap'
 
 // Re-export for convenience

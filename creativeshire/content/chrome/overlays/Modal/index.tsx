@@ -23,6 +23,9 @@ import { useStore } from 'zustand'
 import { useModalStore } from './store'
 import { useSmoothScroll } from '@/creativeshire/experience/SmoothScrollProvider'
 import { useSmoothModalScroll } from './useSmoothModalScroll'
+// ARCHITECTURE EXCEPTION: Overlays may import driver utilities for enter/exit animations.
+// RevealTransition is driver infrastructure (not a behaviour), providing GSAP timeline
+// control for sequenced modal transitions that CSS cannot achieve.
 import { RevealTransition } from '@/creativeshire/experience/drivers/gsap'
 import type { RevealType } from '@/creativeshire/experience/drivers/gsap'
 import './styles.css'
