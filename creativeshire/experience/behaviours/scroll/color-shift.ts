@@ -1,8 +1,8 @@
 /**
- * scroll/color-shift behaviour - text color changes based on scroll state.
+ * scroll/color-shift behaviour - text color changes based on scroll position.
  *
- * Generic behaviour for color transitions driven by scroll position.
- * Works in conjunction with scroll/image-cycle for coordinated effects.
+ * Generic behaviour for color transitions driven by scroll progress.
+ * Uses same scroll-to-index calculation as scroll/image-cycle for coordination.
  */
 
 import type { Behaviour } from '../types'
@@ -20,27 +20,32 @@ const DEFAULT_COLOR_PALETTE = [
 const scrollColorShift: Behaviour = {
   id: 'scroll/color-shift',
   name: 'Scroll Color Shift',
-  requires: ['--bg-index', 'prefersReducedMotion'],
+  requires: ['scrollProgress', 'prefersReducedMotion'],
 
   compute: (state, options) => {
-    // Get current index from state (set by scroll/image-cycle or similar)
-    const currentIndex = (state['--bg-index'] as number) ?? 0
-
     // Allow custom color palette via options
     const colorPalette = (options?.colorPalette as string[]) ?? DEFAULT_COLOR_PALETTE
+    const cycleRange = (options?.cycleRange as number) ?? 0.2
 
-    // Respect reduced motion preference - use default color
+    // Respect reduced motion preference - use first color (no animation)
     if (state.prefersReducedMotion) {
       return {
-        '--text-color': 'rgb(255, 255, 255)'
+        '--text-color': colorPalette[0] ?? 'rgb(255, 255, 255)',
+        '--color-index': 0
       }
     }
 
+    // Calculate color index from scroll progress (same logic as image-cycle)
+    const progress = (state.scrollProgress as number) ?? 0
+    const rangeProgress = Math.min(1, progress / cycleRange)
+    const colorIndex = Math.floor(rangeProgress * colorPalette.length) % colorPalette.length
+
     // Get color from palette (or default to white)
-    const color = colorPalette[currentIndex] ?? 'rgb(255, 255, 255)'
+    const color = colorPalette[colorIndex] ?? 'rgb(255, 255, 255)'
 
     return {
-      '--text-color': color
+      '--text-color': color,
+      '--color-index': colorIndex
     }
   },
 
@@ -50,6 +55,16 @@ const scrollColorShift: Behaviour = {
     will-change: color;
   `,
 
+  optionConfig: {
+    cycleRange: {
+      type: 'range',
+      label: 'Cycle Range (0-1)',
+      default: 0.2,
+      min: 0.1,
+      max: 1,
+      step: 0.1
+    }
+  }
   // Note: colorPalette is passed via options programmatically
   // UI configuration not supported for array types
 }
