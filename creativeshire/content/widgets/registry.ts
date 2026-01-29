@@ -15,6 +15,7 @@ import Text from './primitives/Text'
 import Image from './primitives/Image'
 import Icon from './primitives/Icon'
 import Button from './primitives/Button'
+import Link from './primitives/Link'
 
 // Video (composite - has state and hooks)
 import Video from './composite/Video'
@@ -44,6 +45,7 @@ export const widgetRegistry: Record<string, WidgetComponent> = {
   Image,
   Icon,
   Button,
+  Link,
   // Video (composite - has state and hooks)
   Video,
   // Layout

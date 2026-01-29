@@ -1,0 +1,52 @@
+/**
+ * Link widget styles.
+ * Uses CSS variables with fallbacks for animation support.
+ */
+
+.link-widget {
+  /* Animation CSS variables with fallbacks (set by behaviours) */
+  transform: translateY(var(--y, 0px));
+  opacity: var(--opacity, 1);
+
+  /* Default styling */
+  color: var(--color-link, currentColor);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Default variant - no underline */
+.link-widget[data-variant="default"] {
+  text-decoration: none;
+}
+
+/* Underline variant - always underlined */
+.link-widget[data-variant="underline"] {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+/* Hover-underline variant - underline only on hover */
+.link-widget[data-variant="hover-underline"] {
+  text-decoration: none;
+}
+
+.link-widget[data-variant="hover-underline"]:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+/* Focus state - remove default outline, rely on :focus-visible */
+.link-widget:focus {
+  outline: none;
+}
+
+/* Keyboard focus indicator (accessibility) */
+.link-widget:focus-visible {
+  outline: 2px solid var(--color-focus, currentColor);
+  outline-offset: 2px;
+}
+
+/* Enable will-change only when behaviour is attached */
+.link-widget[data-behaviour] {
+  will-change: transform, opacity;
+}
