@@ -146,3 +146,11 @@ Browser automation captures **screenshots** (static snapshots). It cannot percei
 3. **Colocation over centralization:** Hooks, stores, and triggers live WITH the components that use them, not in central folders.
 
 4. **Visual tools for L1 only:** Use browser for layout comparison and static rendering checks. Never for L2 animation/transition work—screenshots can't show motion.
+
+5. **No backward compatibility shims:** Don't create aliases, adapters, or compatibility layers. Use canonical names directly. Old patterns get deleted and replaced, not aliased. Scattered code is technical debt.
+
+   | ❌ Don't | ✅ Do |
+   |---|---|
+   | `BEHAVIOUR_ALIASES['old-name'] = 'new/name'` | Delete old, use `new/name` everywhere |
+   | Keep old files "just in case" | Delete unused code immediately |
+   | Gradual migration with both patterns | One pattern, applied consistently |

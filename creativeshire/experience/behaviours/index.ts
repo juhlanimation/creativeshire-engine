@@ -28,14 +28,8 @@ import './animation'
 // Specialized behaviours (keep as-is)
 // ============================================
 
-// Modal transitions (well-structured)
-import './modal'
-
 // Reveal patterns (well-structured)
 import './reveal'
-
-// Video modal (specialized)
-import './video-modal'
 
 // ============================================
 // Types

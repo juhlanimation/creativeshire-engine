@@ -99,30 +99,32 @@ Behaviours compute VALUES based on INPUT. The input is the TRIGGER:
 
 The EFFECT (fade, mask, scale) should be SEPARATE.
 
-**Current (problematic):**
+**Current (mostly clean, trigger-based):**
 ```
 behaviours/
-├── fade-in                      # Effect name, not trigger
-├── scroll-fade                  # Mixed
-├── scroll-fade-out             # Mixed
-├── hover-reveal                # Mixed
-├── contact-reveal              # Widget-specific
-├── floating-contact-cta        # Widget-specific
-├── gallery-thumbnail-expand    # Widget-specific
-├── hero-text-color-transition  # Widget-specific
-├── logo-marquee-animation      # Widget-specific
-├── project-card-hover          # Widget-specific
-├── scroll-indicator-fade       # Widget-specific
-├── video-modal                 # Widget-specific
-├── reveal/
-│   ├── fade-reveal             # Effect in behaviour folder
-│   ├── mask-reveal             # Effect in behaviour folder
-│   └── scale-reveal            # Effect in behaviour folder
-└── modal/
-    ├── modal-fade              # Modal-specific
-    ├── modal-mask-wipe         # Modal-specific
-    └── modal-scale             # Modal-specific
+├── scroll/                     # ✓ Scroll-based triggers
+│   ├── fade.ts                 # scroll/fade
+│   ├── fade-out.ts             # scroll/fade-out
+│   ├── progress.ts             # scroll/progress
+│   ├── color-shift.ts          # scroll/color-shift
+│   └── image-cycle.ts          # scroll/image-cycle
+├── hover/                      # ✓ Hover-based triggers
+│   ├── reveal.ts               # hover/reveal
+│   ├── scale.ts                # hover/scale
+│   └── expand.ts               # hover/expand
+├── visibility/                 # ✓ IntersectionObserver triggers
+│   └── fade-in.ts              # visibility/fade-in
+├── animation/                  # ✓ Continuous animation triggers
+│   └── marquee.ts              # animation/marquee
+└── reveal/                     # ⚠️ Combines trigger + effect (needs review)
+    ├── fade-reveal             # Should be visibility/ + fade effect
+    ├── mask-reveal             # Should be visibility/ + mask effect
+    └── scale-reveal            # Should be visibility/ + scale effect
 ```
+
+**Deleted (dead code):**
+- `modal/` - Modal uses effects directly (RevealTransition), not behaviour system
+- `video-modal/` - Same issue, never used
 
 **Proposed (clean):**
 ```
@@ -268,14 +270,14 @@ Hooks, stores, and utilities live WITH the component that uses them.
 ## Refactoring Priority
 
 1. ~~**High:** Multi-page App Router support~~ ✓ DONE
-2. **High:** Behaviours restructure (trigger-based)
-3. **High:** Effects restructure (mechanism-based)
-4. **High:** Delete `hooks/` folder, redistribute contents
-5. **High:** Delete `transitions/` folder, move to `effects/mask/`
-6. **Medium:** Move misplaced widgets (ContactPrompt, ExpandableGalleryRow)
-7. **Medium:** Rename primitives (LogoLink → Link)
-8. **Low:** Add missing primitives (Icon, Button)
-9. **Low:** Add missing layouts (Stack, Grid, Split)
+2. ~~**High:** Behaviours restructure (trigger-based)~~ ✓ DONE (scroll/, hover/, visibility/, animation/)
+3. ~~**High:** Effects restructure (mechanism-based)~~ ✓ DONE (fade.css, transform/, mask/)
+4. ~~**High:** Delete modal behaviours (dead code)~~ ✓ DONE (Modal uses effects directly)
+5. ~~**High:** Delete `hooks/` folder~~ ✓ NOT NEEDED (hooks are colocated correctly)
+6. ~~**High:** Delete `transitions/` folder~~ ✓ NOT NEEDED (doesn't exist)
+7. **Medium:** Refactor `reveal/` behaviours → `visibility/` + effects
+8. **Medium:** Add missing primitive: Link
+9. **Low:** Add missing chrome regions: Header, Sidebar
 
 ---
 
