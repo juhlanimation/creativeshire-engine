@@ -620,23 +620,52 @@
 
 > Generated from findings after verification complete
 
-### Priority 1: Critical Fixes
+### Priority 1: Critical Fixes (Must Fix)
 
 | Task | Files | Description |
 |------|-------|-------------|
-| | | |
+| TASK-001 | `layout/*/types.ts`, `layout/*/index.tsx` | Change all 6 layout widgets from `children: ReactNode` to `widgets: WidgetSchema[]` and render via WidgetRenderer |
+| TASK-002 | `behaviours/scroll/*.ts`, `behaviours/hover/*.ts`, `behaviours/visibility/*.ts`, `behaviours/animation/*.ts` | Add `requires` array to all 8 behaviours declaring state dependencies |
+| TASK-003 | `triggers/useScrollProgress.ts`, `triggers/useIntersection.ts`, `triggers/useViewport.ts` | Add `typeof window === 'undefined'` SSR guard at start of useEffect |
+| TASK-004 | `effects/mask/RevealTransition.tsx`, `effects/mask/useGsapReveal.ts`, `effects/mask/index.ts` | Move GSAP components from effects/ to behaviours/ or drivers/ (effects must be CSS-only) |
+| TASK-005 | `drivers/types.ts`, `drivers/` | Define Driver/Target interfaces and implement ScrollDriver class with register/unregister/destroy |
+| TASK-006 | `primitives/*/styles.css` | Change `calc(var(--y, 0) * 1px)` to `var(--y, 0px)` - behaviours output final values |
+| TASK-007 | `sections/styles.css` | Extract Bojuhl-specific CSS to preset; remove 100svh viewport units |
+| TASK-008 | `modes/stacking/index.ts`, `experience/types.ts` | Extend Mode interface with: name, description, provides, triggers, options |
 
-### Priority 2: Refactoring
+### Priority 2: Refactoring (Should Fix)
 
 | Task | Files | Description |
 |------|-------|-------------|
-| | | |
+| TASK-009 | `primitives/Button/index.tsx`, `primitives/Button/types.ts` | Remove onClick prop - use BehaviourWrapper for event handling (RSC serialization) |
+| TASK-010 | `primitives/Image/index.tsx`, `primitives/Icon/index.tsx`, `primitives/Text/index.tsx` | Wrap inline style/className with useMemo to prevent memo breakage |
+| TASK-011 | `schema/chrome.ts` | Change TriggerCondition from flat struct to discriminated union per spec |
+| TASK-012 | `schema/site.ts`, `schema/index.ts` | Define and export ModeDefaults interface |
+| TASK-013 | `composite/Video/index.tsx` | Remove L2 hook import; move useVisibilityPlayback to experience/ |
+| TASK-014 | `chrome/CursorLabel/index.tsx` | Move document event listeners to L2 trigger |
+| TASK-015 | `chrome/Modal/index.tsx` | Design decision: keep RevealTransition import or refactor for strict L1/L2 |
+| TASK-016 | `behaviours/scroll/color-shift.ts` | Fix reading `--bg-index` from state - should use options |
+| TASK-017 | `behaviours/hover/expand.ts` | Remove widget-specific state reads (hoveredThumbnailIndex) |
+| TASK-018 | `behaviours/BehaviourWrapper.tsx` | Add driver integration and cleanup return from useEffect |
 
-### Priority 3: Cleanup
+### Priority 3: Cleanup (Nice to Have)
 
 | Task | Files | Description |
 |------|-------|-------------|
-| | | |
+| TASK-019 | `composite/*/styles.css` | Remove CSS files from composites (spec says no CSS in composites) |
+| TASK-020 | `primitives/Button/styles.css` | Add `:focus-visible` accessibility styling |
+| TASK-021 | `primitives/Icon/index.tsx`, `primitives/Icon/types.ts` | Add `decorative` and `label` props for semantic icons |
+| TASK-022 | `primitives/Link/`, `primitives/Video/` | Create missing Link and Video primitives |
+| TASK-023 | `presets/bojuhl/chrome/footer.ts` | Migrate from component-based to widget-based chrome (preferred) |
+| TASK-024 | `modes/types.ts` | Move Mode interface definition here instead of re-exporting |
+| TASK-025 | `behaviours/scroll/progress.ts` | Add `will-change` to cssTemplate |
+| TASK-026 | `renderer/SectionRenderer.tsx` | Refactor custom scroll-fade to use resolveBehaviour() pattern |
+
+### Implementation Order
+
+1. **Foundation** (TASK-001 to TASK-008) - Fix core architecture
+2. **Layer Boundary** (TASK-009 to TASK-018) - Enforce L1/L2 separation
+3. **Polish** (TASK-019 to TASK-026) - Cleanup and consistency
 
 ---
 
