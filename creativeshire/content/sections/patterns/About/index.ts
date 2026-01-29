@@ -187,7 +187,7 @@ export function createAboutSection(props: AboutProps): SectionSchema {
     style: {
       backgroundColor: 'rgb(0, 0, 0)'
     },
-    behaviour: 'scroll-fade',
+    behaviour: 'scroll/fade',
     widgets
   }
 }

@@ -28,6 +28,6 @@ export const footerConfig: PresetRegionConfig = {
       { platform: 'instagram', url: 'https://instagram.com' },
       { platform: 'facebook', url: 'https://facebook.com' },
     ],
-    copyrightText: 'Copyright © Bo Juhl / All rights reserved',
+    copyrightText: 'Copyright © Your Name / All rights reserved',
   },
 }

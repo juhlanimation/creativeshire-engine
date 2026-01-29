@@ -24,7 +24,7 @@ export const floatingContactConfig: PresetOverlayConfig = {
       email: 'hello@example.com',
     },
     behaviour: {
-      id: 'contact-reveal',
+      id: 'hover/reveal',
       options: {
         flipDuration: 200,
         fadeDuration: 100,

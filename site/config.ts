@@ -49,7 +49,7 @@ export const siteConfig: SiteSchema = {
             email: 'hello@bojuhl.com',
           },
           behaviour: {
-            id: 'contact-reveal',
+            id: 'hover/reveal',
             options: {
               flipDuration: 200,
               fadeDuration: 100,
