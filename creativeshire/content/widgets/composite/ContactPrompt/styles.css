@@ -59,7 +59,8 @@
 /* Prompt text - visible by default, slides up on hover */
 .contact-prompt__text--prompt {
   transform: translateY(var(--text-reveal-y, 0));
-  transition: transform var(--flip-duration, 500ms) ease-in-out;
+  /* MOVED TO L2: experience/effects/contact-reveal.css */
+  /* transition: transform var(--flip-duration, 500ms) ease-in-out; */
   will-change: transform;
 }
 
@@ -69,7 +70,8 @@
   top: 100%;
   left: 0;
   transform: translateY(var(--text-reveal-y, 0));
-  transition: transform var(--flip-duration, 500ms) ease-in-out;
+  /* MOVED TO L2: experience/effects/contact-reveal.css */
+  /* transition: transform var(--flip-duration, 500ms) ease-in-out; */
   will-change: transform;
 }
 
@@ -84,7 +86,8 @@
   overflow: hidden;
   /* Fade in on hover */
   opacity: var(--icon-opacity, 0);
-  transition: opacity var(--fade-duration, 200ms) ease-in-out;
+  /* MOVED TO L2: experience/effects/contact-reveal.css */
+  /* transition: opacity var(--fade-duration, 200ms) ease-in-out; */
   will-change: opacity;
 }
 
@@ -100,7 +103,8 @@
 /* Copy icon - visible by default in stack, slides up on click */
 .contact-prompt__icon--copy {
   transform: translateY(var(--icon-reveal-y, 0));
-  transition: transform var(--flip-duration, 500ms) ease-in-out;
+  /* MOVED TO L2: experience/effects/contact-reveal.css */
+  /* transition: transform var(--flip-duration, 500ms) ease-in-out; */
   will-change: transform;
 }
 
@@ -110,7 +114,8 @@
   top: 100%;
   left: 0;
   transform: translateY(var(--icon-reveal-y, 0));
-  transition: transform var(--flip-duration, 500ms) ease-in-out;
+  /* MOVED TO L2: experience/effects/contact-reveal.css */
+  /* transition: transform var(--flip-duration, 500ms) ease-in-out; */
   will-change: transform;
 }
 
@@ -150,8 +155,8 @@
   font-size: inherit;
   font-weight: inherit;
   line-height: inherit;
-  /* Smooth color transition */
-  transition: color 0.2s ease;
+  /* MOVED TO L2: experience/effects/contact-reveal.css */
+  /* transition: color 0.2s ease; */
 }
 
 .contact-prompt--email-only:focus-visible {
@@ -165,6 +170,6 @@
   right: auto;
   top: auto;
   transform: none;
-  /* Opacity controlled by inline style, transitions here */
-  transition: opacity 0.3s ease-in-out;
+  /* MOVED TO L2: experience/effects/contact-reveal.css */
+  /* transition: opacity 0.3s ease-in-out; */
 }
