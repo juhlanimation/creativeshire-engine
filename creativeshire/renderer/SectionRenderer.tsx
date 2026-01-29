@@ -16,7 +16,7 @@ import { WidgetRenderer } from './WidgetRenderer'
 import { BehaviourWrapper } from '../experience/behaviours'
 import { useExperience } from '../experience'
 import { useDriver } from '../experience/DriverProvider'
-import { useScrollFadeBehaviour } from '../experience/hooks'
+import { useScrollFadeBehaviour } from '../experience/behaviours/scroll'
 import type { SectionSchema } from '../schema'
 
 interface SectionRendererProps {

@@ -9,3 +9,6 @@ export type {
   UseGsapRevealOptions,
   RevealTransitionProps,
 } from './RevealTransition'
+
+// Hook re-export for advanced usage
+export { useGsapReveal } from './useGsapReveal'

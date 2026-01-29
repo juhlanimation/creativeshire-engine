@@ -8,7 +8,7 @@
 import { ExperienceProvider, SmoothScrollProvider } from '../experience'
 import { DriverProvider } from '../experience/DriverProvider'
 import { getMode, registerMode, stackingMode } from '../experience/modes'
-import { useScrollIndicatorFade } from '../experience/hooks'
+import { useScrollIndicatorFade } from './hooks'
 import { PageRenderer } from './PageRenderer'
 import { ChromeRenderer } from './ChromeRenderer'
 import { ThemeProvider } from './ThemeProvider'

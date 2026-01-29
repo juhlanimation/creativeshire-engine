@@ -11,9 +11,6 @@ export type {
   ExperienceProviderProps,
 } from './types'
 
-// L2 Hooks (imperative control)
-export { useVisibilityPlayback } from './hooks'
-
 // Transitions (generic reveal animations)
-export { RevealTransition } from './transitions'
+export { RevealTransition, useGsapReveal } from './transitions'
 export type { RevealType, UseGsapRevealOptions, RevealTransitionProps } from './transitions'

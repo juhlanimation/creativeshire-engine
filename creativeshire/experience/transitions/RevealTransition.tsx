@@ -30,10 +30,10 @@
  */
 
 import { type ReactNode, type CSSProperties } from 'react'
-import { useGsapReveal, type UseGsapRevealOptions } from '../hooks/useGsapReveal'
+import { useGsapReveal, type UseGsapRevealOptions } from './useGsapReveal'
 
 // Re-export types for convenience
-export type { RevealType, UseGsapRevealOptions } from '../hooks/useGsapReveal'
+export type { RevealType, UseGsapRevealOptions } from './useGsapReveal'
 
 /**
  * Props for RevealTransition component.

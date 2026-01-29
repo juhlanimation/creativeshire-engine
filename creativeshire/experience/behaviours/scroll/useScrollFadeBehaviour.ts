@@ -16,8 +16,8 @@
 import { useEffect, useRef, type RefObject } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { resolveBehaviour } from '../behaviours/resolve'
-import type { BehaviourState } from '../../schema/experience'
+import { resolveBehaviour } from '../resolve'
+import type { BehaviourState } from '../../../schema/experience'
 
 // Register plugin (client-only)
 if (typeof window !== 'undefined') {

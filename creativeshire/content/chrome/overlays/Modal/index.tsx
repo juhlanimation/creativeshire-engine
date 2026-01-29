@@ -24,7 +24,7 @@ import { useModalStore } from './store'
 import { useSmoothScroll } from '@/creativeshire/experience/SmoothScrollProvider'
 import { useSmoothModalScroll } from './useSmoothModalScroll'
 import { RevealTransition } from '@/creativeshire/experience/transitions'
-import type { RevealType } from '@/creativeshire/experience/hooks/useGsapReveal'
+import type { RevealType } from '@/creativeshire/experience/transitions'
 import './styles.css'
 
 /**

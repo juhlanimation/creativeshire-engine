@@ -16,7 +16,7 @@
  */
 
 import { useState, useRef, useEffect, useCallback, type CSSProperties } from 'react'
-import { useVisibilityPlayback } from '@/creativeshire/experience'
+import { useVisibilityPlayback } from './useVisibilityPlayback'
 import { openModal } from '@/creativeshire/content/chrome/overlays/Modal'
 import { VideoPlayer } from '@/creativeshire/content/widgets/composite'
 import { usePlaybackPosition } from '@/creativeshire/content/widgets/composite/VideoPlayer/hooks'
