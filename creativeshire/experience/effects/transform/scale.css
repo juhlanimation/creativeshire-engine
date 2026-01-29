@@ -1,0 +1,97 @@
+/**
+ * Scale Effects
+ *
+ * Transform scale-based animations for reveals, hovers, and modals.
+ * Named by MECHANISM (scale), not by trigger or widget.
+ *
+ * Variants:
+ * - scale-reveal: Scale + opacity for visibility reveals
+ * - scale-hover: Scale feedback on hover/press
+ * - modal-scale: Scale + opacity for modals
+ *
+ * Each variant uses its own CSS variable namespace to avoid conflicts.
+ */
+
+/* =============================================================================
+ * SCALE REVEAL
+ * Scale + opacity animation for any container.
+ * Works with scale-reveal behaviour.
+ *
+ * Usage:
+ *   <div data-effect="scale-reveal">...</div>
+ *
+ * CSS Variables consumed:
+ * - --scale-transform: scale transform value (default: scale(1))
+ * - --scale-opacity: opacity value (default: 1)
+ * - --scale-duration: transition duration (default: 400ms)
+ * - --scale-easing: timing function (default: overshoot cubic-bezier)
+ * ============================================================================= */
+
+[data-effect~="scale-reveal"] {
+  transform: var(--scale-transform, scale(1));
+  opacity: var(--scale-opacity, 1);
+  transition:
+    transform var(--scale-duration, 400ms) var(--scale-easing, cubic-bezier(0.34, 1.56, 0.64, 1)),
+    opacity var(--scale-duration, 400ms) ease-out;
+  will-change: transform, opacity;
+}
+
+/* =============================================================================
+ * SCALE HOVER
+ * Scale feedback on hover and press.
+ *
+ * Behaviour: contact-reveal, hover-reveal, or any behaviour outputting --scale
+ *
+ * CSS Variables consumed:
+ * - --scale: Current scale value for root element (default: 1)
+ * - --scale-target: Scale value for child targets (default: 1)
+ * - --scale-duration: Transition duration (default: 150ms)
+ * - --scale-easing: Timing function (default: ease-out)
+ * ============================================================================= */
+
+[data-effect~="scale-hover"] {
+  transform: scale(var(--scale, 1));
+  transition: transform var(--scale-duration, 150ms) var(--scale-easing, ease-out);
+  will-change: transform;
+}
+
+[data-effect~="scale-hover"] [data-scale-target] {
+  transform: scale(var(--scale-target, 1));
+  transition: transform var(--scale-duration, 300ms) var(--scale-easing, ease);
+  will-change: transform;
+}
+
+/* =============================================================================
+ * MODAL SCALE
+ * Scale + opacity animation for modals.
+ * Works with modal-scale behaviour.
+ *
+ * CSS Variables consumed:
+ * - --modal-scale: transform scale value (default: 1)
+ * - --modal-opacity: container opacity (default: 1)
+ * - --modal-duration: transition duration (default: 400ms)
+ * - --modal-easing: timing function (default: ease)
+ * ============================================================================= */
+
+[data-effect~="modal-scale"] {
+  transform: scale(var(--modal-scale, 1));
+  opacity: var(--modal-opacity, 1);
+  transition:
+    transform var(--modal-duration, 400ms) var(--modal-easing, cubic-bezier(0.34, 1.56, 0.64, 1)),
+    opacity var(--modal-duration, 400ms) var(--modal-easing, ease-out);
+  will-change: transform, opacity;
+}
+
+/* =============================================================================
+ * REDUCED MOTION
+ * Instant transitions for users who prefer reduced motion.
+ * ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-effect~="scale-reveal"],
+  [data-effect~="scale-hover"],
+  [data-effect~="scale-hover"] [data-scale-target],
+  [data-effect~="modal-scale"] {
+    transition: none;
+  }
+}

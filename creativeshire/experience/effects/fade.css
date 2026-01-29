@@ -1,0 +1,79 @@
+/**
+ * Fade Effects
+ *
+ * Opacity-based animations for reveals, modals, and backdrops.
+ * Named by MECHANISM (fade), not by trigger or widget.
+ *
+ * Variants:
+ * - fade-reveal: General purpose fade animation
+ * - modal-fade: Modal container fade
+ * - modal-backdrop: Modal backdrop overlay fade
+ *
+ * Each variant uses its own CSS variable namespace to avoid conflicts.
+ */
+
+/* =============================================================================
+ * FADE REVEAL
+ * Simple opacity fade animation for any container.
+ * Works with fade-reveal behaviour.
+ *
+ * Usage:
+ *   <div data-effect="fade-reveal">...</div>
+ *
+ * CSS Variables consumed:
+ * - --fade-opacity: opacity value (default: 1)
+ * - --fade-duration: transition duration (default: 300ms)
+ * - --fade-easing: timing function (default: ease-out)
+ * ============================================================================= */
+
+[data-effect~="fade-reveal"] {
+  opacity: var(--fade-opacity, 1);
+  transition: opacity var(--fade-duration, 300ms) var(--fade-easing, ease-out);
+  will-change: opacity;
+}
+
+/* =============================================================================
+ * MODAL FADE
+ * Simple opacity fade animation for modals.
+ * Works with modal-fade behaviour.
+ *
+ * CSS Variables consumed:
+ * - --modal-opacity: container opacity (default: 1)
+ * - --modal-duration: transition duration (default: 300ms)
+ * - --modal-easing: timing function (default: ease-out)
+ * ============================================================================= */
+
+[data-effect~="modal-fade"] {
+  opacity: var(--modal-opacity, 1);
+  transition: opacity var(--modal-duration, 300ms) var(--modal-easing, ease-out);
+  will-change: opacity;
+}
+
+/* =============================================================================
+ * MODAL BACKDROP
+ * Opacity animation for modal backdrop overlay.
+ * Works with all modal behaviours (they all output --modal-backdrop-opacity).
+ *
+ * CSS Variables consumed:
+ * - --modal-backdrop-opacity: backdrop opacity (default: 0)
+ * - --modal-duration: transition duration (default: 300ms)
+ * ============================================================================= */
+
+[data-effect~="modal-backdrop"] {
+  opacity: var(--modal-backdrop-opacity, 0);
+  transition: opacity var(--modal-duration, 300ms) ease-out;
+  will-change: opacity;
+}
+
+/* =============================================================================
+ * REDUCED MOTION
+ * Instant transitions for users who prefer reduced motion.
+ * ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-effect~="fade-reveal"],
+  [data-effect~="modal-fade"],
+  [data-effect~="modal-backdrop"] {
+    transition: none;
+  }
+}

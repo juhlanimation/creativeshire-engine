@@ -1,20 +1,32 @@
 /**
- * Text Reveal Effect
+ * Slide Effects
  *
+ * Vertical/horizontal slide animations using translateY/translateX.
+ * Named by MECHANISM (slide), not by trigger or widget.
+ *
+ * Variants:
+ * - text-reveal: Vertical text slide with primary/secondary text swap
+ *
+ * Note: Additional slide variants (horizontal, staggered) can be added here.
+ */
+
+/* =============================================================================
+ * TEXT REVEAL (Vertical Slide)
  * Vertical text slide with primary/secondary text swap.
  *
  * Behaviour: contact-reveal (or any behaviour outputting these variables)
- * Variables consumed:
- *   --reveal-y: Vertical slide position (default: 0)
- *   --reveal-opacity: Icon/secondary opacity (default: 0)
- *   --reveal-duration: Transition duration (default: 400ms)
- *   --reveal-easing: Timing function (default: ease-in-out)
+ *
+ * CSS Variables consumed:
+ * - --reveal-y: Vertical slide position (default: 0)
+ * - --reveal-opacity: Icon/secondary opacity (default: 0)
+ * - --reveal-duration: Transition duration (default: 400ms)
+ * - --reveal-easing: Timing function (default: ease-in-out)
  *
  * Markers:
  *   data-reveal="primary" - Main text (slides up on hover)
  *   data-reveal="secondary" - Revealed text (slides in from below)
  *   data-reveal="icon" - Optional icon (fades in)
- */
+ * ============================================================================= */
 
 [data-effect~="text-reveal"] [data-reveal="primary"],
 [data-effect~="text-reveal"] [data-reveal="secondary"] {
@@ -29,7 +41,11 @@
   will-change: opacity;
 }
 
-/* Reduced motion support */
+/* =============================================================================
+ * REDUCED MOTION
+ * Instant transitions for users who prefer reduced motion.
+ * ============================================================================= */
+
 @media (prefers-reduced-motion: reduce) {
   [data-effect~="text-reveal"] [data-reveal="primary"],
   [data-effect~="text-reveal"] [data-reveal="secondary"],

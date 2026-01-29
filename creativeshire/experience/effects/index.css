@@ -3,21 +3,43 @@
  *
  * Import all effects for global availability.
  * Effects define HOW elements animate using CSS variables from behaviours.
+ *
+ * Structure (organized by MECHANISM):
+ * - fade.css      — Opacity (single file at root)
+ * - transform/    — Position, scale, rotation (slide, scale, rotate, flip)
+ * - mask/         — Clip-path based (wipe, reveal)
+ * - emphasis/     — Attention/looping (pulse, shake, bounce) [future]
+ * - page/         — Route transitions [future]
  */
 
-@import './text-reveal.css';
+/* =============================================================================
+ * FADE (Opacity-based)
+ * ============================================================================= */
+@import './fade.css';
+
+/* =============================================================================
+ * TRANSFORM (Position, scale, rotation)
+ * ============================================================================= */
+@import './transform/scale.css';
+@import './transform/slide.css';
+
+/* =============================================================================
+ * MASK (Clip-path based)
+ * ============================================================================= */
+@import './mask/wipe.css';
+@import './mask/reveal.css';
+
+/* =============================================================================
+ * ROOT-LEVEL EFFECTS (Single-mechanism files)
+ * ============================================================================= */
 @import './color-shift.css';
-@import './scale-hover.css';
 @import './overlay-darken.css';
 @import './marquee-scroll.css';
+
+/* =============================================================================
+ * WIDGET-SPECIFIC EFFECTS
+ * These could be colocated with widgets in the future.
+ * Kept here temporarily for backward compatibility.
+ * ============================================================================= */
 @import './contact-reveal.css';
 @import './thumbnail-expand.css';
-@import './modal-mask.css';
-@import './modal-fade.css';
-@import './modal-scale.css';
-@import './modal-backdrop.css';
-
-/* Generic reveal effects */
-@import './mask-reveal.css';
-@import './fade-reveal.css';
-@import './scale-reveal.css';

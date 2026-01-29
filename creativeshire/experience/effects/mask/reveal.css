@@ -1,6 +1,15 @@
 /**
- * Mask Reveal Effect
+ * Mask Reveal Effects
  *
+ * Clip-path reveal animations for general containers.
+ * Named by MECHANISM (mask reveal), not by trigger or widget.
+ *
+ * Variants:
+ * - mask-reveal: Generic clip-path reveal with content fade
+ */
+
+/* =============================================================================
+ * MASK REVEAL (Clip-Path Reveal)
  * Clip-path reveal animation for any container.
  * Works with mask-reveal behaviour.
  *
@@ -15,7 +24,7 @@
  * - --mask-easing: timing function (default: cubic-bezier)
  * - --mask-content-opacity: content opacity (default: 1)
  * - --mask-content-delay: delay for content fade (default: 0ms)
- */
+ * ============================================================================= */
 
 /* Container - clip-path animation */
 [data-effect~="mask-reveal"] {
@@ -32,7 +41,11 @@
   will-change: opacity;
 }
 
-/* Reduced motion - instant transitions */
+/* =============================================================================
+ * REDUCED MOTION
+ * Instant transitions for users who prefer reduced motion.
+ * ============================================================================= */
+
 @media (prefers-reduced-motion: reduce) {
   [data-effect~="mask-reveal"],
   [data-effect~="mask-reveal"] [data-reveal="content"] {
