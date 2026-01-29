@@ -2,12 +2,13 @@
  * hover/expand behaviour - hover-triggered width/size expansion.
  *
  * Generic behaviour for expanding elements on hover.
- * Used for thumbnails, accordions, and expandable items.
+ * Used for accordions, expandable items, galleries, and any element
+ * that grows on hover.
  *
  * CSS Variables Output:
  * - --expand-width: Current width value
- * - --thumbnail-width: Alias for thumbnail-specific styling
- * - --details-opacity: Opacity for detail content that appears on expand
+ * - --expand-scale: Scale factor for expansion
+ * - --expand-opacity: Opacity for content that appears on expand
  */
 
 import type { Behaviour } from '../types'
@@ -17,26 +18,22 @@ interface HoverExpandOptions {
   baseWidth?: number
   expandedWidth?: number
   widthUnit?: string
+  expandScale?: number
 }
 
 const hoverExpand: Behaviour = {
   id: 'hover/expand',
   name: 'Hover Expand',
-  requires: ['isHovered', 'hoveredThumbnailIndex', 'thumbnailIndex', 'prefersReducedMotion'],
+  requires: ['isHovered', 'prefersReducedMotion'],
 
   compute: (state, options) => {
-    // Support both direct hover state and indexed hover tracking
-    const hoveredIndex = (state.hoveredThumbnailIndex as number) ?? -1
-    const currentIndex = (state.thumbnailIndex as number) ?? 0
-    const directHover = (state.isHovered as boolean) ?? false
-
-    // Determine if this element is hovered
-    const isHovered = directHover || hoveredIndex === currentIndex
+    const isHovered = (state.isHovered as boolean) ?? false
 
     const {
       baseWidth = 78,
       expandedWidth = 268,
-      widthUnit = 'px'
+      widthUnit = 'px',
+      expandScale = 1
     } = (options as HoverExpandOptions) || {}
 
     const width = isHovered ? expandedWidth : baseWidth
@@ -45,8 +42,8 @@ const hoverExpand: Behaviour = {
     // (transition is in CSS, behaviour just sets the target value)
     return {
       '--expand-width': `${width}${widthUnit}`,
-      '--thumbnail-width': `${width}${widthUnit}`,
-      '--details-opacity': isHovered ? 1 : 0
+      '--expand-scale': isHovered ? expandScale : 1,
+      '--expand-opacity': isHovered ? 1 : 0
     }
   },
 
@@ -72,6 +69,14 @@ const hoverExpand: Behaviour = {
       min: 200,
       max: 400,
       step: 10
+    },
+    expandScale: {
+      type: 'range',
+      label: 'Expand Scale',
+      default: 1,
+      min: 1,
+      max: 1.2,
+      step: 0.01
     }
   }
 }
