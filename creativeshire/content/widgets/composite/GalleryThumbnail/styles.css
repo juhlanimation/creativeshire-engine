@@ -1,7 +1,7 @@
 /**
  * GalleryThumbnail styles.
  * Content Layer (L1) - structure only, no animation.
- * Animation handled by thumbnail-expand effect.
+ * Animation handled by flex-expand effect.
  */
 
 .gallery-thumbnail {
@@ -105,9 +105,10 @@
 }
 
 /* =============================================================================
- * Thumbnail Expand Effect (colocated from experience/effects/)
+ * Flex Expand Effect (colocated with widget)
  *
- * Expandable thumbnail gallery with label opacity transitions.
+ * Uses mechanism-based naming (flex-expand) per architecture spec.
+ * Expandable gallery with flex transitions and label opacity.
  * Flex transitions are handled inline (CSS shorthand limitation).
  *
  * Variables consumed:
@@ -116,13 +117,13 @@
  * ============================================================================= */
 
 /* Thumbnail container - base styles */
-[data-effect~="thumbnail-expand"] {
+[data-effect~="flex-expand"] {
   min-width: 0;
   will-change: flex, width;
 }
 
 /* Metadata labels - fade in on expand */
-[data-effect~="thumbnail-expand"] [data-expand="label"] {
+[data-effect~="flex-expand"] [data-expand="label"] {
   opacity: var(--label-opacity, 0);
   transition: opacity calc(var(--expand-duration, 400ms) * 0.75) ease-out;
   will-change: opacity;
@@ -130,14 +131,14 @@
 }
 
 /* Make labels interactive when visible */
-[data-effect~="thumbnail-expand"][data-expanded="true"] [data-expand="label"] {
+[data-effect~="flex-expand"][data-expanded="true"] [data-expand="label"] {
   pointer-events: auto;
 }
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
-  [data-effect~="thumbnail-expand"],
-  [data-effect~="thumbnail-expand"] [data-expand="label"] {
+  [data-effect~="flex-expand"],
+  [data-effect~="flex-expand"] [data-expand="label"] {
     transition: none !important;
   }
 }

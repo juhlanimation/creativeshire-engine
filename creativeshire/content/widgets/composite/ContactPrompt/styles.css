@@ -170,8 +170,9 @@
 }
 
 /* =============================================================================
- * Contact Reveal Effect (colocated with widget)
+ * Color Shift Effect (colocated with widget)
  *
+ * Uses mechanism-based naming (color-shift) per architecture spec.
  * Handles color transitions for this widget.
  *
  * NOTE: mix-blend-mode is applied at the .chrome-overlay level
@@ -184,13 +185,13 @@
  * - --icon-opacity: Icon visibility (0 default, 1 hovered)
  * ============================================================================= */
 
-[data-effect="contact-reveal"] {
+[data-effect="color-shift"].contact-prompt {
   color: var(--shift-color, white);
   /* No transition - instant color change to prevent flash */
   will-change: color;
 }
 
 /* When hovered, immediately use purple (don't wait for JS to compute) */
-[data-effect="contact-reveal"][data-hovered] {
+[data-effect="color-shift"].contact-prompt[data-hovered] {
   color: var(--shift-color, var(--interaction, #9933FF));
 }

@@ -38,7 +38,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* MOVED TO L2: experience/effects/thumbnail-expand.css */
+  /* MOVED TO L2: flex-expand effect (colocated with GalleryThumbnail) */
   /* transition: opacity 300ms ease-out; */
 }
 
@@ -54,7 +54,7 @@
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  /* MOVED TO L2: experience/effects/thumbnail-expand.css */
+  /* MOVED TO L2: flex-expand effect (colocated with GalleryThumbnail) */
   /* transition: opacity 300ms ease-out; */
 }
 

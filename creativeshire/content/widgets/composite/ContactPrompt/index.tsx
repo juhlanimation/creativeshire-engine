@@ -195,7 +195,7 @@ const ContactPrompt = memo(forwardRef<HTMLDivElement, ContactPromptProps>(functi
       className={classNames}
       style={style}
       data-behaviour={dataBehaviour}
-      data-effect="contact-reveal"
+      data-effect="color-shift"
       data-copy-state={copyState !== 'idle' ? copyState : undefined}
       onClick={handleClick}
       role="button"

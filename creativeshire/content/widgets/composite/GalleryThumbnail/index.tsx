@@ -6,7 +6,7 @@
  *
  * Architecture:
  * - Receives isExpanded state from parent (ExpandableGalleryRow)
- * - Sets CSS variables for thumbnail-expand effect
+ * - Sets CSS variables for flex-expand effect
  * - Video plays when expanded
  * - Metadata labels fade in when expanded
  * - Click opens modal with mask-expand transition
@@ -99,7 +99,7 @@ const GalleryThumbnail = memo(function GalleryThumbnail({
       ref={containerRef}
       className={containerClasses}
       style={style}
-      data-effect="thumbnail-expand"
+      data-effect="flex-expand"
       data-expanded={isExpanded || undefined}
       onMouseEnter={onExpand}
       onClick={handleClick}

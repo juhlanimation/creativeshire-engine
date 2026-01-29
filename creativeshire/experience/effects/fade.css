@@ -128,17 +128,17 @@
 }
 
 /* =============================================================================
- * CURSOR LABEL
- * Fast opacity fade for cursor-following labels.
+ * LABEL FADE
+ * Fast opacity fade for labels (mechanism-based naming).
  * Used by: CursorLabel overlay
  *
  * CSS Variables consumed:
- * - --cursor-duration: transition duration (default: 150ms)
- * - --cursor-easing: timing function (default: ease-out)
+ * - --label-duration: transition duration (default: 150ms)
+ * - --label-easing: timing function (default: ease-out)
  * ============================================================================= */
 
-[data-effect~="cursor-label"] {
-  transition: opacity var(--cursor-duration, 150ms) var(--cursor-easing, ease-out);
+[data-effect~="label-fade"] {
+  transition: opacity var(--label-duration, 150ms) var(--label-easing, ease-out);
   will-change: opacity;
 }
 
@@ -155,7 +155,7 @@
   [data-effect~="controls-fade"],
   [data-effect~="button-hover"],
   [data-effect~="scrubber-fade"],
-  [data-effect~="cursor-label"] {
+  [data-effect~="label-fade"] {
     transition: none;
   }
 }

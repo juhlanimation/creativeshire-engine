@@ -18,16 +18,18 @@
 }
 
 /**
- * Contact reveal blend mode fix.
+ * Color shift blend mode fix (ContactPrompt overlay).
  * Mix-blend-mode must be on the stacking context (fixed + z-index element),
  * not a nested child. Chrome creates isolation when z-index is set.
+ *
+ * Uses mechanism-based effect name (color-shift) per architecture spec.
  *
  * States:
  * - Default: mix-blend-mode: difference (adapts to background)
  * - Hovered: mix-blend-mode: normal (shows purple CTA color)
  * - Copied: mix-blend-mode: difference (via data-copy-state)
  */
-.chrome-overlay:has([data-effect="contact-reveal"]) {
+.chrome-overlay:has([data-effect="color-shift"]) {
   mix-blend-mode: difference;
   color: white;
 }
@@ -41,7 +43,7 @@
 }
 
 /* Copied state: back to difference blend */
-.chrome-overlay:has([data-effect="contact-reveal"][data-copy-state]) {
+.chrome-overlay:has([data-effect="color-shift"][data-copy-state]) {
   mix-blend-mode: difference;
 }
 
