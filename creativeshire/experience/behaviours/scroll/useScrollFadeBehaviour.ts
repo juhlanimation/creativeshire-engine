@@ -24,8 +24,12 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-/** Supported scroll-fade behaviour types */
-type ScrollFadeBehaviourId = 'scroll-fade' | 'scroll-fade-out'
+/** Supported scroll-fade behaviour types (supports both old and new IDs) */
+type ScrollFadeBehaviourId =
+  | 'scroll/fade'
+  | 'scroll/fade-out'
+  | 'scroll-fade'      // Legacy alias
+  | 'scroll-fade-out'  // Legacy alias
 
 interface UseScrollFadeBehaviourOptions {
   /** ScrollTrigger start position (defaults based on behaviour type) */
@@ -38,11 +42,11 @@ interface UseScrollFadeBehaviourOptions {
 
 /**
  * Get default ScrollTrigger positions based on behaviour type.
- * - scroll-fade: triggers as section enters viewport from bottom
- * - scroll-fade-out: triggers as section exits viewport at top
+ * - scroll/fade (scroll-fade): triggers as section enters viewport from bottom
+ * - scroll/fade-out (scroll-fade-out): triggers as section exits viewport at top
  */
 function getDefaultPositions(behaviourId: ScrollFadeBehaviourId): { start: string; end: string } {
-  if (behaviourId === 'scroll-fade-out') {
+  if (behaviourId === 'scroll/fade-out' || behaviourId === 'scroll-fade-out') {
     // Fade out as section scrolls up and exits viewport
     return { start: 'top top', end: 'bottom top' }
   }
@@ -55,12 +59,12 @@ function getDefaultPositions(behaviourId: ScrollFadeBehaviourId): { start: strin
  * Sets CSS variables directly on the element, bypassing React.
  *
  * @param ref - Ref to the element to animate
- * @param behaviourId - The scroll-fade behaviour type ('scroll-fade' or 'scroll-fade-out')
+ * @param behaviourId - The scroll-fade behaviour type ('scroll/fade' or 'scroll/fade-out')
  * @param options - ScrollTrigger configuration overrides
  */
 export function useScrollFadeBehaviour(
   ref: RefObject<HTMLElement | null>,
-  behaviourId: ScrollFadeBehaviourId = 'scroll-fade',
+  behaviourId: ScrollFadeBehaviourId = 'scroll/fade',
   options: UseScrollFadeBehaviourOptions = {}
 ): void {
   const defaults = getDefaultPositions(behaviourId)

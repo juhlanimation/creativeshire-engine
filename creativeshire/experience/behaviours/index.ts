@@ -3,49 +3,84 @@
  *
  * IMPORTANT: All behaviour folders must be imported here for auto-registration.
  * Behaviours call registerBehaviour() on import, so missing imports = broken behaviours.
+ *
+ * NAMING CONVENTION: Behaviours are named by TRIGGER (scroll, hover, visibility),
+ * NOT by effect (fade, scale) or widget (project-card, contact).
  */
 
-// Auto-register behaviours by importing them
+// ============================================
+// Trigger-based behaviours (NEW structure)
+// ============================================
+
 // Scroll-based triggers
-import './scroll-fade'
-import './scroll-fade-out'
-import './scroll-background-slideshow'
-import './scroll-indicator-fade'
+import './scroll'
 
 // Hover-based triggers
-import './hover-reveal'
-import './contact-reveal'
-import './floating-contact-cta'
-import './project-card-hover'
-import './gallery-thumbnail-expand'
+import './hover'
 
-// Visibility-based triggers
-import './fade-in'
+// Visibility-based triggers (IntersectionObserver)
+import './visibility'
 
-// Animation triggers
-import './logo-marquee-animation'
-import './hero-text-color-transition'
+// Animation triggers (continuous/looping)
+import './animation'
 
-// Modal transitions
+// ============================================
+// Specialized behaviours (keep as-is)
+// ============================================
+
+// Modal transitions (well-structured)
 import './modal'
-import './video-modal'
 
-// Reveal patterns
+// Reveal patterns (well-structured)
 import './reveal'
 
+// Video modal (specialized)
+import './video-modal'
+
+// ============================================
 // Types
+// ============================================
 export type { Behaviour, BehaviourRegistry } from './types'
 
+// ============================================
 // Registry
+// ============================================
 export {
   behaviourRegistry,
   registerBehaviour,
   unregisterBehaviour,
 } from './registry'
 
+// ============================================
 // Resolution
+// ============================================
 export { resolveBehaviour, resolveBehavioursWithDependencies } from './resolve'
 
+// ============================================
 // Components
+// ============================================
 export { BehaviourWrapper } from './BehaviourWrapper'
 export type { BehaviourWrapperProps } from './BehaviourWrapper'
+
+// ============================================
+// Re-exports for explicit imports
+// ============================================
+
+// Scroll behaviours
+export {
+  scrollFade,
+  scrollFadeOut,
+  scrollProgress,
+  scrollColorShift,
+  scrollImageCycle,
+  useScrollFadeBehaviour,
+} from './scroll'
+
+// Hover behaviours
+export { hoverReveal, hoverScale, hoverExpand } from './hover'
+
+// Visibility behaviours
+export { visibilityFadeIn } from './visibility'
+
+// Animation behaviours
+export { animationMarquee } from './animation'

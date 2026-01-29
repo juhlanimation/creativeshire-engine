@@ -1,7 +1,7 @@
 /**
- * scroll-fade-out behaviour - Fades section out as it exits viewport.
+ * scroll/fade-out behaviour - Fades section out as it exits viewport.
  *
- * Inverse of scroll-fade. As section scrolls up and out of view,
+ * Inverse of scroll/fade. As section scrolls up and out of view,
  * opacity transitions from 1 to 0.
  *
  * CSS Variables Output:
@@ -13,7 +13,7 @@ import type { Behaviour } from '../types'
 import { registerBehaviour } from '../registry'
 
 const scrollFadeOut: Behaviour = {
-  id: 'scroll-fade-out',
+  id: 'scroll/fade-out',
   name: 'Scroll Fade Out',
 
   compute: (state) => {

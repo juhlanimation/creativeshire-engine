@@ -1,14 +1,20 @@
 /**
- * logo-marquee-animation behaviour - continuous horizontal scroll for logos.
- * Note: CSS animation handles the actual scroll, this provides variable hooks.
+ * animation/marquee behaviour - continuous horizontal scroll animation.
+ *
+ * Generic behaviour for marquee/ticker effects.
+ * CSS animation handles the actual scroll, this provides variable hooks.
+ *
+ * CSS Variables Output:
+ * - --marquee-play-state: Animation play state (running/paused)
+ * - --marquee-duration: Animation duration
  */
 
 import type { Behaviour } from '../types'
 import { registerBehaviour } from '../registry'
 
-const logoMarqueeAnimation: Behaviour = {
-  id: 'logo-marquee-animation',
-  name: 'Logo Marquee Animation',
+const animationMarquee: Behaviour = {
+  id: 'animation/marquee',
+  name: 'Animation Marquee',
   requires: ['prefersReducedMotion'],
 
   compute: (state, options) => {
@@ -46,6 +52,6 @@ const logoMarqueeAnimation: Behaviour = {
 }
 
 // Auto-register on module load
-registerBehaviour(logoMarqueeAnimation)
+registerBehaviour(animationMarquee)
 
-export default logoMarqueeAnimation
+export default animationMarquee

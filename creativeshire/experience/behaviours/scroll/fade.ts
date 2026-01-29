@@ -1,5 +1,5 @@
 /**
- * scroll-fade behaviour - Fades section in as it enters viewport.
+ * scroll/fade behaviour - Fades section in as it enters viewport.
  *
  * Uses sectionVisibility (0-1 intersection ratio) to compute opacity.
  * Matches bojuhl.com fade-in effect with 1.5x acceleration.
@@ -13,7 +13,7 @@ import type { Behaviour } from '../types'
 import { registerBehaviour } from '../registry'
 
 const scrollFade: Behaviour = {
-  id: 'scroll-fade',
+  id: 'scroll/fade',
   name: 'Scroll Fade',
 
   compute: (state) => {

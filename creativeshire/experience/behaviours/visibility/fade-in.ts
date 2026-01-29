@@ -1,13 +1,20 @@
 /**
- * fade-in behaviour - fades and slides content as it enters viewport.
+ * visibility/fade-in behaviour - fades and slides content as it enters viewport.
+ *
+ * Generic behaviour for IntersectionObserver-triggered fade animations.
+ * Sets CSS variables for opacity and vertical offset.
+ *
+ * CSS Variables Output:
+ * - --opacity: Element opacity (0-1)
+ * - --y: Vertical offset in pixels
  */
 
 import type { Behaviour } from '../types'
 import { registerBehaviour } from '../registry'
 
-const fadeIn: Behaviour = {
-  id: 'fade-in',
-  name: 'Fade In',
+const visibilityFadeIn: Behaviour = {
+  id: 'visibility/fade-in',
+  name: 'Visibility Fade In',
   requires: ['sectionVisibility', 'prefersReducedMotion'],
 
   compute: (state, options) => {
@@ -48,6 +55,6 @@ const fadeIn: Behaviour = {
 }
 
 // Auto-register on module load
-registerBehaviour(fadeIn)
+registerBehaviour(visibilityFadeIn)
 
-export default fadeIn
+export default visibilityFadeIn

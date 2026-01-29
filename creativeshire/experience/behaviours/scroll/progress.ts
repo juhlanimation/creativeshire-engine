@@ -1,13 +1,16 @@
 /**
- * scroll-indicator-fade behaviour - fades out scroll indicator as user scrolls.
+ * scroll/progress behaviour - fades out element based on scroll progress.
+ *
+ * Generic behaviour for any scroll-progress-based opacity transitions.
+ * Originally used for scroll indicators.
  */
 
 import type { Behaviour } from '../types'
 import { registerBehaviour } from '../registry'
 
-const scrollIndicatorFade: Behaviour = {
-  id: 'scroll-indicator-fade',
-  name: 'Scroll Indicator Fade',
+const scrollProgress: Behaviour = {
+  id: 'scroll/progress',
+  name: 'Scroll Progress',
   requires: ['scrollProgress', 'prefersReducedMotion'],
 
   compute: (state, options) => {
@@ -47,6 +50,6 @@ const scrollIndicatorFade: Behaviour = {
 }
 
 // Auto-register on module load
-registerBehaviour(scrollIndicatorFade)
+registerBehaviour(scrollProgress)
 
-export default scrollIndicatorFade
+export default scrollProgress
