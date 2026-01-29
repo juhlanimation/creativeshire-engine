@@ -1,0 +1,24 @@
+/**
+ * Split layout widget styles.
+ * Uses CSS variables with fallbacks for animation support.
+ */
+
+.split-widget {
+  /* Animation CSS variables with fallbacks (set by behaviours) */
+  transform: translateY(calc(var(--y, 0) * 1px));
+  opacity: var(--opacity, 1);
+
+  /* Default sizing */
+  width: 100%;
+  transition: none; /* Animations handled by drivers, not CSS transitions */
+}
+
+/* Reset text direction for children when using reverse */
+.split-widget > * {
+  direction: ltr;
+}
+
+/* Enable will-change only when behaviour is attached */
+.split-widget[data-behaviour] {
+  will-change: transform, opacity;
+}

@@ -14,10 +14,16 @@ import type { ComponentType } from 'react'
 import Text from './primitives/Text'
 import Image from './primitives/Image'
 import Video from './primitives/Video'
+import Icon from './primitives/Icon'
+import Button from './primitives/Button'
 
 // Layout (containers)
 import Flex from './layout/Flex'
 import Box from './layout/Box'
+import Stack from './layout/Stack'
+import Grid from './layout/Grid'
+import Split from './layout/Split'
+import Container from './layout/Container'
 
 // Composites (assembled widgets with state/logic)
 import ContactPrompt from './composite/ContactPrompt'
@@ -35,9 +41,15 @@ export const widgetRegistry: Record<string, WidgetComponent> = {
   Text,
   Image,
   Video,
+  Icon,
+  Button,
   // Layout
   Flex,
   Box,
+  Stack,
+  Grid,
+  Split,
+  Container,
   // Composites
   ContactPrompt,
   LogoLink,

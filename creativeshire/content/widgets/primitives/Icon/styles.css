@@ -1,0 +1,33 @@
+/**
+ * Icon widget styles.
+ * Uses CSS variables with fallbacks for animation support.
+ */
+
+.icon-widget {
+  /* Animation CSS variables with fallbacks (set by behaviours) */
+  transform: translateY(calc(var(--y, 0) * 1px));
+  opacity: var(--opacity, 1);
+
+  /* Default styling */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+  vertical-align: middle;
+  flex-shrink: 0;
+  transition: none; /* Animations handled by drivers, not CSS transitions */
+}
+
+/* SVG within icon inherits size and color */
+.icon-widget svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+/* Enable will-change only when behaviour is attached */
+.icon-widget[data-behaviour] {
+  will-change: transform, opacity;
+}
