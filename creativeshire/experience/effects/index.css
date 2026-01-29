@@ -36,10 +36,7 @@
 @import './overlay-darken.css';
 @import './marquee-scroll.css';
 
-/* =============================================================================
- * WIDGET-SPECIFIC EFFECTS
- * These could be colocated with widgets in the future.
- * Kept here temporarily for backward compatibility.
- * ============================================================================= */
-@import './contact-reveal.css';
-@import './thumbnail-expand.css';
+/* Widget-specific effects are colocated with their widgets:
+ * - contact-reveal → widgets/composite/ContactPrompt/styles.css
+ * - thumbnail-expand → widgets/composite/GalleryThumbnail/styles.css
+ */
