@@ -1,8 +1,14 @@
 /**
- * Chrome overlay positioning styles.
- * Used by ChromeRenderer for widget-based overlays.
- * Component-based overlays handle their own positioning.
+ * Chrome styles for widget-based regions and overlays.
+ * Used by ChromeRenderer.
+ *
+ * - Overlay positioning styles for widget-based overlays
+ * - Footer styles for widget-based footer regions
+ * - Component-based chrome handles its own styles
  */
+
+/* Import footer styles for widget-based footer regions */
+@import url('../content/chrome/regions/Footer/styles.css');
 
 /* Base overlay - shared properties */
 .chrome-overlay {

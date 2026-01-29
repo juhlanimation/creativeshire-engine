@@ -35,11 +35,15 @@ export interface ChromeRendererProps {
 
 /**
  * Renders a region (header, footer, sidebar).
+ * For widget-based regions, wraps content in semantic element.
  */
-function renderRegion(region: RegionSchema | undefined): React.ReactNode {
+function renderRegion(
+  region: RegionSchema | undefined,
+  position: 'header' | 'footer' | 'sidebar'
+): React.ReactNode {
   if (!region) return null
 
-  // Component-based approach
+  // Component-based approach - component handles its own semantic element
   if (region.component) {
     const Component = getChromeComponent(region.component)
     if (!Component) {
@@ -48,15 +52,23 @@ function renderRegion(region: RegionSchema | undefined): React.ReactNode {
     return <Component {...(region.props || {})} />
   }
 
-  // Widget-based approach
+  // Widget-based approach - wrap in semantic element
   if (region.widgets && region.widgets.length > 0) {
-    return (
-      <>
-        {region.widgets.map((widget) => (
-          <WidgetRenderer key={widget.id} widget={widget} />
-        ))}
-      </>
-    )
+    const children = region.widgets.map((widget) => (
+      <WidgetRenderer key={widget.id} widget={widget} />
+    ))
+
+    // Wrap in semantic element based on position
+    switch (position) {
+      case 'header':
+        return <header role="banner">{children}</header>
+      case 'footer':
+        return <footer role="contentinfo">{children}</footer>
+      case 'sidebar':
+        return <aside role="complementary">{children}</aside>
+      default:
+        return <>{children}</>
+    }
   }
 
   return null
@@ -150,10 +162,10 @@ export function ChromeRenderer({ siteChrome, pageChrome, position }: ChromeRende
 
   switch (position) {
     case 'header':
-      return renderRegion(getRegion('header'))
+      return renderRegion(getRegion('header'), 'header')
 
     case 'footer':
-      return renderRegion(getRegion('footer'))
+      return renderRegion(getRegion('footer'), 'footer')
 
     case 'overlays':
       return renderOverlays(siteChrome.overlays)
