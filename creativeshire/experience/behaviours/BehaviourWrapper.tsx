@@ -6,16 +6,28 @@
  * Architecture:
  * 1. Resolves behaviour from registry by ID
  * 2. Tracks local interaction state (hover, press)
- * 3. Calls behaviour.compute(state, options) to get CSS variables
- * 4. Applies variables via inline style
+ * 3. For scroll behaviours: registers with ScrollDriver for 60fps updates
+ * 4. For non-scroll behaviours: calls behaviour.compute(state, options) directly
+ * 5. Applies variables via inline style or driver setProperty
  *
  * This enables reusable behaviours across any widget.
  * The widget stays pure (L1), BehaviourWrapper handles experience (L2).
  */
 
-import { useRef, useState, useCallback, useMemo, type ReactNode, type CSSProperties } from 'react'
+import {
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+  useEffect,
+  useId,
+  type ReactNode,
+  type CSSProperties,
+} from 'react'
 import { resolveBehaviour } from './resolve'
+import { ScrollDriver } from '../drivers/ScrollDriver'
 import type { BehaviourState, CSSVariables } from '../../schema/experience'
+import type { Behaviour } from './types'
 
 /**
  * Props for BehaviourWrapper component.
@@ -52,8 +64,57 @@ const DEFAULT_STATE: BehaviourState = {
 }
 
 /**
+ * State dependencies that require ScrollDriver.
+ * If a behaviour requires any of these, it will be registered with the driver.
+ */
+const SCROLL_DEPENDENCIES = new Set([
+  'scrollProgress',
+  'scrollVelocity',
+  'sectionProgress',
+])
+
+/**
+ * Lazy singleton ScrollDriver instance.
+ * Created on first use, shared across all BehaviourWrappers.
+ * Destroyed when no more wrappers are registered.
+ */
+let sharedDriver: ScrollDriver | null = null
+let driverRefCount = 0
+
+function getDriver(): ScrollDriver {
+  if (!sharedDriver) {
+    sharedDriver = new ScrollDriver()
+  }
+  driverRefCount++
+  return sharedDriver
+}
+
+function releaseDriver(): void {
+  driverRefCount--
+  if (driverRefCount <= 0 && sharedDriver) {
+    sharedDriver.destroy()
+    sharedDriver = null
+    driverRefCount = 0
+  }
+}
+
+/**
+ * Check if behaviour requires scroll driver.
+ * Returns true if any of the behaviour's requires array contains scroll-related state.
+ */
+function needsScrollDriver(behaviour: Behaviour): boolean {
+  if (!behaviour.requires || behaviour.requires.length === 0) {
+    return false
+  }
+  return behaviour.requires.some((req) => SCROLL_DEPENDENCIES.has(req))
+}
+
+/**
  * BehaviourWrapper component.
  * Wraps children and applies behaviour-computed CSS variables.
+ *
+ * For scroll-based behaviours, registers with ScrollDriver for 60fps updates.
+ * For interaction-based behaviours, computes CSS variables on state change.
  *
  * @param behaviourId - ID of behaviour to apply
  * @param options - Options to pass to behaviour compute
@@ -69,6 +130,7 @@ export function BehaviourWrapper({
   style,
 }: BehaviourWrapperProps): ReactNode {
   const ref = useRef<HTMLDivElement>(null)
+  const id = useId()
 
   // Local interaction state
   const [isHovered, setIsHovered] = useState(false)
@@ -86,6 +148,30 @@ export function BehaviourWrapper({
     return resolveBehaviour(behaviourId)
   }, [behaviourId])
 
+  // Determine if this behaviour needs scroll driver
+  const usesScrollDriver = useMemo(() => {
+    return behaviour ? needsScrollDriver(behaviour) : false
+  }, [behaviour])
+
+  // Register with ScrollDriver for scroll-based behaviours
+  useEffect(() => {
+    if (!behaviour || !usesScrollDriver || !ref.current) {
+      return
+    }
+
+    const element = ref.current
+    const driver = getDriver()
+
+    // Register element with driver
+    driver.register(id, element, behaviour, options ?? {})
+
+    // Cleanup: unregister from driver and release reference
+    return () => {
+      driver.unregister(id)
+      releaseDriver()
+    }
+  }, [behaviour, usesScrollDriver, id, options])
+
   // Event handlers
   const handleMouseEnter = useCallback(() => setIsHovered(true), [])
   const handleMouseLeave = useCallback(() => {
@@ -95,11 +181,17 @@ export function BehaviourWrapper({
   const handleMouseDown = useCallback(() => setIsPressed(true), [])
   const handleMouseUp = useCallback(() => setIsPressed(false), [])
 
-  // Compute CSS variables from state
+  // Compute CSS variables from state (for non-scroll behaviours)
   const computedStyle = useMemo((): CSSProperties => {
     if (!behaviour) return style || {}
 
-    // Build state object
+    // For scroll-driven behaviours, driver applies CSS vars directly
+    // We only add cssTemplate styles here
+    if (usesScrollDriver) {
+      return style || {}
+    }
+
+    // Build state object for non-scroll behaviours
     const state: BehaviourState = {
       ...DEFAULT_STATE,
       ...initialState,
@@ -119,7 +211,7 @@ export function BehaviourWrapper({
     })
 
     return { ...style, ...varsStyle }
-  }, [behaviour, isHovered, isPressed, prefersReducedMotion, initialState, options, style])
+  }, [behaviour, usesScrollDriver, isHovered, isPressed, prefersReducedMotion, initialState, options, style])
 
   // No behaviour - just render children
   if (!behaviour) {
