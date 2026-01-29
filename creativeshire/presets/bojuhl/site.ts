@@ -15,11 +15,12 @@ export const experienceConfig: PresetExperienceConfig = {
 
 /**
  * Default behaviour mappings by widget type.
+ * Uses trigger-based behaviour names (scroll/, hover/, animation/).
  */
 export const behaviourDefaults: Record<string, string> = {
-  HeroTitle: 'hero-text-color-transition',
-  ScrollIndicator: 'scroll-indicator-fade',
-  VideoThumbnail: 'project-card-hover',
-  ProjectCard: 'project-card-hover',
-  LogoMarquee: 'logo-marquee-animation',
+  HeroTitle: 'scroll/color-shift',
+  ScrollIndicator: 'scroll/progress',
+  VideoThumbnail: 'hover/scale',
+  ProjectCard: 'hover/scale',
+  LogoMarquee: 'animation/marquee',
 }
