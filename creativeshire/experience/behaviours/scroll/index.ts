@@ -1,6 +1,8 @@
 /**
  * Scroll-based behaviours.
  * Triggered by scroll position/progress.
+ *
+ * Note: For 60fps scroll animations, use useScrollFadeDriver from drivers/.
  */
 
 // Auto-register by importing
@@ -16,6 +18,3 @@ export { default as scrollFadeOut } from './fade-out'
 export { default as scrollProgress } from './progress'
 export { default as scrollColorShift } from './color-shift'
 export { default as scrollImageCycle } from './image-cycle'
-
-// Hooks
-export { useScrollFadeBehaviour } from './useScrollFadeBehaviour'

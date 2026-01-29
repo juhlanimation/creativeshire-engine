@@ -60,14 +60,13 @@ export type { BehaviourWrapperProps } from './BehaviourWrapper'
 // Re-exports for explicit imports
 // ============================================
 
-// Scroll behaviours
+// Scroll behaviours (for 60fps driver, use useScrollFadeDriver from drivers/)
 export {
   scrollFade,
   scrollFadeOut,
   scrollProgress,
   scrollColorShift,
   scrollImageCycle,
-  useScrollFadeBehaviour,
 } from './scroll'
 
 // Hover behaviours

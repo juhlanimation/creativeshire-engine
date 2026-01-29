@@ -1,37 +1,33 @@
 'use client'
 
 /**
- * useScrollFadeBehaviour - GSAP ScrollTrigger driver for scroll-fade behaviours.
+ * useScrollFadeDriver - GSAP ScrollTrigger driver for scroll-fade behaviours.
  *
- * Architecture: Uses "GSAP as Driver" pattern (experience.spec.md:377-395).
+ * Architecture:
+ * - Driver applies CSS variables at 60fps, bypassing React
  * - ScrollTrigger watches scroll position
  * - Calls behaviour.compute() to get CSS variables
  * - Sets CSS variables directly via element.style.setProperty()
- * - Bypasses React entirely for 60fps animation
  *
- * Supports both scroll-fade (fade in) and scroll-fade-out (fade out) behaviours
+ * Supports both scroll/fade (fade in) and scroll/fade-out (fade out) behaviours
  * with appropriate ScrollTrigger configurations for each direction.
  */
 
 import { useEffect, useRef, type RefObject } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { resolveBehaviour } from '../resolve'
-import type { BehaviourState } from '../../../schema/experience'
+import { resolveBehaviour } from '../behaviours/resolve'
+import type { BehaviourState } from '../../schema/experience'
 
 // Register plugin (client-only)
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-/** Supported scroll-fade behaviour types (supports both old and new IDs) */
-type ScrollFadeBehaviourId =
-  | 'scroll/fade'
-  | 'scroll/fade-out'
-  | 'scroll-fade'      // Legacy alias
-  | 'scroll-fade-out'  // Legacy alias
+/** Supported scroll-fade behaviour types */
+type ScrollFadeBehaviourId = 'scroll/fade' | 'scroll/fade-out'
 
-interface UseScrollFadeBehaviourOptions {
+export interface UseScrollFadeDriverOptions {
   /** ScrollTrigger start position (defaults based on behaviour type) */
   start?: string
   /** ScrollTrigger end position (defaults based on behaviour type) */
@@ -42,11 +38,11 @@ interface UseScrollFadeBehaviourOptions {
 
 /**
  * Get default ScrollTrigger positions based on behaviour type.
- * - scroll/fade (scroll-fade): triggers as section enters viewport from bottom
- * - scroll/fade-out (scroll-fade-out): triggers as section exits viewport at top
+ * - scroll/fade: triggers as section enters viewport from bottom
+ * - scroll/fade-out: triggers as section exits viewport at top
  */
 function getDefaultPositions(behaviourId: ScrollFadeBehaviourId): { start: string; end: string } {
-  if (behaviourId === 'scroll/fade-out' || behaviourId === 'scroll-fade-out') {
+  if (behaviourId === 'scroll/fade-out') {
     // Fade out as section scrolls up and exits viewport
     return { start: 'top top', end: 'bottom top' }
   }
@@ -55,17 +51,17 @@ function getDefaultPositions(behaviourId: ScrollFadeBehaviourId): { start: strin
 }
 
 /**
- * Hook that drives scroll-fade behaviours using GSAP ScrollTrigger.
- * Sets CSS variables directly on the element, bypassing React.
+ * Driver hook that applies scroll-fade CSS variables at 60fps using GSAP ScrollTrigger.
+ * Bypasses React for performance-critical scroll animations.
  *
  * @param ref - Ref to the element to animate
  * @param behaviourId - The scroll-fade behaviour type ('scroll/fade' or 'scroll/fade-out')
  * @param options - ScrollTrigger configuration overrides
  */
-export function useScrollFadeBehaviour(
+export function useScrollFadeDriver(
   ref: RefObject<HTMLElement | null>,
   behaviourId: ScrollFadeBehaviourId = 'scroll/fade',
-  options: UseScrollFadeBehaviourOptions = {}
+  options: UseScrollFadeDriverOptions = {}
 ): void {
   const defaults = getDefaultPositions(behaviourId)
   const { start = defaults.start, end = defaults.end, scrub = 0.5 } = options
@@ -86,7 +82,7 @@ export function useScrollFadeBehaviour(
 
     /**
      * Set CSS variables on element using behaviour.compute().
-     * This is the "GSAP as Driver" pattern - driver calls compute(), sets vars directly.
+     * Driver calls compute(), sets vars directly on DOM.
      */
     const setVars = (progress: number) => {
       const state: BehaviourState = {
@@ -146,4 +142,4 @@ export function useScrollFadeBehaviour(
   }, [ref, behaviourId, start, end, scrub])
 }
 
-export default useScrollFadeBehaviour
+export default useScrollFadeDriver

@@ -5,8 +5,7 @@
  * Wraps tree in providers and renders page.
  */
 
-import { ExperienceProvider, SmoothScrollProvider } from '../experience'
-import { DriverProvider } from '../experience/DriverProvider'
+import { ExperienceProvider, SmoothScrollProvider, TriggerInitializer } from '../experience'
 import { getMode, registerMode, stackingMode } from '../experience/modes'
 import { useScrollIndicatorFade } from './hooks'
 import { PageRenderer } from './PageRenderer'
@@ -48,7 +47,7 @@ export function SiteRenderer({ site, page }: SiteRendererProps) {
   return (
     <ThemeProvider theme={site.theme}>
       <ExperienceProvider mode={mode} store={store}>
-        <DriverProvider>
+        <TriggerInitializer>
           {/* Smooth scroll wrapper for main content */}
           <SmoothScrollProvider config={site.theme?.smoothScroll}>
             {/* Header chrome */}
@@ -80,7 +79,7 @@ export function SiteRenderer({ site, page }: SiteRendererProps) {
                 Inside React tree for useSmoothScroll() context access. */}
             <ModalRoot />
           </SmoothScrollProvider>
-        </DriverProvider>
+        </TriggerInitializer>
       </ExperienceProvider>
     </ThemeProvider>
   )

@@ -3,20 +3,19 @@
 /**
  * SectionRenderer - renders sections from schema.
  * Maps widgets to WidgetRenderer and wraps with behaviour.
- * Registers sections with VisibilityDriver for scroll-based effects.
  *
+ * Visibility tracking is handled by useIntersection trigger (auto-discovers data-section-id).
  * Performance: scroll-fade uses GSAP ScrollTrigger driver (bypasses React).
  * Other behaviours use the IntersectionObserver → Zustand → React path.
  */
 
-import { useRef, useEffect, useMemo } from 'react'
+import { useRef } from 'react'
 import { useStore } from 'zustand'
 import Section from '../content/sections'
 import { WidgetRenderer } from './WidgetRenderer'
 import { BehaviourWrapper } from '../experience/behaviours'
 import { useExperience } from '../experience'
-import { useDriver } from '../experience/DriverProvider'
-import { useScrollFadeBehaviour } from '../experience/behaviours/scroll'
+import { useScrollFadeDriver } from '../experience/drivers'
 import type { SectionSchema } from '../schema'
 
 interface SectionRendererProps {
@@ -26,44 +25,31 @@ interface SectionRendererProps {
 
 /**
  * Renders a section with its widgets.
- * Tracks visibility via IntersectionObserver and passes to behaviour.
+ * Visibility tracking is automatic via useIntersection trigger.
  */
 export function SectionRenderer({ section, index }: SectionRendererProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const driver = useDriver()
   const { store } = useExperience()
 
   // Check if section uses a scroll-fade behaviour (in or out)
   const behaviourId = typeof section.behaviour === 'string'
     ? section.behaviour
     : section.behaviour?.id
-  const isScrollFadeBehaviour = behaviourId === 'scroll-fade' || behaviourId === 'scroll-fade-out'
+  const isScrollFadeBehaviour = behaviourId === 'scroll/fade' || behaviourId === 'scroll/fade-out'
 
   // Use GSAP ScrollTrigger driver for scroll-fade behaviours (bypasses React for 60fps)
-  // This hook sets CSS variables directly on the ref element
-  useScrollFadeBehaviour(
+  // This driver sets CSS variables directly on the ref element
+  useScrollFadeDriver(
     isScrollFadeBehaviour ? ref : { current: null },
-    (behaviourId as 'scroll-fade' | 'scroll-fade-out') ?? 'scroll-fade'
+    (behaviourId === 'scroll/fade-out' ? 'scroll/fade-out' : 'scroll/fade')
   )
 
-  // Subscribe to visibility from store ONLY for non-scroll-fade behaviours
-  // For scroll-fade behaviours, the hook handles visibility directly via ScrollTrigger
+  // Subscribe to visibility from store
+  // useIntersection trigger auto-discovers elements with data-section-id attribute
   const sectionVisibility = useStore(
     store,
     (state) => isScrollFadeBehaviour ? 1 : (state.sectionVisibilities[section.id] ?? 0)
   )
-
-  // Register section with driver on mount (for non-scroll-fade behaviours)
-  useEffect(() => {
-    // Skip driver registration for scroll-fade behaviours - the hook handles it directly
-    if (isScrollFadeBehaviour) return
-
-    const el = ref.current
-    if (el) {
-      driver.observe(el)
-      return () => driver.unobserve(el)
-    }
-  }, [driver, isScrollFadeBehaviour])
 
   const widgets = section.widgets.map((widget, i) => (
     <WidgetRenderer key={widget.id ?? `widget-${i}`} widget={widget} index={i} />
