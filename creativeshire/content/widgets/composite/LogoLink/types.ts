@@ -1,20 +1,26 @@
 /**
- * LogoLink widget types.
- * Text or image logo that links to homepage with hover color transition.
+ * LogoLink composite configuration.
+ * Factory function props for creating logo link widget schemas.
  */
 
-import type { WidgetBaseProps } from '../../types'
+import type { CSSProperties } from 'react'
 
 /**
- * Props for LogoLink widget.
+ * Configuration for the createLogoLink factory.
  */
-export interface LogoLinkProps extends WidgetBaseProps {
+export interface LogoLinkConfig {
+  /** Unique identifier for the logo link */
+  id?: string
   /** Logo text (if no image) */
   text?: string
   /** Logo image src (if no text) */
   imageSrc?: string
-  /** Alt text for image */
+  /** Alt text for image (defaults to 'Logo') */
   imageAlt?: string
-  /** Link href (defaults to /) */
+  /** Link href (defaults to '/') */
   href?: string
+  /** Additional CSS class names */
+  className?: string
+  /** Inline styles */
+  style?: CSSProperties
 }

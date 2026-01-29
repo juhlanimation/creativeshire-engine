@@ -3,9 +3,12 @@
  * Content Layer (L1) - static component lookup.
  *
  * Widget categories:
- * - primitives/ : Leaf nodes (Text, Image, Icon, Button)
+ * - primitives/ : Leaf nodes (Text, Image, Icon, Button, Link)
  * - layout/     : Containers (Flex, Box, Stack, Grid, Split, Container)
- * - composite/  : Assembled widgets with state/logic (Video, ContactPrompt, LogoLink, etc.)
+ * - composite/  : Assembled widgets with state/logic (Video, ContactPrompt, etc.)
+ *
+ * Note: Factory-based composites (createLogoLink, createProjectCard) are NOT registered here.
+ * They return WidgetSchema which the renderer expands into registered widgets.
  */
 
 import type { ComponentType } from 'react'
@@ -30,7 +33,6 @@ import Container from './layout/Container'
 
 // Composites (assembled widgets with state/logic)
 import ContactPrompt from './composite/ContactPrompt'
-import LogoLink from './composite/LogoLink'
 import ExpandableGalleryRow from './composite/ExpandableGalleryRow'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Widget props vary by type
@@ -57,7 +59,6 @@ export const widgetRegistry: Record<string, WidgetComponent> = {
   Container,
   // Composites
   ContactPrompt,
-  LogoLink,
   ExpandableGalleryRow,
 }
 

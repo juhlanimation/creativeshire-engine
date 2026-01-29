@@ -33,9 +33,9 @@ export type { VideoPlayerProps } from './VideoPlayer/types'
 export { default as ContactPrompt } from './ContactPrompt'
 export type { ContactPromptProps } from './ContactPrompt/types'
 
-// LogoLink - logo with hover effects and navigation (component)
-export { default as LogoLink } from './LogoLink'
-export type { LogoLinkProps } from './LogoLink/types'
+// LogoLink - logo with hover effects and navigation (factory)
+export { createLogoLink } from './LogoLink'
+export type { LogoLinkConfig } from './LogoLink/types'
 
 // ExpandableGalleryRow - gallery row with hover expansion (component)
 export { default as ExpandableGalleryRow } from './ExpandableGalleryRow'

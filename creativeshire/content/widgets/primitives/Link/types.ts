@@ -5,7 +5,7 @@
  * Uses Next.js Link for internal routes, native <a> for external URLs.
  */
 
-import type { CSSProperties } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
 /**
  * Link visual variants.
@@ -20,8 +20,8 @@ export interface LinkProps {
   id?: string
   /** Navigation URL (internal paths start with /) */
   href: string
-  /** Link text content */
-  children?: string
+  /** Link content (text or nested elements) */
+  children?: ReactNode
   /** Link target - use _blank for external links */
   target?: '_blank' | '_self'
   /** Relationship attribute - use 'noopener noreferrer' for external links */
