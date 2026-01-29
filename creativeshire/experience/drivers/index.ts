@@ -8,8 +8,18 @@
  * - Triggers write TO store (input)
  * - Behaviours define WHAT to compute (logic)
  * - Drivers apply CSS vars at 60fps (output, performance path)
+ *
+ * Two patterns available:
+ * 1. Class-based (recommended): ScrollDriver with register/unregister/destroy lifecycle
+ * 2. Hook-based (legacy): useScrollFadeDriver for existing code
  */
 
+// Class-based drivers (spec-compliant)
+export { ScrollDriver } from './ScrollDriver'
+
+// Hook-based drivers (legacy - for migration)
 export { useScrollFadeDriver } from './useScrollFadeDriver'
 export type { UseScrollFadeDriverOptions } from './useScrollFadeDriver'
-export type { DriverConfig, ElementDriverProps } from './types'
+
+// Types
+export type { DriverConfig, ElementDriverProps, Driver, Target } from './types'
