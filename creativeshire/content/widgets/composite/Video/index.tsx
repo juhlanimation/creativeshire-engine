@@ -18,9 +18,10 @@
  * - Multiple render modes with different DOM structures
  * - Modal integration with complex callbacks
  *
- * Note: useVisibilityPlayback L2 import is a known violation (TASK-013).
- * The hook will be moved to experience/behaviours/ and integrated via
- * data-behaviour attributes instead of direct hook usage.
+ * Note on useVisibilityPlayback:
+ * This hook is colocated here (not in experience/) because it's component-specific.
+ * It doesn't write to a store or set CSS variables - it directly controls the video
+ * element. Per spec, composites with complex state CAN have colocated hooks.
  */
 
 import { useState, useRef, useEffect, useCallback, type CSSProperties } from 'react'
@@ -59,7 +60,7 @@ export default function Video({
   // Playback position persistence
   const { getPosition } = usePlaybackPosition()
 
-  // L2 hook: pause autoplay videos when scrolled out of view (performance)
+  // Pause autoplay videos when scrolled out of view (performance optimization)
   useVisibilityPlayback(videoRef, autoplay && !hoverPlay)
 
   // Hover-play mode: control playback based on hover state
