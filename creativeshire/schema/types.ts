@@ -12,5 +12,6 @@ export type SerializableValue =
   | number
   | boolean
   | null
+  | undefined
   | SerializableValue[]
   | { [key: string]: SerializableValue }

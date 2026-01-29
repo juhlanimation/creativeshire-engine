@@ -15,6 +15,26 @@ export type { RevealType } from '@/creativeshire/experience/hooks/useGsapReveal'
 export type TransitionPhase = 'closed' | 'opening' | 'open' | 'closing'
 
 /**
+ * Modal transition type (maps to behaviour IDs).
+ */
+export type TransitionType = 'mask-wipe' | 'mask-expand' | 'fade' | 'scale' | 'none'
+
+/**
+ * Direction for wipe transitions.
+ */
+export type WipeDirection = 'left' | 'right'
+
+/**
+ * Transition configuration options.
+ */
+export interface TransitionConfig {
+  /** Animation duration in seconds */
+  duration?: number
+  /** GSAP easing function */
+  ease?: string
+}
+
+/**
  * Configuration when opening a modal.
  */
 export interface ModalConfig {

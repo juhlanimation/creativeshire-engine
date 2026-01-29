@@ -3,7 +3,7 @@
  * Used by the registry to type widget component lookup.
  */
 
-import type { ComponentType } from 'react'
+import type { ComponentType, CSSProperties } from 'react'
 
 /**
  * Base props that all widgets must accept.
@@ -11,6 +11,8 @@ import type { ComponentType } from 'react'
 export interface WidgetBaseProps {
   /** Additional CSS class names */
   className?: string
+  /** Inline styles */
+  style?: CSSProperties
   /** Data attribute for behaviour binding */
   'data-behaviour'?: string
 }

@@ -3,9 +3,9 @@
  * Content Layer (L1) - static component lookup.
  *
  * Widget categories:
- * - primitives/ : Leaf nodes (Text, Image, Video, etc.)
+ * - primitives/ : Leaf nodes (Text, Image, Video)
  * - layout/     : Containers (Flex, Box)
- * - composite/  : Factory functions (not registered here - they return WidgetSchema)
+ * - composite/  : Assembled widgets with state/logic (ContactPrompt, LogoLink, etc.)
  */
 
 import type { ComponentType } from 'react'
@@ -14,13 +14,15 @@ import type { ComponentType } from 'react'
 import Text from './primitives/Text'
 import Image from './primitives/Image'
 import Video from './primitives/Video'
-import ContactPrompt from './primitives/ContactPrompt'
-import LogoLink from './primitives/LogoLink'
 
 // Layout (containers)
 import Flex from './layout/Flex'
 import Box from './layout/Box'
-import ExpandableGalleryRow from './layout/ExpandableGalleryRow'
+
+// Composites (assembled widgets with state/logic)
+import ContactPrompt from './composite/ContactPrompt'
+import LogoLink from './composite/LogoLink'
+import ExpandableGalleryRow from './composite/ExpandableGalleryRow'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Widget props vary by type
 type WidgetComponent = ComponentType<any>
@@ -33,11 +35,12 @@ export const widgetRegistry: Record<string, WidgetComponent> = {
   Text,
   Image,
   Video,
-  ContactPrompt,
-  LogoLink,
   // Layout
   Flex,
   Box,
+  // Composites
+  ContactPrompt,
+  LogoLink,
   ExpandableGalleryRow,
 }
 

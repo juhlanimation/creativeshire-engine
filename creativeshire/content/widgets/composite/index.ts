@@ -28,3 +28,15 @@ export type { GalleryThumbnailProps, GalleryProject } from './GalleryThumbnail'
 // VideoPlayer - full video player with controls (component)
 export { default as VideoPlayer } from './VideoPlayer'
 export type { VideoPlayerProps } from './VideoPlayer/types'
+
+// ContactPrompt - copy-to-clipboard with flip animation (component)
+export { default as ContactPrompt } from './ContactPrompt'
+export type { ContactPromptProps } from './ContactPrompt/types'
+
+// LogoLink - logo with hover effects and navigation (component)
+export { default as LogoLink } from './LogoLink'
+export type { LogoLinkProps } from './LogoLink/types'
+
+// ExpandableGalleryRow - gallery row with hover expansion (component)
+export { default as ExpandableGalleryRow } from './ExpandableGalleryRow'
+export type { ExpandableGalleryRowProps } from './ExpandableGalleryRow/types'

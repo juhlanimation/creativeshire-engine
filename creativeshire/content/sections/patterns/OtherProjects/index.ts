@@ -9,7 +9,7 @@
  * Reference: bojuhl.com "Other Selected Projects" section
  */
 
-import type { SectionSchema, WidgetSchema } from '@/creativeshire/schema'
+import type { SectionSchema, WidgetSchema, SerializableValue } from '@/creativeshire/schema'
 import type { OtherProjectsProps } from './types'
 
 /**
@@ -57,7 +57,8 @@ export function createOtherProjectsSection(props: OtherProjectsProps): SectionSc
       id: 'other-projects-gallery',
       type: 'ExpandableGalleryRow',
       props: {
-        projects: props.projects,
+        // Type assertion needed: OtherProject[] is serializable but TS can't infer it
+        projects: props.projects as unknown as SerializableValue,
         height: '32rem',
         gap: '4px',
         expandedWidth: '32rem',

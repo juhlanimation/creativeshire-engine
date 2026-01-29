@@ -16,4 +16,4 @@ export { useVisibilityPlayback } from './hooks'
 
 // Transitions (generic reveal animations)
 export { RevealTransition } from './transitions'
-export type { RevealType, RevealOptions, RevealTransitionProps } from './transitions'
+export type { RevealType, UseGsapRevealOptions, RevealTransitionProps } from './transitions'
