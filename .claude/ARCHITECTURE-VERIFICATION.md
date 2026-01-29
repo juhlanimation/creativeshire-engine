@@ -20,11 +20,11 @@
 |-------|--------|-------|
 | 1. Presets (bojuhl) | `[x] Complete` | agent:a6a3bb6 |
 | 2. Schema | `[x] Complete` | agent:a5e0dd5 |
-| 3. Content - Primitives | `[ ] Not started` | |
-| 4. Content - Layout | `[ ] Not started` | |
-| 5. Content - Composite | `[ ] Not started` | |
-| 6. Content - Sections | `[ ] Not started` | |
-| 7. Content - Chrome | `[ ] Not started` | |
+| 3. Content - Primitives | `[x] Complete` | agent:ae0cd9f |
+| 4. Content - Layout | `[x] Complete` | agent:aca84b9 |
+| 5. Content - Composite | `[x] Complete` | agent:a91aa4b |
+| 6. Content - Sections | `[x] Complete` | agent:ae0ecfb |
+| 7. Content - Chrome | `[x] Complete` | agent:aa7b299 |
 | 8. Experience - Behaviours | `[ ] Not started` | |
 | 9. Experience - Effects | `[ ] Not started` | |
 | 10. Experience - Drivers | `[ ] Not started` | |
@@ -113,167 +113,174 @@
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `widgets/index.ts` | Barrel exports | |
-| [ ] | `widgets/types.ts` | Widget type definitions | |
-| [ ] | `widgets/registry.ts` | Widget registry | |
+| [x] | `widgets/index.ts` | Barrel exports | Verified - correct documentation |
+| [x] | `widgets/types.ts` | Widget type definitions | Verified - WidgetBaseProps correct |
+| [x] | `widgets/registry.ts` | Widget registry | Verified - correct mapping |
 
 ### `primitives/Button/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | Clickable element, no children | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `styles.css` | Visual styles | |
+| [!] | `index.tsx` | Clickable element, no children | onClick prop breaks RSC serialization |
+| [!] | `types.ts` | Props interface | MouseEventHandler type incompatible with RSC |
+| [!] | `styles.css` | Visual styles | Missing :focus-visible; calc(var(--y)) violates rule 19 |
 
 ### `primitives/Icon/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | SVG display, no children | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `styles.css` | Visual styles | |
+| [!] | `index.tsx` | SVG display, no children | computedStyle inline object; always aria-hidden (no semantic option) |
+| [x] | `types.ts` | Props interface | Verified - correct structure |
+| [!] | `styles.css` | Visual styles | calc(var(--y)) violates rule 19 |
 
 ### `primitives/Image/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | Image display, no children | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `styles.css` | Visual styles | |
+| [!] | `index.tsx` | Image display, no children | computedStyle inline object without useMemo |
+| [x] | `types.ts` | Props interface | Verified - good accessibility with decorative prop |
+| [!] | `styles.css` | Visual styles | calc(var(--y)) violates rule 19 |
 
 ### `primitives/Text/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | Typography, no children | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `styles.css` | Visual styles | |
+| [!] | `index.tsx` | Typography, no children | computedClassName inline without memoization |
+| [x] | `types.ts` | Props interface | Verified - semantic variants |
+| [!] | `styles.css` | Visual styles | calc(var(--y)) violates rule 19 |
+
+### Missing Primitives
+
+| Status | File | Expected | Findings |
+|--------|------|----------|----------|
+| [!] | `primitives/Link/` | Link primitive | NOT IMPLEMENTED - required per architecture |
+| [!] | `primitives/Video/` | Video primitive | NOT IMPLEMENTED - required per architecture |
 
 ---
 
 ## PHASE 4: CONTENT - LAYOUT
 
-**Rule:** Structure containers, accepts children, defines positioning
+**Rule:** Structure containers, accepts widgets array, renders via WidgetRenderer
 
 ### `layout/Box/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | Generic container with children | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `styles.css` | Layout styles | |
+| [!] | `index.tsx` | Schema-driven with widgets array | Uses React children instead of widgets array |
+| [!] | `types.ts` | Props with widgets?: WidgetSchema[] | Uses children?: ReactNode (spec violation) |
+| [x] | `styles.css` | Layout styles | Verified - correct CSS variables |
 
 ### `layout/Container/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | Max-width centered, children | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `styles.css` | Layout styles | |
+| [!] | `index.tsx` | Schema-driven with widgets array | Uses React children instead of widgets array |
+| [!] | `types.ts` | Props with widgets?: WidgetSchema[] | Uses children?: ReactNode (spec violation) |
+| [x] | `styles.css` | Layout styles | Verified - correct CSS variables |
 
 ### `layout/Flex/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | Flexbox container, children | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `styles.css` | Layout styles | |
+| [!] | `index.tsx` | Schema-driven with widgets array | Uses React children instead of widgets array |
+| [!] | `types.ts` | Props with widgets?: WidgetSchema[] | Uses children?: ReactNode (spec violation) |
+| [x] | `styles.css` | Layout styles | Verified - correct CSS variables |
 
 ### `layout/Grid/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | CSS Grid container, children | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `styles.css` | Layout styles | |
+| [!] | `index.tsx` | Schema-driven with widgets array | Uses React children instead of widgets array |
+| [!] | `types.ts` | Props with widgets?: WidgetSchema[] | Uses children?: ReactNode (spec violation) |
+| [x] | `styles.css` | Layout styles | Verified - correct CSS variables |
 
 ### `layout/Split/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | Two-panel layout, children | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `styles.css` | Layout styles | |
+| [!] | `index.tsx` | Schema-driven with widgets array | Uses React children instead of widgets array |
+| [!] | `types.ts` | Props with widgets?: WidgetSchema[] | Uses children?: ReactNode (spec violation) |
+| [x] | `styles.css` | Layout styles | Verified - correct CSS variables |
 
 ### `layout/Stack/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | Vertical stacking, children | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `styles.css` | Layout styles | |
+| [!] | `index.tsx` | Schema-driven with widgets array | Uses React children instead of widgets array |
+| [!] | `types.ts` | Props with widgets?: WidgetSchema[] | Uses children?: ReactNode (spec violation) |
+| [x] | `styles.css` | Layout styles | Verified - correct CSS variables |
 
 ---
 
 ## PHASE 5: CONTENT - COMPOSITE
 
-**Rule:** Pre-assembled widget trees, can have local state, colocate hooks
+**Rule:** Factory functions return WidgetSchema OR components with colocated hooks; NO CSS files per spec
 
 ### Infrastructure
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `composite/index.ts` | Barrel exports | |
+| [x] | `composite/index.ts` | Barrel exports | Verified - exports factories and components |
 
 ### `composite/ContactPrompt/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | Contact CTA composite | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `styles.css` | Styles | |
+| [x] | `index.tsx` | Contact CTA composite | Verified - proper component |
+| [x] | `types.ts` | Props interface | Verified |
+| [!] | `styles.css` | Should NOT exist | CSS file present (spec says no CSS files in composites) |
 
 ### `composite/ExpandableGalleryRow/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | Expanding gallery row | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `styles.css` | Styles | |
+| [x] | `index.tsx` | Expanding gallery row | Verified |
+| [x] | `types.ts` | Props interface | Verified |
+| [!] | `styles.css` | Should NOT exist | CSS file present (spec violation) |
 
 ### `composite/GalleryThumbnail/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | Gallery item thumbnail | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `styles.css` | Styles | |
+| [x] | `index.tsx` | Gallery item thumbnail | Verified |
+| [x] | `types.ts` | Props interface | Verified |
+| [!] | `styles.css` | Should NOT exist | CSS file present (spec violation) |
 
 ### `composite/LogoLink/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | Logo with link | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `styles.css` | Styles | |
+| [x] | `index.tsx` | Logo with link | Verified - uses data-behaviour correctly |
+| [x] | `types.ts` | Props interface | Verified |
+| [!] | `styles.css` | Should NOT exist | CSS file present (spec violation) |
 
 ### `composite/ProjectCard/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.ts` | Project card factory | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `styles.css` | Styles | |
+| [x] | `index.ts` | Project card factory | Verified - returns WidgetSchema |
+| [x] | `types.ts` | Props interface | Verified |
+| [!] | `styles.css` | Should NOT exist | CSS file present (spec violation) |
 
 ### `composite/Video/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | Video with auto-play | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `styles.css` | Styles | |
-| [ ] | `useVisibilityPlayback.ts` | Colocated hook | |
+| [!] | `index.tsx` | Video with auto-play | Imports L2 hook useVisibilityPlayback (layer violation) |
+| [x] | `types.ts` | Props interface | Verified |
+| [!] | `styles.css` | Should NOT exist | CSS file present (spec violation) |
+| [!] | `useVisibilityPlayback.ts` | Colocated hook | Marked as L2 hook - shouldn't be in L1 |
 
 ### `composite/VideoPlayer/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | Full video player | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `styles.css` | Styles | |
-| [ ] | `hooks/index.ts` | Hook barrel | |
-| [ ] | `hooks/usePlaybackPosition.ts` | Colocated hook | |
-| [ ] | `hooks/useVideoControls.ts` | Colocated hook | |
+| [x] | `index.tsx` | Full video player | Verified |
+| [x] | `types.ts` | Props interface | Verified |
+| [!] | `styles.css` | Should NOT exist | CSS file present (spec violation) |
+| [x] | `hooks/index.ts` | Hook barrel | Verified - properly colocated |
+| [x] | `hooks/usePlaybackPosition.ts` | Colocated hook | Verified |
+| [x] | `hooks/useVideoControls.ts` | Colocated hook | Verified |
 
 ---
 
@@ -285,44 +292,44 @@
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `sections/index.ts` | Barrel exports | |
-| [ ] | `sections/types.ts` | Section type definitions | |
-| [ ] | `sections/styles.css` | Base section styles | |
-| [ ] | `sections/Section.tsx` | Base Section component | |
+| [x] | `sections/index.ts` | Barrel exports | Verified |
+| [x] | `sections/types.ts` | Section type definitions | Verified |
+| [!] | `sections/styles.css` | Base section styles | CRITICAL: Contains 100svh, position:absolute, site-specific Bojuhl CSS |
+| [x] | `sections/Section.tsx` | Base Section component | Verified - minor design notes |
 
 ### `sections/patterns/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `patterns/index.ts` | Barrel exports (factories) | |
+| [x] | `patterns/index.ts` | Barrel exports (factories) | Verified |
 
 ### `sections/patterns/About/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.ts` | About section factory | |
-| [ ] | `types.ts` | About config types | |
+| [x] | `index.ts` | About section factory | Verified - minor type cast workaround |
+| [x] | `types.ts` | About config types | Verified |
 
 ### `sections/patterns/Hero/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.ts` | Hero section factory | |
-| [ ] | `types.ts` | Hero config types | |
+| [x] | `index.ts` | Hero section factory | Verified - correct factory pattern |
+| [x] | `types.ts` | Hero config types | Verified |
 
 ### `sections/patterns/FeaturedProjects/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.ts` | FeaturedProjects factory | |
-| [ ] | `types.ts` | FeaturedProjects types | |
+| [x] | `index.ts` | FeaturedProjects factory | Verified |
+| [x] | `types.ts` | FeaturedProjects types | Verified |
 
 ### `sections/patterns/OtherProjects/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.ts` | OtherProjects factory | |
-| [ ] | `types.ts` | OtherProjects types | |
+| [x] | `index.ts` | OtherProjects factory | Verified - minor type cast |
+| [x] | `types.ts` | OtherProjects types | Verified |
 
 ---
 
@@ -334,36 +341,36 @@
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `chrome/index.ts` | Barrel exports | |
-| [ ] | `chrome/types.ts` | Chrome type definitions | |
-| [ ] | `chrome/registry.ts` | Chrome component registry | |
+| [x] | `chrome/index.ts` | Barrel exports | Verified |
+| [x] | `chrome/types.ts` | Chrome type definitions | Verified |
+| [x] | `chrome/registry.ts` | Chrome component registry | Verified |
 
 ### `chrome/regions/Footer/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | Footer region component | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `styles.css` | Styles | |
+| [x] | `index.tsx` | Footer region component | Verified - proper role="contentinfo" |
+| [x] | `types.ts` | Props interface | Verified |
+| [x] | `styles.css` | Styles | Verified - correct CSS variable fallbacks |
 
 ### `chrome/overlays/CursorLabel/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | Cursor follower label | |
-| [ ] | `styles.css` | Styles | |
+| [!] | `index.tsx` | Cursor follower label | Document event listeners (L2 violation) |
+| [x] | `styles.css` | Styles | Verified (position:fixed OK for portal) |
 
 ### `chrome/overlays/Modal/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.tsx` | Modal overlay component | |
-| [ ] | `types.ts` | Props interface | |
-| [ ] | `store.ts` | Colocated modal state | |
-| [ ] | `styles.css` | Styles | |
-| [ ] | `ModalRoot.tsx` | Portal root | |
-| [ ] | `useSmoothModalScroll.ts` | Colocated hook | |
-| [ ] | `useTransitionComplete.ts` | Colocated hook | |
+| [!] | `index.tsx` | Modal overlay component | Imports from experience/ (RevealTransition, useSmoothScroll) |
+| [!] | `types.ts` | Props interface | Imports types from experience/ layer |
+| [x] | `store.ts` | Colocated modal state | Verified - Zustand store correctly colocated |
+| [x] | `styles.css` | Styles | Verified - correct for portal overlay |
+| [x] | `ModalRoot.tsx` | Portal root | Verified |
+| [!] | `useSmoothModalScroll.ts` | Colocated hook | Document wheel listener; imports from experience/ |
+| [x] | `useTransitionComplete.ts` | Colocated hook | Verified |
 
 ---
 
@@ -538,6 +545,16 @@
 |------|-------|--------|
 | `schema/site.ts` | ModeDefaults interface not defined | Required by spec for mode-specific defaults |
 | `schema/chrome.ts` | TriggerCondition uses flat struct instead of discriminated union | Loses type safety; missing timer/visibility events |
+| `primitives/Button/index.tsx` | onClick prop breaks RSC serialization | Functions can't serialize across server/client |
+| `primitives/*/styles.css` | calc(var(--y)) violates rule 19 | Behaviours should output final values, not numbers |
+| `primitives/Image,Icon,Text` | Inline objects without useMemo | Breaks memo effectiveness |
+| `layout/*/types.ts` | Uses children prop instead of widgets array | Spec requires WidgetSchema[] for schema-driven rendering |
+| `composite/*/styles.css` | CSS files in all 7 composites | Spec says composites produce schema, no CSS files |
+| `composite/Video/index.tsx` | Imports L2 hook useVisibilityPlayback | Content layer cannot import from experience/ |
+| `sections/styles.css` | Contains 100svh, position:absolute | Viewport units and positioning belong to L2 |
+| `sections/styles.css` | Contains site-specific Bojuhl CSS | Should be in preset, not generic section styles |
+| `chrome/CursorLabel/index.tsx` | Document event listeners | Event handling belongs in L2 triggers |
+| `chrome/Modal/index.tsx` | Imports RevealTransition from experience/ | L1 chrome importing L2 experience components |
 
 ### Naming Issues
 
@@ -550,12 +567,21 @@
 | File | Current Layer | Correct Layer | Reason |
 |------|---------------|---------------|--------|
 | `presets/bojuhl/chrome/footer.ts` | Component-based approach | Widget-based approach | Spec says widget-based is preferred for composability |
+| All 6 layout widgets | React children pattern | widgets array + WidgetRenderer | Schema-driven rendering required |
+| `composite/Video/` | L1 with L2 hook | Pure L1 OR move hook to L2 | useVisibilityPlayback is L2 concern |
+| `sections/styles.css` | L1 with viewport units | L2 BehaviourWrapper | 100svh, position:absolute belong to L2 |
+| `chrome/Modal/index.tsx` | L1 importing L2 | Need design decision | RevealTransition is intentional but violates strict L1/L2 |
+| `chrome/CursorLabel/index.tsx` | L1 with DOM listeners | L2 driver/trigger | Mouse tracking is L2 concern |
 
 ### Missing Files
 
 | Expected Location | Purpose |
 |-------------------|---------|
 | `schema/index.ts` | Missing ModeDefaults export (type exists but not exported) |
+| `primitives/Link/` | Link primitive - required per architecture |
+| `primitives/Video/` | Video primitive - required per architecture |
+| `primitives/Button/styles.css` | :focus-visible accessibility styling |
+| `primitives/Icon/` | aria-label/decorative prop for semantic icons |
 
 ### Duplicate/Redundant Code
 
