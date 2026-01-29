@@ -268,7 +268,83 @@ Phase 5 should run last to verify everything.
 
 ## Completed
 
-### Remove Dead Modal Behaviours
+### Phase 1: Triggers Layer ✅
+**Commit:** f5379df
+
+Created `experience/triggers/` folder with hooks that write browser events to store:
+- `useScrollProgress` - scroll position 0-1
+- `useIntersection` - section visibility via IntersectionObserver (replaces VisibilityDriver)
+- `usePrefersReducedMotion` - a11y preference
+- `useViewport` - viewport dimensions
+- `TriggerInitializer` - orchestrates all triggers in provider hierarchy
+
+Created `experience/drivers/` folder for 60fps performance paths:
+- `useScrollFadeDriver` - GSAP ScrollTrigger for smooth scroll animations
+
+**Deleted:**
+- `DriverProvider.tsx` - replaced by TriggerInitializer
+- `drivers/VisibilityDriver.ts` - functionality moved to useIntersection trigger
+
+**Architecture established:**
+```
+Browser Event → Trigger → Store → BehaviourWrapper → CSS (React path)
+                              ↘ Driver → CSS (60fps, bypass React)
+```
+
+---
+
+### Phase 2: Remove Backward Compatibility ✅
+**Commit:** 4e40bb8
+
+Deleted `BEHAVIOUR_ALIASES` from `resolve.ts`. Updated all usages to canonical names:
+- `contact-reveal` → `hover/reveal`
+- `scroll-fade` → `scroll/fade`
+- Footer copyright placeholder updated
+
+**Principle:** No aliases, no backward compatibility shims. Use canonical names everywhere.
+
+---
+
+### Phase 3: Colocate Widget-Specific Code ✅
+**Commit:** ed1d9a8
+
+Moved widget-specific effect CSS to their widgets:
+- `effects/contact-reveal.css` → `widgets/composite/ContactPrompt/styles.css`
+- `effects/thumbnail-expand.css` → `widgets/composite/GalleryThumbnail/styles.css`
+
+**Principle:** Widget-specific code lives WITH the widget, not in centralized folders.
+
+---
+
+### Phase 4: Refactor Reveal Behaviours ✅
+**Commit:** 71770b7
+
+Deleted `behaviours/reveal/` folder containing:
+- `fade-reveal` - opacity fade (named by EFFECT, not trigger)
+- `mask-reveal` - clip-path wipe (named by EFFECT, not trigger)
+- `scale-reveal` - scale transform (named by EFFECT, not trigger)
+
+**Reason:** Named by effect, not trigger - violates architecture.
+
+**Patterns preserved in:** `experience/effects/mask/useGsapReveal.ts`
+- Clip-path directions: wipe-left, wipe-right, expand, fade
+- Duration/easing options
+- Content fade sequencing
+- All Modal functionality unchanged (uses GSAP directly)
+
+---
+
+### Phase 5: Systematic Audit ✅
+
+Full codebase audit confirmed compliance:
+- **Behaviours:** All named by TRIGGER (scroll/, hover/, visibility/, animation/)
+- **Effects:** All named by MECHANISM (fade, transform/, mask/)
+- **Widgets:** Generic names, no viewport units in primitives
+- **Presets:** Use generic components with configurable values
+
+---
+
+### Remove Dead Modal Behaviours (Pre-refactor)
 **Date:** Session start
 
 Deleted dead code:
