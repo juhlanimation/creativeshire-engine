@@ -8,6 +8,17 @@ import type { ExperienceConfig } from './experience'
 import type { ThemeSchema } from './theme'
 
 /**
+ * Default behaviour assignments for a mode.
+ * Specifies which behaviours apply to sections and widgets within the mode.
+ */
+export interface ModeDefaults {
+  /** Default behaviour for sections in this mode */
+  section?: string
+  /** Default behaviour for widgets in this mode */
+  widget?: string
+}
+
+/**
  * Reference to a page with its identifier and slug.
  * Used in site configuration to list available pages.
  */
