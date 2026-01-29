@@ -23,6 +23,8 @@ export function useScrollProgress({ store }: TriggerProps): void {
   const rafId = useRef<number>(undefined)
 
   useEffect(() => {
+    if (typeof window === 'undefined') return
+
     const updateScroll = () => {
       const scrollHeight = document.documentElement.scrollHeight - window.innerHeight
       const scrollProgress = scrollHeight > 0 ? window.scrollY / scrollHeight : 0

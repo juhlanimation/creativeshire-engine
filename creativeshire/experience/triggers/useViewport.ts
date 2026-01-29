@@ -21,6 +21,8 @@ export function useViewport({ store }: TriggerProps): void {
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   useEffect(() => {
+    if (typeof window === 'undefined') return
+
     const updateViewport = () => {
       store.setState({ viewportHeight: window.innerHeight })
     }

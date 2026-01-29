@@ -27,6 +27,8 @@ export function useIntersection({ store }: TriggerProps): void {
   const mutationObserverRef = useRef<MutationObserver | null>(null)
 
   useEffect(() => {
+    if (typeof window === 'undefined') return
+
     // Create thresholds for smooth visibility updates (0, 0.05, 0.10, ... 1.0)
     const thresholds = Array.from({ length: 21 }, (_, i) => i / 20)
 
