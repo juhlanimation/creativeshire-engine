@@ -37,13 +37,21 @@ export type {
   OverlaySchema,
   PageChromeOverrides,
   TriggerCondition,
+  ScrollTriggerCondition,
+  ClickTriggerCondition,
+  HoverTriggerCondition,
+  LoadTriggerCondition,
+  VisibilityTriggerCondition,
+  TimerTriggerCondition,
+  DeviceTriggerCondition,
+  CustomTriggerCondition,
 } from './chrome'
 
 // Page types
 export type { PageSchema, PageHeadSchema } from './page'
 
 // Site types
-export type { SiteSchema, PageReference } from './site'
+export type { SiteSchema, PageReference, ModeDefaults } from './site'
 
 // Theme types
 export type {

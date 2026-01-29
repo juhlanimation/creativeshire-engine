@@ -9,17 +9,105 @@ import type { SerializableValue } from './types'
 
 /**
  * Trigger condition for overlays.
- * Defines when an overlay should be shown/hidden.
+ * Discriminated union - type-safe trigger configuration.
+ * Each trigger type has only its relevant properties.
  */
-export interface TriggerCondition {
-  /** Event type that triggers the condition */
-  event: 'scroll' | 'click' | 'hover' | 'load' | 'custom'
-  /** Threshold value (e.g., scroll percentage) */
-  threshold?: number
+export type TriggerCondition =
+  | ScrollTriggerCondition
+  | ClickTriggerCondition
+  | HoverTriggerCondition
+  | LoadTriggerCondition
+  | VisibilityTriggerCondition
+  | TimerTriggerCondition
+  | DeviceTriggerCondition
+  | CustomTriggerCondition
+
+/**
+ * Scroll-based trigger.
+ * Fires when scroll position crosses threshold.
+ */
+export interface ScrollTriggerCondition {
+  type: 'scroll'
+  /** Scroll progress threshold (0-1) */
+  threshold: number
+  /** Direction of scroll to trigger ('up' | 'down' | 'both') */
+  direction?: 'up' | 'down' | 'both'
+}
+
+/**
+ * Click-based trigger.
+ * Fires when target element is clicked.
+ */
+export interface ClickTriggerCondition {
+  type: 'click'
   /** Target element selector */
-  target?: string
+  target: string
+}
+
+/**
+ * Hover-based trigger.
+ * Fires when target element is hovered.
+ */
+export interface HoverTriggerCondition {
+  type: 'hover'
+  /** Target element selector */
+  target: string
+}
+
+/**
+ * Load-based trigger.
+ * Fires when page loads.
+ */
+export interface LoadTriggerCondition {
+  type: 'load'
+  /** Delay after load before trigger fires (ms) */
+  delay?: number
+}
+
+/**
+ * Visibility-based trigger.
+ * Fires when element enters/exits viewport via IntersectionObserver.
+ */
+export interface VisibilityTriggerCondition {
+  type: 'visibility'
+  /** Intersection threshold (0-1) */
+  threshold: number
+  /** Root margin for intersection calculation */
+  rootMargin?: string
+}
+
+/**
+ * Timer-based trigger.
+ * Fires after a delay.
+ */
+export interface TimerTriggerCondition {
+  type: 'timer'
+  /** Delay before trigger fires (ms) */
+  delay: number
+  /** Whether timer should repeat */
+  repeat?: boolean
+  /** Interval between repeats (ms) */
+  interval?: number
+}
+
+/**
+ * Device-based trigger.
+ * Fires based on device type.
+ */
+export interface DeviceTriggerCondition {
+  type: 'device'
+  /** Device type to match */
+  device: 'desktop' | 'tablet' | 'mobile'
+}
+
+/**
+ * Custom trigger.
+ * Fires when custom event is dispatched.
+ */
+export interface CustomTriggerCondition {
+  type: 'custom'
   /** Custom trigger identifier */
-  customId?: string
+  customId: string
 }
 
 /**
