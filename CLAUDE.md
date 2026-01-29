@@ -6,15 +6,16 @@ A CMS engine. Think Squarespace/Webflow. Everything is generic and configurable.
 
 ```
 PRIMITIVES (atoms - no children, single purpose)
-  Text, Image, Video, Icon, Button, Link
+  Text, Image, Icon, Button, Link
 
 LAYOUT (structure - holds children)
   Stack, Grid, Flex, Split, Container
 
-COMPOSITES (layout + primitives assembled)
+COMPOSITES (layout + primitives assembled, OR complex state)
   ProjectCard = Stack(Image, Text, Text)
   HeroContent = Split(Text, Video)
-  Any static content = Layout(Primitives)
+  Video = Complex state (hover-play, visibility, modal)
+  VideoPlayer = Complex state (controls, scrubber, fullscreen)
 ```
 
 ## Architecture

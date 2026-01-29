@@ -1,34 +1,65 @@
 # Widget Composite Spec
 
-> Factory functions that return `WidgetSchema`, not React components.
+> Two patterns: Factory functions OR React components with complex state.
 
 ## Purpose
 
-Widget composites assemble pre-configured widget trees from domain-specific props. They return `WidgetSchema` objects that the renderer expands into React components. Composites provide semantic APIs (e.g., `createProjectCard`) while the renderer handles instantiation.
+Widget composites serve two purposes:
 
-**Key distinction:** Composites return schema data. They never return React elements.
+1. **Factory Pattern**: Assemble pre-configured widget trees from domain-specific props. Return `WidgetSchema` objects that the renderer expands.
 
-## Widget vs Widget Composite
+2. **React Component Pattern**: Components that need complex local state, multiple render modes, or hooks that cannot be expressed as a widget tree.
 
-| Aspect | Widget | Widget Composite |
-|--------|--------|------------------|
-| **What it is** | React component | Factory function |
-| **Returns** | JSX (renders DOM) | `WidgetSchema` (data) |
-| **File extension** | `index.tsx` | `index.ts` (no JSX) |
-| **Has CSS** | Yes, `styles.css` | No CSS files |
-| **Registered** | Yes, in widgetRegistry | No registration needed |
-| **Creates** | New DOM element type | Combination of existing widgets |
+## Two Patterns
 
-### When to Create a Widget Composite
+### Pattern 1: Factory Functions (Preferred)
+
+| Aspect | Factory Composite |
+|--------|-------------------|
+| **What it is** | Factory function |
+| **Returns** | `WidgetSchema` (data) |
+| **File extension** | `index.ts` (no JSX) |
+| **Has CSS** | No CSS files |
+| **Registered** | No registration needed |
+| **Creates** | Combination of existing widgets |
+
+### Pattern 2: React Component Composites
+
+| Aspect | React Composite |
+|--------|-----------------|
+| **What it is** | React component |
+| **Returns** | JSX (renders DOM) |
+| **File extension** | `index.tsx` |
+| **Has CSS** | Yes, `styles.css` |
+| **Registered** | Yes, in widgetRegistry |
+| **Creates** | Complex stateful widget |
+
+**When to use React Component pattern:**
+- Multiple render modes with different DOM structures (e.g., Video hover-play vs autoplay)
+- Complex local state management (`useState`, `useRef`, `useEffect`)
+- Modal/overlay integration with callbacks
+- Playback controls with scrubber state
+
+**Examples:**
+- `Video` - Hover state, visibility playback, modal integration
+- `VideoPlayer` - Playback controls, scrubber, fullscreen logic
+
+### When to Create Which
 
 ```
 Can it be expressed as a TREE of existing widgets?
         │
-        ├─ YES → Widget Composite
+        ├─ YES → Factory Composite (Pattern 1)
         │        Domain props → WidgetSchema tree
+        │        Example: ProjectCard = Stack + Image + Text
         │
-        └─ NO  → New Widget (see widget.spec.md)
-                 Needs new DOM element or browser API
+        └─ NO  → Does it need complex state or multiple modes?
+                 │
+                 ├─ YES → React Component Composite (Pattern 2)
+                 │        Example: Video, VideoPlayer
+                 │
+                 └─ NO  → New Primitive (see widget.spec.md)
+                          Needs new DOM element or browser API
 ```
 
 ### Catalog Growth

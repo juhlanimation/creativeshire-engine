@@ -11,7 +11,13 @@
  * - modalTransition: Type of transition when opening modal
  * - modalDirection: Direction for mask-wipe transition
  *
- * Note: In composite/ due to complex state (useState, useVisibilityPlayback, usePlaybackPosition).
+ * Why composite (not primitive):
+ * - Multiple elements in hover-play mode (div > img + video)
+ * - Local state management (useState, useRef, useEffect)
+ * - Two render modes with different DOM structures
+ * - Modal integration with complex callbacks
+ *
+ * See TASK-027 decision in composite/CLAUDE.md for rationale.
  */
 
 import type { WidgetBaseProps } from '../../types'

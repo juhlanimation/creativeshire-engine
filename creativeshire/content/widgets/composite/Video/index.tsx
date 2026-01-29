@@ -12,9 +12,15 @@
  * - When videoUrl is provided, clicking opens a fullscreen modal
  * - modalTransition and modalDirection control the modal animation
  *
- * Uses L2 hook (useVisibilityPlayback) for performance optimization.
+ * Why composite (not primitive):
+ * - Multiple elements in hover-play mode (div > img + video)
+ * - Local state management (useState, useRef, useEffect)
+ * - Multiple render modes with different DOM structures
+ * - Modal integration with complex callbacks
  *
- * Note: Moved from primitives/ to composite/ due to complex state and hooks.
+ * Note: useVisibilityPlayback L2 import is a known violation (TASK-013).
+ * The hook will be moved to experience/behaviours/ and integrated via
+ * data-behaviour attributes instead of direct hook usage.
  */
 
 import { useState, useRef, useEffect, useCallback, type CSSProperties } from 'react'

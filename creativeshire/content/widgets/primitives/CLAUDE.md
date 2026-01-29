@@ -2,7 +2,9 @@
 
 **Atoms. No children. Single purpose.**
 
-Examples: Text, Image, Video, Icon, Button, Link
+Examples: Text, Image, Icon, Button, Link
+
+Note: Video is in composite/ due to complex state (hover-play, visibility, modal).
 
 Before creating:
 - Is this truly atomic? No children?
