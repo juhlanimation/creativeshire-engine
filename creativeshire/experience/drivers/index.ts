@@ -21,5 +21,9 @@ export { ScrollDriver } from './ScrollDriver'
 export { useScrollFadeDriver } from './useScrollFadeDriver'
 export type { UseScrollFadeDriverOptions } from './useScrollFadeDriver'
 
+// GSAP-powered animation drivers
+export { RevealTransition, useGsapReveal } from './gsap'
+export type { RevealType, UseGsapRevealOptions, RevealTransitionProps } from './gsap'
+
 // Types
 export type { DriverConfig, ElementDriverProps, Driver, Target } from './types'

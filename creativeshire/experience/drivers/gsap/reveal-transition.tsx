@@ -30,10 +30,10 @@
  */
 
 import { type ReactNode, type CSSProperties } from 'react'
-import { useGsapReveal, type UseGsapRevealOptions } from './useGsapReveal'
+import { useGsapReveal, type UseGsapRevealOptions } from './use-gsap-reveal'
 
 // Re-export types for convenience
-export type { RevealType, UseGsapRevealOptions } from './useGsapReveal'
+export type { RevealType, UseGsapRevealOptions } from './use-gsap-reveal'
 
 /**
  * Props for RevealTransition component.
@@ -64,7 +64,7 @@ export interface RevealTransitionProps {
  * Consumer passes `revealed` state; this component handles the animation.
  *
  * Uses GSAP timelines for:
- * - Precise sequencing (wipe → then content fade)
+ * - Precise sequencing (wipe -> then content fade)
  * - True reversal on close (timeline.reverse())
  * - sourceRect-based expand animations
  */

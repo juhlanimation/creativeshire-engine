@@ -22,9 +22,5 @@ export {
 export type { TriggerConfig, TriggerProps } from './triggers'
 
 // Drivers (apply CSS vars at 60fps, bypass React)
-export { useScrollFadeDriver } from './drivers'
-export type { UseScrollFadeDriverOptions, DriverConfig, ElementDriverProps } from './drivers'
-
-// Mask effects (GSAP-powered reveal animations)
-export { RevealTransition, useGsapReveal } from './effects/mask'
-export type { RevealType, UseGsapRevealOptions, RevealTransitionProps } from './effects/mask'
+export { useScrollFadeDriver, RevealTransition, useGsapReveal } from './drivers'
+export type { UseScrollFadeDriverOptions, DriverConfig, ElementDriverProps, RevealType, UseGsapRevealOptions, RevealTransitionProps } from './drivers'

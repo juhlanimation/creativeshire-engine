@@ -23,8 +23,8 @@ import { useStore } from 'zustand'
 import { useModalStore } from './store'
 import { useSmoothScroll } from '@/creativeshire/experience/SmoothScrollProvider'
 import { useSmoothModalScroll } from './useSmoothModalScroll'
-import { RevealTransition } from '@/creativeshire/experience/effects/mask'
-import type { RevealType } from '@/creativeshire/experience/effects/mask'
+import { RevealTransition } from '@/creativeshire/experience/drivers/gsap'
+import type { RevealType } from '@/creativeshire/experience/drivers/gsap'
 import './styles.css'
 
 /**
