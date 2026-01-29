@@ -6,15 +6,6 @@
 // Base types
 export type { SerializableValue } from './types'
 
-// Feature types
-export type {
-  FeatureSet,
-  SpacingFeature,
-  TypographyFeature,
-  BackgroundFeature,
-  BorderFeature,
-} from './features'
-
 // Experience types
 export type {
   CSSVariables,
@@ -53,3 +44,12 @@ export type { PageSchema, PageHeadSchema } from './page'
 
 // Site types
 export type { SiteSchema, PageReference } from './site'
+
+// Theme types
+export type {
+  ThemeSchema,
+  ScrollbarConfig,
+  SmoothScrollConfig,
+  TypographyConfig,
+  SectionTransitionConfig,
+} from './theme'

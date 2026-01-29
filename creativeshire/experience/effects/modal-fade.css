@@ -1,0 +1,24 @@
+/**
+ * Modal Fade Effect
+ *
+ * Simple opacity fade animation for modals.
+ * Works with modal-fade behaviour.
+ *
+ * CSS Variables consumed:
+ * - --modal-opacity: container opacity (default: 1)
+ * - --modal-duration: transition duration (default: 300ms)
+ * - --modal-easing: timing function (default: ease-out)
+ */
+
+[data-effect~="modal-fade"] {
+  opacity: var(--modal-opacity, 1);
+  transition: opacity var(--modal-duration, 300ms) var(--modal-easing, ease-out);
+  will-change: opacity;
+}
+
+/* Reduced motion - instant transitions */
+@media (prefers-reduced-motion: reduce) {
+  [data-effect~="modal-fade"] {
+    transition: none;
+  }
+}

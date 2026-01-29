@@ -87,6 +87,7 @@ export type BehaviourConfig = string | { id: string; options?: Record<string, an
 12. Use Set/Map for O(1) lookups instead of array.includes/find
 13. Early return when result is determined (skip unnecessary work)
 14. Use `toSorted()` instead of `sort()` for immutability
+15. Output computed VALUES not flags (e.g., `'--y': '-100%'` not `'--is-active': 1`)
 
 ### Must Not
 
@@ -196,6 +197,33 @@ export default myBehaviour
 ```
 
 ## Anti-Patterns
+
+### Don't: Output flags instead of values
+
+```typescript
+// WRONG - Outputs a flag, widget calculates animation
+compute: (state) => ({
+  '--is-hovered': state.isHovered ? 1 : 0  // Just a flag
+})
+
+// Widget CSS has to calculate:
+// transform: translateY(calc(var(--is-hovered) * -100%));
+```
+
+```typescript
+// CORRECT - Outputs actual animation values
+compute: (state) => ({
+  '--reveal-y': state.isHovered ? '-100%' : '0',  // Actual value
+  '--reveal-opacity': state.isHovered ? 1 : 0,
+  '--reveal-duration': '400ms',
+  '--reveal-easing': 'ease-in-out',
+})
+
+// Effect CSS just applies:
+// transform: translateY(var(--reveal-y, 0));
+```
+
+**Why:** When behaviours output flags (0 or 1), animation knowledge leaks into Content (L1). The widget must know what `-100%` means. By outputting actual values, all animation knowledge stays in L2. This enables reusable effects across different content.
 
 ### Don't: Direct DOM manipulation
 
@@ -592,7 +620,7 @@ export default fadeIn
 The Hero and About sections use this behaviour (see [Section Composite Spec](../content/section-composite.spec.md)):
 
 ```typescript
-// sections/composites/Hero/index.ts
+// sections/patterns/Hero/index.ts
 return {
   id: props.id ?? 'hero',
   layout: { type: 'stack', align: 'center', gap: 24 },

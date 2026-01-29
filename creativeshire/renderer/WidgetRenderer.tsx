@@ -5,7 +5,7 @@
  *
  * Responsibilities:
  * 1. Look up widget component from registry
- * 2. Apply feature styles (spacing, typography, etc.)
+ * 2. Pass style and className directly to widget
  * 3. Wrap with behaviour for animation
  * 4. Recursively render child widgets
  *
@@ -15,7 +15,6 @@
 import type { ReactNode, CSSProperties } from 'react'
 import type { WidgetSchema, BehaviourConfig } from '@/creativeshire/schema'
 import { getWidget } from '@/creativeshire/content/widgets/registry'
-import { featuresToStyle } from '@/creativeshire/content/features'
 import { BehaviourWrapper } from '@/creativeshire/experience/behaviours'
 import { ErrorBoundary } from './ErrorBoundary'
 import type { WidgetRendererProps } from './types'
@@ -38,23 +37,6 @@ function extractBehaviourOptions(
 ): Record<string, unknown> | undefined {
   if (!behaviour || typeof behaviour === 'string') return undefined
   return behaviour.options
-}
-
-/**
- * Merge feature styles with any existing props.style.
- */
-function mergeStyles(
-  featureStyles: CSSProperties,
-  propsStyle?: CSSProperties
-): CSSProperties | undefined {
-  const hasFeatureStyles = Object.keys(featureStyles).length > 0
-  const hasPropsStyle = propsStyle && Object.keys(propsStyle).length > 0
-
-  if (!hasFeatureStyles && !hasPropsStyle) return undefined
-  if (!hasFeatureStyles) return propsStyle
-  if (!hasPropsStyle) return featureStyles
-
-  return { ...featureStyles, ...propsStyle }
 }
 
 /**
@@ -85,7 +67,7 @@ function UnknownWidgetFallback({ type }: { type: string }): ReactNode {
  *
  * @param widget - Widget schema to render
  * @param index - Optional index when rendered in a list
- * @returns Rendered widget with features and behaviour applied
+ * @returns Rendered widget with style and behaviour applied
  *
  * @example
  * ```tsx
@@ -105,28 +87,21 @@ export function WidgetRenderer({
     return <UnknownWidgetFallback type={widget.type} />
   }
 
-  // Convert features to CSS styles
-  const featureStyles = featuresToStyle(widget.features)
-
   // Extract behaviour configuration
   const behaviourId = extractBehaviourId(widget.behaviour)
   const behaviourOptions = extractBehaviourOptions(widget.behaviour)
-
-  // Merge feature styles with any props.style
-  const style = mergeStyles(
-    featureStyles,
-    widget.props?.style as CSSProperties | undefined
-  )
 
   // Recursively render child widgets for layout containers
   const children = widget.widgets?.map((child, i) => (
     <WidgetRenderer key={child.id ?? i} widget={child} index={i} />
   ))
 
-  // Prepare props, omitting style if undefined
+  // Prepare props - pass style and className directly from schema
   const componentProps = {
     ...widget.props,
-    ...(style && { style }),
+    ...(widget.id && { id: widget.id }),
+    ...(widget.style && { style: widget.style }),
+    ...(widget.className && { className: widget.className }),
     ...(index !== undefined && { 'data-widget-index': index }),
   }
 

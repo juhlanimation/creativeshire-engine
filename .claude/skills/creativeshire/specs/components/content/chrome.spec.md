@@ -34,19 +34,120 @@ creativeshire/components/content/chrome/
 └── index.ts             # Barrel exports
 ```
 
+## Widget-based vs Component-based
+
+Chrome supports two approaches. **Widget-based is preferred** for clean separation of concerns.
+
+| Approach | Use When | Chrome Responsibility | Content Responsibility |
+|----------|----------|----------------------|------------------------|
+| **Widget-based** (preferred) | Simple overlays, reusable content | Positioning only | Widget handles content |
+| **Component-based** (complex) | Complex regions with internal logic | Everything | N/A |
+
+### Widget-based (Preferred for Overlays)
+
+Chrome = positioning. Widget = content. Clean separation.
+
+```typescript
+// site/config.ts - Widget-based overlay
+overlays: {
+  floatingContact: {
+    widget: {
+      id: 'contact-cta',
+      type: 'HoverReveal',
+      props: {
+        defaultContent: 'How can I help you?',
+        revealedContent: 'hello@example.com',
+        iconType: 'copy',
+        actionType: 'copy',
+      },
+    },
+    position: 'top-right',  // ChromeRenderer handles positioning
+  },
+}
+```
+
+**ChromeRenderer wraps widget in positioning container and portals to body:**
+```html
+<!-- Portaled to document.body -->
+<div class="chrome-overlay chrome-overlay--top-right">
+  <!-- Widget renders here -->
+</div>
+```
+
+### Transform Context Handling
+
+Chrome overlays use `position: fixed` for viewport-relative positioning. When rendered inside a CSS transform context (e.g., GSAP ScrollSmoother), fixed positioning breaks - the element becomes fixed relative to the transformed ancestor, not the viewport.
+
+**Solution:** ChromeRenderer portals widget-based overlays to `document.body`. This keeps them in the React tree (full context access) while escaping the DOM transform context.
+
+```
+React Tree (context flows):     DOM Tree (visual):
+───────────────────────────     ──────────────────
+SmoothScrollProvider            body
+  ChromeRenderer(overlays)        .chrome-overlay (portaled here)
+    WidgetRenderer ─────────────► position: fixed works correctly
+```
+
+**Key principle:** React tree = context tree. DOM tree = visual tree. Portals decouple them.
+
+Component-based overlays (like Modal) handle their own portals internally.
+
+### Component-based (For Complex Regions)
+
+Use for regions (Footer, Header) that have complex internal structure.
+
+```typescript
+// site/config.ts - Component-based region
+regions: {
+  footer: {
+    component: 'Footer',
+    props: {
+      navLinks: [...],
+      contactEmail: 'hello@example.com',
+    },
+  },
+}
+```
+
+### Decision Guide
+
+```
+Is it an overlay (floating element)?
+    │
+    ├─ YES → Use widget-based
+    │        (ChromeRenderer handles positioning)
+    │
+    └─ NO (region like header/footer)
+           │
+           ├─ Simple content? → Widget-based (widgets array)
+           │
+           └─ Complex with internal logic? → Component-based
+```
+
 ## Interface
 
 ```typescript
 // chrome/types.ts
 export interface RegionSchema {
-  widgets: WidgetSchema[]
+  // Widget-based (preferred for simple regions)
+  widgets?: WidgetSchema[]
+  // Component-based (for complex regions)
+  component?: string
+  props?: Record<string, SerializableValue>
+  // Behaviour for animation
   behaviour?: string | BehaviourConfig
   behaviourOptions?: Record<string, any>
 }
 
 export interface OverlaySchema {
   trigger?: TriggerCondition
-  widget: WidgetSchema
+  // Widget-based (preferred) - ChromeRenderer handles positioning
+  widget?: WidgetSchema
+  // Component-based (legacy) - component handles positioning
+  component?: string
+  props?: Record<string, SerializableValue>
+  // Position for widget-based overlays
+  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
   behaviour?: string | BehaviourConfig
 }
 
@@ -56,11 +157,7 @@ export interface ChromeSchema {
     footer?: RegionSchema
     sidebar?: RegionSchema
   }
-  overlays?: {
-    cursor?: OverlaySchema
-    loader?: OverlaySchema
-    modal?: OverlaySchema
-  }
+  overlays?: Record<string, OverlaySchema>
 }
 
 export interface PageChromeOverrides {
@@ -70,8 +167,7 @@ export interface PageChromeOverrides {
     sidebar?: 'inherit' | 'hidden' | RegionSchema
   }
   overlays?: {
-    cursor?: 'inherit' | 'hidden' | OverlaySchema
-    loader?: 'inherit' | 'hidden' | OverlaySchema
+    [key: string]: 'inherit' | 'hidden' | OverlaySchema
   }
 }
 

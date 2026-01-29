@@ -14,7 +14,7 @@ Widget imports experience concerns. Breaks layer separation. Widget becomes coup
 
 ### Bad Example
 ```typescript
-// creativeshire/content/widgets/content/Image/index.tsx
+// creativeshire/content/widgets/primitives/Image/index.tsx
 import { useScrollProgress } from '@/creativeshire/experience/triggers'
 
 export default function Image({ src, alt }: ImageProps) {
@@ -25,7 +25,7 @@ export default function Image({ src, alt }: ImageProps) {
 
 ### Good Example
 ```typescript
-// creativeshire/content/widgets/content/Image/index.tsx
+// creativeshire/content/widgets/primitives/Image/index.tsx
 export default function Image({ src, alt }: ImageProps) {
   return <img src={src} alt={alt} className="image-widget" />
 }
@@ -49,7 +49,7 @@ Widget uses `100vh` directly. BehaviourWrapper imposes extrinsic constraints, no
 
 ### Bad Example
 ```typescript
-// creativeshire/content/widgets/content/Hero/index.tsx
+// creativeshire/content/widgets/primitives/Hero/index.tsx
 export default function Hero({ title }: HeroProps) {
   return <div style={{ height: '100vh' }}><h1>{title}</h1></div>
 }
@@ -57,7 +57,7 @@ export default function Hero({ title }: HeroProps) {
 
 ### Good Example
 ```typescript
-// creativeshire/content/widgets/content/Hero/index.tsx
+// creativeshire/content/widgets/primitives/Hero/index.tsx
 export default function Hero({ title }: HeroProps) {
   return <div className="hero-widget"><h1>{title}</h1></div>
 }
@@ -221,7 +221,7 @@ Content imports from experience directory. Layer boundary violated.
 
 ### Bad Example
 ```typescript
-// creativeshire/content/widgets/content/Card/index.tsx
+// creativeshire/content/widgets/primitives/Card/index.tsx
 import { useExperience } from '@/creativeshire/experience/ExperienceProvider'
 
 export default function Card({ title }: CardProps) {
@@ -232,7 +232,7 @@ export default function Card({ title }: CardProps) {
 
 ### Good Example
 ```typescript
-// creativeshire/content/widgets/content/Card/index.tsx
+// creativeshire/content/widgets/primitives/Card/index.tsx
 export default function Card({ title }: CardProps) {
   return <div className="card-widget">{title}</div>
 }

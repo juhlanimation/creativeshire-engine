@@ -1,0 +1,41 @@
+/**
+ * Mask Reveal Effect
+ *
+ * Clip-path reveal animation for any container.
+ * Works with mask-reveal behaviour.
+ *
+ * Usage:
+ *   <div data-effect="mask-reveal">
+ *     <div data-reveal="content">...</div>
+ *   </div>
+ *
+ * CSS Variables consumed:
+ * - --mask-clip: clip-path inset value (default: inset(0 0 0 0))
+ * - --mask-duration: transition duration (default: 800ms)
+ * - --mask-easing: timing function (default: cubic-bezier)
+ * - --mask-content-opacity: content opacity (default: 1)
+ * - --mask-content-delay: delay for content fade (default: 0ms)
+ */
+
+/* Container - clip-path animation */
+[data-effect~="mask-reveal"] {
+  clip-path: var(--mask-clip, inset(0 0 0 0));
+  transition: clip-path var(--mask-duration, 800ms) var(--mask-easing, cubic-bezier(0.4, 0, 0.2, 1));
+  will-change: clip-path;
+}
+
+/* Content - opacity with delay to sequence after clip starts */
+[data-effect~="mask-reveal"] [data-reveal="content"] {
+  opacity: var(--mask-content-opacity, 1);
+  transition: opacity calc(var(--mask-duration, 800ms) * 0.4) ease-out;
+  transition-delay: var(--mask-content-delay, 0ms);
+  will-change: opacity;
+}
+
+/* Reduced motion - instant transitions */
+@media (prefers-reduced-motion: reduce) {
+  [data-effect~="mask-reveal"],
+  [data-effect~="mask-reveal"] [data-reveal="content"] {
+    transition: none;
+  }
+}

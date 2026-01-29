@@ -50,9 +50,8 @@
 | [widget-composite.spec.md](components/content/widget-composite.spec.md) | Factory functions that create widget trees |
 | [layout-widget.spec.md](components/content/layout-widget.spec.md) | Layout widgets (Stack, Flex, Grid, Carousel, Tabs) |
 | [section.spec.md](components/content/section.spec.md) | Scrollable groups of widgets |
-| [section-composite.spec.md](components/content/section-composite.spec.md) | Factory functions that create section presets |
+| [section-pattern.spec.md](components/content/section-pattern.spec.md) | Factory functions that create section patterns |
 | [chrome.spec.md](components/content/chrome.spec.md) | Persistent UI (navigation, overlays) |
-| [feature.spec.md](components/content/feature.spec.md) | Static styling (spacing, typography, backgrounds) |
 
 ### components/experience/ — Experience Layer Contracts
 
@@ -60,6 +59,7 @@
 |------|-----------|
 | [experience.spec.md](components/experience/experience.spec.md) | User-selectable experience definitions (wrapping rules, appended sections) |
 | [behaviour.spec.md](components/experience/behaviour.spec.md) | Functions that compute CSS variables from state |
+| [effect.spec.md](components/experience/effect.spec.md) | Reusable CSS that defines HOW elements animate (transitions, transforms) |
 | [driver.spec.md](components/experience/driver.spec.md) | Applies CSS variables to DOM elements |
 | [trigger.spec.md](components/experience/trigger.spec.md) | Connects events (scroll, click) to store updates |
 | [mode.spec.md](components/experience/mode.spec.md) | Bundles of behaviours and triggers |
@@ -146,6 +146,7 @@
 | Build a widget | [widget.spec.md](components/content/widget.spec.md) |
 | Build a layout widget | [layout-widget.spec.md](components/content/layout-widget.spec.md) |
 | Build animation | [behaviour.spec.md](components/experience/behaviour.spec.md) |
+| Define animation CSS | [effect.spec.md](components/experience/effect.spec.md) |
 | Build chrome behaviour | [chrome-behaviour.spec.md](components/experience/chrome-behaviour.spec.md) |
 | Create an experience | [experience.spec.md](components/experience/experience.spec.md) |
 | Create a preset | [preset.spec.md](components/preset/preset.spec.md) |

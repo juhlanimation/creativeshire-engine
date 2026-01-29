@@ -106,7 +106,7 @@ export function create{Name}(props: {Name}Props): WidgetSchema {
 2. JSX syntax - return schema objects only
 3. CSS files - composites produce schema, not styled components
 4. Imports from `experience/` - layer violation
-5. Viewport units in features
+5. Viewport units in style
 6. Widget internals as props (`type`, `widgets`)
 
 ## Validation Rules
@@ -121,7 +121,7 @@ export function create{Name}(props: {Name}Props): WidgetSchema {
 | 4 | No React imports | `checkNoReactImports` | `.ts` |
 | 5 | No JSX syntax | `checkNoJsx` | `.ts` |
 | 6 | No experience imports | `checkNoExperienceImports` | `.ts` |
-| 7 | No viewport units in features | `checkNoViewportUnits` | `.ts` |
+| 7 | No viewport units in style | `checkNoViewportUnits` | `.ts` |
 | 8 | No CSS files | `checkNoCssFiles` | `.css` |
 
 ## Template
@@ -143,7 +143,7 @@ import { {Name}Props } from './types'
 export function create{Name}(props: {Name}Props): WidgetSchema {
   return {
     type: 'Stack',
-    features: { spacing: { gap: 16 } },
+    style: { gap: 16 },
     widgets: [
       { type: 'Image', props: { src: props.image, alt: props.title } },
       { type: 'Text', props: { content: props.title } },

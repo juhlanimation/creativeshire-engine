@@ -34,6 +34,10 @@ creativeshire/experience/
 │   ├── scroll-stack/
 │   ├── depth-layer/
 │   └── fade-on-scroll/
+├── effects/                   # Reusable animation CSS
+│   ├── text-reveal.css        # Text slide transitions
+│   ├── fade-in.css            # Opacity transitions
+│   └── scale-hover.css        # Scale on hover
 ├── drivers/
 │   ├── ScrollDriver.ts
 │   └── GSAPDriver.ts
@@ -45,7 +49,7 @@ creativeshire/experience/
 └── types.ts
 ```
 
-**Concepts owned:** Experiences, Modes, Behaviours, BehaviourWrapper, Drivers, Triggers, Store
+**Concepts owned:** Experiences, Modes, Behaviours, Effects, BehaviourWrapper, Drivers, Triggers, Store
 
 ---
 
@@ -258,6 +262,28 @@ class ScrollDriver {
 
 Zustand manages runtime state. Each mode creates its own store.
 
+### Store Lifecycle
+
+```
+MODE DEFINITION (modes/parallax/index.ts)
+├── createStore: () => zustand store factory
+│
+SITE RENDERER (renderer/SiteRenderer.tsx)
+├── const mode = getMode(modeId)
+├── const store = mode.createStore()      ← Store created HERE
+│
+EXPERIENCE PROVIDER
+├── <ExperienceContext.Provider value={{ mode, store }}>
+│   └── Distributed via React context
+│
+ANY COMPONENT
+└── const { store } = useExperience()     ← Access anywhere
+```
+
+**Why Mode creates the store:** Different modes need different state. Parallax needs scrollProgress. Slideshow needs currentSlide. The mode knows what state it provides.
+
+### Store Shape
+
 ```typescript
 const createParallaxStore = () => create((set, get) => ({
   scrollProgress: 0,
@@ -274,6 +300,17 @@ const createParallaxStore = () => create((set, get) => ({
 ```
 
 Use a Map for per-section state, not nested providers.
+
+### Store Colocation
+
+Component-specific stores (like modal state) are colocated with the component, not centralized.
+
+```
+content/chrome/overlays/Modal/
+├── index.tsx
+├── types.ts
+└── store.ts    ← Modal store lives HERE, not in lib/stores/
+```
 
 ---
 
@@ -292,7 +329,54 @@ Use a Map for per-section state, not nested providers.
 
 ## GSAP Integration
 
-For complex sequences, use GSAP ScrollTrigger.
+GSAP integrates at three levels depending on the use case.
+
+### Integration Options
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  OPTION A: GSAP as Trigger                                  │
+│  ─────────────────────────                                  │
+│  ScrollTrigger → updates Zustand store → behaviours compute │
+│  Good for: scroll position, section detection               │
+├─────────────────────────────────────────────────────────────┤
+│  OPTION B: GSAP as Driver                                   │
+│  ────────────────────────                                   │
+│  Zustand store → GSAP reads → animates via CSS vars         │
+│  Good for: complex easing, timeline sequences               │
+├─────────────────────────────────────────────────────────────┤
+│  OPTION C: GSAP Alongside (ScrollSmoother)                  │
+│  ──────────────────────────────────────────                 │
+│  ScrollSmoother wraps site → smooth scrolling globally      │
+│  Your drivers still work (read smoothed scroll position)    │
+│  Good for: inertial smooth scrolling feel                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Option A: GSAP as Trigger
+
+ScrollTrigger captures scroll and updates the store. Behaviours compute from store.
+
+```typescript
+// experience/triggers/useGSAPScroll.ts
+function useGSAPScroll(store: ExperienceStore) {
+  useEffect(() => {
+    ScrollTrigger.create({
+      onUpdate: (self) => {
+        store.setState({
+          scrollProgress: self.progress,
+          scrollVelocity: self.getVelocity()
+        })
+      }
+    })
+    return () => ScrollTrigger.killAll()
+  }, [store])
+}
+```
+
+### Option B: GSAP as Driver
+
+GSAP drives the animation loop. Behaviours still compute CSS variables.
 
 ```typescript
 // experience/drivers/GSAPDriver.ts
@@ -308,6 +392,45 @@ function registerBehaviour(element, behaviour, options) {
   return () => trigger.kill()
 }
 ```
+
+### Option C: GSAP ScrollSmoother (Alongside)
+
+ScrollSmoother wraps the entire site for smooth inertial scrolling. Your drivers read the smoothed scroll position.
+
+```typescript
+// experience/providers/SmoothScrollProvider.tsx
+function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const smoother = ScrollSmoother.create({
+      wrapper: wrapperRef.current,
+      content: contentRef.current,
+      smooth: 1.5,
+      effects: true
+    })
+    return () => smoother.kill()
+  }, [])
+
+  return (
+    <div ref={wrapperRef}>
+      <div ref={contentRef}>{children}</div>
+    </div>
+  )
+}
+```
+
+### Choosing an Integration
+
+| Use Case | Option |
+|----------|--------|
+| Simple scroll-driven animation | A (Trigger) |
+| Complex timelines, easing | B (Driver) |
+| Smooth scrolling feel | C (Alongside) |
+| All three combined | A + B + C |
+
+**Note:** Options can be combined. ScrollSmoother (C) can wrap the site while triggers (A) update the store and drivers (B) apply behaviours.
 
 ---
 
@@ -358,6 +481,125 @@ const depthLayerBehaviour: Behaviour = {
   }),
   cssTemplate: `transform: translateY(calc(var(--depth-y, 0) * 1px)); will-change: transform;`
 }
+```
+
+---
+
+## Effects
+
+**Effects** are reusable CSS files that define HOW elements animate. They contain transitions, transforms, and timing—driven by CSS variables from behaviours.
+
+### Why Effects?
+
+Without effects, animation knowledge leaks into Content (L1):
+
+```css
+/* BAD: Widget defines animation */
+.contact-prompt__text {
+  transform: translateY(calc(var(--reveal) * -100%));  /* Widget knows it slides */
+  transition: transform 400ms ease-in-out;              /* Widget knows timing */
+}
+```
+
+With effects, Content stays pure structure:
+
+```css
+/* GOOD: Widget is pure structure */
+.contact-prompt__text {
+  /* No animation knowledge */
+}
+
+/* Effect (L2) defines animation */
+[data-effect="text-reveal"] [data-reveal] {
+  transform: translateY(var(--reveal-y, 0));
+  transition: transform var(--reveal-duration, 400ms) var(--reveal-easing, ease-in-out);
+}
+```
+
+### Behaviour vs Effect
+
+| Aspect | Behaviour | Effect |
+|--------|-----------|--------|
+| **What** | Computes CSS variable VALUES | Defines CSS that USES variables |
+| **Format** | TypeScript function | CSS file |
+| **Contains** | State → value mapping | Transitions, transforms, timing |
+| **Example output** | `--reveal-y: -100%` | `transform: translateY(var(--reveal-y))` |
+
+### Pattern: data-effect Attributes
+
+Content marks animatable elements with `data-effect` and `data-*` attributes:
+
+```tsx
+// L1 - Pure structure with animation hooks
+<div className="contact-prompt" data-effect="text-reveal">
+  <span data-reveal="primary">{promptText}</span>
+  <span data-reveal="secondary">{email}</span>
+  <span data-reveal="icon">{icon}</span>
+</div>
+```
+
+```typescript
+// L2 - Behaviour computes actual values
+const textReveal: Behaviour = {
+  id: 'text-reveal',
+  compute: (state) => ({
+    '--reveal-y': state.isHovered ? '-100%' : '0',
+    '--reveal-opacity': state.isHovered ? 1 : 0,
+    '--reveal-duration': '400ms',
+    '--reveal-easing': 'ease-in-out',
+  })
+}
+```
+
+```css
+/* L2 - Effect defines transitions */
+/* effects/text-reveal.css */
+[data-effect="text-reveal"] [data-reveal="primary"],
+[data-effect="text-reveal"] [data-reveal="secondary"] {
+  transform: translateY(var(--reveal-y, 0));
+  transition: transform var(--reveal-duration, 400ms) var(--reveal-easing, ease-in-out);
+}
+
+[data-effect="text-reveal"] [data-reveal="icon"] {
+  opacity: var(--reveal-opacity, 0);
+  transition: opacity calc(var(--reveal-duration, 400ms) * 0.75) var(--reveal-easing, ease-in-out);
+}
+```
+
+### Effect File Structure
+
+```
+creativeshire/experience/effects/
+├── text-reveal.css      # Vertical text slide
+├── fade-in.css          # Opacity fade
+├── scale-hover.css      # Scale on hover
+├── color-shift.css      # Color/blend-mode transition
+└── index.css            # Barrel import
+```
+
+### Built-in Effects
+
+| Effect | Behaviour | Description |
+|--------|-----------|-------------|
+| `text-reveal` | `text-reveal` | Vertical text slide with secondary text |
+| `fade-in` | `fade-in` | Opacity + translateY entrance |
+| `scale-hover` | `scale-hover` | Scale feedback on hover/press |
+| `color-shift` | `color-shift` | Color and blend-mode transition |
+
+### Importing Effects
+
+Effects are imported globally in the experience provider:
+
+```typescript
+// experience/ExperienceProvider.tsx
+import './effects/index.css'
+```
+
+Or per-effect when needed:
+
+```typescript
+// Only import text-reveal effect
+import '@/creativeshire/experience/effects/text-reveal.css'
 ```
 
 ---

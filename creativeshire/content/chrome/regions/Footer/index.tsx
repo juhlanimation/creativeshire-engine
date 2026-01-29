@@ -6,6 +6,7 @@
  */
 
 import React, { memo, forwardRef } from 'react'
+import ContactPrompt from '@/creativeshire/content/widgets/primitives/ContactPrompt'
 import type { FooterProps } from './types'
 import './styles.css'
 
@@ -39,72 +40,81 @@ const Footer = memo(forwardRef<HTMLElement, FooterProps>(function Footer(
       role="contentinfo"
     >
       <div className="footer-chrome__content">
-        {/* Navigation Column */}
-        <nav className="footer-chrome__section" aria-label="Footer navigation">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="footer-chrome__nav-link"
-            >
-              {link.label}
-            </a>
-          ))}
-        </nav>
-
-        {/* Contact Column */}
-        <div className="footer-chrome__section">
-          <h2 className="footer-chrome__heading">{contactHeading}</h2>
-          <a href={`mailto:${contactEmail}`} className="footer-chrome__link">
-            {contactEmail}
-          </a>
-          {contactLinkedin ? (
-            <a
-              href={contactLinkedin}
-              className="footer-chrome__social-link"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              linkedin
-            </a>
-          ) : null}
+        {/* Left: Navigation (centered over copyright) */}
+        <div className="footer-chrome__left">
+          <nav className="footer-chrome__nav" aria-label="Footer navigation">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="footer-chrome__nav-link"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
         </div>
 
-        {/* Studio Column */}
-        {(studioUrl || studioEmail || studioSocials.length > 0) ? (
+        {/* Right: Contact + Studio side-by-side */}
+        <div className="footer-chrome__right">
+          {/* Contact Section */}
           <div className="footer-chrome__section">
-            <h2 className="footer-chrome__heading">{studioHeading}</h2>
-            {studioUrl ? (
+            <h2 className="footer-chrome__heading">{contactHeading}</h2>
+            <ContactPrompt
+              email={contactEmail}
+              showPrompt={false}
+              className="footer-chrome__link"
+            />
+            {contactLinkedin ? (
               <a
-                href={studioUrl}
-                className="footer-chrome__link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {studioUrl.replace(/^https?:\/\//, '')}
-              </a>
-            ) : null}
-            {studioEmail ? (
-              <a href={`mailto:${studioEmail}`} className="footer-chrome__link">
-                {studioEmail}
-              </a>
-            ) : null}
-            {studioSocials.map((social) => (
-              <a
-                key={social.platform}
-                href={social.url}
+                href={contactLinkedin}
                 className="footer-chrome__social-link"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {social.platform}
+                linkedin
               </a>
-            ))}
+            ) : null}
           </div>
-        ) : null}
+
+          {/* Studio Section */}
+          {(studioUrl || studioEmail || studioSocials.length > 0) ? (
+            <div className="footer-chrome__section">
+              <h2 className="footer-chrome__heading">{studioHeading}</h2>
+              {studioUrl ? (
+                <a
+                  href={studioUrl}
+                  className="footer-chrome__link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {studioUrl.replace(/^https?:\/\//, '')}
+                </a>
+              ) : null}
+              {studioEmail ? (
+                <ContactPrompt
+                  email={studioEmail}
+                  showPrompt={false}
+                  className="footer-chrome__link"
+                />
+              ) : null}
+              {studioSocials.map((social) => (
+                <a
+                  key={social.platform}
+                  href={social.url}
+                  className="footer-chrome__social-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {social.platform}
+                </a>
+              ))}
+            </div>
+          ) : null}
+        </div>
       </div>
 
-      {/* Copyright */}
+      {/* Copyright - positioned at bottom-left */}
       <p className="footer-chrome__copyright">{copyrightText}</p>
     </footer>
   )

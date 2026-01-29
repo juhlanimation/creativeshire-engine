@@ -6,9 +6,9 @@
 
 ## Purpose
 
-The Content Layer owns all visual primitives. Widgets hold content (text, images, video). Sections group widgets into semantic containers. Chrome persists across pages (header, footer, overlays). Features apply static styles (spacing, typography, background).
+The Content Layer owns all visual primitives. Widgets hold content (text, images, video). Sections group widgets into semantic containers. Chrome persists across pages (header, footer, overlays).
 
-Content stays pure. It renders once and fills its container. Animation, scroll behavior, and viewport sizing belong to the **Experience Layer (L2)**.
+Content stays pure. It renders once and fills its container. Animation, scroll behavior, and viewport sizing belong to the **Experience Layer (L2)**. Styling is handled via direct `style` and `className` props - no intermediate abstractions.
 
 ---
 
@@ -19,19 +19,15 @@ This layer owns:
 ```
 creativeshire/content/
 ├── widgets/
-│   ├── content/           # Leaf nodes: Text, Image, Video, Button
+│   ├── primitives/        # Leaf nodes: Text, Image, Video, Button
 │   ├── layout/            # Containers: Flex, Grid, Stack, Carousel
 │   └── composite/         # Factory functions: ProjectCard, Testimonial
 ├── sections/
 │   ├── Section.tsx        # Base section renderer
-│   └── composites/        # Factory functions: Hero, Gallery, Showreel
+│   └── patterns/          # Factory functions: Hero, Gallery, Showreel
 ├── chrome/
 │   ├── regions/           # Header, Footer, Sidebar
 │   └── overlays/          # Cursor, Loader, ModalContainer
-├── features/              # Static decorators
-│   ├── spacing.ts
-│   ├── typography.ts
-│   └── background.ts
 └── registry.ts            # Auto-discovery via import.meta.glob
 ```
 
@@ -39,7 +35,6 @@ creativeshire/content/
 - Widget components and their props
 - Section structure and layout
 - Chrome regions and overlays
-- Static feature decorators
 - Widget registry and auto-discovery
 
 ---
@@ -51,7 +46,6 @@ creativeshire/content/
 | **Schema** | Widget definitions | `WidgetSchema` |
 | **Schema** | Section definitions | `SectionSchema` |
 | **Schema** | Chrome definitions | `ChromeSchema` |
-| **Schema** | Feature configuration | `FeatureSet` |
 | **Experience (L2)** | Wrapper constraints | `BehaviourWrapper` children |
 
 ---
@@ -63,7 +57,6 @@ creativeshire/content/
 | **Renderer** | Widget components | `ComponentType<WidgetProps>` |
 | **Renderer** | Section component | `Section` component |
 | **Renderer** | Chrome components | `Header`, `Footer`, `Cursor` |
-| **Renderer** | Feature styles | `CSSProperties` via `useFeatures()` |
 | **Experience (L2)** | DOM refs | Via `BehaviourWrapper` children |
 
 ---
@@ -134,7 +127,7 @@ Composites return `WidgetSchema`, not React components. The renderer expands the
 export function createProjectCard(props: ProjectCardProps): WidgetSchema {
   return {
     type: 'Stack',
-    features: { spacing: { gap: 16 } },
+    style: { gap: 16 },
     widgets: [
       { type: 'Image', props: { src: props.image, alt: props.title } },
       { type: 'Text', props: { content: props.title } },
@@ -149,34 +142,35 @@ export function createProjectCard(props: ProjectCardProps): WidgetSchema {
 
 ### Section Structure
 
-Sections group widgets into semantic containers. Each section has an ID (for anchoring), layout configuration, optional features, and a list of widgets.
+Sections group widgets into semantic containers. Each section has an ID (for anchoring), layout configuration, optional style/className, and a list of widgets.
 
 ```typescript
 // creativeshire/schema/section.ts
 export interface SectionSchema {
   id: string
   layout: LayoutConfig
-  features?: FeatureSet
+  style?: CSSProperties       // Inline styles
+  className?: string          // Tailwind/CSS classes
   behaviour?: string | BehaviourConfig
   behaviourOptions?: Record<string, any>
   widgets: WidgetSchema[]
 }
 ```
 
-Section composites are factory functions that return `SectionSchema`:
+Section patterns are factory functions that return `SectionSchema`:
 
 ```typescript
-// creativeshire/content/sections/composites/Hero/index.ts
+// creativeshire/content/sections/patterns/Hero/index.ts
 export function createHeroSection(props: HeroProps): SectionSchema {
   return {
     id: props.id ?? 'hero',
     layout: { type: 'stack', align: 'center', gap: 32 },
-    features: { background: props.background },
+    style: { backgroundColor: props.backgroundColor },
     widgets: [
       {
         type: 'Text',
         props: { content: props.headline },
-        features: { typography: { size: '6xl', weight: 'bold' } }
+        className: 'text-6xl font-bold'
       }
     ]
   }
@@ -208,32 +202,6 @@ Chrome exists at **Site level** (defaults) and **Page level** (overrides):
 | **override** | Page replaces region |
 | **hidden** | Page hides region |
 
-### Features (Static Decorators)
-
-Features apply static styles. They never animate. If a property changes with scroll, it belongs to a behaviour.
-
-| Category | Properties |
-|----------|------------|
-| **Spacing** | margin, padding |
-| **Visual** | background, border, shadow, opacity |
-| **Typography** | family, size, weight, align, color |
-| **Layout** | fullWidth, aspectRatio |
-
-```typescript
-// creativeshire/schema/features.ts
-export interface FeatureSet {
-  spacing?: { margin?: string; padding?: string }
-  background?: { color?: string; image?: string; gradient?: string }
-  typography?: {
-    size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl'
-    weight?: 'normal' | 'medium' | 'semibold' | 'bold'
-    align?: 'left' | 'center' | 'right'
-    color?: string
-  }
-  border?: { width?: number; color?: string; radius?: string }
-}
-```
-
 ### Registry Auto-Discovery
 
 Widgets are auto-discovered using `import.meta.glob`:
@@ -252,7 +220,7 @@ Object.entries(widgetModules).forEach(([path, module]) => {
 })
 ```
 
-Drop a widget folder in `widgets/content/` or `widgets/layout/`. The registry finds it automatically.
+Drop a widget folder in `widgets/primitives/` or `widgets/layout/`. The registry finds it automatically.
 
 ---
 
@@ -262,7 +230,7 @@ Drop a widget folder in `widgets/content/` or `widgets/layout/`. The registry fi
 
 - Render static structure and content
 - Accept children props for layout widgets
-- Apply features (spacing, typography, background)
+- Accept `style` and `className` props for styling
 - Use intrinsic sizing (content-based dimensions)
 - Fill parent containers
 - Export components to the registry
@@ -287,7 +255,8 @@ export interface WidgetSchema {
   id?: string
   type: string
   props?: Record<string, any>
-  features?: FeatureSet
+  style?: CSSProperties         // Inline styles
+  className?: string            // Tailwind/CSS classes
   behaviour?: string | BehaviourConfig
   behaviourOptions?: Record<string, any>
   widgets?: WidgetSchema[]
@@ -297,7 +266,8 @@ export interface WidgetSchema {
 export interface SectionSchema {
   id: string
   layout: LayoutConfig
-  features?: FeatureSet
+  style?: CSSProperties         // Inline styles
+  className?: string            // Tailwind/CSS classes
   behaviour?: string | BehaviourConfig
   behaviourOptions?: Record<string, any>
   widgets: WidgetSchema[]
@@ -363,7 +333,7 @@ L2 wrappers impose extrinsic constraints. L1 content fills or sizes intrinsicall
 ### Don't: Use Viewport Units in Widgets
 
 ```typescript
-// creativeshire/content/widgets/content/Video/index.tsx
+// creativeshire/content/widgets/primitives/Video/index.tsx
 export default function Video({ src }: VideoProps) {
   return (
     <div style={{ height: '100vh' }}> {/* WRONG: viewport unit in L1 */}
@@ -378,7 +348,7 @@ export default function Video({ src }: VideoProps) {
 ### Don't: Import from Experience Layer
 
 ```typescript
-// creativeshire/content/widgets/content/Image/index.tsx
+// creativeshire/content/widgets/primitives/Image/index.tsx
 import { useScrollProgress } from '@/creativeshire/experience/triggers' // WRONG
 
 export default function Image({ src, alt }: ImageProps) {

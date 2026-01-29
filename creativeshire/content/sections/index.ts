@@ -10,7 +10,6 @@ export type {
   SectionSchema,
   LayoutConfig,
   LayoutStyles,
-  FeatureSet,
   WidgetSchema,
 } from './types'
 

@@ -1,0 +1,35 @@
+/**
+ * Contact Reveal Effect
+ *
+ * Handles color transitions for ContactPrompt widget.
+ * Widget CSS handles the flip animations via CSS variables.
+ *
+ * NOTE: mix-blend-mode is applied at the .chrome-overlay level
+ * (see chrome.css) because blend-mode must be on the stacking context
+ * creator (fixed + z-index), not a nested child.
+ *
+ * CSS Variables consumed (from contact-reveal behaviour):
+ * - --shift-color: Text color (white default, purple on hover/idle)
+ * - --text-reveal-y: Text flip position (0 default, -100% hovered)
+ * - --icon-opacity: Icon visibility (0 default, 1 hovered)
+ *
+ * Note: --icon-reveal-y is set by the widget based on copyState
+ */
+
+[data-effect="contact-reveal"] {
+  color: var(--shift-color, white);
+  /* No transition - instant color change to prevent flash */
+  will-change: color;
+}
+
+/* When hovered, immediately use purple (don't wait for JS to compute) */
+[data-effect="contact-reveal"][data-hovered] {
+  color: var(--shift-color, var(--interaction, #9933FF));
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  [data-effect="contact-reveal"] {
+    transition: none;
+  }
+}

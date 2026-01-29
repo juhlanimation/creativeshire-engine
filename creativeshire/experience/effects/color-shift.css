@@ -1,0 +1,27 @@
+/**
+ * Color Shift Effect
+ *
+ * Color and blend-mode transitions for hover states.
+ *
+ * Behaviour: contact-reveal (or any behaviour outputting these variables)
+ * Variables consumed:
+ *   --shift-color: Text color (default: inherit)
+ *   --shift-blend: Mix blend mode (default: normal)
+ *   --shift-duration: Transition duration (default: 300ms)
+ *   --shift-easing: Timing function (default: ease-in-out)
+ */
+
+[data-effect~="color-shift"] {
+  color: var(--shift-color, inherit);
+  mix-blend-mode: var(--shift-blend, normal);
+  transition:
+    color var(--shift-duration, 300ms) var(--shift-easing, ease-in-out);
+  will-change: color;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  [data-effect~="color-shift"] {
+    transition: none;
+  }
+}

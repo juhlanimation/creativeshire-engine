@@ -1,0 +1,19 @@
+/**
+ * Box layout widget styles.
+ * Uses CSS variables with fallbacks for animation support.
+ */
+
+.box-widget {
+  /* Animation CSS variables with fallbacks (set by behaviours) */
+  transform: translateY(calc(var(--y, 0) * 1px));
+  opacity: var(--opacity, 1);
+
+  /* Default sizing */
+  box-sizing: border-box;
+  transition: none; /* Animations handled by drivers, not CSS transitions */
+}
+
+/* Enable will-change only when behaviour is attached */
+.box-widget[data-behaviour] {
+  will-change: transform, opacity;
+}

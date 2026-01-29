@@ -151,7 +151,7 @@ React renders structure once. Drivers handle motion continuously. They never sha
 CSS always declares fallbacks for SSR safety. Before hydration, fallback values apply. After driver registers, computed values apply.
 
 ```css
-/* content/widgets/content/Image/styles.css */
+/* content/widgets/primitives/Image/styles.css */
 .image-widget {
   transform: translateY(calc(var(--y, 0) * 1px));
   opacity: var(--opacity, 1);

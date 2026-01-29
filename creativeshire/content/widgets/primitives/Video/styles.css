@@ -1,0 +1,71 @@
+/**
+ * Video widget styles.
+ * Default styling for video elements.
+ *
+ * Modes:
+ * - Default: direct video element
+ * - Hover-play: container with poster + video crossfade
+ */
+
+.video-widget {
+  /* Animation CSS variables with fallbacks */
+  opacity: var(--opacity, 1);
+
+  /* Default sizing */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Background variant - absolute positioning */
+.video-widget--background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* ============================================
+   Hover-play mode (thumbnail with video on hover)
+   ============================================ */
+
+.video-widget--hover-play {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #000;
+}
+
+/* Poster image - fills container */
+.video-widget__poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 1;
+  transition: opacity 300ms ease;
+}
+
+.video-widget__poster--hidden {
+  opacity: 0;
+}
+
+/* Video - absolute positioned, hidden by default */
+.video-widget__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.video-widget__video--visible {
+  opacity: 1;
+}

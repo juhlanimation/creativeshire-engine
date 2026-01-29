@@ -48,8 +48,7 @@ Check catalog/registry
 | **CSS Variables** | [Styling Guide](../reference/tech-stack/styling.md) | Variable catalog | Expand range, add fallback | Truly new animation property |
 | **Widgets** | Widget Registry | Existing widgets | Add prop or variant | No existing widget fits |
 | **Behaviours** | Behaviour Registry | Existing behaviours | Add option parameter | New animation pattern |
-| **Sections** | Section Composites | Existing composites | Add variant function | New layout pattern |
-| **Features** | Feature Set | Existing features | Add value to enum | New decorator type |
+| **Sections** | Section Patterns | Existing patterns | Add variant function | New layout pattern |
 
 ---
 
@@ -110,7 +109,7 @@ When creating something new:
 | CSS Variable | `reference/tech-stack/styling.md` | Name, range, fallback, set by, consumed by |
 | Widget | Registry + contract | Props, variants, when to use |
 | Behaviour | Registry + contract | Options, requires, CSS variables produced |
-| Section Composite | Composite index | Variants, when to use |
+| Section Pattern | Pattern index | Variants, when to use |
 
 ---
 

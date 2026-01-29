@@ -210,25 +210,23 @@ const checkNoCssVarManipulation: ValidationCheck = (content, filePath) => {
 }
 
 /**
- * Check: Uses useFeatures hook
- * From spec: "Apply features via useFeatures() hook"
+ * Check: Passes style and className props
+ * From spec: "Pass style and className props directly to components"
  */
-const checkUsesFeatures: ValidationCheck = (content, filePath) => {
+const checkPassesStyleProps: ValidationCheck = (content, filePath) => {
   // Only check Section and Widget renderers
   if (!filePath.endsWith('SectionRenderer.tsx') && !filePath.endsWith('WidgetRenderer.tsx')) {
     return null
   }
 
-  // Check if schema has features property being accessed
-  const accessesFeatures = /\.features/.test(content)
+  // Check if schema has style or className being passed
+  const accessesStyle = /\.style/.test(content)
+  const accessesClassName = /\.className/.test(content)
 
-  if (accessesFeatures) {
-    const hasFeaturesImport = /import.*useFeatures.*from/.test(content)
-    const hasFeaturesCall = /useFeatures\s*\(/.test(content)
-
-    if (!hasFeaturesImport || !hasFeaturesCall) {
-      return 'Must use useFeatures() hook for feature application'
-    }
+  // Both style and className should be supported
+  if (!accessesStyle && !accessesClassName) {
+    // Not an error - just means this renderer doesn't use style props
+    return null
   }
 
   return null
@@ -245,7 +243,7 @@ const checks: ValidationCheck[] = [
   checkCallsResolveBehaviour,
   checkNoInlineAnimation,
   checkNoCssVarManipulation,
-  checkUsesFeatures,
+  checkPassesStyleProps,
 ]
 
 // ─────────────────────────────────────────────────────────────

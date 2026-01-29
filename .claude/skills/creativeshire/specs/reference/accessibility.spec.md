@@ -214,7 +214,7 @@ export function Chrome({ children }: ChromeProps) {
 ### Keyboard Shortcuts in Widgets
 
 ```tsx
-// widgets/content/Carousel/index.tsx
+// widgets/primitives/Carousel/index.tsx
 function handleKeyDown(e: KeyboardEvent) {
   switch (e.key) {
     case 'ArrowLeft':
@@ -449,7 +449,7 @@ function SectionContent({ id }: { id: string }) {
 ### Form Validation Pattern
 
 ```tsx
-// widgets/content/Form/index.tsx
+// widgets/primitives/Form/index.tsx
 function Form({ fields, onSubmit }: FormProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -571,7 +571,7 @@ Tab through page (keyboard only), test at 200% zoom, enable reduced motion in OS
 ### Testing Template
 
 ```typescript
-// widgets/content/Button/index.test.tsx
+// widgets/primitives/Button/index.test.tsx
 import { axe, toHaveNoViolations } from 'jest-axe';
 import { render } from '@testing-library/react';
 import { Button } from './index';
@@ -710,7 +710,7 @@ button:focus-visible {
 ### Accessible Widget Template
 
 ```tsx
-// widgets/content/{Name}/index.tsx
+// widgets/primitives/{Name}/index.tsx
 "use client";
 
 import { forwardRef, useId } from "react";

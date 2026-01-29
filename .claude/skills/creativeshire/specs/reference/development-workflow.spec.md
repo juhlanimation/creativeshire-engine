@@ -347,7 +347,7 @@ Develop and test components in isolation before integration.
 ### Story Structure
 
 ```
-creativeshire/content/widgets/content/{Name}/
+creativeshire/content/widgets/primitives/{Name}/
 ├── index.tsx
 ├── types.ts
 ├── styles.css
@@ -357,7 +357,7 @@ creativeshire/content/widgets/content/{Name}/
 ### Story Template
 
 ```tsx
-// widgets/content/VideoGrid/VideoGrid.stories.tsx
+// widgets/primitives/VideoGrid/VideoGrid.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react';
 import VideoGridWidget from './index';
 

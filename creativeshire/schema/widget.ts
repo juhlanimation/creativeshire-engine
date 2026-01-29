@@ -3,7 +3,7 @@
  * Widgets are atomic content units that render static structure.
  */
 
-import type { FeatureSet } from './features'
+import type { CSSProperties } from 'react'
 import type { BehaviourConfig } from './experience'
 import type { SerializableValue } from './types'
 
@@ -18,8 +18,10 @@ export interface WidgetSchema {
   type: string
   /** Widget-specific properties - must be serializable */
   props?: Record<string, SerializableValue>
-  /** Static styling features */
-  features?: FeatureSet
+  /** Inline styles */
+  style?: CSSProperties
+  /** CSS class names */
+  className?: string
   /** Behaviour configuration for animation */
   behaviour?: BehaviourConfig
   /** Nested widgets (for layout widgets) */

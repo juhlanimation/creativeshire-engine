@@ -1,0 +1,170 @@
+/**
+ * ContactPrompt widget styles.
+ * Dual-stack structure: text stack + icon stack, both with flip animations.
+ *
+ * Structure:
+ * .contact-prompt (container - receives color/blend from effect)
+ *   .contact-prompt__text-stack (overflow hidden, contains 2 texts)
+ *     .contact-prompt__text--prompt (primary - visible by default)
+ *     .contact-prompt__text--email (secondary - flips in on hover)
+ *   .contact-prompt__icon-stack (overflow hidden, contains 2 icons)
+ *     .contact-prompt__icon--copy (primary - visible on hover)
+ *     .contact-prompt__icon--check (secondary - flips in on click)
+ *
+ * CSS Variables consumed (from contact-reveal behaviour):
+ * - --text-reveal-y: Text flip position (0 default, -100% hovered)
+ * - --icon-reveal-y: Icon flip position (0 default, -100% clicked) - set by widget
+ * - --icon-opacity: Icon visibility (0 default, 1 hovered)
+ * - --shift-color: Text color
+ * - --shift-blend: Blend mode
+ * - --flip-duration: Animation duration for text/icon flips (default: 400ms)
+ * - --fade-duration: Animation duration for icon fade (default: 200ms)
+ */
+
+/* Root container */
+.contact-prompt {
+  position: relative; /* For absolute icon positioning */
+  display: flex;
+  align-items: center;
+  height: 1.75rem; /* 28px - matches bojuhl.com reference */
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 400; /* Reference uses 400 (font-medium renders as faux-500) */
+  letter-spacing: 0.025em;
+  white-space: nowrap;
+  /* No gap - icon is absolutely positioned */
+  /* Color and blend from effect */
+}
+
+/* Focus state for accessibility - subtle, no border */
+.contact-prompt:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Text stack - contains prompt and email stacked vertically */
+.contact-prompt__text-stack {
+  position: relative;
+  height: 1.75rem; /* 28px - matches bojuhl.com reference */
+  overflow: hidden;
+}
+
+/* Shared text styles */
+.contact-prompt__text {
+  display: block;
+  line-height: 1.75rem; /* 28px - matches container */
+}
+
+/* Prompt text - visible by default, slides up on hover */
+.contact-prompt__text--prompt {
+  transform: translateY(var(--text-reveal-y, 0));
+  transition: transform var(--flip-duration, 500ms) ease-in-out;
+  will-change: transform;
+}
+
+/* Email text - positioned below, slides in on hover */
+.contact-prompt__text--email {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  transform: translateY(var(--text-reveal-y, 0));
+  transition: transform var(--flip-duration, 500ms) ease-in-out;
+  will-change: transform;
+}
+
+/* Icon stack - absolutely positioned to not affect text layout */
+.contact-prompt__icon-stack {
+  position: absolute;
+  right: -1.5rem; /* Position to the right of container edge */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  overflow: hidden;
+  /* Fade in on hover */
+  opacity: var(--icon-opacity, 0);
+  transition: opacity var(--fade-duration, 200ms) ease-in-out;
+  will-change: opacity;
+}
+
+/* Shared icon styles */
+.contact-prompt__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Copy icon - visible by default in stack, slides up on click */
+.contact-prompt__icon--copy {
+  transform: translateY(var(--icon-reveal-y, 0));
+  transition: transform var(--flip-duration, 500ms) ease-in-out;
+  will-change: transform;
+}
+
+/* Checkmark icon - positioned below, slides in on click */
+.contact-prompt__icon--check {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  transform: translateY(var(--icon-reveal-y, 0));
+  transition: transform var(--flip-duration, 500ms) ease-in-out;
+  will-change: transform;
+}
+
+/* Icon SVG */
+.contact-prompt__icon-svg {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .contact-prompt__text--prompt,
+  .contact-prompt__text--email,
+  .contact-prompt__icon-stack,
+  .contact-prompt__icon--copy,
+  .contact-prompt__icon--check {
+    transition: none;
+  }
+}
+
+/* =============================================================================
+ * Email-only mode (showPrompt=false)
+ * Simpler variant: just email text + copy icon on hover
+ * Used in Footer and other places that don't need text flip
+ * ============================================================================= */
+
+.contact-prompt--email-only {
+  /* Reset button styles */
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  /* Inherit font from parent */
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  /* Smooth color transition */
+  transition: color 0.2s ease;
+}
+
+.contact-prompt--email-only:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Icon stack in email-only mode: inline, not absolute */
+.contact-prompt--email-only .contact-prompt__icon-stack {
+  position: relative;
+  right: auto;
+  top: auto;
+  transform: none;
+  /* Opacity controlled by inline style, transitions here */
+  transition: opacity 0.3s ease-in-out;
+}

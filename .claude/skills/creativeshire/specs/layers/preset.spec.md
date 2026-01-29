@@ -40,7 +40,7 @@ creativeshire/presets/
 | From Layer | What | Shape |
 |------------|------|-------|
 | **Experience (L2)** | Mode definitions | `Mode` |
-| **Content (L1)** | Section composites | `createHeroSection()` |
+| **Content (L1)** | Section patterns | `createHeroSection()` |
 | **Content (L1)** | Widget composites | `createProjectCard()` |
 | **Schema** | Type definitions | `SiteSchema`, `PageSchema` |
 

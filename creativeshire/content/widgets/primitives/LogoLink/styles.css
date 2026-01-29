@@ -1,0 +1,34 @@
+/**
+ * LogoLink widget styles.
+ * Structure only - animations handled by effects.
+ *
+ * Architecture:
+ * - Content (L1): Structure only (no transitions)
+ * - Experience (L2): Effects handle transitions via data-effect attributes
+ *
+ * Effects used: color-shift, scale-hover
+ * All animations defined in experience/effects/, not here.
+ */
+
+.logo-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  /* No transitions here - handled by effects */
+}
+
+.logo-link:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+.logo-link__image {
+  height: 1.5rem;
+  width: auto;
+}

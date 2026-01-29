@@ -159,34 +159,23 @@ The `resolveBehaviour()` function in `experience/behaviours/resolve.ts` implemen
 
 ---
 
-## Feature Application
+## Style Application
 
-Renderers apply features as static styles. Features translate to inline styles or class names.
+Renderers pass `style` and `className` props directly to components. No intermediate transformation is needed.
 
 ```typescript
-// creativeshire/content/features/index.ts
-function useFeatures(features?: FeatureSet): CSSProperties {
-  if (!features) return {}
-
-  return {
-    margin: features.spacing?.margin,
-    padding: features.spacing?.padding,
-    backgroundColor: features.background?.color,
-    backgroundImage: features.background?.image
-      ? `url(${features.background.image})`
-      : features.background?.gradient,
-    borderWidth: features.border?.width,
-    borderColor: features.border?.color,
-    borderRadius: features.border?.radius,
-    fontSize: typographySizeMap[features.typography?.size ?? 'base'],
-    fontWeight: features.typography?.weight,
-    textAlign: features.typography?.align,
-    color: features.typography?.color
-  }
-}
+// creativeshire/renderer/WidgetRenderer.tsx
+const Component = widgetRegistry[widget.type]
+return (
+  <Component
+    {...widget.props}
+    style={widget.style}
+    className={widget.className}
+  />
+)
 ```
 
-Features are **static**. Dynamic properties belong to behaviours.
+Styles are **static**. Dynamic properties belong to behaviours and are applied via CSS variables.
 
 ---
 

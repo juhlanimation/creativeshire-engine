@@ -1,0 +1,37 @@
+/**
+ * Thumbnail Expand Effect
+ *
+ * Expandable thumbnail gallery with label opacity transitions.
+ * Flex transitions are handled inline (CSS shorthand limitation).
+ *
+ * Variables consumed:
+ *   --label-opacity: Metadata label opacity (default: 0)
+ *   --expand-duration: Transition duration (default: 400ms)
+ */
+
+/* Thumbnail container - base styles */
+[data-effect~="thumbnail-expand"] {
+  min-width: 0;
+  will-change: flex, width;
+}
+
+/* Metadata labels - fade in on expand */
+[data-effect~="thumbnail-expand"] [data-expand="label"] {
+  opacity: var(--label-opacity, 0);
+  transition: opacity calc(var(--expand-duration, 400ms) * 0.75) ease-out;
+  will-change: opacity;
+  pointer-events: none;
+}
+
+/* Make labels interactive when visible */
+[data-effect~="thumbnail-expand"][data-expanded="true"] [data-expand="label"] {
+  pointer-events: auto;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  [data-effect~="thumbnail-expand"],
+  [data-effect~="thumbnail-expand"] [data-expand="label"] {
+    transition: none !important;
+  }
+}

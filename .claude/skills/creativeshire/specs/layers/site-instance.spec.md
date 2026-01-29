@@ -50,7 +50,7 @@ site/
 | **Preset** | Chrome defaults | `ChromeSchema` |
 | **Preset** | Behaviour mappings | `Record<string, string>` |
 | **Schema** | Type definitions | `SiteSchema`, `PageSchema` |
-| **Content (L1)** | Section composites | `createHeroSection()` |
+| **Content (L1)** | Section patterns | `createHeroSection()` |
 | **Content (L1)** | Widget composites | `createProjectCard()` |
 
 ---
@@ -102,7 +102,7 @@ Pages extend preset page structures with actual content.
 // site/pages/home.ts
 import { PageSchema } from '@/creativeshire/schema'
 import { showcasePreset } from '@/creativeshire/presets/showcase'
-import { createGallerySection } from '@/creativeshire/content/sections/composites/Gallery'
+import { createGallerySection } from '@/creativeshire/content/sections/patterns/Gallery'
 import { projects } from '@/site/data/projects'
 
 export const homePage: PageSchema = {
@@ -116,7 +116,7 @@ export const homePage: PageSchema = {
         {
           type: 'Text',
           props: { content: 'My Actual Headline' },
-          features: { typography: { size: '6xl', weight: 'bold' } }
+          className: 'text-6xl font-bold'
         }
       ]
     },

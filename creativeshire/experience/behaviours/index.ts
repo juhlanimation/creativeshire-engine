@@ -2,6 +2,13 @@
  * Behaviours barrel export.
  */
 
+// Auto-register behaviours by importing them
+import './contact-reveal'
+import './scroll-fade'
+import './scroll-fade-out'
+import './modal'
+import './reveal'
+
 // Types
 export type { Behaviour, BehaviourRegistry } from './types'
 

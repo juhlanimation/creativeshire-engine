@@ -1,0 +1,147 @@
+/**
+ * ExpandableGalleryRow styles.
+ * Content Layer (L1) - structure only.
+ *
+ * Reference spacing values from bojuhl.com:
+ * - Thumbnails row: gap-1 (4px)
+ * - Labels row: mt-1 (4px), h-24 (6rem), gap-1 (4px)
+ * - Label content: px-2 (8px), py-2 (8px), gap-1.5 (6px)
+ * - Font: text-[10px]
+ */
+
+.expandable-gallery-row {
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  position: relative;
+  margin-top: 36px; /* mt-9 = 2.25rem = 36px - matches bojuhl */
+}
+
+/* Thumbnails row */
+.expandable-gallery-row__thumbnails {
+  display: flex;
+  flex-direction: row;
+  overflow: visible;
+}
+
+/* Individual thumbnail container */
+.expandable-gallery-row__thumbnail {
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+/* Poster image */
+.expandable-gallery-row__poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 300ms ease-out;
+}
+
+.expandable-gallery-row__poster--hidden {
+  opacity: 0;
+}
+
+/* Video */
+.expandable-gallery-row__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 300ms ease-out;
+}
+
+.expandable-gallery-row__video--visible {
+  opacity: 1;
+}
+
+/* Labels row - below thumbnails */
+.expandable-gallery-row__labels-row {
+  display: flex;
+  flex-direction: row;
+  margin-top: 4px; /* mt-1 */
+  height: 6rem; /* h-24 */
+}
+
+/* Individual label container - matches thumbnail width */
+.expandable-gallery-row__label-container {
+  overflow: hidden;
+}
+
+/* Label content */
+.expandable-gallery-row__labels {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px; /* px-2 py-2 */
+  font-family: var(--font-paragraph);
+  font-size: 10px;
+  line-height: 1.5;
+  color: inherit; /* Inherit from section */
+  opacity: 0;
+  pointer-events: none;
+}
+
+.expandable-gallery-row__labels--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.expandable-gallery-row__labels-left,
+.expandable-gallery-row__labels-right {
+  display: flex;
+  flex-direction: column;
+  gap: 6px; /* gap-1.5 */
+  min-width: 0;
+  flex: 1;
+}
+
+.expandable-gallery-row__labels-left {
+  align-items: flex-start;
+  padding-right: 8px;
+}
+
+.expandable-gallery-row__labels-right {
+  align-items: flex-end;
+  text-align: right;
+  padding-left: 8px;
+}
+
+/* Label text styles */
+.expandable-gallery-row__year,
+.expandable-gallery-row__role,
+.expandable-gallery-row__client,
+.expandable-gallery-row__studio {
+  opacity: 0.6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  line-height: 1.4;
+}
+
+.expandable-gallery-row__title {
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  line-height: 1.4;
+}
+
+.expandable-gallery-row__client .uppercase,
+.expandable-gallery-row__studio .uppercase {
+  text-transform: uppercase;
+}
+
+/* Hide on mobile/tablet (< 1024px) */
+@media (max-width: 1023px) {
+  .expandable-gallery-row {
+    display: none;
+  }
+}

@@ -22,7 +22,6 @@ creativeshire/schema/
 ├── section.ts            # Section layout and widgets
 ├── widget.ts             # Widget types and props
 ├── chrome.ts             # Regions and overlays
-├── features.ts           # Static styling decorators
 └── experience.ts         # Behaviour and mode configuration
 ```
 
@@ -31,9 +30,8 @@ creativeshire/schema/
 - `SiteSchema` - Root container with experience config and chrome
 - `PageSchema` - Page structure with chrome overrides
 - `SectionSchema` - Semantic container with layout and widgets
-- `WidgetSchema` - Atomic content unit with props and features
+- `WidgetSchema` - Atomic content unit with props, style, and className
 - `ChromeSchema` - Persistent UI (header, footer, overlays)
-- `FeatureSet` - Static styling declarations
 - `BehaviourConfig` - Animation intent (id + options)
 
 ---
@@ -52,7 +50,8 @@ SiteSchema
                     ├── ChromeOverrides
                     └── SectionSchema[]
                             ├── LayoutConfig
-                            ├── FeatureSet?
+                            ├── style? (CSSProperties)
+                            ├── className?
                             ├── BehaviourConfig?
                             └── WidgetSchema[]
                                     └── WidgetSchema[]? (recursive)
@@ -107,7 +106,8 @@ interface PageSchema {
 interface SectionSchema {
   id: string
   layout: LayoutConfig
-  features?: FeatureSet
+  style?: CSSProperties       // Inline styles
+  className?: string          // Tailwind/CSS classes
   behaviour?: string | BehaviourConfig
   widgets: WidgetSchema[]
 }
@@ -125,7 +125,8 @@ interface WidgetSchema {
   id?: string
   type: string
   props?: Record<string, any>
-  features?: FeatureSet
+  style?: CSSProperties       // Inline styles
+  className?: string          // Tailwind/CSS classes
   behaviour?: string | BehaviourConfig
   widgets?: WidgetSchema[]
 }
@@ -178,22 +179,9 @@ interface PageReference {
 }
 ```
 
-### Features and Experience
+### Experience
 
 ```typescript
-// schema/features.ts
-interface FeatureSet {
-  spacing?: { margin?: string; padding?: string }
-  background?: { color?: string; image?: string; gradient?: string }
-  typography?: {
-    size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl'
-    weight?: 'normal' | 'medium' | 'semibold' | 'bold'
-    align?: 'left' | 'center' | 'right'
-    color?: string
-  }
-  border?: { width?: number; color?: string; radius?: string }
-}
-
 // schema/experience.ts
 interface BehaviourConfig {
   id: string
@@ -230,8 +218,7 @@ export type {
   OverlaySchema,
   TriggerCondition,
 
-  // Features and Experience
-  FeatureSet,
+  // Experience
   BehaviourConfig,
   CSSVariables,
 }
@@ -328,16 +315,17 @@ Schemas describe structure and behaviour intent. They never contain implementati
 |-----------------|-------------------------|
 | `type: 'Image'` | Content Layer widget |
 | `behaviour: 'depth-layer'` | Experience Layer behaviour |
-| `features.typography.size` | Content Layer feature utility |
+| `style`, `className` | Content Layer widget props |
 
-### Features Are Intrinsic
+### Style Props Are Intrinsic
 
-Features describe static, intrinsic styling. Extrinsic sizing belongs to behaviours.
+`style` and `className` props describe static, intrinsic styling. Extrinsic sizing belongs to behaviours.
 
 | Property | Location | Why |
 |----------|----------|-----|
-| `padding` | `features.spacing` | Static, intrinsic |
-| `background` | `features.background` | Static, intrinsic |
+| `padding` | `style` prop | Static, intrinsic |
+| `backgroundColor` | `style` prop | Static, intrinsic |
+| Tailwind classes | `className` prop | Static, intrinsic |
 | `100vh` height | `behaviour` wrapper | Extrinsic sizing |
 | `translateY` | `behaviour` compute | Scroll-dependent |
 
@@ -374,11 +362,11 @@ interface WidgetSchema {
 }
 ```
 
-### Don't: Include Viewport Units in Features
+### Don't: Include Viewport Units in Style
 
 ```typescript
-// Wrong - extrinsic sizing in features
-features: { minHeight: '100vh' }
+// Wrong - extrinsic sizing in style
+style: { minHeight: '100vh' }
 
 // Right - behaviour wrapper imposes size
 behaviour: 'scroll-stack'

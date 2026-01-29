@@ -57,7 +57,6 @@ See [Widget Composite Spec](./widget-composite.spec.md) for composite patterns.
 | Widget Composite | Factory function returning WidgetSchema from existing widgets |
 | Content Widget | Renders visual content (text, image, video) |
 | Layout Widget | Arranges child widgets (Stack, Flex, Grid) |
-| Features | Static styling props (spacing, typography, background) |
 | CSS Variable Contract | Widgets READ CSS variables set by driver; never SET them |
 
 ## Folder Structure
@@ -79,17 +78,18 @@ creativeshire/components/content/widgets/
 ```typescript
 // widgets/types.ts
 export interface WidgetProps {
-  features?: FeatureSet
-  children?: ReactNode  // Layout widgets only
+  style?: CSSProperties    // Inline styles passed directly
+  className?: string       // Tailwind/CSS classes
+  children?: ReactNode     // Layout widgets only
 }
 
-// widgets/content/{Name}/types.ts
+// widgets/primitives/{Name}/types.ts
 export interface {Name}Props extends WidgetProps {
   content?: string
   // Widget-specific props
 }
 
-// widgets/content/{Name}/index.tsx
+// widgets/primitives/{Name}/index.tsx
 export default function {Name}(props: {Name}Props): JSX.Element
 ```
 
@@ -101,7 +101,7 @@ export default function {Name}(props: {Name}Props): JSX.Element
 2. Props interface exported from `types.ts`
 3. CSS variables have fallbacks: `var(--name, fallback)`
 4. Fill parent container via intrinsic sizing
-5. Features prop is optional
+5. Accept `style` and `className` props for styling
 6. Descriptive className on root element
 
 ### Must Not
@@ -115,6 +115,8 @@ export default function {Name}(props: {Name}Props): JSX.Element
 7. Use `&&` for conditional rendering with numbers (use ternary instead)
 8. Animate SVG elements directly (wrap in div for hardware acceleration)
 9. Create RegExp inside render (hoist to module scope or useMemo)
+10. Define CSS transitions in widget styles - effects handle this in L2
+11. Calculate from CSS variables (e.g., `calc(var(--flag) * -100%)`) - behaviour outputs final values
 
 ## Validation Rules
 
@@ -133,10 +135,12 @@ export default function {Name}(props: {Name}Props): JSX.Element
 | 12 | Use ternary for conditional numbers | `checkNoAndWithNumbers` | `.tsx` |
 | 13 | SVG animations via wrapper | `checkSvgAnimationWrapper` | `.tsx`, `.css` |
 | 14 | RegExp hoisted or memoized | `checkRegExpHoisted` | `.tsx` |
+| 18 | No CSS transitions in widget styles | `checkNoTransitions` | `.css` |
+| 19 | No calc() from CSS variables | `checkNoCalcFromVars` | `.css` |
 
 ## CSS Variables
 
-> Widgets READ these (set by driver). Never SET them.
+> Widgets READ these (set by driver). Never SET them. Never CALCULATE from them.
 
 | Variable | Purpose | Fallback |
 |----------|---------|----------|
@@ -146,7 +150,7 @@ export default function {Name}(props: {Name}Props): JSX.Element
 
 ```css
 .{name}-widget {
-  transform: translateY(calc(var(--y, 0) * 1px));
+  transform: translateY(var(--y, 0));  /* Just apply, don't calculate */
   opacity: var(--opacity, 1);
 }
 
@@ -155,13 +159,58 @@ export default function {Name}(props: {Name}Props): JSX.Element
 }
 ```
 
+## Animation Hooks (data-effect)
+
+Widgets that support effects use `data-effect` and `data-*` attributes to mark animatable elements. This keeps animation knowledge in L2 (Experience) while L1 (Content) stays pure structure.
+
+### Pattern
+
+```tsx
+// Widget marks elements with data attributes
+<div className="contact-prompt" data-effect="text-reveal">
+  <span data-reveal="primary">{promptText}</span>
+  <span data-reveal="secondary">{email}</span>
+</div>
+```
+
+The widget CSS contains **only layout**—no transitions or transforms:
+
+```css
+/* Widget CSS - structure only */
+.contact-prompt { display: flex; }
+.contact-prompt [data-reveal="secondary"] {
+  position: absolute;
+  top: 100%;
+}
+```
+
+The **effect CSS** (in L2) defines animations using CSS variables:
+
+```css
+/* Effect CSS (experience/effects/text-reveal.css) */
+[data-effect="text-reveal"] [data-reveal] {
+  transform: translateY(var(--reveal-y, 0));
+  transition: transform var(--reveal-duration, 400ms) var(--reveal-easing, ease-in-out);
+}
+```
+
+### Why This Pattern?
+
+| Approach | Animation knowledge in | Reusable? |
+|----------|----------------------|-----------|
+| Widget defines transitions | L1 (Content) | No |
+| Effect defines transitions | L2 (Experience) | Yes |
+
+With `data-effect`, the same effect can be applied to any widget that uses the convention. The widget stays pure content.
+
 ## Template
 
 ```typescript
 // {Name}/types.ts
 export interface {Name}Props {
   content: string
-  features?: FeatureSet
+  style?: CSSProperties
+  className?: string
 }
 ```
 
@@ -197,9 +246,10 @@ Widgets are pure content containers. Wrap with `React.memo()` to prevent unneces
 // {Name}/index.tsx
 import { memo } from 'react'
 import type { {Name}Props } from './types'
+import { cn } from '@/lib/utils'
 
-function {Name}({ content, features }: {Name}Props) {
-  return <div className="{name}-widget">{content}</div>
+function {Name}({ content, style, className }: {Name}Props) {
+  return <div className={cn("{name}-widget", className)} style={style}>{content}</div>
 }
 
 export default memo({Name})
@@ -223,8 +273,8 @@ See [Must Not rules](#must-not) for scroll listeners, viewport units, and experi
 
 ```typescript
 // WRONG - Inline objects break memo
-<Widget features={{ spacing: { p: 4 } }} />
-// FIX: const features = useMemo(() => ({ spacing: { p: 4 } }), [])
+<Widget style={{ padding: 16 }} />
+// FIX: const style = useMemo(() => ({ padding: 16 }), [])
 
 // WRONG - Functions break RSC serialization
 <Widget onClick={() => {}} />
@@ -320,7 +370,7 @@ Interactive widgets must have visible focus states using `:focus-visible`:
 Widgets that convey meaning beyond their text content need ARIA attributes:
 
 ```typescript
-// widgets/content/Icon/index.tsx
+// widgets/primitives/Icon/index.tsx
 export default memo(function Icon({ name, label, decorative }: IconProps) {
   return (
     <svg
@@ -349,7 +399,7 @@ Use semantic HTML elements where appropriate:
 ### Button Accessibility
 
 ```typescript
-// widgets/content/Button/index.tsx
+// widgets/primitives/Button/index.tsx
 const Button = memo(forwardRef<HTMLElement, ButtonProps>(
   ({ label, href, variant = 'primary', disabled }, ref) => {
     // Use <a> for navigation, <button> for actions
@@ -373,7 +423,7 @@ const Button = memo(forwardRef<HTMLElement, ButtonProps>(
 ### Image Accessibility
 
 ```typescript
-// widgets/content/Image/index.tsx
+// widgets/primitives/Image/index.tsx
 const Image = memo(forwardRef<HTMLImageElement, ImageProps>(
   ({ src, alt, decorative, aspect }, ref) => (
     <img
@@ -405,7 +455,6 @@ const Image = memo(forwardRef<HTMLImageElement, ImageProps>(
 | `schema/widget.ts` | Imports | Type definitions |
 | `experience/behaviours` | Reads | CSS variables via driver |
 | `renderer/WidgetRenderer` | Rendered by | Instantiated from schema |
-| `features/` | Receives | Static styling via props |
 
 ## Validator
 
@@ -424,17 +473,18 @@ The simplest site needs these widgets:
 ### Image Widget
 
 ```typescript
-// widgets/content/Image/types.ts
+// widgets/primitives/Image/types.ts
 export interface ImageProps {
   src: string
   alt: string
   aspect?: string  // e.g., '16/9', '1/1'
-  features?: FeatureSet
+  style?: CSSProperties
+  className?: string
 }
 ```
 
 ```typescript
-// widgets/content/Image/index.tsx
+// widgets/primitives/Image/index.tsx
 import { memo, forwardRef } from 'react'
 import type { ImageProps } from './types'
 import './styles.css'
@@ -455,7 +505,7 @@ export default Image
 ```
 
 ```css
-/* widgets/content/Image/styles.css */
+/* widgets/primitives/Image/styles.css */
 .image-widget {
   transform: translateY(calc(var(--y, 0) * 1px));
   opacity: var(--opacity, 1);
@@ -472,17 +522,18 @@ export default Image
 ### Button Widget
 
 ```typescript
-// widgets/content/Button/types.ts
+// widgets/primitives/Button/types.ts
 export interface ButtonProps {
   label: string
   href?: string
   variant?: 'primary' | 'secondary'
-  features?: FeatureSet
+  style?: CSSProperties
+  className?: string
 }
 ```
 
 ```typescript
-// widgets/content/Button/index.tsx
+// widgets/primitives/Button/index.tsx
 import { memo, forwardRef } from 'react'
 import type { ButtonProps } from './types'
 import './styles.css'
@@ -504,7 +555,7 @@ export default Button
 ```
 
 ```css
-/* widgets/content/Button/styles.css */
+/* widgets/primitives/Button/styles.css */
 .button-widget {
   transform: translateY(calc(var(--y, 0) * 1px));
   opacity: var(--opacity, 1);
@@ -535,7 +586,7 @@ export default Button
 These widgets are used in the Hero section (see [Section Composite Spec](./section-composite.spec.md)):
 
 ```typescript
-// sections/composites/Hero/index.ts
+// sections/patterns/Hero/index.ts
 createHeroSection({
   headline: 'We craft digital experiences',
   subheadline: 'Strategy, design, and development.',

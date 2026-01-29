@@ -128,7 +128,7 @@ Building a widget component that needs consistent styling.
 Use Tailwind for static properties, `cn()` for class composition:
 
 ```typescript
-// creativeshire/content/widgets/content/Card/index.tsx
+// creativeshire/content/widgets/primitives/Card/index.tsx
 import { cn } from '@/lib/utils';
 import type { CardProps } from './types';
 
@@ -165,7 +165,7 @@ Tailwind classes are static. Drivers update values at 60fps.
 Use CSS variables for animated properties:
 
 ```tsx
-// creativeshire/content/widgets/content/HeroImage/index.tsx
+// creativeshire/content/widgets/primitives/HeroImage/index.tsx
 import './styles.css';
 
 export default function HeroImage({ src, alt }: HeroImageProps) {
@@ -181,7 +181,7 @@ export default function HeroImage({ src, alt }: HeroImageProps) {
 ```
 
 ```css
-/* creativeshire/content/widgets/content/HeroImage/styles.css */
+/* creativeshire/content/widgets/primitives/HeroImage/styles.css */
 [data-widget="hero-image"] {
   opacity: var(--hero-opacity, 1);
   transform: translateY(var(--hero-y, 0px));
@@ -213,7 +213,7 @@ Conditional class strings become complex and error-prone.
 Use `class-variance-authority` for type-safe variants:
 
 ```typescript
-// creativeshire/content/widgets/content/Button/index.tsx
+// creativeshire/content/widgets/primitives/Button/index.tsx
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 

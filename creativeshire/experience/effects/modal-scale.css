@@ -1,0 +1,28 @@
+/**
+ * Modal Scale Effect
+ *
+ * Scale + opacity animation for modals.
+ * Works with modal-scale behaviour.
+ *
+ * CSS Variables consumed:
+ * - --modal-scale: transform scale value (default: 1)
+ * - --modal-opacity: container opacity (default: 1)
+ * - --modal-duration: transition duration (default: 400ms)
+ * - --modal-easing: timing function (default: ease)
+ */
+
+[data-effect~="modal-scale"] {
+  transform: scale(var(--modal-scale, 1));
+  opacity: var(--modal-opacity, 1);
+  transition:
+    transform var(--modal-duration, 400ms) var(--modal-easing, cubic-bezier(0.34, 1.56, 0.64, 1)),
+    opacity var(--modal-duration, 400ms) var(--modal-easing, ease-out);
+  will-change: transform, opacity;
+}
+
+/* Reduced motion - instant transitions */
+@media (prefers-reduced-motion: reduce) {
+  [data-effect~="modal-scale"] {
+    transition: none;
+  }
+}

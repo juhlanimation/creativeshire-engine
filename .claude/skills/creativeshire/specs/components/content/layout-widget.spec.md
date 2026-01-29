@@ -106,7 +106,8 @@ creativeshire/components/content/widgets/layout/
 // widgets/layout/types.ts
 export interface LayoutWidgetProps {
   widgets?: WidgetSchema[]
-  features?: FeatureSet
+  style?: CSSProperties
+  className?: string
 }
 
 // widgets/layout/{Name}/types.ts
@@ -189,16 +190,18 @@ Layout widgets render their `widgets` array via WidgetRenderer, enabling recursi
 // widgets/layout/Stack/index.tsx
 import { memo } from 'react'
 import { WidgetRenderer } from '@/creativeshire/renderer/WidgetRenderer'
+import { cn } from '@/lib/utils'
 import type { StackProps } from './types'
 import './styles.css'
 
-const Stack = memo(function Stack({ widgets, gap, align, features }: StackProps) {
+const Stack = memo(function Stack({ widgets, gap, align, style, className }: StackProps) {
   return (
     <div
-      className="stack-widget"
+      className={cn("stack-widget", className)}
       style={{
         gap: typeof gap === 'number' ? `${gap}px` : gap,
-        alignItems: align
+        alignItems: align,
+        ...style
       }}
     >
       {widgets?.map((widget, index) => (
@@ -287,13 +290,15 @@ export default Stack
 
 ```typescript
 // widgets/layout/Stack/types.ts
-import { WidgetSchema, FeatureSet } from '@/creativeshire/schema'
+import { WidgetSchema } from '@/creativeshire/schema'
+import { CSSProperties } from 'react'
 
 export interface StackProps {
   widgets?: WidgetSchema[]
   gap?: number | string
   align?: 'start' | 'center' | 'end' | 'stretch'
-  features?: FeatureSet
+  style?: CSSProperties
+  className?: string
 }
 ```
 
@@ -301,6 +306,7 @@ export interface StackProps {
 // widgets/layout/Stack/index.tsx
 import { memo } from 'react'
 import { WidgetRenderer } from '@/creativeshire/renderer/WidgetRenderer'
+import { cn } from '@/lib/utils'
 import type { StackProps } from './types'
 import './styles.css'
 
@@ -308,14 +314,16 @@ const Stack = memo(function Stack({
   widgets,
   gap = 0,
   align = 'stretch',
-  features
+  style,
+  className
 }: StackProps) {
   return (
     <div
-      className="stack-widget"
+      className={cn("stack-widget", className)}
       style={{
         gap: typeof gap === 'number' ? `${gap}px` : gap,
-        alignItems: align
+        alignItems: align,
+        ...style
       }}
     >
       {widgets?.map((widget, index) => (
@@ -346,14 +354,16 @@ export default Stack
 
 ```typescript
 // widgets/layout/Grid/types.ts
-import { WidgetSchema, FeatureSet } from '@/creativeshire/schema'
+import { WidgetSchema } from '@/creativeshire/schema'
+import { CSSProperties } from 'react'
 
 export interface GridProps {
   widgets?: WidgetSchema[]
   columns?: number | 'auto-fit' | 'auto-fill'
   gap?: number | string
   minWidth?: string
-  features?: FeatureSet
+  style?: CSSProperties
+  className?: string
 }
 ```
 
@@ -361,6 +371,7 @@ export interface GridProps {
 // widgets/layout/Grid/index.tsx
 import { memo, useMemo } from 'react'
 import { WidgetRenderer } from '@/creativeshire/renderer/WidgetRenderer'
+import { cn } from '@/lib/utils'
 import type { GridProps } from './types'
 import './styles.css'
 
@@ -369,7 +380,8 @@ const Grid = memo(function Grid({
   columns = 3,
   gap = 16,
   minWidth = '250px',
-  features
+  style,
+  className
 }: GridProps) {
   const gridStyle = useMemo(() => {
     const gapValue = typeof gap === 'number' ? `${gap}px` : gap
@@ -377,19 +389,21 @@ const Grid = memo(function Grid({
     if (typeof columns === 'number') {
       return {
         gridTemplateColumns: `repeat(${columns}, 1fr)`,
-        gap: gapValue
+        gap: gapValue,
+        ...style
       }
     }
 
     // auto-fit or auto-fill
     return {
       gridTemplateColumns: `repeat(${columns}, minmax(${minWidth}, 1fr))`,
-      gap: gapValue
+      gap: gapValue,
+      ...style
     }
-  }, [columns, gap, minWidth])
+  }, [columns, gap, minWidth, style])
 
   return (
-    <div className="grid-widget" style={gridStyle}>
+    <div className={cn("grid-widget", className)} style={gridStyle}>
       {widgets?.map((widget, index) => (
         <WidgetRenderer key={widget.id ?? index} schema={widget} />
       ))}

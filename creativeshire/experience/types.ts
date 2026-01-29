@@ -12,6 +12,8 @@ export interface ExperienceState {
   scrollProgress: number
   viewportHeight: number
   isScrolling: boolean
+  /** Section visibility ratios (0-1) keyed by section ID */
+  sectionVisibilities: Record<string, number>
 }
 
 /**

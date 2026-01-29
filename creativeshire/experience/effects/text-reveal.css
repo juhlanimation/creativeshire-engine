@@ -1,0 +1,39 @@
+/**
+ * Text Reveal Effect
+ *
+ * Vertical text slide with primary/secondary text swap.
+ *
+ * Behaviour: contact-reveal (or any behaviour outputting these variables)
+ * Variables consumed:
+ *   --reveal-y: Vertical slide position (default: 0)
+ *   --reveal-opacity: Icon/secondary opacity (default: 0)
+ *   --reveal-duration: Transition duration (default: 400ms)
+ *   --reveal-easing: Timing function (default: ease-in-out)
+ *
+ * Markers:
+ *   data-reveal="primary" - Main text (slides up on hover)
+ *   data-reveal="secondary" - Revealed text (slides in from below)
+ *   data-reveal="icon" - Optional icon (fades in)
+ */
+
+[data-effect~="text-reveal"] [data-reveal="primary"],
+[data-effect~="text-reveal"] [data-reveal="secondary"] {
+  transform: translateY(var(--reveal-y, 0));
+  transition: transform var(--reveal-duration, 400ms) var(--reveal-easing, ease-in-out);
+  will-change: transform;
+}
+
+[data-effect~="text-reveal"] [data-reveal="icon"] {
+  opacity: var(--reveal-opacity, 0);
+  transition: opacity calc(var(--reveal-duration, 400ms) * 0.75) var(--reveal-easing, ease-in-out);
+  will-change: opacity;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  [data-effect~="text-reveal"] [data-reveal="primary"],
+  [data-effect~="text-reveal"] [data-reveal="secondary"],
+  [data-effect~="text-reveal"] [data-reveal="icon"] {
+    transition: none;
+  }
+}

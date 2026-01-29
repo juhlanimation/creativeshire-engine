@@ -110,7 +110,7 @@ Composites return `WidgetSchema` or `SectionSchema`, not React elements.
 export function createProjectCard(props: ProjectCardProps): WidgetSchema {
   return {
     type: 'Stack',
-    features: { spacing: { gap: 16 } },
+    style: { gap: 16 },
     widgets: [
       { type: 'Image', props: { src: props.image, alt: props.title } },
       { type: 'Text', props: { content: props.title } },
@@ -121,7 +121,7 @@ export function createProjectCard(props: ProjectCardProps): WidgetSchema {
 ```
 
 ```typescript
-// content/sections/composites/Hero/index.ts
+// content/sections/patterns/Hero/index.ts
 export function createHeroSection(props: HeroProps): SectionSchema {
   return {
     id: props.id ?? 'hero',

@@ -3,9 +3,8 @@
  * Re-exports schema types and defines component-specific interfaces.
  */
 
-import type { ReactNode } from 'react'
+import type { ReactNode, CSSProperties } from 'react'
 import type { SectionSchema, LayoutConfig } from '../../schema/section'
-import type { FeatureSet } from '../../schema/features'
 import type { WidgetSchema } from '../../schema/widget'
 
 /**
@@ -52,4 +51,4 @@ export const JUSTIFY_MAP: Record<string, string> = {
 } as const
 
 // Re-export schema types for convenience
-export type { SectionSchema, LayoutConfig, FeatureSet, WidgetSchema }
+export type { SectionSchema, LayoutConfig, WidgetSchema, CSSProperties }

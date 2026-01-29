@@ -9,9 +9,11 @@ import { bojuhlPreset } from '../creativeshire/presets/bojuhl'
 /**
  * Main site configuration.
  * Easy to swap: change bojuhlPreset to another preset.
+ * Sites inherit from presets and can override specific values.
  */
 export const siteConfig: SiteSchema = {
   id: 'bojuhl',
+  theme: bojuhlPreset.theme,
   experience: bojuhlPreset.experience,
   chrome: {
     regions: {
@@ -19,7 +21,7 @@ export const siteConfig: SiteSchema = {
         component: 'Footer',
         props: {
           navLinks: [
-            { label: 'HOME', href: '/' },
+            { label: 'HOME', href: '#hero' },
             { label: 'ABOUT', href: '#about' },
             { label: 'PROJECTS', href: '#projects' },
           ],
@@ -33,19 +35,42 @@ export const siteConfig: SiteSchema = {
             { platform: 'linkedin', url: 'https://linkedin.com/company/crossroadstudio' },
             { platform: 'instagram', url: 'https://instagram.com/crossroadstudio' },
           ],
-          copyrightText: '© 2024 Bo Juhl. All rights reserved.',
+          copyrightText: 'Copyright © Bo Juhl / All rights reserved',
         },
       },
     },
     overlays: {
       floatingContact: {
-        component: 'FloatingContact',
-        props: {
-          promptText: 'How can I help you?',
-          email: 'hello@bojuhl.com',
-          backgroundColor: '#9933FF',
+        widget: {
+          id: 'floating-contact',
+          type: 'ContactPrompt',
+          props: {
+            promptText: 'How can I help you?',
+            email: 'hello@bojuhl.com',
+          },
+          behaviour: {
+            id: 'contact-reveal',
+            options: {
+              flipDuration: 200,
+              fadeDuration: 100,
+            },
+          },
         },
         position: 'top-right',
+      },
+      cursorLabelEnter: {
+        component: 'CursorLabel',
+        props: {
+          label: 'ENTER',
+          targetSelector: '.text-widget a',
+        },
+      },
+      cursorLabelWatch: {
+        component: 'CursorLabel',
+        props: {
+          label: 'WATCH',
+          targetSelector: '.video-widget--hover-play',
+        },
       },
     },
   },

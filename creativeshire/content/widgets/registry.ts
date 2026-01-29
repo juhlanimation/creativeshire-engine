@@ -1,16 +1,26 @@
 /**
  * Widget registry - maps type strings to React components.
  * Content Layer (L1) - static component lookup.
+ *
+ * Widget categories:
+ * - primitives/ : Leaf nodes (Text, Image, Video, etc.)
+ * - layout/     : Containers (Flex, Box)
+ * - composite/  : Factory functions (not registered here - they return WidgetSchema)
  */
 
 import type { ComponentType } from 'react'
-import Text from './content/Text'
-import HeroTitle from './content/HeroTitle'
-import ScrollIndicator from './content/ScrollIndicator'
-import LogoMarquee from './content/LogoMarquee'
-import Video from './content/Video'
-import VideoThumbnail from './content/VideoThumbnail'
-import ProjectCard from './content/ProjectCard'
+
+// Primitives (leaf nodes)
+import Text from './primitives/Text'
+import Image from './primitives/Image'
+import Video from './primitives/Video'
+import ContactPrompt from './primitives/ContactPrompt'
+import LogoLink from './primitives/LogoLink'
+
+// Layout (containers)
+import Flex from './layout/Flex'
+import Box from './layout/Box'
+import ExpandableGalleryRow from './layout/ExpandableGalleryRow'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Widget props vary by type
 type WidgetComponent = ComponentType<any>
@@ -19,13 +29,16 @@ type WidgetComponent = ComponentType<any>
  * Registry mapping widget type strings to their components.
  */
 export const widgetRegistry: Record<string, WidgetComponent> = {
+  // Primitives
   Text,
-  HeroTitle,
-  ScrollIndicator,
-  LogoMarquee,
+  Image,
   Video,
-  VideoThumbnail,
-  ProjectCard,
+  ContactPrompt,
+  LogoLink,
+  // Layout
+  Flex,
+  Box,
+  ExpandableGalleryRow,
 }
 
 /**

@@ -13,7 +13,7 @@ export const footerConfig: PresetRegionConfig = {
   component: 'Footer',
   props: {
     navLinks: [
-      { label: 'HOME', href: '/' },
+      { label: 'HOME', href: '#hero' },
       { label: 'ABOUT', href: '#about' },
       { label: 'PROJECTS', href: '#projects' },
     ],
@@ -28,6 +28,6 @@ export const footerConfig: PresetRegionConfig = {
       { platform: 'instagram', url: 'https://instagram.com' },
       { platform: 'facebook', url: 'https://facebook.com' },
     ],
-    copyrightText: '© 2024. All rights reserved.',
+    copyrightText: 'Copyright © Bo Juhl / All rights reserved',
   },
 }

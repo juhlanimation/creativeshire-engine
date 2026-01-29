@@ -67,7 +67,7 @@ export interface LayoutSchema {
 ### Example: Responsive Grid
 
 ```typescript
-// sections/composites/Gallery/index.ts
+// sections/patterns/Gallery/index.ts
 return {
   id: 'gallery',
   layout: {
@@ -233,7 +233,7 @@ function BehaviourWrapper({ behaviour, children }) {
 Use Next.js Image with responsive sizes.
 
 ```typescript
-// widgets/content/Image/index.tsx
+// widgets/primitives/Image/index.tsx
 import NextImage from 'next/image'
 
 export default function Image({ src, alt, sizes }: ImageProps) {

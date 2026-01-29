@@ -4,5 +4,4 @@
  */
 
 export { default as Footer } from './regions/Footer'
-export { default as FloatingContact } from './overlays/FloatingContact'
 export * from './types'

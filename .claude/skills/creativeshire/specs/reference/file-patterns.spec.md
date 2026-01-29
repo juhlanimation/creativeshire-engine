@@ -11,7 +11,7 @@ Content widgets hold actual content (text, images, video). They are leaf nodes i
 ### Folder Structure
 
 ```
-creativeshire/content/widgets/content/{WidgetName}/
+creativeshire/content/widgets/primitives/{WidgetName}/
 ├── index.tsx           # React component
 ├── types.ts            # Props interface
 ├── styles.css          # CSS with var() mappings (optional)
@@ -199,14 +199,14 @@ export interface ProjectCardProps {
 
 ---
 
-## Section Composite
+## Section Pattern
 
-Section composites are factory functions that expand into a full SectionSchema. Use at page level.
+Section patterns are factory functions that expand into a full SectionSchema. Use at page level.
 
 ### Folder Structure
 
 ```
-creativeshire/content/sections/composites/{CompositeName}/
+creativeshire/content/sections/patterns/{PatternName}/
 ├── index.ts            # Factory function: createXxxSection(props) → SectionSchema
 ├── types.ts            # Props interface
 └── variants.ts         # Predefined configurations (optional)
@@ -551,10 +551,10 @@ Components use **folder-based organization** with `index.tsx` entry points:
 
 | Component Type | Folder Pattern | Entry File | Example Path |
 |----------------|----------------|------------|--------------|
-| Content Widget | `widgets/content/{Name}/` | `index.tsx` | `widgets/content/VideoGallery/index.tsx` |
+| Content Widget | `widgets/primitives/{Name}/` | `index.tsx` | `widgets/primitives/VideoGallery/index.tsx` |
 | Layout Widget | `widgets/layout/{Name}/` | `index.tsx` | `widgets/layout/Flex/index.tsx` |
 | Widget Composite | `widgets/composite/{Name}/` | `index.ts` | `widgets/composite/ProjectCard/index.ts` |
-| Section Composite | `sections/composites/{Name}/` | `index.ts` | `sections/composites/Hero/index.ts` |
+| Section Pattern | `sections/patterns/{Name}/` | `index.ts` | `sections/patterns/Hero/index.ts` |
 | Behaviour | `behaviours/{name}/` | `index.ts` | `behaviours/depth-layer/index.ts` |
 | Mode | `modes/{name}/` | `index.ts` | `modes/parallax/index.ts` |
 | Preset | `presets/{name}/` | `index.ts` | `presets/showcase/index.ts` |

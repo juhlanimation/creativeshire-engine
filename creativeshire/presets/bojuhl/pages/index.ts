@@ -2,4 +2,4 @@
  * Bojuhl preset pages barrel.
  */
 
-export { homePageTemplate } from './home'
+export { homePageTemplate, bojuhlHeroStyles } from './home'

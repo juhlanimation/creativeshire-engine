@@ -28,15 +28,15 @@ Read the relevant spec before implementing any component.
 | Widget | [specs/components/content/widget.spec.md](specs/components/content/widget.spec.md) |
 | Widget Composite | [specs/components/content/widget-composite.spec.md](specs/components/content/widget-composite.spec.md) |
 | Section | [specs/components/content/section.spec.md](specs/components/content/section.spec.md) |
-| Section Composite | [specs/components/content/section-composite.spec.md](specs/components/content/section-composite.spec.md) |
+| Section Pattern | [specs/components/content/section-pattern.spec.md](specs/components/content/section-pattern.spec.md) |
 | Chrome | [specs/components/content/chrome.spec.md](specs/components/content/chrome.spec.md) |
-| Feature | [specs/components/content/feature.spec.md](specs/components/content/feature.spec.md) |
 
 ### Experience Layer
 
 | Component | Spec |
 |-----------|------|
 | Behaviour | [specs/components/experience/behaviour.spec.md](specs/components/experience/behaviour.spec.md) |
+| Effect | [specs/components/experience/effect.spec.md](specs/components/experience/effect.spec.md) |
 | Driver | [specs/components/experience/driver.spec.md](specs/components/experience/driver.spec.md) |
 | Trigger | [specs/components/experience/trigger.spec.md](specs/components/experience/trigger.spec.md) |
 | Mode | [specs/components/experience/mode.spec.md](specs/components/experience/mode.spec.md) |
@@ -81,6 +81,7 @@ Read the relevant spec before implementing any component.
 | Understand core rules | [specs/core/philosophy.spec.md](specs/core/philosophy.spec.md) |
 | Build a widget | [specs/components/content/widget.spec.md](specs/components/content/widget.spec.md) |
 | Build animation | [specs/components/experience/behaviour.spec.md](specs/components/experience/behaviour.spec.md) |
+| Define animation CSS | [specs/components/experience/effect.spec.md](specs/components/experience/effect.spec.md) |
 | Create a preset | [specs/components/preset/preset.spec.md](specs/components/preset/preset.spec.md) |
 | Know folder layout | [specs/reference/folders.spec.md](specs/reference/folders.spec.md) |
 | See what to avoid | [specs/patterns/anti-patterns.spec.md](specs/patterns/anti-patterns.spec.md) |

@@ -9,10 +9,9 @@
 | Behaviour | Unit (REQUIRED) | [behaviour.spec.md](../components/experience/behaviour.spec.md#testing) |
 | Driver | Unit (REQUIRED) | [driver.spec.md](../components/experience/driver.spec.md#testing) |
 | Trigger | Unit (REQUIRED) | [trigger.spec.md](../components/experience/trigger.spec.md#testing) |
-| Feature | Unit (REQUIRED) | [feature.spec.md](../components/content/feature.spec.md#testing) |
 | Widget | Browser-based | [widget.spec.md](../components/content/widget.spec.md#testing) |
 | Widget Composite | Schema validation | [widget-composite.spec.md](../components/content/widget-composite.spec.md#testing) |
-| Section Composite | Schema validation | [section-composite.spec.md](../components/content/section-composite.spec.md#testing) |
+| Section Pattern | Schema validation | [section-pattern.spec.md](../components/content/section-pattern.spec.md#testing) |
 | Mode | Unit | [mode.spec.md](../components/experience/mode.spec.md#testing) |
 | Provider | Unit (REQUIRED) | [provider.spec.md](../components/experience/provider.spec.md#testing) |
 | Renderer | Unit + Browser | [renderer.spec.md](../components/renderer/renderer.spec.md#testing) |

@@ -15,7 +15,6 @@ Sections are Content Layer (L1) components. They render static structure and fil
 | Section | Semantic container with ID, layout, and widgets |
 | Layout Config | Flex, grid, or stack arrangement |
 | Anchor ID | Unique identifier for navigation linking |
-| Features | Static styling (spacing, background, typography) |
 
 ## Folder Structure
 
@@ -34,7 +33,8 @@ creativeshire/components/content/sections/
 export interface SectionSchema {
   id: string
   layout: LayoutConfig
-  features?: FeatureSet
+  style?: CSSProperties       // Inline styles (e.g., backgroundColor)
+  className?: string          // Tailwind/CSS classes
   behaviour?: string | BehaviourConfig
   behaviourOptions?: Record<string, any>
   widgets: WidgetSchema[]
@@ -114,11 +114,12 @@ export default function Section(props: SectionSchema): JSX.Element
 // Section.tsx
 import { SectionSchema } from './types'
 import { WidgetRenderer } from '@/creativeshire/renderer/WidgetRenderer'
+import { cn } from '@/lib/utils'
 import './styles.css'
 
-export default function Section({ id, layout, features, widgets }: SectionSchema) {
+export default function Section({ id, layout, style, className, widgets }: SectionSchema) {
   return (
-    <section id={id} className="section" data-layout={layout.type}>
+    <section id={id} className={cn("section", className)} data-layout={layout.type} style={style}>
       {widgets.map((widget, index) => (
         <WidgetRenderer key={widget.id ?? index} schema={widget} />
       ))}
@@ -155,7 +156,7 @@ export default function Section({ id, layout, features, widgets }: SectionSchema
 
 ```typescript
 // WRONG
-features: { minHeight: '100vh' }
+style: { minHeight: '100vh' }
 ```
 
 **Why:** Viewport sizing is extrinsic. BehaviourWrapper applies `100dvh`.

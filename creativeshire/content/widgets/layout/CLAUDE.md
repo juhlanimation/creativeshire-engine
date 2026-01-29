@@ -1,0 +1,12 @@
+# Layout Widgets
+
+**Structure only. Holds children. No content.**
+
+Examples: Stack, Grid, Flex, Split, Container, Box
+
+Before creating:
+- Does it ONLY define structure (no images, text, icons)?
+- Does it accept `children` or `widgets`?
+- Has content or state? → Move to composite/
+
+Spec: [layout-widget.spec.md](/.claude/skills/creativeshire/specs/components/content/layout-widget.spec.md)

@@ -29,13 +29,13 @@
 │   │   ├── index.ts                     # Re-exports all
 │   │   ├── site.ts, page.ts             # SiteSchema, PageSchema
 │   │   ├── section.ts, widget.ts        # SectionSchema, WidgetSchema
-│   │   ├── chrome.ts, features.ts       # ChromeSchema, FeatureSet
+│   │   ├── chrome.ts                    # ChromeSchema
 │   │   └── experience.ts                # ExperienceConfig, BehaviourConfig
 │   │
 │   ├── content/                         # LAYER 1: WHAT'S ON THE PAGE
 │   │   │
 │   │   ├── widgets/
-│   │   │   ├── content/                 # LEAF NODES
+│   │   │   ├── primitives/              # LEAF NODES
 │   │   │   │   └── {Name}/              # Text, Image, Video, Button, etc.
 │   │   │   │       ├── index.tsx        # React component
 │   │   │   │       ├── types.ts         # Props interface
@@ -47,7 +47,7 @@
 │   │   │   │       └── types.ts
 │   │   │   │
 │   │   │   └── composite/               # WIDGET FACTORIES
-│   │   │       └── {Name}/              # ProjectCard, Testimonial, etc.
+│   │   │       └── {Name}/              # IconButton, CardWithMeta, etc.
 │   │   │           ├── index.ts         # create{Name}(props) -> WidgetSchema
 │   │   │           └── types.ts
 │   │   │
@@ -64,9 +64,6 @@
 │   │   │   ├── Chrome.tsx               # Chrome orchestrator
 │   │   │   ├── regions/                 # Header, Footer, Sidebar
 │   │   │   └── overlays/                # Cursor, Loader, ModalContainer
-│   │   │
-│   │   ├── features/                    # STATIC DECORATORS
-│   │   │   └── {name}.ts                # spacing, background, typography
 │   │   │
 │   │   └── registry.ts                  # Auto-discovery
 │   │
@@ -166,7 +163,7 @@ A preset **includes** a mode selection plus content structure.
 
 | Category | Location | Purpose | Output |
 |----------|----------|---------|--------|
-| **Content** | `widgets/content/` | Display actual content (leaf nodes) | React component |
+| **Primitives** | `widgets/primitives/` | Display actual content (leaf nodes) | React component |
 | **Layout** | `widgets/layout/` | Arrange other widgets (containers) | React component |
 | **Composite** | `widgets/composite/` | Pre-assembled patterns (factories) | WidgetSchema |
 
@@ -174,7 +171,7 @@ A preset **includes** a mode selection plus content structure.
 
 | Level | Location | Returns | Used In |
 |-------|----------|---------|---------|
-| **Section Composite** | `sections/composites/` | `SectionSchema` | Page definition |
+| **Section Pattern** | `sections/patterns/` | `SectionSchema` | Page definition |
 | **Widget Composite** | `widgets/composite/` | `WidgetSchema` | Section content |
 
 ---
@@ -183,13 +180,12 @@ A preset **includes** a mode selection plus content structure.
 
 | Need to... | Go to... |
 |------------|----------|
-| Add a content widget | `creativeshire/content/widgets/content/{Name}/` |
+| Add a primitive widget | `creativeshire/content/widgets/primitives/{Name}/` |
 | Add a layout widget | `creativeshire/content/widgets/layout/{Name}/` |
 | Add a widget composite | `creativeshire/content/widgets/composite/{Name}/` |
-| Add a section composite | `creativeshire/content/sections/composites/{Name}/` |
+| Add a section composite | `creativeshire/content/sections/patterns/{Name}/` |
 | Add chrome region | `creativeshire/content/chrome/regions/{Name}.tsx` |
 | Add chrome overlay | `creativeshire/content/chrome/overlays/{Name}.tsx` |
-| Add feature decorator | `creativeshire/content/features/{name}.ts` |
 | Add experience definition | `creativeshire/experience/experiences/{name}.ts` |
 | Add animation mode | `creativeshire/experience/modes/{name}/` |
 | Add behaviour | `creativeshire/experience/behaviours/{name}/` |
@@ -242,7 +238,7 @@ A preset **includes** a mode selection plus content structure.
 │   widgets/                         modes/                        │
 │   sections/                        behaviours/                   │
 │   chrome/                          drivers/                      │
-│   features/                        triggers/                     │
+│                                    triggers/                     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 

@@ -49,10 +49,9 @@ flowchart TB
             Widgets["widgets/
             content/ layout/ composite/"]
             Sections["sections/
-            composites/"]
+            patterns/"]
             Chrome["chrome/
             regions/ overlays/"]
-            Features["features/"]
         end
 
         subgraph L2["experience/ (LAYER 2)"]
@@ -127,12 +126,8 @@ flowchart TB
             ProjectCard, Testimonial"]
         end
 
-        SectionComposites["Section Composites
+        SectionComposites["Section Patterns
         Hero, Gallery, Showreel"]
-
-        FeaturesC["Features (Static)
-        spacing, background,
-        typography, border"]
     end
 
     subgraph Experience["EXPERIENCE LAYER (L2)"]
@@ -205,7 +200,6 @@ flowchart TB
 
     %% Content to Output
     Renderers --> DOM
-    FeaturesC --> DOM
     WidgetsC --> DOM
     BehaviourWrapper --> DOM
 
@@ -737,7 +731,6 @@ flowchart TB
 | **Behaviour** | Compute function (state to CSS vars) |
 | **BehaviourWrapper** | ONE generic wrapper component |
 | **Preset** | Full site starting point |
-| **Feature** | Static styling decorator |
 
 ### The Core Insight
 

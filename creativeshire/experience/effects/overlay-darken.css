@@ -1,0 +1,27 @@
+/**
+ * Overlay Darken Effect
+ *
+ * Background overlay darkens on hover.
+ *
+ * Behaviour: Any behaviour outputting --overlay-bg
+ * Variables consumed:
+ *   --overlay-bg: Background color (default: rgba(0, 0, 0, 0.1))
+ *   --overlay-duration: Transition duration (default: 300ms)
+ *   --overlay-easing: Timing function (default: ease)
+ *
+ * Markers:
+ *   data-overlay - Element that receives the background transition
+ */
+
+[data-effect~="overlay-darken"] [data-overlay] {
+  background-color: var(--overlay-bg, rgba(0, 0, 0, 0.1));
+  transition: background-color var(--overlay-duration, 300ms) var(--overlay-easing, ease);
+  will-change: background-color;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  [data-effect~="overlay-darken"] [data-overlay] {
+    transition: none;
+  }
+}

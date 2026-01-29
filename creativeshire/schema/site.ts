@@ -5,6 +5,7 @@
 
 import type { ChromeSchema } from './chrome'
 import type { ExperienceConfig } from './experience'
+import type { ThemeSchema } from './theme'
 
 /**
  * Reference to a page with its identifier and slug.
@@ -19,11 +20,13 @@ export interface PageReference {
 
 /**
  * Schema for a site instance.
- * The top-level configuration containing experience, chrome, and page references.
+ * The top-level configuration containing theme, experience, chrome, and page references.
  */
 export interface SiteSchema {
   /** Unique identifier for the site */
   id: string
+  /** Theme configuration (scrollbar, colors, fonts) */
+  theme?: ThemeSchema
   /** Experience configuration (modes, behaviours) */
   experience: ExperienceConfig
   /** Site-level chrome (header, footer, overlays) */

@@ -23,6 +23,31 @@ import { homePageTemplate } from './pages'
  * Includes hero, about, featured projects, and other projects sections.
  */
 export const bojuhlPreset: SitePreset = {
+  theme: {
+    scrollbar: {
+      width: 6,
+      thumb: '#000000',
+      track: '#ffffff',
+      thumbDark: '#ffffff',
+      trackDark: '#0a0a0a',
+    },
+    smoothScroll: {
+      enabled: true,
+      smooth: 1.2,
+      smoothMac: 0.5,
+      effects: true,
+    },
+    typography: {
+      // Inter for titles (alternative to Neue Haas Grotesk)
+      title: 'var(--font-inter), system-ui, -apple-system, sans-serif',
+      // Plus Jakarta Sans for body (alternative to Soleil)
+      paragraph: 'var(--font-plus-jakarta), system-ui, -apple-system, sans-serif',
+    },
+    sectionTransition: {
+      fadeDuration: '0.15s',
+      fadeEasing: 'ease-out',
+    },
+  },
   experience: experienceConfig,
   chrome: {
     regions: {

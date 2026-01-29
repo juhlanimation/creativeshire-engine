@@ -1,9 +1,15 @@
 /**
  * Preset type definitions.
  * Presets bundle experience, chrome, and page configurations.
+ *
+ * Chrome supports two approaches:
+ * 1. Widget-based (preferred): Chrome handles positioning, widget handles content
+ * 2. Component-based (legacy): Chrome component handles both positioning and content
  */
 
 import type { PageSchema } from '../schema/page'
+import type { WidgetSchema } from '../schema/widget'
+import type { ThemeSchema } from '../schema/theme'
 
 /**
  * Experience configuration for a preset.
@@ -17,23 +23,32 @@ export interface PresetExperienceConfig {
 
 /**
  * Chrome region configuration.
+ * Supports widget-based (preferred) or component-based (legacy) approach.
  */
 export interface PresetRegionConfig {
-  /** Component type to render */
-  component: string
-  /** Props to pass to the component */
-  props: Record<string, unknown>
+  /** Widgets to render in this region (widget-based approach - preferred) */
+  widgets?: WidgetSchema[]
+  /** Component type to render (component-based approach - legacy) */
+  component?: string
+  /** Props to pass to the component (component-based approach) */
+  props?: Record<string, unknown>
 }
 
 /**
  * Chrome overlay configuration.
+ * Supports widget-based (preferred) or component-based (legacy) approach.
+ *
+ * Widget-based: ChromeRenderer handles positioning via `position` prop.
+ * Component-based: Component handles its own positioning.
  */
 export interface PresetOverlayConfig {
-  /** Component type to render */
-  component: string
-  /** Props to pass to the component */
-  props: Record<string, unknown>
-  /** Position of the overlay */
+  /** Widget to render as overlay content (widget-based approach - preferred) */
+  widget?: WidgetSchema
+  /** Component type to render (component-based approach - legacy) */
+  component?: string
+  /** Props to pass to the component (component-based approach) */
+  props?: Record<string, unknown>
+  /** Position of the overlay (used by widget-based approach) */
   position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
 }
 
@@ -53,9 +68,11 @@ export interface PresetChromeConfig {
 
 /**
  * Complete site preset definition.
- * Bundles experience, chrome, and pages into a ready-to-use configuration.
+ * Bundles theme, experience, chrome, and pages into a ready-to-use configuration.
  */
 export interface SitePreset {
+  /** Theme configuration (scrollbar, smooth scroll, colors) */
+  theme?: ThemeSchema
   /** Experience mode and options */
   experience: PresetExperienceConfig
   /** Chrome regions and overlays */

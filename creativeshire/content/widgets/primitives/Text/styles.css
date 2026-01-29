@@ -1,0 +1,25 @@
+/**
+ * Text widget styles.
+ * Uses CSS variables with fallbacks for animation support.
+ */
+
+.text-widget {
+  /* Animation CSS variables with fallbacks (set by behaviours) */
+  transform: translateY(calc(var(--y, 0) * 1px));
+  opacity: var(--opacity, 1);
+
+  /* Default styling */
+  margin: 0;
+  transition: none; /* Animations handled by drivers, not CSS transitions */
+}
+
+/* Inline link styling (for html mode) */
+.text-widget a {
+  color: rgb(153, 51, 255); /* #9933FF purple - var(--interaction) */
+  text-decoration: none;
+}
+
+/* No underline on hover - cursor label provides hover feedback */
+.text-widget a:hover {
+  text-decoration: none;
+}

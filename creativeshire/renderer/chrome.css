@@ -1,0 +1,90 @@
+/**
+ * Chrome overlay positioning styles.
+ * Used by ChromeRenderer for widget-based overlays.
+ * Component-based overlays handle their own positioning.
+ */
+
+/* Base overlay - shared properties */
+.chrome-overlay {
+  position: fixed;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+/**
+ * Contact reveal blend mode fix.
+ * Mix-blend-mode must be on the stacking context (fixed + z-index element),
+ * not a nested child. Chrome creates isolation when z-index is set.
+ *
+ * States:
+ * - Default: mix-blend-mode: difference (adapts to background)
+ * - Hovered: mix-blend-mode: normal (shows purple CTA color)
+ * - Copied: mix-blend-mode: difference (via data-copy-state)
+ */
+.chrome-overlay:has([data-effect="contact-reveal"]) {
+  mix-blend-mode: difference;
+  color: white;
+}
+
+/* Hover state: normal blend to show purple */
+/* Also set color directly to avoid flash of white before behaviour computes */
+.chrome-overlay:has([data-behaviour="contact-reveal"][data-hovered]) {
+  mix-blend-mode: normal;
+  color: var(--interaction, #9933FF);
+}
+
+/* Copied state: back to difference blend */
+.chrome-overlay:has([data-effect="contact-reveal"][data-copy-state]) {
+  mix-blend-mode: difference;
+}
+
+/* Position variants */
+.chrome-overlay--top-left {
+  top: 24px;
+  left: 24px;
+}
+
+.chrome-overlay--top-right {
+  top: 24px;
+  right: 24px;
+}
+
+.chrome-overlay--bottom-left {
+  bottom: 24px;
+  left: 24px;
+}
+
+.chrome-overlay--bottom-right {
+  bottom: 24px;
+  right: 24px;
+}
+
+/* Desktop: match bojuhl.com reference positioning */
+@media (min-width: 1024px) {
+  .chrome-overlay--top-left {
+    top: 22px;
+    left: 48px;
+  }
+
+  .chrome-overlay--top-right {
+    top: 22px;
+    right: 48px;
+  }
+
+  .chrome-overlay--bottom-left {
+    bottom: 22px;
+    left: 48px;
+  }
+
+  .chrome-overlay--bottom-right {
+    bottom: 22px;
+    right: 48px;
+  }
+}
+
+/* Mobile: hide overlays */
+@media (max-width: 767px) {
+  .chrome-overlay {
+    display: none;
+  }
+}

@@ -1,6 +1,6 @@
 # Schema Spec
 
-> TypeScript type definitions describing data structures for sites, pages, sections, widgets, chrome, features, and experiences.
+> TypeScript type definitions describing data structures for sites, pages, sections, widgets, chrome, and experiences.
 
 ## Purpose
 
@@ -25,7 +25,6 @@ creativeshire/schema/
 ├── section.ts            # SectionSchema, LayoutConfig
 ├── widget.ts             # WidgetSchema
 ├── chrome.ts             # ChromeSchema, RegionSchema, OverlaySchema
-├── features.ts           # FeatureSet, feature category interfaces
 └── experience.ts         # BehaviourConfig, CSSVariables, OptionConfig
 ```
 
@@ -37,7 +36,8 @@ export interface WidgetSchema {
   id?: string
   type: string
   props?: Record<string, any>
-  features?: FeatureSet
+  style?: CSSProperties         // Inline styles
+  className?: string            // Tailwind/CSS classes
   behaviour?: string | BehaviourConfig
   widgets?: WidgetSchema[]
 }
@@ -196,7 +196,8 @@ export interface WidgetSchema {
   id?: string
   type: string
   props?: Record<string, SerializableValue>  // Strict type
-  features?: FeatureSet
+  style?: CSSProperties         // Inline styles
+  className?: string            // Tailwind/CSS classes
   behaviour?: string | BehaviourConfig
   widgets?: WidgetSchema[]
 }
@@ -240,7 +241,8 @@ export interface WidgetSchema {
   id?: string
   type: string
   props?: Record<string, any>
-  features?: FeatureSet
+  style?: CSSProperties         // Inline styles
+  className?: string            // Tailwind/CSS classes
   behaviour?: string | BehaviourConfig
   widgets?: WidgetSchema[]
 }
@@ -263,7 +265,6 @@ export type { SiteSchema, ExperienceConfig, PageReference } from './site'
 export type { PageSchema, PageChromeOverrides } from './page'
 export type { SectionSchema, LayoutConfig } from './section'
 export type { ChromeSchema, RegionSchema, OverlaySchema } from './chrome'
-export type { FeatureSet } from './features'
 export type { BehaviourConfig, CSSVariables, OptionConfig } from './experience'
 ```
 
@@ -303,8 +304,8 @@ import { useStore } from '@/creativeshire/experience/providers'
 
 ```typescript
 // CORRECT
-import type { FeatureSet } from './features'
 import type { BehaviourConfig } from './experience'
+import type { CSSProperties } from 'react'
 ```
 
 ### Don't: Include implementation details

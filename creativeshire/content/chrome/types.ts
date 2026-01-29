@@ -3,8 +3,6 @@
  * Chrome provides persistent UI outside page content.
  */
 
-import type { FeatureSet } from '../../schema/features'
-
 /**
  * Base props that all chrome components must accept.
  */

@@ -1,0 +1,27 @@
+/**
+ * CursorLabel overlay styles.
+ * Reference: bojuhl.com cursor-label.tsx
+ */
+
+.cursor-label {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 50;
+  pointer-events: none;
+
+  /* Typography - reference: text-[10px] font-medium uppercase tracking-wide */
+  font-family: var(--font-body, 'Plus Jakarta Sans', system-ui, sans-serif);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+
+  /* Visibility on any background */
+  color: #ffffff;
+  mix-blend-mode: difference;
+
+  /* Smooth transition */
+  transition: opacity 0.15s ease-out;
+}

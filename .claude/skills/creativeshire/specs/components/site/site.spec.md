@@ -74,7 +74,7 @@ export const {name}: {Type}[] = [...]
 3. Export named constants (`siteConfig`, `{pageId}Page`)
 4. List all pages with id and slug in config.ts
 5. Import data from `site/data/` (not inline)
-6. Use section composites from `creativeshire/content/sections/composites`
+6. Use section patterns from `creativeshire/content/sections/patterns`
 
 ### Must Not
 
@@ -124,7 +124,7 @@ export const siteConfig: SiteSchema = {
 
 ```typescript
 // site/pages/home.ts
-import { createGallerySection } from '@/creativeshire/content/sections/composites/Gallery'
+import { createGallerySection } from '@/creativeshire/content/sections/patterns/Gallery'
 import { projects } from '@/site/data/projects'
 
 export const homePage: PageSchema = {
@@ -374,7 +374,7 @@ npm test -- site/
 |----------------|-----------|-----|
 | `creativeshire/presets` | Imports | Extends preset configurations |
 | `creativeshire/schema` | Imports | Uses type definitions |
-| `creativeshire/content/sections/composites` | Imports | Section factory functions |
+| `creativeshire/content/sections/patterns` | Imports | Section factory functions |
 | `app/` | Provides | Data for route components |
 
 ## Validator
@@ -465,13 +465,13 @@ import { ProjectCardProps } from './types'
 export function createProjectCard(props: ProjectCardProps): WidgetSchema {
   return {
     type: 'Stack',
-    features: { spacing: { gap: 12 } },
+    style: { gap: 12 },
     widgets: [
       { type: 'Image', props: { src: props.image, alt: props.title } },
       { type: 'Text', props: { content: props.title, as: 'h3' } },
       {
         type: 'Flex',
-        features: { spacing: { gap: 8 } },
+        style: { gap: 8 },
         widgets: (props.tags ?? []).map(tag => ({
           type: 'Badge',
           props: { label: tag }
@@ -487,7 +487,7 @@ export function createProjectCard(props: ProjectCardProps): WidgetSchema {
 Uses ProjectCard composite for a gallery layout.
 
 ```typescript
-// creativeshire/content/sections/composites/Gallery/index.ts
+// creativeshire/content/sections/patterns/Gallery/index.ts
 import { SectionSchema } from '@/creativeshire/schema'
 import { createProjectCard } from '@/creativeshire/content/widgets/composites/ProjectCard'
 
@@ -513,8 +513,8 @@ Assembles sections into a page.
 ```typescript
 // site/pages/home.ts
 import { PageSchema } from '@/creativeshire/schema'
-import { createHeroSection } from '@/creativeshire/content/sections/composites/Hero'
-import { createGallerySection } from '@/creativeshire/content/sections/composites/Gallery'
+import { createHeroSection } from '@/creativeshire/content/sections/patterns/Hero'
+import { createGallerySection } from '@/creativeshire/content/sections/patterns/Gallery'
 import { projects } from '@/site/data/projects'
 
 export const homePage: PageSchema = {
@@ -575,8 +575,8 @@ Section → ProjectCard → Image, Text, Badge
 | Site | `site/config.ts` | Selects mode, extends preset |
 | Mode | `modes/reveal/index.ts` | Defines state + triggers + defaults |
 | Behaviour | `behaviours/fade-in/index.ts` | Maps state → CSS variables |
-| Section Composite | `sections/composites/Gallery/index.ts` | Returns SectionSchema |
+| Section Composite | `sections/patterns/Gallery/index.ts` | Returns SectionSchema |
 | Widget Composite | `widgets/composites/ProjectCard/index.ts` | Returns WidgetSchema |
-| Widgets | `widgets/content/Image/index.tsx` | Renders DOM, reads CSS vars |
+| Widgets | `widgets/primitives/Image/index.tsx` | Renders DOM, reads CSS vars |
 | Data | `site/data/projects.ts` | Content arrays |
 | Page | `site/pages/home.ts` | Composes sections |

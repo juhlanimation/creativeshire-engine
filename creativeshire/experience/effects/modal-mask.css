@@ -1,0 +1,36 @@
+/**
+ * Modal Mask Effect
+ *
+ * Clip-path reveal animation for modals.
+ * Works with modal-mask-wipe behaviour.
+ *
+ * CSS Variables consumed:
+ * - --modal-clip: clip-path inset value (default: inset(0 0 0 0))
+ * - --modal-content-opacity: content opacity (default: 1)
+ * - --modal-duration: transition duration (default: 800ms)
+ * - --modal-content-delay: delay for content fade (default: 0ms)
+ * - --modal-easing: timing function (default: ease)
+ */
+
+/* Container - clip-path animation */
+[data-effect~="modal-mask"] {
+  clip-path: var(--modal-clip, inset(0 0 0 0));
+  transition: clip-path var(--modal-duration, 800ms) var(--modal-easing, cubic-bezier(0.4, 0, 0.2, 1));
+  will-change: clip-path;
+}
+
+/* Content - opacity with delay to sequence after clip starts */
+[data-effect~="modal-mask"] [data-modal="content"] {
+  opacity: var(--modal-content-opacity, 1);
+  transition: opacity calc(var(--modal-duration, 800ms) * 0.4) var(--modal-easing, ease-out);
+  transition-delay: var(--modal-content-delay, 0ms);
+  will-change: opacity;
+}
+
+/* Reduced motion - instant transitions */
+@media (prefers-reduced-motion: reduce) {
+  [data-effect~="modal-mask"],
+  [data-effect~="modal-mask"] [data-modal="content"] {
+    transition: none;
+  }
+}

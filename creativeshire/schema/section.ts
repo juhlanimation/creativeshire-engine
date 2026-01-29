@@ -3,8 +3,8 @@
  * Sections are semantic containers that group widgets into coherent page units.
  */
 
+import type { CSSProperties } from 'react'
 import type { WidgetSchema } from './widget'
-import type { FeatureSet } from './features'
 import type { BehaviourConfig } from './experience'
 import type { SerializableValue } from './types'
 
@@ -38,8 +38,10 @@ export interface SectionSchema {
   id: string
   /** Layout configuration */
   layout: LayoutConfig
-  /** Static styling features */
-  features?: FeatureSet
+  /** Inline styles */
+  style?: CSSProperties
+  /** CSS class names */
+  className?: string
   /** Behaviour configuration for animation */
   behaviour?: BehaviourConfig
   /** Additional behaviour options */

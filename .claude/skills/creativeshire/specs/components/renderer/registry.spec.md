@@ -191,7 +191,7 @@ export function WidgetCrashed({ type }: { type: string }) {
 Drop a widget folder in the correct category. Auto-discovery finds it:
 
 ```
-creativeshire/content/widgets/content/CustomWidget/
+creativeshire/content/widgets/primitives/CustomWidget/
 ├── index.tsx    # Default export = auto-registered
 └── types.ts     # Props interface
 ```
@@ -547,7 +547,7 @@ npm test -- content/widgets/registry
 | Interacts With | Direction | How |
 |----------------|-----------|-----|
 | `renderer/WidgetRenderer` | Exports to | Provides component lookup |
-| `content/widgets/content/*` | Imports from | Auto-discovers components |
+| `content/widgets/primitives/*` | Imports from | Auto-discovers components |
 | `content/widgets/layout/*` | Imports from | Auto-discovers components |
 | `schema/widget.ts` | References | Type strings from schema |
 

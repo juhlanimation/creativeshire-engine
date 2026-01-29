@@ -21,5 +21,6 @@ export const stackingMode: Mode = {
       scrollProgress: 0,
       viewportHeight: 0,
       isScrolling: false,
+      sectionVisibilities: {},
     })),
 }

@@ -7,18 +7,19 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import type { Driver } from './drivers/types'
-import { NoopDriver } from './drivers/NoopDriver'
+import { VisibilityDriver } from './drivers/VisibilityDriver'
+import { useExperience } from './ExperienceProvider'
 
 /**
  * Driver context for driver distribution.
  */
-const DriverContext = createContext<Driver | null>(null)
+const DriverContext = createContext<VisibilityDriver | null>(null)
 
 /**
  * Hook to access driver context.
  * Throws if used outside of DriverProvider.
  */
-export function useDriver(): Driver {
+export function useDriver(): VisibilityDriver {
   const driver = useContext(DriverContext)
   if (!driver) {
     throw new Error('useDriver must be used within a DriverProvider')
@@ -36,15 +37,16 @@ export interface DriverProviderProps {
 /**
  * DriverProvider component.
  * Wraps app tree to provide driver context.
- * Creates driver instance in useEffect for client-side only initialization.
+ * Creates VisibilityDriver instance that tracks section visibility.
  *
  * @param children - Child components
  */
 export function DriverProvider({ children }: DriverProviderProps): ReactNode {
-  const [driver, setDriver] = useState<Driver | null>(null)
+  const { store } = useExperience()
+  const [driver, setDriver] = useState<VisibilityDriver | null>(null)
 
   useEffect(() => {
-    const d = new NoopDriver()
+    const d = new VisibilityDriver(store)
     d.start()
     // Valid initialization pattern - setState on mount to trigger re-render with driver
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -53,7 +55,7 @@ export function DriverProvider({ children }: DriverProviderProps): ReactNode {
     return () => {
       d.destroy()
     }
-  }, [])
+  }, [store])
 
   if (!driver) {
     return null

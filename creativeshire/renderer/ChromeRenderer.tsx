@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * ChromeRenderer - Renders chrome regions and overlays.
  *
@@ -6,11 +8,18 @@
  * - Overlays: floating elements like contact buttons
  *
  * Supports both widget-based and component-based chrome definitions.
+ *
+ * Portal Pattern:
+ * Widget-based overlays are portaled to document.body to escape CSS transform
+ * contexts (e.g., GSAP ScrollSmoother). This keeps them in the React tree
+ * for context access while positioning them correctly in the DOM.
  */
 
+import { createPortal } from 'react-dom'
 import type { ChromeSchema, PageChromeOverrides, RegionSchema, OverlaySchema } from '@/creativeshire/schema'
 import { getChromeComponent } from '../content/chrome/registry'
 import { WidgetRenderer } from './WidgetRenderer'
+import './chrome.css'
 
 /**
  * Props for ChromeRenderer.
@@ -54,20 +63,35 @@ function renderRegion(region: RegionSchema | undefined): React.ReactNode {
 }
 
 /**
+ * Position class map for overlay positioning.
+ */
+const POSITION_CLASSES: Record<string, string> = {
+  'top-left': 'chrome-overlay--top-left',
+  'top-right': 'chrome-overlay--top-right',
+  'bottom-left': 'chrome-overlay--bottom-left',
+  'bottom-right': 'chrome-overlay--bottom-right',
+}
+
+/**
  * Renders overlays.
+ *
+ * Widget-based overlays are portaled to document.body to escape CSS transform
+ * contexts (like GSAP ScrollSmoother). This is necessary because `position: fixed`
+ * becomes relative to the nearest transformed ancestor, not the viewport.
+ *
+ * Component-based overlays handle their own positioning (and portals if needed).
  */
 function renderOverlays(overlays: ChromeSchema['overlays'] | undefined): React.ReactNode {
   if (!overlays) return null
 
   const elements: React.ReactNode[] = []
 
-  // Render each overlay type
   Object.entries(overlays).forEach(([key, overlay]) => {
     if (!overlay) return
 
     const typedOverlay = overlay as OverlaySchema
 
-    // Component-based approach
+    // Component-based: component handles its own positioning (may use portal internally)
     if (typedOverlay.component) {
       const Component = getChromeComponent(typedOverlay.component)
       if (!Component) {
@@ -82,9 +106,24 @@ function renderOverlays(overlays: ChromeSchema['overlays'] | undefined): React.R
       return
     }
 
-    // Widget-based approach
+    // Widget-based: portal to document.body to escape transform context
     if (typedOverlay.widget) {
-      elements.push(<WidgetRenderer key={key} widget={typedOverlay.widget} />)
+      const positionClass = typedOverlay.position
+        ? POSITION_CLASSES[typedOverlay.position]
+        : 'chrome-overlay--top-right'
+
+      const content = (
+        <div key={key} className={`chrome-overlay ${positionClass}`}>
+          <WidgetRenderer widget={typedOverlay.widget} />
+        </div>
+      )
+
+      // Portal to body (SSR-safe: only portal on client)
+      if (typeof window !== 'undefined') {
+        elements.push(createPortal(content, document.body))
+      } else {
+        elements.push(content)
+      }
     }
   })
 

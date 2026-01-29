@@ -1,0 +1,170 @@
+/**
+ * Modal overlay styles.
+ * The modal is a chrome overlay container - it just provides:
+ * - Backdrop
+ * - Close button
+ * - Scroll container
+ *
+ * The CONTENT inside determines its own size and layout.
+ *
+ * Structure with RevealTransition:
+ * .modal
+ *   .modal__backdrop (RevealTransition wrapper)
+ *     .modal__backdrop-inner (click target)
+ *   .modal__container (RevealTransition wrapper)
+ *     .modal__container-inner
+ *       .modal__content (scrollable)
+ */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* Prevent pointer events on the root */
+  pointer-events: none;
+}
+
+/* Backdrop wrapper (RevealTransition) */
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: auto;
+}
+
+/* Backdrop inner (click target) */
+.modal__backdrop-inner {
+  position: absolute;
+  inset: 0;
+  /* Background color inherited from parent inline style */
+  background: inherit;
+}
+
+/* Container wrapper (RevealTransition) - GETS the clip-path animation */
+.modal__container {
+  /* Fill entire viewport - matches bojuhl.com video player */
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+  /* Black background - the wipe reveals black first, then content fades in on top */
+  /* This is critical for wipe transitions to be visible */
+  background: black;
+  /* Center content */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Start hidden - GSAP sets visibility: visible when animation starts */
+  /* This prevents flash before clip-path is applied */
+  visibility: hidden;
+}
+
+/* Container inner (holds content) */
+.modal__container-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* No size constraints - fullscreen for video modals */
+  overflow: hidden;
+}
+
+/* Content area - fills viewport */
+.modal__content {
+  /* Fill the container */
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* Prevent scroll chaining to parent/body */
+  overscroll-behavior: contain;
+}
+
+/* Webkit scrollbar */
+.modal__content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal__content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal__content::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.modal__content::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Close button - matches bojuhl: top-6 left-6 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm */
+.modal__close {
+  position: fixed;
+  top: 1.5rem;        /* top-6 = 24px = 1.5rem */
+  left: 1.5rem;       /* left-6 = 24px = 1.5rem (TOP-LEFT, not right!) */
+  z-index: 210;
+  width: 3rem;        /* w-12 = 48px = 3rem */
+  height: 3rem;       /* h-12 = 48px = 3rem */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);  /* bg-white/10 */
+  backdrop-filter: blur(4px);             /* backdrop-blur-sm */
+  -webkit-backdrop-filter: blur(4px);
+  border: none;
+  border-radius: 9999px;  /* rounded-full */
+  cursor: pointer;
+  color: white;
+  transition: background 200ms ease, opacity 300ms ease;
+  pointer-events: auto;
+}
+
+/* Hide close button when video player controls are hidden */
+.modal:has(.video-player--hide-cursor) .modal__close {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modal__close:hover {
+  background: rgba(255, 255, 255, 0.2);  /* hover:bg-white/20 */
+}
+
+.modal__close:focus {
+  outline: none;
+}
+
+/* Close icon - matches bojuhl: w-6 h-6 */
+.modal__close svg {
+  width: 1.5rem;      /* w-6 = 24px = 1.5rem */
+  height: 1.5rem;     /* h-6 = 24px = 1.5rem */
+}
+
+/* Touch devices */
+@media (hover: none) {
+  .modal__close {
+    opacity: 1;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .modal__close {
+    top: 1rem;
+    left: 1rem;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .modal__close svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}

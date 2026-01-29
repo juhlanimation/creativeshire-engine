@@ -1,0 +1,21 @@
+/**
+ * Image widget styles.
+ * Uses CSS variables with fallbacks for animation support.
+ */
+
+.image-widget {
+  /* Animation CSS variables with fallbacks (set by behaviours) */
+  transform: translateY(calc(var(--y, 0) * 1px));
+  opacity: var(--opacity, 1);
+
+  /* Default styling */
+  display: block;
+  max-width: 100%;
+  height: auto;
+  transition: none; /* Animations handled by drivers, not CSS transitions */
+}
+
+/* Enable will-change only when behaviour is attached */
+.image-widget[data-behaviour] {
+  will-change: transform, opacity;
+}
