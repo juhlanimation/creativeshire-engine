@@ -1,72 +1,148 @@
 # Refactoring Plan: Creativeshire Engine Architecture
 
 ## Goal
-Align the codebase with the documented architecture while keeping everything working.
+Align the codebase with the documented architecture to be fully generalized and preset-based.
 
 **Related docs:**
-- [ARCHITECTURE-AUDIT.md](.claude/ARCHITECTURE-AUDIT.md) - Issues found
-- [CLAUDE.md](CLAUDE.md) - Target architecture
+- `.claude/ARCHITECTURE-AUDIT.md` - Original audit
+- `CLAUDE.md` - Architecture overview
 
 ---
 
-## Phase 1: Widget Reclassification (Low Risk)
-Simple file moves with import updates. No logic changes.
+# COMPREHENSIVE AUDIT FINDINGS
 
-### 1.1 Move ContactPrompt
-- **From:** `creativeshire/content/widgets/primitives/ContactPrompt/`
-- **To:** `creativeshire/content/widgets/composite/ContactPrompt/`
-- **Reason:** Has icons, state machine, multiple elements - not atomic
-- **Update:**
-  - `creativeshire/content/widgets/registry.ts`
-  - `creativeshire/content/widgets/composite/index.ts`
+## Widget Layer Issues
 
-### 1.2 Move LogoLink
-- **From:** `creativeshire/content/widgets/primitives/LogoLink/`
-- **To:** `creativeshire/content/widgets/composite/LogoLink/`
-- **Reason:** Combines image/text with link - composition pattern
-- **Update:**
-  - `creativeshire/content/widgets/registry.ts`
-  - `creativeshire/content/widgets/composite/index.ts`
+### Misclassified Widgets (CRITICAL)
 
-### 1.3 Move ExpandableGalleryRow
-- **From:** `creativeshire/content/widgets/layout/ExpandableGalleryRow/`
-- **To:** `creativeshire/content/widgets/composite/ExpandableGalleryRow/`
-- **Reason:** Has state, modal integration, content - not pure layout
-- **Update:**
-  - `creativeshire/content/widgets/registry.ts`
-  - `creativeshire/content/widgets/composite/index.ts`
+| Widget | Current | Correct | Reason |
+|--------|---------|---------|--------|
+| `ContactPrompt` | `primitives/` | `composite/` | Has state machine (copyState: idle/copied/failed), multiple nested elements, flip animation, icon toggle. NOT atomic. |
+| `LogoLink` | `primitives/` | `composite/` | Combines Image + Text with navigation. Composition pattern, not primitive. |
+| `ExpandableGalleryRow` | `layout/` | `composite/` | Has state (expandedId), modal integration, video playback, metadata rendering. NOT a pure layout. |
 
-**Verify:** `npm run build` passes, all components render correctly
+### L1/L2 Violations (CRITICAL)
+
+Widgets contain CSS transitions that belong in L2 effects:
+
+**ContactPrompt/styles.css:**
+```css
+/* Line 62, 72 */ transition: transform 500ms ease-in-out;  /* VIOLATION */
+/* Line 103, 113 */ transition: opacity 200ms ease-in-out;  /* VIOLATION */
+```
+
+**ExpandableGalleryRow/styles.css:**
+```css
+/* Line 41, 56 */ transition: opacity 300ms ease-out;  /* VIOLATION */
+```
+
+**Fix:** Extract transitions to `experience/effects/` and use `data-effect` attributes.
+
+### Widget Naming Issues
+
+| Current | Suggested | Reason |
+|---------|-----------|--------|
+| `LogoLink` | `Link` or `NavLink` | Site-specific. Should be CMS-generic. |
+| `ContactPrompt` | `CopyButton` or `FlipCard` | Site-specific. Should describe the pattern, not the use case. |
+
+### Missing Widgets
+
+| Category | Widget | Reason |
+|----------|--------|--------|
+| Primitives | `Icon` | Currently inline SVGs in ContactPrompt |
+| Primitives | `Button` | No interactive button primitive exists |
+| Layout | `Stack` | Common vertical layout (Flex column) |
+| Layout | `Grid` | 2D layout capability |
+| Layout | `Split` | 2-column split pattern |
+| Layout | `Container` | Constrained width wrapper |
 
 ---
 
-## Phase 2: Hook Colocation (Low-Medium Risk)
-Delete `experience/hooks/` by colocating hooks with their consumers.
+## Experience Layer Issues
 
-| Hook | Current Location | Move To | Consumer |
-|------|-----------------|---------|----------|
-| `useVisibilityPlayback` | `experience/hooks/` | `content/widgets/primitives/Video/` | Video widget |
-| `useScrollIndicatorFade` | `experience/hooks/` | `renderer/hooks/` | SiteRenderer |
-| `useGsapReveal` | `experience/hooks/` | `experience/transitions/` | RevealTransition |
-| `useScrollFadeBehaviour` | `experience/hooks/` | `experience/behaviours/scroll/` | SectionRenderer |
-| `useTransitionComplete` | `experience/hooks/` | `content/chrome/overlays/Modal/` | Modal |
+### Behaviour Auto-Registration (CRITICAL)
 
-Then delete `experience/hooks/` folder entirely.
+**File:** `creativeshire/experience/behaviours/index.ts`
 
-**Verify:** All animations work, no import errors
+Only 5 behaviours are imported for auto-registration:
+```typescript
+import './contact-reveal'
+import './scroll-fade'
+import './scroll-fade-out'
+import './modal'
+import './reveal'
+```
+
+**MISSING imports (10+ behaviours not registered):**
+- `fade-in/`
+- `hover-reveal/`
+- `project-card-hover/`
+- `logo-marquee-animation/`
+- `gallery-thumbnail-expand/`
+- `scroll-background-slideshow/`
+- `hero-text-color-transition/`
+- `floating-contact-cta/`
+- `scroll-indicator-fade/`
+- `video-modal/`
+
+### Behaviour Naming Violations (HIGH)
+
+**Rule:** Behaviours named by TRIGGER (scroll, hover, visibility), NOT by effect or widget.
+
+**13 out of 18 behaviours violate this rule:**
+
+| Behaviour | Current Name | Problem | Suggested |
+|-----------|-------------|---------|-----------|
+| `fade-in` | fade-in | Named by EFFECT | `visibility/fade-in` |
+| `scroll-fade` | scroll-fade | Named by EFFECT | `scroll/fade` |
+| `scroll-fade-out` | scroll-fade-out | Named by EFFECT | `scroll/fade-out` |
+| `hover-reveal` | hover-reveal | Named by EFFECT | `hover/reveal` |
+| `contact-reveal` | contact-reveal | Widget-specific | `hover/reveal` (generalize) |
+| `floating-contact-cta` | floating-contact-cta | Widget-specific | `hover/scale` (generalize) |
+| `project-card-hover` | project-card-hover | Widget-specific | `hover/scale` (generalize) |
+| `gallery-thumbnail-expand` | gallery-thumbnail-expand | Widget-specific | `hover/expand` (generalize) |
+| `logo-marquee-animation` | logo-marquee-animation | Widget-specific | `animation/marquee` (generalize) |
+| `scroll-indicator-fade` | scroll-indicator-fade | Widget-specific | `scroll/progress` (generalize) |
+| `scroll-background-slideshow` | scroll-background-slideshow | Widget-specific | `scroll/image-cycle` (generalize) |
+| `hero-text-color-transition` | hero-text-color-transition | Widget-specific | `scroll/color-shift` (generalize) |
+| `video-modal` | video-modal | Widget-specific | Use `modal/*` behaviours |
+
+### Widget-Specific Behaviours (Should Generalize or Colocate)
+
+| Behaviour | Consuming Widget | Action |
+|-----------|-----------------|--------|
+| `scroll-indicator-fade` | ScrollIndicator widget | Colocate OR generalize to `scroll/progress` |
+| `contact-reveal` | FloatingContact overlay | Merge with `hover-reveal` |
+| `floating-contact-cta` | FloatingContact overlay | Generalize to `hover/scale` |
+| `project-card-hover` | ProjectCard composite | Generalize to `hover/scale` |
+| `gallery-thumbnail-expand` | GalleryThumbnail composite | Generalize to `hover/expand` |
+| `logo-marquee-animation` | LogoMarquee widget | Generalize to `animation/marquee` |
+| `hero-text-color-transition` | HeroTitle widget | Generalize to `scroll/color-shift` |
+| `video-modal` | VideoModal overlay | Use existing `modal/*` behaviours |
+
+### Hooks Colocation (Centralized Should Be Colocated)
+
+| Hook | Current Location | Consumer | Move To |
+|------|-----------------|----------|---------|
+| `useVisibilityPlayback` | `experience/hooks/` | Video widget | `widgets/primitives/Video/` |
+| `useScrollIndicatorFade` | `experience/hooks/` | SiteRenderer | `renderer/hooks/` |
+| `useGsapReveal` | `experience/hooks/` | RevealTransition | `experience/transitions/` (already there) |
+| `useScrollFadeBehaviour` | `experience/hooks/` | SectionRenderer | `experience/behaviours/scroll/` |
+| `useTransitionComplete` | `experience/hooks/` | Modal | `chrome/overlays/Modal/` |
 
 ---
 
-## Phase 3: Effects Restructuring (Medium Risk)
-Organize effects by visual mechanism instead of flat files.
+## Effects Layer (Mostly Correct)
 
-### Current State (flat)
+Effects are correctly named by MECHANISM. Minor restructuring needed:
+
+### Current Structure (Flat)
 ```
 effects/
 ├── color-shift.css
-├── contact-reveal.css     # Widget-specific
+├── contact-reveal.css     # Widget-specific → colocate
 ├── fade-reveal.css
-├── marquee-scroll.css     # Widget-specific
+├── marquee-scroll.css     # Widget-specific → colocate or keep
 ├── mask-reveal.css
 ├── modal-backdrop.css
 ├── modal-fade.css
@@ -76,88 +152,236 @@ effects/
 ├── scale-hover.css
 ├── scale-reveal.css
 ├── text-reveal.css
-├── thumbnail-expand.css   # Widget-specific
+├── thumbnail-expand.css   # Widget-specific → colocate
 └── index.css
 ```
 
-### Target Structure
+### Target Structure (Organized)
 ```
 effects/
-├── fade.css              # Opacity (merge: fade-reveal, modal-fade, modal-backdrop)
+├── fade.css              # Merge: fade-reveal, modal-fade, modal-backdrop
 ├── transform/
 │   ├── scale.css         # Merge: scale-reveal, scale-hover, modal-scale
-│   └── slide.css         # Rename: text-reveal (Y-axis transform)
+│   └── slide.css         # Rename: text-reveal
 ├── mask/
 │   ├── wipe.css          # Rename: modal-mask
-│   └── reveal.css        # Move: mask-reveal
-├── color-shift.css       # Keep at root (unique effect)
-├── overlay-darken.css    # Keep or merge into fade.css
+│   └── reveal.css        # Keep: mask-reveal
+├── color-shift.css       # Keep at root
+├── overlay-darken.css    # Keep at root
 └── index.css
 ```
 
-### Widget-specific effects → Colocate with widget
-- `contact-reveal.css` → `composite/ContactPrompt/styles.css` (merge)
-- `thumbnail-expand.css` → `composite/GalleryThumbnail/styles.css` (merge)
-- `marquee-scroll.css` → Keep generic or colocate with marquee widget
-
-**Verify:** All `data-effect` attributes resolve, animations work
+### Widget-Specific Effects → Colocate
+- `contact-reveal.css` → `composite/ContactPrompt/styles.css`
+- `thumbnail-expand.css` → `composite/GalleryThumbnail/styles.css`
+- `marquee-scroll.css` → Keep generic OR colocate with marquee widget
 
 ---
 
-## Phase 4: Transitions Merge (Medium Risk)
-Move `experience/transitions/` into `effects/mask/` since RevealTransition uses clip-path animations.
+## Preset/Site Layer (Mostly Correct)
 
-### Steps
-1. Move `RevealTransition.tsx` to `experience/effects/mask/RevealTransition.tsx`
-2. Move `useGsapReveal.ts` to `experience/effects/mask/useGsapReveal.ts`
-3. Update `experience/index.ts` exports
-4. Update Modal component imports
-5. Delete `experience/transitions/` folder
+### Behaviour Mappings Use Widget-Specific Names
 
-**Verify:** Modal wipe/expand/fade animations work
+**File:** `creativeshire/presets/bojuhl/site.ts`
+
+```typescript
+behaviours: {
+  HeroTitle: 'hero-text-color-transition',      // Widget-specific name
+  ScrollIndicator: 'scroll-indicator-fade',     // Widget-specific name
+  // ...
+}
+```
+
+**After restructure:** Update to use trigger-based names:
+```typescript
+behaviours: {
+  HeroTitle: 'scroll/color-shift',
+  ScrollIndicator: 'scroll/progress',
+  // ...
+}
+```
+
+### Minor Hardcoded Styles
+
+| File | Line | Content | Fix |
+|------|------|---------|-----|
+| `About/index.ts` | 188 | `backgroundColor: 'rgb(0, 0, 0)'` | Add to `AboutProps.backgroundColor` |
+| `FeaturedProjects/index.ts` | 62 | `backgroundColor: '#fff'` | Add to `FeaturedProjectsProps.backgroundColor` |
+
+---
+
+# REFACTORING PHASES
+
+## Phase 1: Widget Reclassification (Low Risk)
+
+### 1.1 Move ContactPrompt
+```
+From: creativeshire/content/widgets/primitives/ContactPrompt/
+To:   creativeshire/content/widgets/composite/ContactPrompt/
+```
+**Files to move:** `index.tsx`, `styles.css`, `types.ts`
+
+### 1.2 Move LogoLink
+```
+From: creativeshire/content/widgets/primitives/LogoLink/
+To:   creativeshire/content/widgets/composite/LogoLink/
+```
+**Files to move:** `index.tsx`, `styles.css`, `types.ts`
+
+### 1.3 Move ExpandableGalleryRow
+```
+From: creativeshire/content/widgets/layout/ExpandableGalleryRow/
+To:   creativeshire/content/widgets/composite/ExpandableGalleryRow/
+```
+**Files to move:** `index.tsx`, `styles.css`, `types.ts`
+
+### 1.4 Update Registry
+**File:** `creativeshire/content/widgets/registry.ts`
+
+Change imports:
+```typescript
+// Before
+import ContactPrompt from './primitives/ContactPrompt'
+import LogoLink from './primitives/LogoLink'
+import ExpandableGalleryRow from './layout/ExpandableGalleryRow'
+
+// After
+import ContactPrompt from './composite/ContactPrompt'
+import LogoLink from './composite/LogoLink'
+import ExpandableGalleryRow from './composite/ExpandableGalleryRow'
+```
+
+### 1.5 Update Barrel Exports
+**File:** `creativeshire/content/widgets/composite/index.ts`
+
+Add exports for moved widgets.
+
+**Verify:** `npm run build` passes, site renders correctly
+
+---
+
+## Phase 2: Fix Behaviour Auto-Registration (CRITICAL)
+
+**File:** `creativeshire/experience/behaviours/index.ts`
+
+Add ALL missing imports:
+```typescript
+// Existing
+import './contact-reveal'
+import './scroll-fade'
+import './scroll-fade-out'
+import './modal'
+import './reveal'
+
+// ADD THESE
+import './fade-in'
+import './hover-reveal'
+import './project-card-hover'
+import './logo-marquee-animation'
+import './gallery-thumbnail-expand'
+import './scroll-background-slideshow'
+import './hero-text-color-transition'
+import './floating-contact-cta'
+import './scroll-indicator-fade'
+import './video-modal'
+```
+
+**Verify:** All behaviours resolve via `resolveBehaviour()`, no console errors
+
+---
+
+## Phase 3: Extract L1/L2 Violations (CRITICAL)
+
+### 3.1 ContactPrompt Transitions → Effects
+
+**From:** `widgets/composite/ContactPrompt/styles.css`
+**To:** `experience/effects/contact-reveal.css` (already exists, merge if needed)
+
+Remove these lines from widget CSS:
+- Line 62: `transition: transform 500ms ease-in-out;`
+- Line 72: `transition: transform 500ms ease-in-out;`
+- Line 103: `transition: opacity 200ms ease-in-out;`
+- Line 113: `transition: opacity 200ms ease-in-out;`
+
+Add `data-effect="contact-reveal"` to widget markup.
+
+### 3.2 ExpandableGalleryRow Transitions → Effects
+
+**From:** `widgets/composite/ExpandableGalleryRow/styles.css`
+**To:** `experience/effects/thumbnail-expand.css` (already exists, merge if needed)
+
+Remove these lines from widget CSS:
+- Line 41: `transition: opacity 300ms ease-out;`
+- Line 56: `transition: opacity 300ms ease-out;`
+
+Add `data-effect="thumbnail-expand"` to widget markup.
+
+**Verify:** Animations still work via CSS variables + effects
+
+---
+
+## Phase 4: Hook Colocation (Medium Risk)
+
+### 4.1 Move useVisibilityPlayback
+```
+From: creativeshire/experience/hooks/useVisibilityPlayback.ts
+To:   creativeshire/content/widgets/primitives/Video/useVisibilityPlayback.ts
+```
+Update import in `Video/index.tsx`
+
+### 4.2 Move useScrollIndicatorFade
+```
+From: creativeshire/experience/hooks/useScrollIndicatorFade.ts
+To:   creativeshire/renderer/hooks/useScrollIndicatorFade.ts
+```
+Create `renderer/hooks/` folder if needed. Update import in `SiteRenderer.tsx`
+
+### 4.3 Move useScrollFadeBehaviour
+```
+From: creativeshire/experience/hooks/useScrollFadeBehaviour.ts
+To:   creativeshire/experience/behaviours/scroll/useScrollFadeBehaviour.ts
+```
+Update import in `SectionRenderer.tsx`
+
+### 4.4 Move useTransitionComplete
+```
+From: creativeshire/experience/hooks/useTransitionComplete.ts
+To:   creativeshire/content/chrome/overlays/Modal/useTransitionComplete.ts
+```
+Update import in `Modal/index.tsx`
+
+### 4.5 Delete Hooks Folder
+After all moves, delete `creativeshire/experience/hooks/`
+
+**Verify:** All animations work, no import errors
 
 ---
 
 ## Phase 5: Behaviours Restructuring (Higher Risk)
-Reorganize by trigger type, not effect type.
 
-### Current State (mixed naming)
+### Target Folder Structure
 ```
 behaviours/
-├── contact-reveal/              # Named by widget
-├── fade-in/                     # Named by effect
-├── floating-contact-cta/        # Named by widget
-├── gallery-thumbnail-expand/    # Named by widget
-├── hero-text-color-transition/  # Named by widget
-├── hover-reveal/                # OK - trigger based
-├── logo-marquee-animation/      # Named by widget
-├── modal/                       # OK - grouped
-├── project-card-hover/          # Named by widget
-├── reveal/                      # Named by effect
-├── scroll-fade/                 # Mixed (trigger + effect)
-├── scroll-fade-out/             # Mixed
-├── scroll-indicator-fade/       # Named by widget
-└── video-modal/                 # Named by widget
-```
-
-### Target Structure
-```
-behaviours/
-├── scroll/                      # Scroll-based triggers
-│   ├── fade-in.ts              # Renamed from scroll-fade
-│   ├── fade-out.ts             # Renamed from scroll-fade-out
-│   ├── progress.ts             # Generic scroll progress (0-1)
-│   └── useDriver.ts            # useScrollFadeBehaviour
-├── hover/                       # Hover-based triggers
-│   ├── reveal.ts               # Merged: contact-reveal, hover-reveal
-│   └── scale.ts                # Generic hover scale
-├── visibility/                  # IntersectionObserver triggers
-│   └── in-view.ts              # Generic visibility (--visible: 0|1)
-├── modal/                       # Keep grouped (complex, interdependent)
+├── scroll/
+│   ├── fade.ts           # Renamed from scroll-fade
+│   ├── fade-out.ts       # Renamed from scroll-fade-out
+│   ├── progress.ts       # Generalized scroll-indicator-fade
+│   ├── color-shift.ts    # Generalized hero-text-color-transition
+│   ├── image-cycle.ts    # Generalized scroll-background-slideshow
+│   └── useDriver.ts      # Moved useScrollFadeBehaviour
+├── hover/
+│   ├── reveal.ts         # Merged: contact-reveal, hover-reveal
+│   ├── scale.ts          # Merged: floating-contact-cta, project-card-hover
+│   └── expand.ts         # Generalized gallery-thumbnail-expand
+├── visibility/
+│   └── fade-in.ts        # Renamed from fade-in
+├── animation/
+│   └── marquee.ts        # Generalized logo-marquee-animation
+├── modal/                # Keep as-is (well-structured)
 │   ├── fade/
 │   ├── mask-wipe/
 │   └── scale/
-├── reveal/                      # Keep grouped (animation patterns)
+├── reveal/               # Keep as-is (well-structured)
 │   ├── fade-reveal/
 │   ├── mask-reveal/
 │   └── scale-reveal/
@@ -165,81 +389,181 @@ behaviours/
 ├── resolve.ts
 ├── types.ts
 ├── BehaviourWrapper.tsx
-└── index.ts                     # CRITICAL: barrel imports for auto-registration
+└── index.ts              # CRITICAL: barrel imports for auto-registration
 ```
 
-**Critical:** Behaviour IDs must stay the same to avoid breaking presets.
-Map old IDs to new locations in registry if needed.
+### Behaviour ID Mapping (Preserve Compatibility)
 
-**Verify:** All behaviours auto-register, `resolveBehaviour()` works, animations work
+Old IDs must still resolve. Update `resolveBehaviour()` with aliases:
+
+```typescript
+const BEHAVIOUR_ALIASES: Record<string, string> = {
+  'scroll-fade': 'scroll/fade',
+  'scroll-fade-out': 'scroll/fade-out',
+  'fade-in': 'visibility/fade-in',
+  'hover-reveal': 'hover/reveal',
+  'contact-reveal': 'hover/reveal',
+  'floating-contact-cta': 'hover/scale',
+  'project-card-hover': 'hover/scale',
+  'gallery-thumbnail-expand': 'hover/expand',
+  'logo-marquee-animation': 'animation/marquee',
+  'scroll-indicator-fade': 'scroll/progress',
+  'hero-text-color-transition': 'scroll/color-shift',
+  'scroll-background-slideshow': 'scroll/image-cycle',
+}
+```
+
+**Verify:** All behaviours resolve via old AND new IDs
 
 ---
 
-## Phase 6: Legacy Cleanup (Optional, Lower Priority)
-Generalize widget-specific behaviours to use generic ones with options.
+## Phase 6: Effects Restructuring (Medium Risk)
 
-| Widget-Specific | Replace With |
-|-----------------|--------------|
-| `floating-contact-cta` | `hover/reveal` with options |
-| `gallery-thumbnail-expand` | `hover/reveal` with options |
-| `hero-text-color-transition` | `scroll/progress` with color interpolation |
-| `logo-marquee-animation` | CSS animation or `scroll/velocity` |
-| `project-card-hover` | `hover/reveal` with options |
-| `scroll-indicator-fade` | `scroll/progress` |
-| `video-modal` | `modal/*` behaviours |
+### Merge Similar Effects
 
-**Note:** Requires updating preset configurations to pass options.
+**fade.css** (merge into):
+- `fade-reveal.css`
+- `modal-fade.css`
+- `modal-backdrop.css`
+
+**transform/scale.css** (merge into):
+- `scale-reveal.css`
+- `scale-hover.css`
+- `modal-scale.css`
+
+**transform/slide.css**:
+- Rename `text-reveal.css`
+
+**mask/wipe.css**:
+- Rename `modal-mask.css`
+
+**mask/reveal.css**:
+- Keep `mask-reveal.css`
+
+### Colocate Widget-Specific Effects
+
+Move to widget folders:
+- `contact-reveal.css` → `composite/ContactPrompt/effects.css`
+- `thumbnail-expand.css` → `composite/GalleryThumbnail/effects.css`
+
+### Update index.css
+Import all reorganized effects.
+
+**Verify:** All `data-effect` attributes resolve, animations work
 
 ---
 
-## Execution Order
+## Phase 7: Preset Updates (After All Above)
+
+### Update Behaviour Mappings
+
+**File:** `creativeshire/presets/bojuhl/site.ts`
+
+```typescript
+// Before (widget-specific names)
+behaviours: {
+  HeroTitle: 'hero-text-color-transition',
+  ScrollIndicator: 'scroll-indicator-fade',
+  ContactPrompt: 'contact-reveal',
+  // ...
+}
+
+// After (trigger-based names)
+behaviours: {
+  HeroTitle: 'scroll/color-shift',
+  ScrollIndicator: 'scroll/progress',
+  ContactPrompt: 'hover/reveal',
+  // ...
+}
 ```
-Phase 1 (Widgets)
+
+---
+
+## Phase 8: Optional Improvements
+
+### Add Missing Primitives
+- `Icon` widget (wrap SVG rendering)
+- `Button` widget (interactive primitive)
+
+### Add Missing Layouts
+- `Stack` (vertical Flex)
+- `Grid` (2D layout)
+- `Split` (2-column)
+- `Container` (max-width wrapper)
+
+### Make Styles Configurable
+- `About/index.ts`: Add `backgroundColor` to props
+- `FeaturedProjects/index.ts`: Add `backgroundColor` to props
+
+---
+
+# CRITICAL FILES
+
+| File | Why Critical |
+|------|-------------|
+| `creativeshire/content/widgets/registry.ts` | All widget moves update this |
+| `creativeshire/experience/behaviours/index.ts` | Barrel imports for auto-registration |
+| `creativeshire/experience/behaviours/resolve.ts` | Behaviour lookup + aliases |
+| `creativeshire/experience/effects/index.css` | CSS imports for effects |
+| `creativeshire/renderer/SectionRenderer.tsx` | Uses scroll behaviours |
+| `creativeshire/content/chrome/overlays/Modal/index.tsx` | Uses transitions |
+| `creativeshire/presets/bojuhl/site.ts` | Behaviour mappings |
+
+---
+
+# VERIFICATION CHECKLIST (Per Phase)
+
+1. **Build:** `npm run build` passes
+2. **Type check:** `npx tsc --noEmit` passes
+3. **Visual check in browser:**
+   - [ ] Hero section renders with video
+   - [ ] Scroll-fade animations work (sections fade in/out)
+   - [ ] Hover effects work (contact, logo, project cards)
+   - [ ] Modal opens with wipe/expand/fade animation
+   - [ ] Modal closes with reverse animation
+   - [ ] Footer renders correctly
+   - [ ] Gallery expands on hover
+   - [ ] Marquee scrolls continuously
+4. **Console:** No errors, no warnings about missing behaviours
+
+---
+
+# EXECUTION ORDER
+
+```
+Phase 1 (Widget Moves)
     ↓
-Phase 2 (Hooks)
+Phase 2 (Fix Auto-Registration) ← CRITICAL FIRST
     ↓
-Phase 3 + 4 (Effects + Transitions)
+Phase 3 (Extract L1/L2 Violations)
     ↓
-Phase 5 (Behaviours)
+Phase 4 (Hook Colocation)
     ↓
-Phase 6 (Cleanup) - Optional
+Phase 5 (Behaviours Restructure) ← HIGHEST RISK
+    ↓
+Phase 6 (Effects Restructure)
+    ↓
+Phase 7 (Preset Updates)
+    ↓
+Phase 8 (Optional Improvements)
 ```
 
 **Each phase = one git commit.** Rollback: `git revert <phase-commit>`
 
 ---
 
-## Critical Files
+# NOTES FOR FUTURE AGENTS
 
-| File | Why Critical |
-|------|-------------|
-| `creativeshire/content/widgets/registry.ts` | All widget moves update this |
-| `creativeshire/experience/behaviours/index.ts` | Barrel imports for auto-registration |
-| `creativeshire/experience/effects/index.css` | CSS imports for effects |
-| `creativeshire/renderer/SectionRenderer.tsx` | Uses scroll behaviours |
-| `creativeshire/content/chrome/overlays/Modal/index.tsx` | Uses transitions |
+1. **Behaviour auto-registration:** Behaviours register themselves when imported. The `behaviours/index.ts` barrel file MUST import all behaviour modules or they won't work.
 
----
+2. **CSS variable bridge:** L1 (content) and L2 (experience) communicate ONLY via CSS variables. Never directly couple them. Widgets READ variables, behaviours WRITE them.
 
-## Verification Checklist (Per Phase)
+3. **GSAP as Driver pattern:** `useScrollFadeBehaviour` bypasses React, sets CSS vars directly via `element.style.setProperty()` for 60fps performance.
 
-1. **Build:** `npm run build` passes
-2. **Type check:** No TypeScript errors
-3. **Visual check in browser:**
-   - [ ] Hero section renders with video
-   - [ ] Scroll-fade animations work (sections fade in/out)
-   - [ ] Hover effects work (contact, logo, cards)
-   - [ ] Modal opens with wipe/expand animation
-   - [ ] Modal closes with reverse animation
-   - [ ] Footer renders correctly
-   - [ ] Other Projects gallery expands on hover
-4. **Console:** No errors
+4. **Reduced motion:** All behaviours check `state.prefersReducedMotion`. Respect this.
 
----
+5. **Behaviour aliases:** When restructuring, add aliases to `resolveBehaviour()` so old IDs still work. This prevents breaking presets.
 
-## Notes for Future Agents
+6. **Widget CSS rule:** Widgets define WHAT is visible (opacity, transform initial values). Effects define HOW it transitions. Never put `transition:` in widget CSS.
 
-- **Behaviour auto-registration:** Behaviours register themselves when their module is imported. The `behaviours/index.ts` barrel file must import all behaviour modules.
-- **CSS variable bridge:** L1 (content) and L2 (experience) communicate ONLY via CSS variables. Never directly couple them.
-- **GSAP as Driver pattern:** `useScrollFadeBehaviour` bypasses React, sets CSS vars directly via `element.style.setProperty()` for 60fps performance.
-- **Reduced motion:** All behaviours check `state.prefersReducedMotion`. Respect this.
+7. **Testing animations:** Browser tools can only capture static snapshots. Test animations by running the dev server and interacting manually.
