@@ -7,6 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:arch": "vitest run __tests__/architecture/",
     "sync:react-rules": "npx tsx .claude/scripts/sync-react-best-practices.ts"
   },
   "dependencies": {
@@ -24,12 +28,15 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/ui": "^4.0.18",
     "agent-browser": "^0.1.0",
     "baseline-browser-mapping": "^2.9.19",
     "eslint": "^9",
     "eslint-config-next": "16.0.8",
+    "fast-glob": "^3.3.3",
     "tailwindcss": "^4",
     "typescript": "^5",
+    "vitest": "^4.0.18",
     "yaml": "^2.8.2"
   }
 }

@@ -1,5 +1,5 @@
 /**
- * ContactPrompt widget styles.
+ * ContactPrompt widget styles + colocated effects.
  * Dual-stack structure: text stack + icon stack, both with flip animations.
  *
  * Structure:
@@ -11,7 +11,7 @@
  *     .contact-prompt__icon--copy (primary - visible on hover)
  *     .contact-prompt__icon--check (secondary - flips in on click)
  *
- * CSS Variables consumed (from contact-reveal behaviour):
+ * CSS Variables consumed (from hover/reveal behaviour):
  * - --text-reveal-y: Text flip position (0 default, -100% hovered)
  * - --icon-reveal-y: Icon flip position (0 default, -100% clicked) - set by widget
  * - --icon-opacity: Icon visibility (0 default, 1 hovered)
@@ -19,6 +19,9 @@
  * - --shift-blend: Blend mode
  * - --flip-duration: Animation duration for text/icon flips (default: 400ms)
  * - --fade-duration: Animation duration for icon fade (default: 200ms)
+ *
+ * Effect Colocation: Transitions are defined here per architecture (widget-specific
+ * effects colocated with widgets). See effects/index.css comment.
  */
 
 /* Root container */
@@ -59,8 +62,7 @@
 /* Prompt text - visible by default, slides up on hover */
 .contact-prompt__text--prompt {
   transform: translateY(var(--text-reveal-y, 0));
-  /* MOVED TO L2: experience/effects/contact-reveal.css */
-  /* transition: transform var(--flip-duration, 500ms) ease-in-out; */
+  transition: transform var(--flip-duration, 400ms) cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
 }
 
@@ -70,8 +72,7 @@
   top: 100%;
   left: 0;
   transform: translateY(var(--text-reveal-y, 0));
-  /* MOVED TO L2: experience/effects/contact-reveal.css */
-  /* transition: transform var(--flip-duration, 500ms) ease-in-out; */
+  transition: transform var(--flip-duration, 400ms) cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
 }
 
@@ -86,8 +87,7 @@
   overflow: hidden;
   /* Fade in on hover */
   opacity: var(--icon-opacity, 0);
-  /* MOVED TO L2: experience/effects/contact-reveal.css */
-  /* transition: opacity var(--fade-duration, 200ms) ease-in-out; */
+  transition: opacity var(--fade-duration, 200ms) ease-out;
   will-change: opacity;
 }
 
@@ -103,8 +103,7 @@
 /* Copy icon - visible by default in stack, slides up on click */
 .contact-prompt__icon--copy {
   transform: translateY(var(--icon-reveal-y, 0));
-  /* MOVED TO L2: experience/effects/contact-reveal.css */
-  /* transition: transform var(--flip-duration, 500ms) ease-in-out; */
+  transition: transform var(--flip-duration, 400ms) cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
 }
 
@@ -114,8 +113,7 @@
   top: 100%;
   left: 0;
   transform: translateY(var(--icon-reveal-y, 0));
-  /* MOVED TO L2: experience/effects/contact-reveal.css */
-  /* transition: transform var(--flip-duration, 500ms) ease-in-out; */
+  transition: transform var(--flip-duration, 400ms) cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
 }
 
@@ -155,8 +153,7 @@
   font-size: inherit;
   font-weight: inherit;
   line-height: inherit;
-  /* MOVED TO L2: experience/effects/contact-reveal.css */
-  /* transition: color 0.2s ease; */
+  transition: color 0.2s ease-out;
 }
 
 .contact-prompt--email-only:focus-visible {
@@ -173,7 +170,7 @@
 }
 
 /* =============================================================================
- * Contact Reveal Effect (colocated from experience/effects/)
+ * Contact Reveal Effect (colocated with widget)
  *
  * Handles color transitions for this widget.
  *

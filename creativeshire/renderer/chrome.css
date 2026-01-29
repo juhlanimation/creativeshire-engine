@@ -28,7 +28,8 @@
 
 /* Hover state: normal blend to show purple */
 /* Also set color directly to avoid flash of white before behaviour computes */
-.chrome-overlay:has([data-behaviour="contact-reveal"][data-hovered]) {
+/* data-hovered is on BehaviourWrapper parent, data-effect on ContactPrompt child */
+.chrome-overlay:has([data-hovered]) {
   mix-blend-mode: normal;
   color: var(--interaction, #9933FF);
 }

@@ -50,6 +50,10 @@ interface UseGsapRevealProps {
 
 /**
  * Computes the initial clip-path for a reveal type.
+ *
+ * For 'expand': Adjusts for scrollbar width difference. The sourceRect is
+ * captured with scrollbar visible, but the modal fills the full viewport
+ * after scroll lock hides the scrollbar.
  */
 function getInitialClipPath(type: RevealType, sourceRect?: DOMRect | null): string {
   switch (type) {
@@ -61,8 +65,12 @@ function getInitialClipPath(type: RevealType, sourceRect?: DOMRect | null): stri
       return 'inset(0 0 0 100%)'
     case 'expand':
       if (sourceRect) {
-        const vw = window.innerWidth
-        const vh = window.innerHeight
+        // Use clientWidth/clientHeight for calculations since sourceRect
+        // coordinates are relative to the content area, not the full viewport.
+        // This ensures the clip-path scales correctly across the entire width.
+        const vw = document.documentElement.clientWidth
+        const vh = document.documentElement.clientHeight
+
         const top = (sourceRect.top / vh) * 100
         const bottom = ((vh - sourceRect.bottom) / vh) * 100
         const left = (sourceRect.left / vw) * 100

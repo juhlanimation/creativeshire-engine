@@ -154,3 +154,11 @@ Browser automation captures **screenshots** (static snapshots). It cannot percei
    | `BEHAVIOUR_ALIASES['old-name'] = 'new/name'` | Delete old, use `new/name` everywhere |
    | Keep old files "just in case" | Delete unused code immediately |
    | Gradual migration with both patterns | One pattern, applied consistently |
+
+6. **Tests must pass before commits:**
+   ```
+   Before commit:
+   1. Run `npm run test:arch`
+   2. Report results to user
+   3. Ask if they want to proceed
+   ```
