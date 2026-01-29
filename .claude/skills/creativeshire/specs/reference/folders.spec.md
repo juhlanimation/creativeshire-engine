@@ -54,7 +54,7 @@
 │   │   ├── sections/
 │   │   │   ├── Section.tsx              # Base section component
 │   │   │   ├── types.ts
-│   │   │   └── composites/              # SECTION FACTORIES
+│   │   │   └── patterns/                # SECTION FACTORIES
 │   │   │       └── {Name}/              # Hero, Gallery, CTA, FAQ, etc.
 │   │   │           ├── index.ts         # create{Name}Section(props)
 │   │   │           ├── types.ts
