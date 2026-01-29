@@ -19,7 +19,7 @@
 | Phase | Status | Agent |
 |-------|--------|-------|
 | 1. Presets (bojuhl) | `[x] Complete` | agent:a6a3bb6 |
-| 2. Schema | `[ ] Not started` | |
+| 2. Schema | `[x] Complete` | agent:a5e0dd5 |
 | 3. Content - Primitives | `[ ] Not started` | |
 | 4. Content - Layout | `[ ] Not started` | |
 | 5. Content - Composite | `[ ] Not started` | |
@@ -93,15 +93,15 @@
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.ts` | Barrel exports | |
-| [ ] | `types.ts` | Base schema types | |
-| [ ] | `site.ts` | SiteSchema definition | |
-| [ ] | `page.ts` | PageSchema definition | |
-| [ ] | `section.ts` | SectionSchema definition | |
-| [ ] | `widget.ts` | WidgetSchema definition | |
-| [ ] | `chrome.ts` | ChromeSchema definition | |
-| [ ] | `experience.ts` | ExperienceSchema definition | |
-| [ ] | `theme.ts` | ThemeSchema definition | |
+| [!] | `index.ts` | Barrel exports | Missing ModeDefaults export; 22+ types vs spec's 14-type minimal list |
+| [x] | `types.ts` | Base schema types | Verified - SerializableValue correctly defined |
+| [!] | `site.ts` | SiteSchema definition | ModeDefaults interface not defined (required by spec) |
+| [x] | `page.ts` | PageSchema definition | Verified - correct structure |
+| [x] | `section.ts` | SectionSchema definition | Verified - correct structure |
+| [x] | `widget.ts` | WidgetSchema definition | Verified - correct structure |
+| [!] | `chrome.ts` | ChromeSchema definition | TriggerCondition uses flat structure, spec requires discriminated union |
+| [x] | `experience.ts` | ExperienceSchema definition | Verified - correct structure |
+| [?] | `theme.ts` | ThemeSchema definition | Not in canonical specs - unclear if intentional extension |
 
 ---
 
@@ -536,7 +536,8 @@
 
 | File | Issue | Impact |
 |------|-------|--------|
-| | | |
+| `schema/site.ts` | ModeDefaults interface not defined | Required by spec for mode-specific defaults |
+| `schema/chrome.ts` | TriggerCondition uses flat struct instead of discriminated union | Loses type safety; missing timer/visibility events |
 
 ### Naming Issues
 
@@ -554,7 +555,7 @@
 
 | Expected Location | Purpose |
 |-------------------|---------|
-| | |
+| `schema/index.ts` | Missing ModeDefaults export (type exists but not exported) |
 
 ### Duplicate/Redundant Code
 
