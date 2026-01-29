@@ -47,6 +47,7 @@
 }
 
 /* Center play button - matches bojuhl: w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm */
+/* MOVED TO L2: data-effect="button-hover" */
 .video-player__center-play {
   width: 5rem;    /* w-20 = 80px = 5rem */
   height: 5rem;   /* h-20 = 80px = 5rem */
@@ -57,7 +58,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 200ms ease;
 }
 
 .video-player__center-overlay:hover .video-player__center-play {
@@ -74,11 +74,11 @@
 
 /* Controls overlay - fades in/out */
 /* pointer-events stays none so clicks pass through to video for play/pause */
+/* MOVED TO L2: data-effect="controls-fade" */
 .video-player__controls {
   position: absolute;
   inset: 0;
   opacity: 0;
-  transition: opacity 300ms ease;
   pointer-events: none;
 }
 
@@ -128,6 +128,7 @@
 }
 
 /* Progress bar fill - matches bojuhl: bg-white rounded-full */
+/* Note: width transition kept inline as it's continuous playback, not L2 animation */
 .video-player__progress-fill {
   position: absolute;
   top: 0;
@@ -135,11 +136,12 @@
   height: 100%;
   background: white;
   border-radius: 9999px;
-  transition: width 75ms linear;  /* transition-all duration-75 */
+  transition: width 75ms linear;  /* transition-all duration-75 - playback continuity */
   pointer-events: none;
 }
 
 /* Progress bar scrubber - matches bojuhl: w-4 h-4 bg-white rounded-full shadow-lg */
+/* MOVED TO L2: data-effect="scrubber-fade" */
 .video-player__progress-scrubber {
   position: absolute;
   top: 50%;
@@ -150,7 +152,6 @@
   border-radius: 50%;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);  /* shadow-lg */
   opacity: 0;
-  transition: opacity 150ms ease;
   pointer-events: none;
 }
 
@@ -176,6 +177,7 @@
 }
 
 /* Volume button - matches bojuhl: text-white hover:text-white/80 */
+/* MOVED TO L2: data-effect="button-hover" */
 .video-player__volume-button {
   background: transparent;
   border: none;
@@ -185,7 +187,6 @@
   align-items: center;
   justify-content: center;
   color: white;
-  transition: color 150ms ease;
 }
 
 .video-player__volume-button:hover {

@@ -106,6 +106,7 @@
 }
 
 /* Close button - matches bojuhl: top-6 left-6 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm */
+/* MOVED TO L2: data-effect="button-hover" */
 .modal__close {
   position: fixed;
   top: 1.5rem;        /* top-6 = 24px = 1.5rem */
@@ -123,7 +124,6 @@
   border-radius: 9999px;  /* rounded-full */
   cursor: pointer;
   color: white;
-  transition: background 200ms ease, opacity 300ms ease;
   pointer-events: auto;
 }
 

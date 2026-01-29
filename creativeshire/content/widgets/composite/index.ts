@@ -40,3 +40,8 @@ export type { LogoLinkProps } from './LogoLink/types'
 // ExpandableGalleryRow - gallery row with hover expansion (component)
 export { default as ExpandableGalleryRow } from './ExpandableGalleryRow'
 export type { ExpandableGalleryRowProps } from './ExpandableGalleryRow/types'
+
+// Video - video widget with state and hooks (component)
+// Moved from primitives/ due to: useState, useVisibilityPlayback, usePlaybackPosition, modal integration
+export { default as Video } from './Video'
+export type { VideoProps } from './Video/types'

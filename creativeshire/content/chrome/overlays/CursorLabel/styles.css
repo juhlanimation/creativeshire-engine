@@ -3,6 +3,7 @@
  * Reference: bojuhl.com cursor-label.tsx
  */
 
+/* MOVED TO L2: data-effect="cursor-label" */
 .cursor-label {
   position: fixed;
   left: 0;
@@ -21,7 +22,4 @@
   /* Visibility on any background */
   color: #ffffff;
   mix-blend-mode: difference;
-
-  /* Smooth transition */
-  transition: opacity 0.15s ease-out;
 }

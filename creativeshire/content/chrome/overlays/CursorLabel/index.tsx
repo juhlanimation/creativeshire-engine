@@ -97,6 +97,7 @@ const CursorLabel = memo(function CursorLabel({
         transform: `translate(${mousePos.x + offsetX}px, ${mousePos.y + offsetY}px)`,
         opacity: isVisible ? 1 : 0
       }}
+      data-effect="cursor-label"
     >
       {label}
     </div>,

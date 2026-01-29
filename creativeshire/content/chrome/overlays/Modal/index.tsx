@@ -23,8 +23,8 @@ import { useStore } from 'zustand'
 import { useModalStore } from './store'
 import { useSmoothScroll } from '@/creativeshire/experience/SmoothScrollProvider'
 import { useSmoothModalScroll } from './useSmoothModalScroll'
-import { RevealTransition } from '@/creativeshire/experience/transitions'
-import type { RevealType } from '@/creativeshire/experience/transitions'
+import { RevealTransition } from '@/creativeshire/experience/effects/mask'
+import type { RevealType } from '@/creativeshire/experience/effects/mask'
 import './styles.css'
 
 /**
@@ -236,6 +236,7 @@ const Modal = memo(function Modal() {
               onClick={handleClose}
               aria-label="Close modal"
               disabled={transitionPhase !== 'open'}
+              data-effect="button-hover"
             >
               <CloseIcon />
             </button>

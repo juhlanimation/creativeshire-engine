@@ -1,8 +1,8 @@
 'use client'
 
 /**
- * Video widget.
- * Content Layer (L1) - renders video element.
+ * Video widget (composite).
+ * Content Layer (L1) - renders video element with state and hooks.
  *
  * Supports two modes:
  * - Default (autoplay): Video plays automatically, pauses when scrolled out of view
@@ -13,6 +13,8 @@
  * - modalTransition and modalDirection control the modal animation
  *
  * Uses L2 hook (useVisibilityPlayback) for performance optimization.
+ *
+ * Note: Moved from primitives/ to composite/ due to complex state and hooks.
  */
 
 import { useState, useRef, useEffect, useCallback, type CSSProperties } from 'react'
@@ -166,6 +168,7 @@ export default function Video({
           alt={alt}
           className={`video-widget__poster ${isHovered ? 'video-widget__poster--hidden' : ''}`}
           style={{ objectFit }}
+          data-effect="media-crossfade"
         />
       )}
 
@@ -179,6 +182,7 @@ export default function Video({
         preload="metadata"
         className={`video-widget__video ${isHovered ? 'video-widget__video--visible' : ''}`}
         style={{ objectFit }}
+        data-effect="media-crossfade"
       />
     </div>
   )

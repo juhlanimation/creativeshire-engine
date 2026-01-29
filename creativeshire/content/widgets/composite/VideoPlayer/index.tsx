@@ -220,7 +220,7 @@ const VideoPlayer = memo(function VideoPlayer({
           className="video-player__center-overlay"
           onClick={controls.togglePlay}
         >
-          <div className="video-player__center-play">
+          <div className="video-player__center-play" data-effect="button-hover">
             <PlayIcon />
           </div>
         </div>
@@ -229,6 +229,7 @@ const VideoPlayer = memo(function VideoPlayer({
       {/* Controls overlay - fades in/out */}
       <div
         className={`video-player__controls ${controlsVisible ? 'video-player__controls--visible' : ''}`}
+        data-effect="controls-fade"
       >
         {/* Progress bar - bottom-24 left-8 right-8 (matches bojuhl) */}
         <div className="video-player__progress-container">
@@ -248,6 +249,7 @@ const VideoPlayer = memo(function VideoPlayer({
             <div
               className="video-player__progress-scrubber"
               style={{ left: `calc(${controls.progress}% - 8px)` }}
+              data-effect="scrubber-fade"
             />
           </div>
 
@@ -263,6 +265,7 @@ const VideoPlayer = memo(function VideoPlayer({
             className="video-player__volume-button"
             onClick={controls.toggleMute}
             aria-label={controls.isMuted ? 'Unmute' : 'Mute'}
+            data-effect="button-hover"
           >
             <VolumeIcon volume={controls.isMuted ? 0 : controls.volume} />
           </button>

@@ -41,6 +41,7 @@
 }
 
 /* Poster image - fills container */
+/* MOVED TO L2: data-effect="media-crossfade" */
 .video-widget__poster {
   position: absolute;
   inset: 0;
@@ -48,7 +49,6 @@
   height: 100%;
   object-fit: cover;
   opacity: 1;
-  transition: opacity 300ms ease;
 }
 
 .video-widget__poster--hidden {
@@ -56,6 +56,7 @@
 }
 
 /* Video - absolute positioned, hidden by default */
+/* MOVED TO L2: data-effect="media-crossfade" */
 .video-widget__video {
   position: absolute;
   inset: 0;
@@ -63,7 +64,6 @@
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 300ms ease;
 }
 
 .video-widget__video--visible {

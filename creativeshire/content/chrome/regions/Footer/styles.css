@@ -65,6 +65,7 @@
 }
 
 /* Navigation links - uses display font, scales 14px → 16px */
+/* MOVED TO L2: data-effect="color-shift" */
 .footer-chrome__nav-link {
   font-family: var(--font-display, 'Inter', system-ui, sans-serif);
   font-size: 14px;
@@ -72,7 +73,6 @@
   color: white;
   text-decoration: none;
   text-transform: uppercase;
-  transition: color 0.2s ease;
 }
 
 .footer-chrome__nav-link:hover {
@@ -80,13 +80,13 @@
 }
 
 /* Contact/Studio links - uses body font, scales 14px → 16px */
+/* MOVED TO L2: data-effect="color-shift" */
 .footer-chrome__link {
   font-family: var(--font-body, 'Plus Jakarta Sans', system-ui, sans-serif);
   font-size: 14px;
   font-weight: 400;
   color: white;
   text-decoration: none;
-  transition: color 0.2s ease;
 }
 
 .footer-chrome__link:hover {
@@ -94,6 +94,7 @@
 }
 
 /* Social links - uses body font, scales 14px → 16px */
+/* MOVED TO L2: data-effect="color-shift" */
 .footer-chrome__social-link {
   font-family: var(--font-body, 'Plus Jakarta Sans', system-ui, sans-serif);
   font-size: 14px;
@@ -101,7 +102,6 @@
   color: white;
   text-decoration: none;
   text-transform: lowercase;
-  transition: color 0.2s ease;
 }
 
 .footer-chrome__social-link:hover {

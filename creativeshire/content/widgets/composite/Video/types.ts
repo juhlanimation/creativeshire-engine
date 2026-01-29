@@ -10,6 +10,8 @@
  * - videoUrl: URL for modal playback (optional)
  * - modalTransition: Type of transition when opening modal
  * - modalDirection: Direction for mask-wipe transition
+ *
+ * Note: In composite/ due to complex state (useState, useVisibilityPlayback, usePlaybackPosition).
  */
 
 import type { WidgetBaseProps } from '../../types'

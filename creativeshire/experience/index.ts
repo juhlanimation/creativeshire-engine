@@ -11,6 +11,6 @@ export type {
   ExperienceProviderProps,
 } from './types'
 
-// Transitions (generic reveal animations)
-export { RevealTransition, useGsapReveal } from './transitions'
-export type { RevealType, UseGsapRevealOptions, RevealTransitionProps } from './transitions'
+// Mask effects (GSAP-powered reveal animations)
+export { RevealTransition, useGsapReveal } from './effects/mask'
+export type { RevealType, UseGsapRevealOptions, RevealTransitionProps } from './effects/mask'

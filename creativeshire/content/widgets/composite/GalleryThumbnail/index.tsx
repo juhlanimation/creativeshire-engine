@@ -111,6 +111,7 @@ const GalleryThumbnail = memo(function GalleryThumbnail({
           src={project.thumbnailSrc}
           alt={project.thumbnailAlt}
           className={`gallery-thumbnail__poster ${isExpanded && project.videoSrc ? 'gallery-thumbnail__poster--hidden' : ''}`}
+          data-effect="media-crossfade"
         />
 
         {/* Video - plays when expanded */}
@@ -123,6 +124,7 @@ const GalleryThumbnail = memo(function GalleryThumbnail({
             playsInline
             preload="metadata"
             className={`gallery-thumbnail__video ${isExpanded ? 'gallery-thumbnail__video--visible' : ''}`}
+            data-effect="media-crossfade"
           />
         )}
       </div>

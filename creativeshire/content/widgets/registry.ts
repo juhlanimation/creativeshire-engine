@@ -3,9 +3,9 @@
  * Content Layer (L1) - static component lookup.
  *
  * Widget categories:
- * - primitives/ : Leaf nodes (Text, Image, Video)
- * - layout/     : Containers (Flex, Box)
- * - composite/  : Assembled widgets with state/logic (ContactPrompt, LogoLink, etc.)
+ * - primitives/ : Leaf nodes (Text, Image, Icon, Button)
+ * - layout/     : Containers (Flex, Box, Stack, Grid, Split, Container)
+ * - composite/  : Assembled widgets with state/logic (Video, ContactPrompt, LogoLink, etc.)
  */
 
 import type { ComponentType } from 'react'
@@ -13,9 +13,11 @@ import type { ComponentType } from 'react'
 // Primitives (leaf nodes)
 import Text from './primitives/Text'
 import Image from './primitives/Image'
-import Video from './primitives/Video'
 import Icon from './primitives/Icon'
 import Button from './primitives/Button'
+
+// Video (composite - has state and hooks)
+import Video from './composite/Video'
 
 // Layout (containers)
 import Flex from './layout/Flex'
@@ -40,9 +42,10 @@ export const widgetRegistry: Record<string, WidgetComponent> = {
   // Primitives
   Text,
   Image,
-  Video,
   Icon,
   Button,
+  // Video (composite - has state and hooks)
+  Video,
   // Layout
   Flex,
   Box,

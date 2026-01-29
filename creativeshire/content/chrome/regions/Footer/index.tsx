@@ -48,6 +48,7 @@ const Footer = memo(forwardRef<HTMLElement, FooterProps>(function Footer(
                 key={link.href}
                 href={link.href}
                 className="footer-chrome__nav-link"
+                data-effect="color-shift"
               >
                 {link.label}
               </a>
@@ -71,6 +72,7 @@ const Footer = memo(forwardRef<HTMLElement, FooterProps>(function Footer(
                 className="footer-chrome__social-link"
                 target="_blank"
                 rel="noopener noreferrer"
+                data-effect="color-shift"
               >
                 linkedin
               </a>
@@ -87,6 +89,7 @@ const Footer = memo(forwardRef<HTMLElement, FooterProps>(function Footer(
                   className="footer-chrome__link"
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-effect="color-shift"
                 >
                   {studioUrl.replace(/^https?:\/\//, '')}
                 </a>
@@ -105,6 +108,7 @@ const Footer = memo(forwardRef<HTMLElement, FooterProps>(function Footer(
                   className="footer-chrome__social-link"
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-effect="color-shift"
                 >
                   {social.platform}
                 </a>

@@ -1,8 +1,9 @@
 /**
- * Transitions barrel export.
- * GSAP-powered reveal/hide transition components.
+ * Mask effects barrel export.
+ * Clip-path based reveal/hide animations.
  */
 
+// GSAP-powered reveal component and hook
 export { RevealTransition } from './RevealTransition'
 export type {
   RevealType,
@@ -10,5 +11,4 @@ export type {
   RevealTransitionProps,
 } from './RevealTransition'
 
-// Hook re-export for advanced usage
 export { useGsapReveal } from './useGsapReveal'

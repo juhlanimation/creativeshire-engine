@@ -66,6 +66,83 @@
 }
 
 /* =============================================================================
+ * MEDIA CROSSFADE
+ * Opacity crossfade for poster/video switching in hover-play widgets.
+ * Used by: Video widget (hover-play mode), GalleryThumbnail widget
+ *
+ * CSS Variables consumed:
+ * - --crossfade-duration: transition duration (default: 300ms)
+ * - --crossfade-easing: timing function (default: ease-out)
+ * ============================================================================= */
+
+[data-effect~="media-crossfade"] {
+  transition: opacity var(--crossfade-duration, 300ms) var(--crossfade-easing, ease-out);
+  will-change: opacity;
+}
+
+/* =============================================================================
+ * CONTROLS FADE
+ * Opacity fade for video player controls overlay.
+ * Used by: VideoPlayer widget
+ *
+ * CSS Variables consumed:
+ * - --controls-duration: transition duration (default: 300ms)
+ * - --controls-easing: timing function (default: ease)
+ * ============================================================================= */
+
+[data-effect~="controls-fade"] {
+  transition: opacity var(--controls-duration, 300ms) var(--controls-easing, ease);
+  will-change: opacity;
+}
+
+/* =============================================================================
+ * BUTTON HOVER
+ * Background/color transitions for interactive buttons.
+ * Used by: VideoPlayer, Modal close button
+ *
+ * CSS Variables consumed:
+ * - --button-duration: transition duration (default: 200ms)
+ * - --button-easing: timing function (default: ease)
+ * ============================================================================= */
+
+[data-effect~="button-hover"] {
+  transition: background var(--button-duration, 200ms) var(--button-easing, ease),
+              color var(--button-duration, 150ms) var(--button-easing, ease),
+              opacity var(--button-duration, 300ms) var(--button-easing, ease);
+  will-change: background, color, opacity;
+}
+
+/* =============================================================================
+ * SCRUBBER FADE
+ * Opacity fade for progress bar scrubber on hover.
+ * Used by: VideoPlayer widget
+ *
+ * CSS Variables consumed:
+ * - --scrubber-duration: transition duration (default: 150ms)
+ * - --scrubber-easing: timing function (default: ease)
+ * ============================================================================= */
+
+[data-effect~="scrubber-fade"] {
+  transition: opacity var(--scrubber-duration, 150ms) var(--scrubber-easing, ease);
+  will-change: opacity;
+}
+
+/* =============================================================================
+ * CURSOR LABEL
+ * Fast opacity fade for cursor-following labels.
+ * Used by: CursorLabel overlay
+ *
+ * CSS Variables consumed:
+ * - --cursor-duration: transition duration (default: 150ms)
+ * - --cursor-easing: timing function (default: ease-out)
+ * ============================================================================= */
+
+[data-effect~="cursor-label"] {
+  transition: opacity var(--cursor-duration, 150ms) var(--cursor-easing, ease-out);
+  will-change: opacity;
+}
+
+/* =============================================================================
  * REDUCED MOTION
  * Instant transitions for users who prefer reduced motion.
  * ============================================================================= */
@@ -73,7 +150,12 @@
 @media (prefers-reduced-motion: reduce) {
   [data-effect~="fade-reveal"],
   [data-effect~="modal-fade"],
-  [data-effect~="modal-backdrop"] {
+  [data-effect~="modal-backdrop"],
+  [data-effect~="media-crossfade"],
+  [data-effect~="controls-fade"],
+  [data-effect~="button-hover"],
+  [data-effect~="scrubber-fade"],
+  [data-effect~="cursor-label"] {
     transition: none;
   }
 }

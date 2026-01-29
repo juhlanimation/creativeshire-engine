@@ -4,10 +4,10 @@
  */
 
 import type { ReactNode } from 'react'
-import type { RevealType, UseGsapRevealOptions } from '@/creativeshire/experience/transitions'
+import type { RevealType, UseGsapRevealOptions } from '@/creativeshire/experience/effects/mask'
 
 // Re-export for convenience
-export type { RevealType } from '@/creativeshire/experience/transitions'
+export type { RevealType } from '@/creativeshire/experience/effects/mask'
 
 /**
  * Transition phase for modal open/close animation.
