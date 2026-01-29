@@ -5,7 +5,7 @@
  * Content Layer (L1) - no scroll listeners or viewport units.
  */
 
-import React, { memo, forwardRef, type CSSProperties } from 'react'
+import React, { memo, forwardRef, useMemo, type CSSProperties } from 'react'
 import type { IconProps } from './types'
 import './styles.css'
 
@@ -34,17 +34,24 @@ const Icon = memo(forwardRef<HTMLSpanElement, IconProps>(function Icon(
     name,
     size,
     color,
+    decorative = true,
+    label,
     style,
     className,
     'data-behaviour': dataBehaviour
   },
   ref
 ) {
-  const computedStyle: CSSProperties = {
+  const computedStyle = useMemo<CSSProperties>(() => ({
     ...style,
     ...(size !== undefined ? { width: toCssSize(size), height: toCssSize(size) } : {}),
     ...(color ? { color } : {}),
-  }
+  }), [style, size, color])
+
+  // Accessibility attributes based on decorative prop
+  const ariaProps = decorative
+    ? { 'aria-hidden': true as const }
+    : { role: 'img' as const, 'aria-label': label }
 
   // If name is a raw SVG string, render it directly
   if (isRawSvg(name)) {
@@ -55,7 +62,7 @@ const Icon = memo(forwardRef<HTMLSpanElement, IconProps>(function Icon(
         className={className ? `icon-widget ${className}` : 'icon-widget'}
         style={Object.keys(computedStyle).length > 0 ? computedStyle : undefined}
         data-behaviour={dataBehaviour}
-        aria-hidden="true"
+        {...ariaProps}
         dangerouslySetInnerHTML={{ __html: name }}
       />
     )
@@ -70,7 +77,7 @@ const Icon = memo(forwardRef<HTMLSpanElement, IconProps>(function Icon(
       style={Object.keys(computedStyle).length > 0 ? computedStyle : undefined}
       data-icon={name}
       data-behaviour={dataBehaviour}
-      aria-hidden="true"
+      {...ariaProps}
     />
   )
 }))

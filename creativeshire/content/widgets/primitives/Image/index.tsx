@@ -5,7 +5,7 @@
  * Content Layer (L1) - no scroll listeners or viewport units.
  */
 
-import React, { memo, forwardRef, type CSSProperties } from 'react'
+import React, { memo, forwardRef, useMemo, type CSSProperties } from 'react'
 import type { ImageProps } from './types'
 import './styles.css'
 
@@ -28,12 +28,12 @@ const Image = memo(forwardRef<HTMLImageElement, ImageProps>(function Image(
   },
   ref
 ) {
-  const computedStyle: CSSProperties = {
+  const computedStyle = useMemo<CSSProperties>(() => ({
     ...style,
     ...(aspectRatio ? { aspectRatio } : {}),
     objectFit,
     objectPosition,
-  }
+  }), [style, aspectRatio, objectFit, objectPosition])
 
   return (
     <img
