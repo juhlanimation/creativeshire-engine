@@ -1,9 +1,12 @@
 /**
  * Button widget props interface.
  * Button renders an interactive button and reads CSS variables for animation.
+ *
+ * NOTE: No onClick prop - use BehaviourWrapper for click handling.
+ * Functions cannot be serialized across the React Server Component boundary.
  */
 
-import type { CSSProperties, MouseEventHandler } from 'react'
+import type { CSSProperties } from 'react'
 
 /**
  * Button variants for styling.
@@ -18,8 +21,6 @@ export interface ButtonProps {
   id?: string
   /** Button label text */
   label: string
-  /** Click handler */
-  onClick?: MouseEventHandler<HTMLButtonElement>
   /** Visual variant */
   variant?: ButtonVariant
   /** Disabled state */
