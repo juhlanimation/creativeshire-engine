@@ -25,12 +25,12 @@
 | 5. Content - Composite | `[x] Complete` | agent:a91aa4b |
 | 6. Content - Sections | `[x] Complete` | agent:ae0ecfb |
 | 7. Content - Chrome | `[x] Complete` | agent:aa7b299 |
-| 8. Experience - Behaviours | `[ ] Not started` | |
-| 9. Experience - Effects | `[ ] Not started` | |
-| 10. Experience - Drivers | `[ ] Not started` | |
-| 11. Experience - Triggers | `[ ] Not started` | |
-| 12. Experience - Modes | `[ ] Not started` | |
-| 13. Renderer | `[ ] Not started` | |
+| 8. Experience - Behaviours | `[x] Complete` | agent:aed01f2 |
+| 9. Experience - Effects | `[x] Complete` | agent:ad02457 |
+| 10. Experience - Drivers | `[x] Complete` | agent:a0254df |
+| 11. Experience - Triggers | `[x] Complete` | agent:ae2bc61 |
+| 12. Experience - Modes | `[x] Complete` | agent:a3f8fde |
+| 13. Renderer | `[x] Complete` | agent:af5c2ae |
 
 ---
 
@@ -382,45 +382,45 @@
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `behaviours/index.ts` | Barrel exports | |
-| [ ] | `behaviours/types.ts` | Behaviour type definitions | |
-| [ ] | `behaviours/registry.ts` | Behaviour registry | |
-| [ ] | `behaviours/resolve.ts` | Resolution logic | |
-| [ ] | `behaviours/BehaviourWrapper.tsx` | Applies behaviours to children | |
+| [x] | `behaviours/index.ts` | Barrel exports | Verified - triggers registration |
+| [x] | `behaviours/types.ts` | Behaviour type definitions | Verified - minimal and correct |
+| [x] | `behaviours/registry.ts` | Behaviour registry | Verified - manual registration pattern |
+| [x] | `behaviours/resolve.ts` | Resolution logic | Verified - O(1) Set lookups |
+| [!] | `behaviours/BehaviourWrapper.tsx` | Applies behaviours to children | Missing cleanup return; no driver integration |
 
 ### `behaviours/animation/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.ts` | Barrel | |
-| [ ] | `marquee.ts` | Marquee animation behaviour | |
+| [x] | `index.ts` | Barrel | Verified |
+| [!] | `marquee.ts` | Marquee animation behaviour | Missing `requires` array |
 
 ### `behaviours/hover/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.ts` | Barrel | |
-| [ ] | `expand.ts` | Hover expand (sets --hover) | |
-| [ ] | `scale.ts` | Hover scale (sets --hover) | |
-| [ ] | `reveal.ts` | Hover reveal (sets --hover) | |
+| [x] | `index.ts` | Barrel | Verified |
+| [!] | `expand.ts` | Hover expand (sets --hover) | Missing `requires`; reads widget-specific state (hoveredThumbnailIndex) |
+| [!] | `scale.ts` | Hover scale (sets --hover) | Missing `requires`; outputs config as values |
+| [!] | `reveal.ts` | Hover reveal (sets --hover) | Missing `requires`; outputs config as values |
 
 ### `behaviours/scroll/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.ts` | Barrel | |
-| [ ] | `color-shift.ts` | Scroll color shift (sets --scroll) | |
-| [ ] | `fade.ts` | Scroll fade in (sets --scroll) | |
-| [ ] | `fade-out.ts` | Scroll fade out (sets --scroll) | |
-| [ ] | `image-cycle.ts` | Scroll image cycling (sets --scroll) | |
-| [ ] | `progress.ts` | Scroll progress (sets --scroll) | |
+| [x] | `index.ts` | Barrel | Verified |
+| [!] | `color-shift.ts` | Scroll color shift (sets --scroll) | Reads invalid state key (`--bg-index` from state) |
+| [!] | `fade.ts` | Scroll fade in (sets --scroll) | Missing `requires` array |
+| [!] | `fade-out.ts` | Scroll fade out (sets --scroll) | Missing `requires` array |
+| [!] | `image-cycle.ts` | Scroll image cycling (sets --scroll) | Missing `requires` array |
+| [!] | `progress.ts` | Scroll progress (sets --scroll) | Missing `will-change` in cssTemplate |
 
 ### `behaviours/visibility/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.ts` | Barrel | |
-| [ ] | `fade-in.ts` | Visibility fade in (sets --visible) | |
+| [x] | `index.ts` | Barrel | Verified |
+| [!] | `fade-in.ts` | Visibility fade in (sets --visible) | Missing `requires` array |
 
 ---
 
@@ -432,33 +432,33 @@
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `effects/index.css` | Effect imports | |
+| [x] | `effects/index.css` | Effect imports | Verified - organized by mechanism |
 
 ### Root Effects
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `fade.css` | Opacity transitions | |
-| [ ] | `color-shift.css` | Color transitions | |
-| [ ] | `marquee-scroll.css` | Marquee animation | |
-| [ ] | `overlay-darken.css` | Overlay darkening | |
+| [x] | `fade.css` | Opacity transitions | Verified - 8 variants, all compliant |
+| [x] | `color-shift.css` | Color transitions | Verified - CSS variables with fallbacks |
+| [x] | `marquee-scroll.css` | Marquee animation | Verified - reduced motion support |
+| [x] | `overlay-darken.css` | Overlay darkening | Verified - data-attribute selectors |
 
 ### `effects/mask/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.ts` | Barrel | |
-| [ ] | `wipe.css` | Wipe mask effect | |
-| [ ] | `reveal.css` | Reveal mask effect | |
-| [ ] | `RevealTransition.tsx` | Reveal component | |
-| [ ] | `useGsapReveal.ts` | GSAP reveal hook | |
+| [!] | `index.ts` | Should NOT exist | TS barrel in CSS-only folder (layer violation) |
+| [x] | `wipe.css` | Wipe mask effect | Verified |
+| [x] | `reveal.css` | Reveal mask effect | Verified |
+| [!] | `RevealTransition.tsx` | Should NOT be in effects/ | React component belongs in behaviours/ or drivers/ |
+| [!] | `useGsapReveal.ts` | Should NOT be in effects/ | Hook belongs in behaviours/ or drivers/ |
 
 ### `effects/transform/`
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `slide.css` | Slide transform | |
-| [ ] | `scale.css` | Scale transform | |
+| [x] | `slide.css` | Slide transform | Verified |
+| [x] | `scale.css` | Scale transform | Verified - 3 variants |
 
 ---
 
@@ -468,9 +468,11 @@
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `drivers/index.ts` | Barrel exports | |
-| [ ] | `drivers/types.ts` | Driver type definitions | |
-| [ ] | `drivers/useScrollFadeDriver.ts` | Scroll fade driver | |
+| [!] | `drivers/index.ts` | Barrel exports | Exports hook instead of Driver class |
+| [!] | `drivers/types.ts` | Driver type definitions | Missing Driver and Target interfaces |
+| [!] | `drivers/useScrollFadeDriver.ts` | Scroll fade driver | Hook pattern instead of Driver class; missing register/unregister |
+
+**Critical:** Architecture mismatch - uses React hooks instead of Driver classes with register/unregister lifecycle
 
 ---
 
@@ -480,12 +482,14 @@
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `triggers/index.ts` | Barrel exports | |
-| [ ] | `triggers/types.ts` | Trigger type definitions | |
-| [ ] | `triggers/useIntersection.ts` | IntersectionObserver | |
-| [ ] | `triggers/usePrefersReducedMotion.ts` | Motion preference | |
-| [ ] | `triggers/useScrollProgress.ts` | Scroll progress | |
-| [ ] | `triggers/useViewport.ts` | Viewport size | |
+| [x] | `triggers/index.ts` | Barrel exports | Verified |
+| [x] | `triggers/types.ts` | Trigger type definitions | Verified |
+| [!] | `triggers/useIntersection.ts` | IntersectionObserver | Missing SSR guard |
+| [x] | `triggers/usePrefersReducedMotion.ts` | Motion preference | Verified - only one with proper SSR guard |
+| [!] | `triggers/useScrollProgress.ts` | Scroll progress | Missing SSR guard |
+| [!] | `triggers/useViewport.ts` | Viewport size | Missing SSR guard |
+
+**Critical:** 3 triggers missing `typeof window !== 'undefined'` SSR check
 
 ---
 
@@ -495,10 +499,12 @@
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `modes/index.ts` | Barrel exports | |
-| [ ] | `modes/types.ts` | Mode type definitions | |
-| [ ] | `modes/registry.ts` | Mode registry | |
-| [ ] | `modes/stacking/index.ts` | Stacking mode | |
+| [x] | `modes/index.ts` | Barrel exports | Verified |
+| [!] | `modes/types.ts` | Mode type definitions | Redundant re-export; should define Mode locally |
+| [x] | `modes/registry.ts` | Mode registry | Verified - Map-based O(1) lookup |
+| [!] | `modes/stacking/index.ts` | Stacking mode | Missing spec fields: name, description, provides, triggers, options |
+
+**Critical:** Mode interface has 3 fields, spec requires 8
 
 ---
 
@@ -508,18 +514,20 @@
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `index.ts` | Barrel exports | |
-| [ ] | `types.ts` | Renderer type definitions | |
-| [ ] | `chrome.css` | Chrome base styles | |
-| [ ] | `ChromeRenderer.tsx` | Renders chrome | |
-| [ ] | `ErrorBoundary.tsx` | Error boundary | |
-| [ ] | `PageRenderer.tsx` | Renders page | |
-| [ ] | `SectionRenderer.tsx` | Renders sections | |
-| [ ] | `SiteRenderer.tsx` | Top-level renderer | |
-| [ ] | `ThemeProvider.tsx` | Theme context | |
-| [ ] | `WidgetRenderer.tsx` | Renders widgets | |
-| [ ] | `hooks/index.ts` | Hook barrel | |
-| [ ] | `hooks/useScrollIndicatorFade.ts` | Colocated hook | |
+| [x] | `index.ts` | Barrel exports | Verified |
+| [x] | `types.ts` | Renderer type definitions | Verified |
+| [x] | `chrome.css` | Chrome base styles | Verified |
+| [x] | `ChromeRenderer.tsx` | Renders chrome | Verified - registry lookup, portals |
+| [x] | `ErrorBoundary.tsx` | Error boundary | Verified - proper fallback UI |
+| [x] | `PageRenderer.tsx` | Renders page | Verified |
+| [!] | `SectionRenderer.tsx` | Renders sections | Custom scroll-fade instead of resolveBehaviour() |
+| [x] | `SiteRenderer.tsx` | Top-level renderer | Verified - correct provider order |
+| [x] | `ThemeProvider.tsx` | Theme context | Verified |
+| [x] | `WidgetRenderer.tsx` | Renders widgets | Verified - registry, recursion, error boundary |
+| [x] | `hooks/index.ts` | Hook barrel | Verified |
+| [x] | `hooks/useScrollIndicatorFade.ts` | Colocated hook | Verified |
+
+**Overall:** 91% compliant - minor deviations from spec pattern
 
 ---
 
@@ -527,11 +535,11 @@
 
 | Status | File | Expected | Findings |
 |--------|------|----------|----------|
-| [ ] | `experience/index.ts` | Barrel exports | |
-| [ ] | `experience/types.ts` | Experience type defs | |
-| [ ] | `experience/ExperienceProvider.tsx` | Context provider | |
-| [ ] | `experience/SmoothScrollProvider.tsx` | Lenis scroll | |
-| [ ] | `experience/TriggerInitializer.tsx` | Initialize triggers | |
+| [x] | `experience/index.ts` | Barrel exports | Verified |
+| [x] | `experience/types.ts` | Experience type defs | Verified (Mode interface simplified from spec) |
+| [x] | `experience/ExperienceProvider.tsx` | Context provider | Verified |
+| [x] | `experience/SmoothScrollProvider.tsx` | Lenis scroll | Verified |
+| [x] | `experience/TriggerInitializer.tsx` | Initialize triggers | Verified |
 
 ---
 
@@ -555,6 +563,14 @@
 | `sections/styles.css` | Contains site-specific Bojuhl CSS | Should be in preset, not generic section styles |
 | `chrome/CursorLabel/index.tsx` | Document event listeners | Event handling belongs in L2 triggers |
 | `chrome/Modal/index.tsx` | Imports RevealTransition from experience/ | L1 chrome importing L2 experience components |
+| `behaviours/*/` | All 8 behaviours missing `requires` array | Spec rule #2 - must list state dependencies |
+| `behaviours/BehaviourWrapper.tsx` | Missing cleanup and driver integration | Spec rule #9 - must return cleanup function |
+| `behaviours/scroll/color-shift.ts` | Reads `--bg-index` from state | CSS variables are output, not input |
+| `behaviours/hover/expand.ts` | Reads widget-specific state | Breaks generalization - couples to widget |
+| `effects/mask/*.ts,*.tsx` | 3 React/GSAP files in effects/ folder | Effects must be pure CSS; move to behaviours/ |
+| `drivers/*.ts` | Hook pattern instead of Driver class | Spec requires register/unregister/destroy lifecycle |
+| `triggers/useScrollProgress,useIntersection,useViewport` | Missing SSR guard | Will crash on server-side render |
+| `modes/stacking/index.ts` | Mode has 3 fields, spec requires 8 | Missing name, description, provides, triggers, options |
 
 ### Naming Issues
 
@@ -572,6 +588,9 @@
 | `sections/styles.css` | L1 with viewport units | L2 BehaviourWrapper | 100svh, position:absolute belong to L2 |
 | `chrome/Modal/index.tsx` | L1 importing L2 | Need design decision | RevealTransition is intentional but violates strict L1/L2 |
 | `chrome/CursorLabel/index.tsx` | L1 with DOM listeners | L2 driver/trigger | Mouse tracking is L2 concern |
+| `effects/mask/RevealTransition.tsx` | React component in effects/ | behaviours/ or drivers/ | Effects must be pure CSS |
+| `effects/mask/useGsapReveal.ts` | Hook in effects/ | behaviours/ or drivers/ | Effects must be pure CSS |
+| `drivers/useScrollFadeDriver.ts` | React hook pattern | Driver class pattern | Spec requires register/unregister lifecycle |
 
 ### Missing Files
 
@@ -626,6 +645,36 @@
 | Metric | Value |
 |--------|-------|
 | Total Files | ~164 |
-| Verified | 0 |
-| Issues Found | 0 |
-| Tasks Generated | 0 |
+| Verified | 98 |
+| Issues Found | 66 |
+| Tasks Generated | Pending |
+
+### Issues by Phase
+
+| Phase | Verified | Issues | Critical |
+|-------|----------|--------|----------|
+| 1. Presets | 8 | 1 | 0 |
+| 2. Schema | 6 | 3 | 2 |
+| 3. Primitives | 8 | 12 | 4 |
+| 4. Layout | 6 | 12 | 12 |
+| 5. Composite | 16 | 8 | 2 |
+| 6. Sections | 11 | 1 | 1 |
+| 7. Chrome | 11 | 4 | 3 |
+| 8. Behaviours | 8 | 10 | 4 |
+| 9. Effects | 9 | 3 | 3 |
+| 10. Drivers | 0 | 3 | 3 |
+| 11. Triggers | 3 | 3 | 3 |
+| 12. Modes | 2 | 2 | 1 |
+| 13. Renderer | 10 | 1 | 0 |
+| **TOTAL** | **98** | **63** | **38** |
+
+### Top Priority Fixes
+
+1. **Layout widgets**: Change from React children to widgets array (12 files)
+2. **Behaviours**: Add `requires` array to all 8 behaviours
+3. **Triggers**: Add SSR guard to 3 triggers
+4. **Effects**: Move GSAP files from effects/ to behaviours/ or drivers/
+5. **Drivers**: Implement Driver class pattern with register/unregister
+6. **Primitives**: Remove calc(var(--y)), add useMemo, remove onClick from Button
+7. **Sections styles.css**: Extract Bojuhl CSS to preset, remove viewport units
+8. **Modes**: Extend Mode interface to match spec (add 5 missing fields)
