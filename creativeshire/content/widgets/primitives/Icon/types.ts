@@ -17,6 +17,10 @@ export interface IconProps {
   size?: number | string
   /** Icon color (CSS color value) */
   color?: string
+  /** Whether icon is decorative (hidden from screen readers). Default: true */
+  decorative?: boolean
+  /** Accessible label for non-decorative icons. Required if decorative=false */
+  label?: string
   /** Inline styles */
   style?: CSSProperties
   /** Additional CSS class names */
