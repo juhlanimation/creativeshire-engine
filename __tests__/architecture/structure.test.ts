@@ -231,8 +231,7 @@ describe('Component Structure Validation', () => {
   describe('Effect structure', () => {
     const EFFECT_MECHANISMS = ['transform', 'mask', 'emphasis', 'page']
 
-    // TODO: Effect mechanism folders (transform/, mask/) need index.ts barrels
-    it.skip('effect mechanism folders have index.ts (transform/, mask/ missing)', async () => {
+    it('effect mechanism folders have index.ts', async () => {
       const missing: string[] = []
 
       for (const mechanism of EFFECT_MECHANISMS) {

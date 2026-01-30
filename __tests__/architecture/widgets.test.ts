@@ -37,8 +37,7 @@ describe('Widget Structure Validation', () => {
       })
     })
 
-    // TODO: Missing content/widgets/primitives/index.ts barrel file
-    it.skip('primitives folder has index.ts barrel (file missing)', async () => {
+    it('primitives folder has index.ts barrel', async () => {
       const indexFiles = await getFiles('content/widgets/primitives/index.ts')
       expect(indexFiles.length, 'Missing primitives/index.ts').toBeGreaterThan(0)
     })
@@ -101,8 +100,7 @@ describe('Widget Structure Validation', () => {
       })
     })
 
-    // TODO: Missing content/widgets/layout/index.ts barrel file
-    it.skip('layout folder has index.ts barrel (file missing)', async () => {
+    it('layout folder has index.ts barrel', async () => {
       const indexFiles = await getFiles('content/widgets/layout/index.ts')
       expect(indexFiles.length, 'Missing layout/index.ts').toBeGreaterThan(0)
     })
