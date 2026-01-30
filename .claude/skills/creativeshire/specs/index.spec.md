@@ -35,6 +35,7 @@
 | File | Describes |
 |------|-----------|
 | [schema.spec.md](layers/schema.spec.md) | TypeScript types that define the entire system |
+| [settings.spec.md](layers/settings.spec.md) | Component customization schema for CMS editors |
 | [content.spec.md](layers/content.spec.md) | Widgets, sections, chrome, features (L1 - static content) |
 | [experience.spec.md](layers/experience.spec.md) | Experiences, behaviours, drivers, triggers, modes (L2 - animation/interaction) |
 | [interface.spec.md](layers/interface.spec.md) | Platform ↔ Engine contract for live updates and events |
@@ -139,6 +140,7 @@
 |--------------|------|
 | Understand the core rules | [philosophy.spec.md](core/philosophy.spec.md) |
 | Understand platform vs engine | [platform.spec.md](core/platform.spec.md) |
+| Define customizable settings for CMS | [settings.spec.md](layers/settings.spec.md) |
 | Know what a layer can/cannot do | [contracts.spec.md](core/contracts.spec.md) |
 | Look up a term | [glossary.spec.md](core/glossary.spec.md) |
 | Check before creating something new | [extension.spec.md](core/extension.spec.md) |
