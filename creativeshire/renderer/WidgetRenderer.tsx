@@ -96,12 +96,13 @@ export function WidgetRenderer({
     <WidgetRenderer key={child.id ?? i} widget={child} index={i} />
   ))
 
-  // Prepare props - pass style and className directly from schema
+  // Prepare props - pass style, className, and widgets directly from schema
   const componentProps = {
     ...widget.props,
     ...(widget.id && { id: widget.id }),
     ...(widget.style && { style: widget.style }),
     ...(widget.className && { className: widget.className }),
+    ...(widget.widgets && { widgets: widget.widgets }),
     ...(index !== undefined && { 'data-widget-index': index }),
   }
 
