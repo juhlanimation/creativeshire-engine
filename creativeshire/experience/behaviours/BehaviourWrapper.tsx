@@ -66,11 +66,13 @@ const DEFAULT_STATE: BehaviourState = {
 /**
  * State dependencies that require ScrollDriver.
  * If a behaviour requires any of these, it will be registered with the driver.
+ * ScrollDriver provides 60fps updates via requestAnimationFrame.
  */
 const SCROLL_DEPENDENCIES = new Set([
   'scrollProgress',
   'scrollVelocity',
   'sectionProgress',
+  'sectionVisibility', // Tracked via IntersectionObserver in ScrollDriver
 ])
 
 /**

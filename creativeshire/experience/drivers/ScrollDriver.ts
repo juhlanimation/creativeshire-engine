@@ -8,6 +8,7 @@
  * - Event listeners use { passive: true } for non-blocking scroll
  * - Targets stored in Map for O(1) lookup
  * - Only uses element.style.setProperty() for CSS variables
+ * - IntersectionObserver tracks per-element visibility for sectionVisibility
  * - destroy() removes listeners and clears Map
  */
 
@@ -26,12 +27,29 @@ interface ScrollState {
 }
 
 /**
+ * Per-element visibility tracked by IntersectionObserver.
+ */
+interface ElementVisibility {
+  /** Intersection ratio 0-1 */
+  visibility: number
+}
+
+/**
  * ScrollDriver applies CSS variables based on scroll position.
  * Implements the Driver interface with register/unregister/destroy lifecycle.
  */
 export class ScrollDriver implements Driver {
   /** Registered targets - Map for O(1) lookup */
   private targets: Map<string, Target> = new Map()
+
+  /** Per-element visibility from IntersectionObserver */
+  private visibility: Map<string, ElementVisibility> = new Map()
+
+  /** Element ID lookup for IntersectionObserver callback */
+  private elementIds: WeakMap<Element, string> = new WeakMap()
+
+  /** IntersectionObserver for visibility tracking */
+  private observer: IntersectionObserver | null = null
 
   /** Internal scroll state */
   private state: ScrollState = {
@@ -58,8 +76,27 @@ export class ScrollDriver implements Driver {
     // Add scroll listener with passive: true for non-blocking scroll
     window.addEventListener('scroll', this.onScroll, { passive: true })
 
+    // Create IntersectionObserver for visibility tracking
+    // Uses threshold array for smooth visibility values
+    this.observer = new IntersectionObserver(this.onIntersection, {
+      threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+    })
+
     // Start the animation loop
     this.tick()
+  }
+
+  /**
+   * IntersectionObserver callback - updates per-element visibility.
+   * Arrow function for stable reference.
+   */
+  private onIntersection = (entries: IntersectionObserverEntry[]): void => {
+    entries.forEach((entry) => {
+      const id = this.elementIds.get(entry.target)
+      if (id) {
+        this.visibility.set(id, { visibility: entry.intersectionRatio })
+      }
+    })
   }
 
   /**
@@ -105,13 +142,16 @@ export class ScrollDriver implements Driver {
     const { scrollProgress, scrollVelocity } = this.state
 
     // Batch write: update all targets
-    this.targets.forEach(({ element, behaviour, options }) => {
+    this.targets.forEach(({ element, behaviour, options }, id) => {
+      // Get per-element visibility from IntersectionObserver
+      const elementVisibility = this.visibility.get(id)?.visibility ?? 0
+
       // Build state object for behaviour
       const behaviourState: BehaviourState = {
         scrollProgress,
         scrollVelocity,
         sectionProgress: scrollProgress, // Default to global progress
-        sectionVisibility: 1, // Default to visible
+        sectionVisibility: elementVisibility, // Per-element visibility from observer
         sectionIndex: 0,
         totalSections: 1,
         isActive: true,
@@ -133,6 +173,7 @@ export class ScrollDriver implements Driver {
   /**
    * Register an element with the driver.
    * Adds target to internal Map for animation updates.
+   * Starts observing element for visibility tracking.
    */
   register(
     id: string,
@@ -146,14 +187,29 @@ export class ScrollDriver implements Driver {
     }
 
     this.targets.set(id, { element, behaviour, options })
+
+    // Track element ID for IntersectionObserver callback
+    this.elementIds.set(element, id)
+
+    // Initialize visibility and start observing
+    this.visibility.set(id, { visibility: 0 })
+    this.observer?.observe(element)
   }
 
   /**
    * Unregister an element from the driver.
-   * Removes target from Map.
+   * Removes target from Map and stops observing for visibility.
    */
   unregister(id: string): void {
+    const target = this.targets.get(id)
+    if (target) {
+      // Stop observing the element
+      this.observer?.unobserve(target.element)
+      this.elementIds.delete(target.element)
+    }
+
     this.targets.delete(id)
+    this.visibility.delete(id)
   }
 
   /**
@@ -169,14 +225,21 @@ export class ScrollDriver implements Driver {
       window.removeEventListener('scroll', this.onScroll)
     }
 
+    // Disconnect IntersectionObserver
+    if (this.observer) {
+      this.observer.disconnect()
+      this.observer = null
+    }
+
     // Cancel animation frame
     if (this.rafId !== null) {
       cancelAnimationFrame(this.rafId)
       this.rafId = null
     }
 
-    // Clear all targets
+    // Clear all targets and visibility tracking
     this.targets.clear()
+    this.visibility.clear()
   }
 
   /**
