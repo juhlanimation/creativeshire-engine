@@ -65,6 +65,8 @@ export function createOtherProjectsSection(props: OtherProjectsProps): SectionSc
         transitionDuration: 400,
         cursorLabel: 'WATCH',
       },
+      // Wire click to open-video-modal action for thumbnail clicks
+      on: { click: 'open-video-modal' },
     })
   }
 

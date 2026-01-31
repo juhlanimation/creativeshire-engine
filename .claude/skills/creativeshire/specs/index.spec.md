@@ -29,6 +29,7 @@
 | [glossary.spec.md](core/glossary.spec.md) | Definitions of all architectural terms |
 | [extension.spec.md](core/extension.spec.md) | Check → Extend → Create: reuse before invention |
 | [platform.spec.md](core/platform.spec.md) | Creativeshire platform wrapper relationship, engine scope |
+| [versioning.spec.md](core/versioning.spec.md) | Schema versioning, compatibility rules, migration triggers |
 
 ### layers/ — System Organization
 
@@ -92,6 +93,24 @@
 |------|-----------|
 | [site.spec.md](components/site/site.spec.md) | Instance-specific config, pages, and data |
 
+### components/interface/ — Interface Layer Contracts
+
+| File | Describes |
+|------|-----------|
+| [engine-provider.spec.md](components/interface/engine-provider.spec.md) | EngineProvider, controller, state management |
+
+### components/migrations/ — Migration System
+
+| File | Describes |
+|------|-----------|
+| [migrations.spec.md](components/migrations/migrations.spec.md) | Schema migrations, version transforms |
+
+### components/validation/ — Validation System
+
+| File | Describes |
+|------|-----------|
+| [site-validator.spec.md](components/validation/site-validator.spec.md) | Build-time schema validation |
+
 ### patterns/ — Patterns & Anti-Patterns
 
 | File | Describes |
@@ -152,6 +171,10 @@
 | Create a preset | [preset.spec.md](components/preset/preset.spec.md) |
 | Configure a site instance | [site.spec.md](components/site/site.spec.md) |
 | Define platform interface | [interface.spec.md](layers/interface.spec.md) |
+| Build EngineProvider | [engine-provider.spec.md](components/interface/engine-provider.spec.md) |
+| Understand versioning | [versioning.spec.md](core/versioning.spec.md) |
+| Add a migration | [migrations.spec.md](components/migrations/migrations.spec.md) |
+| Validate at build time | [site-validator.spec.md](components/validation/site-validator.spec.md) |
 | See folder layout | [folders.spec.md](reference/folders.spec.md) |
 | See diagrams | [diagrams/index.md](diagrams/index.md) |
 | Know when to use Tailwind vs CSS vars | [tech-stack/styling.md](reference/tech-stack/styling.md) |

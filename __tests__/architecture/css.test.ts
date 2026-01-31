@@ -103,10 +103,13 @@ describe('CSS Rule Validation', () => {
       expect(cssFiles.length, 'No CSS files in effects/').toBeGreaterThan(0)
     })
 
-    // TODO: Effects has index.css but needs index.ts barrel for TypeScript imports
-    it.skip('effects folder has index.ts barrel (missing - has index.css only)', async () => {
-      const indexFiles = await getFiles('experience/effects/index.ts')
-      expect(indexFiles.length, 'Missing experience/effects/index.ts').toBeGreaterThan(0)
+    /**
+     * Per effect.spec.md: Effects are pure CSS. The barrel is index.css, not index.ts.
+     * Effects are imported via CSS @import or included via the root index.css.
+     */
+    it('effects folder has index.css barrel', async () => {
+      const indexFiles = await getFiles('experience/effects/index.css')
+      expect(indexFiles.length, 'Missing experience/effects/index.css').toBeGreaterThan(0)
     })
   })
 

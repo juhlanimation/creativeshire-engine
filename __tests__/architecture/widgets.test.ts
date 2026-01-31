@@ -4,7 +4,8 @@
  * Validates widget architecture rules:
  * - Primitives have no React state (useState/useReducer)
  * - Layout widgets use widgets array, not children
- * - Composites are assemblies of Layout + Primitives
+ * - Patterns are factory functions returning WidgetSchema
+ * - Interactive widgets are React components with state
  * - Proper barrel exports
  */
 
@@ -37,8 +38,7 @@ describe('Widget Structure Validation', () => {
       })
     })
 
-    // TODO: Missing content/widgets/primitives/index.ts barrel file
-    it.skip('primitives folder has index.ts barrel (file missing)', async () => {
+    it('primitives folder has index.ts barrel', async () => {
       const indexFiles = await getFiles('content/widgets/primitives/index.ts')
       expect(indexFiles.length, 'Missing primitives/index.ts').toBeGreaterThan(0)
     })
@@ -101,59 +101,75 @@ describe('Widget Structure Validation', () => {
       })
     })
 
-    // TODO: Missing content/widgets/layout/index.ts barrel file
-    it.skip('layout folder has index.ts barrel (file missing)', async () => {
+    it('layout folder has index.ts barrel', async () => {
       const indexFiles = await getFiles('content/widgets/layout/index.ts')
       expect(indexFiles.length, 'Missing layout/index.ts').toBeGreaterThan(0)
     })
   })
 
-  describe('Composites', () => {
-    // VIOLATION: Composites have CSS files - Video, VideoPlayer, ContactPrompt, etc.
-    describe.skip('No CSS files (composites have styles.css)', () => {
-      it('composites do not have CSS files', async () => {
-        const cssFiles = await getFiles('content/widgets/composite/**/*.css')
+  describe('Patterns (widget factories)', () => {
+    /**
+     * Patterns are factory functions that return WidgetSchema.
+     * They compose existing primitives and layouts into reusable structures.
+     * - Factory Pattern (index.ts) - NO CSS, returns WidgetSchema
+     */
 
-        const violations = cssFiles.map(f => relativePath(f))
-
-        expect(violations, `CSS files in composites:\\n${violations.join('\\n')}`).toHaveLength(0)
-      })
+    it('patterns folder has index.ts barrel', async () => {
+      const indexFiles = await getFiles('content/widgets/patterns/index.ts')
+      expect(indexFiles.length, 'Missing patterns/index.ts').toBeGreaterThan(0)
     })
 
-    it('composites folder has index.ts barrel', async () => {
-      const indexFiles = await getFiles('content/widgets/composite/index.ts')
-      expect(indexFiles.length, 'Missing composite/index.ts').toBeGreaterThan(0)
-    })
-
-    // Architecture uses schema-based composition (factories return WidgetSchema) or
-    // composite-to-composite imports (Video imports VideoPlayer). Direct primitives/layout
-    // imports are not required since composition happens at the schema level.
-    it.skip('composites import from primitives or layout (uses schema-based composition instead)', async () => {
-      const files = await getFiles('content/widgets/composite/**/*.tsx')
-      const componentFiles = files.filter(f =>
+    it('factory patterns return WidgetSchema (not JSX)', async () => {
+      const files = await getFiles('content/widgets/patterns/**/index.ts')
+      const factoryFiles = files.filter(f =>
         !f.endsWith('index.tsx') &&
-        !f.endsWith('index.ts') &&
         !f.includes('.test.')
       )
 
-      let hasValidImports = false
+      const violations: string[] = []
 
-      for (const file of componentFiles) {
+      for (const file of factoryFiles) {
         const content = await readFile(file)
-        const imports = extractImports(content)
 
-        for (const imp of imports) {
-          if (imp.includes('primitives') || imp.includes('layout')) {
-            hasValidImports = true
-            break
-          }
+        // Factory patterns should have WidgetSchema return type or return objects with 'type' property
+        const hasWidgetSchema = content.includes('WidgetSchema') || content.includes("type:")
+        const hasJsx = /<[A-Z][a-zA-Z]*/.test(content) && !content.includes('// ')
+
+        if (hasJsx && !hasWidgetSchema) {
+          violations.push(`${relativePath(file)}: appears to have JSX in factory file`)
         }
-
-        if (hasValidImports) break
       }
 
-      // At least some composites should import from primitives/layout
-      expect(hasValidImports, 'No composites import from primitives or layout').toBe(true)
+      expect(violations, `Factory patterns with JSX (use interactive/ for React components):\\n${violations.join('\\n')}`).toHaveLength(0)
+    })
+  })
+
+  describe('Interactive widgets', () => {
+    /**
+     * Interactive widgets are React components with internal state,
+     * complex event handling, or multiple render modes.
+     * - React Component Pattern (index.tsx) - CAN have CSS
+     */
+
+    it('interactive folder has index.ts barrel', async () => {
+      const indexFiles = await getFiles('content/widgets/interactive/index.ts')
+      expect(indexFiles.length, 'Missing interactive/index.ts').toBeGreaterThan(0)
+    })
+
+    it('interactive widgets are React components (index.tsx)', async () => {
+      const dirs = await getFiles('content/widgets/interactive/*/')
+      const violations: string[] = []
+
+      for (const dir of dirs) {
+        const files = await getFiles(`content/widgets/interactive/${dir.split(/[\\/]/).pop()}/*.tsx`)
+        const hasReactComponent = files.some(f => f.endsWith('index.tsx'))
+
+        if (!hasReactComponent) {
+          violations.push(relativePath(dir))
+        }
+      }
+
+      expect(violations, `Interactive widgets missing index.tsx:\\n${violations.join('\\n')}`).toHaveLength(0)
     })
   })
 

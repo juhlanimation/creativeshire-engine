@@ -72,6 +72,8 @@ export const siteConfig: SiteSchema = {
           targetSelector: '.video-widget--hover-play',
         },
       },
+      // Modal infrastructure - registers 'open-video-modal' action
+      modal: { component: 'ModalRoot' },
     },
   },
   pages: [

@@ -12,7 +12,7 @@
 import type { ComponentType } from 'react'
 import Footer from './regions/Footer'
 import CursorLabel from './overlays/CursorLabel'
-import Modal from './overlays/Modal'
+import { ModalRoot } from './overlays/Modal'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Chrome props vary by type
 type ChromeComponent = ComponentType<any>
@@ -22,11 +22,14 @@ type ChromeComponent = ComponentType<any>
  *
  * Regions (Footer, Header, Sidebar): Component-based is fine, they're complex.
  * Overlays: Prefer widget-based approach via OverlaySchema.widget
+ *
+ * ModalRoot: Registers 'open-video-modal' action for widget → modal communication.
+ * Sites that need modal functionality should add ModalRoot to their chrome overlays.
  */
 export const chromeRegistry: Record<string, ChromeComponent> = {
   Footer,
   CursorLabel,
-  Modal,
+  ModalRoot,
 }
 
 /**

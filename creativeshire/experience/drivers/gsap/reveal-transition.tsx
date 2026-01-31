@@ -3,7 +3,8 @@
 /**
  * RevealTransition - GSAP-powered reveal animation wrapper.
  *
- * Provides wipe and expand transitions matching bojuhl.com:
+ * Uses the transition registry for pluggable animations.
+ * Built-in transitions:
  * - wipe-left: clip from right, reveal left-to-right
  * - wipe-right: clip from left, reveal right-to-left
  * - expand: clip from sourceRect, expand to fullscreen
@@ -13,7 +14,7 @@
  * - GSAP timeline for precise control
  * - Sequenced content fade (content fades in after wipe)
  * - timeline.reverse() for smooth close animations
- * - sourceRect support for expand-from-element
+ * - Registry-based: add new transitions without modifying this file
  *
  * @example
  * ```tsx
@@ -39,8 +40,8 @@ export type { RevealType, UseGsapRevealOptions } from './use-gsap-reveal'
  * Props for RevealTransition component.
  */
 export interface RevealTransitionProps {
-  /** The reveal type: 'wipe-left' | 'wipe-right' | 'expand' | 'fade' */
-  type: 'wipe-left' | 'wipe-right' | 'expand' | 'fade'
+  /** Transition type ID (any registered transition: 'wipe-left', 'expand', 'fade', etc) */
+  type: string
   /** Whether content is revealed (true) or hidden (false) */
   revealed: boolean
   /** Called when reveal animation completes */

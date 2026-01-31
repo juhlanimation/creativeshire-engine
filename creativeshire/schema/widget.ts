@@ -11,6 +11,17 @@ import type { SerializableValue } from './types'
  * Schema for a widget instance.
  * Widgets hold content (text, images, video) and render once.
  */
+/**
+ * Event to action mapping.
+ * Maps DOM events to action IDs that are executed by the action registry.
+ *
+ * @example
+ * ```typescript
+ * { click: 'open-video-modal', hover: 'show-preview' }
+ * ```
+ */
+export type WidgetEventMap = Record<string, string>
+
 export interface WidgetSchema {
   /** Unique identifier for the widget */
   id?: string
@@ -26,6 +37,17 @@ export interface WidgetSchema {
   behaviour?: BehaviourConfig
   /** Nested widgets (for layout widgets) */
   widgets?: WidgetSchema[]
+  /**
+   * Event to action mapping.
+   * Maps DOM events (click, hover) to action IDs.
+   * Actions are registered by chrome and executed by WidgetRenderer.
+   *
+   * @example
+   * ```typescript
+   * { on: { click: 'open-video-modal' } }
+   * ```
+   */
+  on?: WidgetEventMap
 }
 
 /**

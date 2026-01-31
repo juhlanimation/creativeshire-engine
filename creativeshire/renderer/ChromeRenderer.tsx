@@ -92,11 +92,19 @@ const POSITION_CLASSES: Record<string, string> = {
  * becomes relative to the nearest transformed ancestor, not the viewport.
  *
  * Component-based overlays handle their own positioning (and portals if needed).
+ *
+ * Modal support:
+ * - Add 'ModalRoot' to chrome overlays in preset to enable modal functionality
+ * - ModalRoot registers actions (e.g., 'open-video-modal') for widgets to trigger
+ * - If not configured, modal actions gracefully do nothing
  */
 function renderOverlays(overlays: ChromeSchema['overlays'] | undefined): React.ReactNode {
-  if (!overlays) return null
-
   const elements: React.ReactNode[] = []
+
+  // No overlays configured
+  if (!overlays) {
+    return null
+  }
 
   Object.entries(overlays).forEach(([key, overlay]) => {
     if (!overlay) return
@@ -146,6 +154,12 @@ function renderOverlays(overlays: ChromeSchema['overlays'] | undefined): React.R
  * Renders chrome for the specified position.
  */
 export function ChromeRenderer({ siteChrome, pageChrome, position }: ChromeRendererProps): React.ReactNode {
+  // Render overlays (ModalRoot, CursorLabel, etc.)
+  if (position === 'overlays') {
+    return renderOverlays(siteChrome?.overlays)
+  }
+
+  // Regions require siteChrome configuration
   if (!siteChrome) return null
 
   // Handle page chrome overrides
@@ -166,9 +180,6 @@ export function ChromeRenderer({ siteChrome, pageChrome, position }: ChromeRende
 
     case 'footer':
       return renderRegion(getRegion('footer'), 'footer')
-
-    case 'overlays':
-      return renderOverlays(siteChrome.overlays)
 
     default:
       return null

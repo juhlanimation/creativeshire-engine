@@ -8,22 +8,6 @@ import type { ExperienceConfig } from './experience'
 import type { ThemeSchema } from './theme'
 
 /**
- * Default behaviour assignments for a mode.
- * Specifies which behaviours apply to sections and widget types.
- *
- * @deprecated Use ModeDefaults from experience/types.ts instead.
- * This interface is kept for backward compatibility with site schemas.
- */
-export interface ModeDefaults {
-  /** Default page transition behaviour */
-  page?: string
-  /** Default behaviour for all sections */
-  section: string
-  /** Default behaviour per widget type (e.g., Image: 'depth-layer') */
-  [widgetType: string]: string | undefined
-}
-
-/**
  * Reference to a page with its identifier and slug.
  * Used in site configuration to list available pages.
  */
@@ -41,6 +25,16 @@ export interface PageReference {
 export interface SiteSchema {
   /** Unique identifier for the site */
   id: string
+
+  /**
+   * Schema version this site was created with.
+   * Format: "major.minor.patch" (e.g., "2.0.0")
+   *
+   * If omitted, site is assumed to be created with current engine version.
+   * Build-time validation will warn about missing version.
+   */
+  schemaVersion?: string
+
   /** Theme configuration (scrollbar, colors, fonts) */
   theme?: ThemeSchema
   /** Experience configuration (modes, behaviours) */

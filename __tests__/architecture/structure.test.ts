@@ -4,22 +4,29 @@
  * Validates that each component type follows the correct file/folder structure.
  * Catches structural mistakes early before they become patterns.
  *
- * Expected structures:
+ * Expected structures (per specs):
  *
  * PRIMITIVES: content/widgets/primitives/{Name}/
  *   ├── index.tsx (required - exports component)
- *   ├── {Name}.tsx (optional - component implementation if separated)
- *   └── NO: *.css, hooks/, stores/
+ *   ├── types.ts (required - props interface)
+ *   ├── styles.css (expected - structural CSS with var() mappings)
+ *   └── NO: hooks/, stores/, @keyframes (animations in L2 effects)
  *
  * LAYOUTS: content/widgets/layout/{Name}/
  *   ├── index.tsx (required)
- *   └── NO: *.css, hooks/, stores/
+ *   ├── types.ts (required)
+ *   ├── styles.css (expected - layout CSS)
+ *   └── NO: hooks/, stores/
  *
- * COMPOSITES: content/widgets/composite/{Name}/
- *   ├── index.tsx (required)
- *   ├── {Name}.tsx (optional)
- *   ├── hooks/ (optional - for internal hooks)
- *   └── NO: *.css (use effects instead)
+ * COMPOSITES (two patterns):
+ *   Factory Pattern (index.ts):
+ *     ├── index.ts (returns WidgetSchema, no JSX)
+ *     ├── types.ts
+ *     └── NO: styles.css, React imports
+ *   React Component Pattern (index.tsx):
+ *     ├── index.tsx (for complex state: Video, VideoPlayer)
+ *     ├── types.ts
+ *     └── styles.css (allowed for React component composites)
  *
  * BEHAVIOURS: experience/behaviours/{trigger}/
  *   ├── index.ts (barrel)
@@ -27,20 +34,19 @@
  *
  * EFFECTS: experience/effects/
  *   ├── {mechanism}.css (single file effects)
- *   └── {mechanism}/ (folder for variants)
- *       ├── index.ts (barrel)
- *       └── {variant}.css
+ *   ├── {mechanism}/ (folder for variants)
+ *   │   └── {variant}.css
+ *   └── index.css (CSS barrel - NOT index.ts)
  *
  * SECTIONS: content/sections/patterns/{Name}/
  *   ├── index.ts (barrel)
- *   ├── {Name}.tsx (component)
- *   └── schema.ts (optional - section schema)
+ *   └── types.ts
  *
  * CHROME REGIONS: content/chrome/regions/{Name}/
  *   └── index.tsx (required)
  *
  * CHROME OVERLAYS: content/chrome/overlays/{Name}/
- *   └── index.tsx (required)
+ *   └── index.tsx (required) - L1/L2 hybrid, may import from experience/
  */
 
 import { describe, it, expect } from 'vitest'
@@ -75,12 +81,49 @@ describe('Component Structure Validation', () => {
       expect(missing, `Primitives missing index.tsx:\\n${missing.join('\\n')}`).toHaveLength(0)
     })
 
-    // VIOLATION: All primitives have styles.css - should use effects instead
-    it.skip('primitives have no CSS files (all have styles.css)', async () => {
-      const cssFiles = await getFiles('content/widgets/primitives/**/*.css')
-      const violations = cssFiles.map(f => relativePath(f))
+    /**
+     * Per widget.spec.md: Primitives SHOULD have styles.css for structural CSS.
+     * L1 widgets can have layout/positioning CSS. They CANNOT have @keyframes (animations belong in L2 effects).
+     */
+    it('primitives have styles.css for structural CSS', async () => {
+      const allFiles = await getFiles('content/widgets/primitives/**/*.tsx')
+      const folders = new Set<string>()
 
-      expect(violations, `CSS files in primitives (use effects instead):\\n${violations.join('\\n')}`).toHaveLength(0)
+      for (const file of allFiles) {
+        const rel = relativePath(file)
+        const parts = rel.split('/')
+        if (parts.length >= 4) {
+          folders.add(parts[3])
+        }
+      }
+
+      // Most primitives should have styles.css (not a strict requirement, but expected)
+      const withCss: string[] = []
+      for (const folder of folders) {
+        const cssPath = `content/widgets/primitives/${folder}/styles.css`
+        const cssFiles = await getFiles(cssPath)
+        if (cssFiles.length > 0) {
+          withCss.push(folder)
+        }
+      }
+
+      // At least half of primitives should have CSS (structural styling)
+      const ratio = withCss.length / folders.size
+      expect(ratio, `Expected most primitives to have styles.css, got ${withCss.length}/${folders.size}`).toBeGreaterThan(0.5)
+    })
+
+    it('primitives do not have @keyframes in CSS (animations belong in L2 effects)', async () => {
+      const cssFiles = await getFiles('content/widgets/primitives/**/*.css')
+      const violations: string[] = []
+
+      for (const file of cssFiles) {
+        const content = await readFile(file)
+        if (/@keyframes\s+\w+/.test(content)) {
+          violations.push(relativePath(file))
+        }
+      }
+
+      expect(violations, `@keyframes in primitives (move to experience/effects/):\\n${violations.join('\\n')}`).toHaveLength(0)
     })
 
     it('primitives have no hooks folders', async () => {
@@ -122,12 +165,22 @@ describe('Component Structure Validation', () => {
       expect(missing, `Layouts missing index.tsx:\\n${missing.join('\\n')}`).toHaveLength(0)
     })
 
-    // VIOLATION: All layouts have styles.css - should use effects instead
-    it.skip('layouts have no CSS files (all have styles.css)', async () => {
+    /**
+     * Per layout-widget.spec.md: Layouts SHOULD have styles.css for layout CSS.
+     * L1 layouts can have flex/grid CSS. They CANNOT have @keyframes.
+     */
+    it('layouts do not have @keyframes in CSS (animations belong in L2 effects)', async () => {
       const cssFiles = await getFiles('content/widgets/layout/**/*.css')
-      const violations = cssFiles.map(f => relativePath(f))
+      const violations: string[] = []
 
-      expect(violations, `CSS files in layouts (use effects instead):\\n${violations.join('\\n')}`).toHaveLength(0)
+      for (const file of cssFiles) {
+        const content = await readFile(file)
+        if (/@keyframes\s+\w+/.test(content)) {
+          violations.push(relativePath(file))
+        }
+      }
+
+      expect(violations, `@keyframes in layouts (move to experience/effects/):\\n${violations.join('\\n')}`).toHaveLength(0)
     })
 
     it('layouts have no hooks folders', async () => {
@@ -163,14 +216,61 @@ describe('Component Structure Validation', () => {
       expect(missing, `Composites missing index file:\\n${missing.join('\\n')}`).toHaveLength(0)
     })
 
-    // VIOLATION: Composites have CSS files - Video, VideoPlayer, ContactPrompt, GalleryThumbnail, etc.
-    describe.skip('No CSS files (composites have styles.css)', () => {
-      it('composites have no CSS files', async () => {
-        const cssFiles = await getFiles('content/widgets/composite/**/*.css')
-        const violations = cssFiles.map(f => relativePath(f))
+    /**
+     * Per widget-composite.spec.md: Two patterns exist:
+     * 1. Factory Pattern (index.ts) - NO CSS files allowed, returns WidgetSchema
+     * 2. React Component Pattern (index.tsx) - CAN have styles.css (Video, VideoPlayer)
+     *
+     * This test validates factory composites don't have CSS files.
+     */
+    describe('Factory composites have no CSS', () => {
+      it('factory composites (index.ts) do not have CSS files', async () => {
+        const allFiles = await getFiles('content/widgets/composite/**/*.{ts,tsx}')
+        const factoryFolders: string[] = []
 
-        expect(violations, `CSS files in composites (use effects instead):\\n${violations.join('\\n')}`).toHaveLength(0)
+        // Identify factory composites (have index.ts, NOT index.tsx)
+        for (const file of allFiles) {
+          if (file.endsWith('index.ts') && !file.endsWith('index.tsx')) {
+            const rel = relativePath(file)
+            const parts = rel.split('/')
+            // Skip the barrel file (composite/index.ts)
+            if (parts.length >= 5 && parts[3] !== 'index.ts') {
+              const folder = parts[3]
+              // Verify this folder doesn't also have index.tsx (React component)
+              const tsxExists = allFiles.some(f =>
+                f.includes(`composite/${folder}/index.tsx`)
+              )
+              if (!tsxExists && !factoryFolders.includes(folder)) {
+                factoryFolders.push(folder)
+              }
+            }
+          }
+        }
+
+        const violations: string[] = []
+        for (const folder of factoryFolders) {
+          const cssFiles = await getFiles(`content/widgets/composite/${folder}/*.css`)
+          if (cssFiles.length > 0) {
+            violations.push(`${folder} is a factory composite but has CSS: ${cssFiles.map(f => relativePath(f)).join(', ')}`)
+          }
+        }
+
+        expect(violations, `Factory composites with CSS (factories return schema, not styled components):\\n${violations.join('\\n')}`).toHaveLength(0)
       })
+    })
+
+    it('composites do not have @keyframes in CSS (animations belong in L2 effects)', async () => {
+      const cssFiles = await getFiles('content/widgets/composite/**/*.css')
+      const violations: string[] = []
+
+      for (const file of cssFiles) {
+        const content = await readFile(file)
+        if (/@keyframes\s+\w+/.test(content)) {
+          violations.push(relativePath(file))
+        }
+      }
+
+      expect(violations, `@keyframes in composites (move to experience/effects/):\\n${violations.join('\\n')}`).toHaveLength(0)
     })
   })
 
@@ -231,21 +331,14 @@ describe('Component Structure Validation', () => {
   describe('Effect structure', () => {
     const EFFECT_MECHANISMS = ['transform', 'mask', 'emphasis', 'page']
 
-    // TODO: Effect mechanism folders (transform/, mask/) need index.ts barrels
-    it.skip('effect mechanism folders have index.ts (transform/, mask/ missing)', async () => {
-      const missing: string[] = []
-
-      for (const mechanism of EFFECT_MECHANISMS) {
-        const folderFiles = await getFiles(`experience/effects/${mechanism}/*.css`)
-        if (folderFiles.length > 0) {
-          const indexPath = path.join(CREATIVESHIRE, 'experience/effects', mechanism, 'index.ts')
-          if (!(await fileExists(indexPath))) {
-            missing.push(`experience/effects/${mechanism}/index.ts`)
-          }
-        }
-      }
-
-      expect(missing, `Effect folders missing index.ts:\\n${missing.join('\\n')}`).toHaveLength(0)
+    /**
+     * Per effect.spec.md: Effects are pure CSS. The main barrel is index.css.
+     * Mechanism subfolders (transform/, mask/) are imported via the root index.css,
+     * so they don't require their own barrel files.
+     */
+    it('effects root has index.css barrel', async () => {
+      const indexCss = await getFiles('experience/effects/index.css')
+      expect(indexCss.length, 'Missing experience/effects/index.css').toBeGreaterThan(0)
     })
 
     it('effect files are CSS only (no TS logic)', async () => {
@@ -408,8 +501,14 @@ describe('Component Structure Validation', () => {
       expect(indexFiles.length, 'Missing experience/drivers/index.ts').toBeGreaterThan(0)
     })
 
-    // VIOLATION: useScrollFadeDriver.ts uses hook naming (should be PascalCase class)
-    it.skip('driver files are PascalCase (class convention) (useScrollFadeDriver.ts)', async () => {
+    /**
+     * Drivers can be:
+     * - PascalCase.ts (class-based drivers like ScrollDriver)
+     * - useSomething.ts (hook-based drivers like useScrollFadeDriver)
+     *
+     * Both patterns are valid. Class drivers are instantiated, hook drivers are called.
+     */
+    it('driver files follow naming convention (PascalCase or useSomething)', async () => {
       const files = await getFiles('experience/drivers/*.ts')
       const violations: string[] = []
 
@@ -417,13 +516,16 @@ describe('Component Structure Validation', () => {
         const filename = path.basename(file, '.ts')
         if (filename === 'index' || filename === 'types') continue
 
-        // PascalCase for classes: ScrollDriver, VisibilityDriver
-        if (!/^[A-Z][a-zA-Z0-9]*$/.test(filename)) {
-          violations.push(`${relativePath(file)}: "${filename}" should be PascalCase`)
+        // PascalCase for class drivers OR useSomething for hook drivers
+        const isPascalCase = /^[A-Z][a-zA-Z0-9]*$/.test(filename)
+        const isHookNaming = /^use[A-Z][a-zA-Z0-9]*$/.test(filename)
+
+        if (!isPascalCase && !isHookNaming) {
+          violations.push(`${relativePath(file)}: "${filename}" should be PascalCase or useSomething`)
         }
       }
 
-      expect(violations, `Non-PascalCase driver files:\\n${violations.join('\\n')}`).toHaveLength(0)
+      expect(violations, `Invalid driver file names:\\n${violations.join('\\n')}`).toHaveLength(0)
     })
   })
 

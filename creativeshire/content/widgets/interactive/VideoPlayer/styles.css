@@ -1,0 +1,279 @@
+/**
+ * VideoPlayer styles.
+ * Matches bo-juhl-portfolio video player layout exactly.
+ *
+ * From bojuhl source:
+ * - Center play: w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm
+ * - Progress: bottom-24 left-8 right-8, h-1.5 bg-white/20
+ * - Volume: bottom-8, px-4 py-3 rounded-full bg-white/10 backdrop-blur-sm
+ * - Close: top-6 left-6 (handled by Modal)
+ */
+
+.video-player {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: black;
+  overflow: hidden;
+}
+
+/* Hide cursor when controls are hidden (while playing) */
+.video-player--hide-cursor {
+  cursor: none;
+}
+
+.video-player--hide-cursor .video-player__video {
+  cursor: none;
+}
+
+/* Video element - absolute inset-0, object-contain */
+.video-player__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+/* Center overlay - click area when paused */
+.video-player__center-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Center play button - matches bojuhl: w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm */
+/* MOVED TO L2: data-effect="button-hover" */
+.video-player__center-play {
+  width: 5rem;    /* w-20 = 80px = 5rem */
+  height: 5rem;   /* h-20 = 80px = 5rem */
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.2);  /* bg-white/20 */
+  backdrop-filter: blur(4px);             /* backdrop-blur-sm */
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-player__center-overlay:hover .video-player__center-play {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Play icon - matches bojuhl: w-10 h-10 text-white ml-1 */
+.video-player__play-icon {
+  width: 2.5rem;   /* w-10 = 40px = 2.5rem */
+  height: 2.5rem;  /* h-10 = 40px = 2.5rem */
+  color: white;
+  margin-left: 0.25rem;  /* ml-1 = 4px visual centering */
+}
+
+/* Controls overlay - fades in/out */
+/* pointer-events stays none so clicks pass through to video for play/pause */
+/* MOVED TO L2: data-effect="controls-fade" */
+.video-player__controls {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.video-player__controls--visible {
+  opacity: 1;
+  /* Keep pointer-events: none - children handle their own events */
+}
+
+/* Progress bar container - matches bojuhl: bottom-24 left-8 right-8 */
+.video-player__progress-container {
+  position: absolute;
+  bottom: 6rem;    /* bottom-24 = 96px = 6rem */
+  left: 2rem;      /* left-8 = 32px = 2rem */
+  right: 2rem;     /* right-8 = 32px = 2rem */
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;    /* gap-3 = 12px */
+  pointer-events: auto;  /* Enable interaction on this control */
+}
+
+/* Time labels - matches bojuhl: text-white/80 text-sm font-medium min-w-[45px] tabular-nums */
+.video-player__time {
+  font-size: 0.875rem;       /* text-sm */
+  font-weight: 500;          /* font-medium */
+  color: rgba(255, 255, 255, 0.8);  /* text-white/80 */
+  font-variant-numeric: tabular-nums;
+  min-width: 45px;
+}
+
+.video-player__time--current {
+  text-align: left;
+}
+
+.video-player__time--duration {
+  text-align: right;
+}
+
+/* Progress bar track - matches bojuhl: h-1.5 bg-white/20 rounded-full */
+.video-player__progress {
+  flex: 1;
+  height: 6px;     /* h-1.5 = 6px */
+  background: rgba(255, 255, 255, 0.2);  /* bg-white/20 */
+  border-radius: 9999px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Progress bar fill - matches bojuhl: bg-white rounded-full */
+/* Note: width transition kept inline as it's continuous playback, not L2 animation */
+.video-player__progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: white;
+  border-radius: 9999px;
+  transition: width 75ms linear;  /* transition-all duration-75 - playback continuity */
+  pointer-events: none;
+}
+
+/* Progress bar scrubber - matches bojuhl: w-4 h-4 bg-white rounded-full shadow-lg */
+/* MOVED TO L2: data-effect="scrubber-fade" */
+.video-player__progress-scrubber {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;     /* w-4 = 16px = 1rem */
+  height: 1rem;    /* h-4 = 16px = 1rem */
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);  /* shadow-lg */
+  opacity: 0;
+  pointer-events: none;
+}
+
+.video-player__progress:hover .video-player__progress-scrubber {
+  opacity: 1;
+}
+
+/* Volume container - matches bojuhl: bottom-8 left-1/2 -translate-x-1/2 px-4 py-3 rounded-full bg-white/10 backdrop-blur-sm */
+.video-player__volume-container {
+  position: absolute;
+  bottom: 2rem;    /* bottom-8 = 32px = 2rem */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;    /* gap-3 = 12px */
+  padding: 0.75rem 1rem;   /* py-3 px-4 */
+  background: rgba(255, 255, 255, 0.1);  /* bg-white/10 */
+  backdrop-filter: blur(4px);             /* backdrop-blur-sm */
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 9999px;
+  pointer-events: auto;  /* Enable interaction on this control */
+}
+
+/* Volume button - matches bojuhl: text-white hover:text-white/80 */
+/* MOVED TO L2: data-effect="button-hover" */
+.video-player__volume-button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.video-player__volume-button:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Volume icon - matches bojuhl: w-5 h-5 */
+.video-player__volume-icon {
+  width: 1.25rem;  /* w-5 = 20px = 1.25rem */
+  height: 1.25rem; /* h-5 = 20px = 1.25rem */
+}
+
+/* Volume slider - matches bojuhl: w-24 h-1 bg-white/30 rounded-full */
+.video-player__volume-slider {
+  width: 6rem;     /* w-24 = 96px = 6rem */
+  height: 4px;     /* h-1 = 4px */
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.3);  /* bg-white/30 */
+  border-radius: 9999px;
+  cursor: pointer;
+}
+
+/* Slider thumb - matches bojuhl: w-3 h-3 rounded-full bg-white */
+.video-player__volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 0.75rem;  /* w-3 = 12px = 0.75rem */
+  height: 0.75rem; /* h-3 = 12px = 0.75rem */
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+}
+
+.video-player__volume-slider::-moz-range-thumb {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  border: none;
+}
+
+/* Buffering indicator */
+.video-player__buffering {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 3rem;
+  height: 3rem;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  /* Animation handled by data-effect="spin" via experience/effects/emphasis/spin.css */
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .video-player__progress-container {
+    bottom: 5rem;
+    left: 1rem;
+    right: 1rem;
+  }
+
+  .video-player__volume-container {
+    bottom: 1.5rem;
+  }
+
+  .video-player__time {
+    font-size: 0.75rem;
+    min-width: 38px;
+  }
+
+  .video-player__center-play {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .video-player__play-icon {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+/* Touch devices - always show controls when paused */
+@media (hover: none) {
+  .video-player__controls {
+    opacity: 1;
+  }
+}

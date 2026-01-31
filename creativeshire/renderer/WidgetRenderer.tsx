@@ -8,16 +8,26 @@
  * 2. Pass style and className directly to widget
  * 3. Wrap with behaviour for animation
  * 4. Recursively render child widgets
+ * 5. Wire schema.on events to action registry
  *
  * @see .claude/architecture/creativeshire/components/renderer/renderer.spec.md
  */
 
-import type { ReactNode, CSSProperties } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import type { WidgetSchema, BehaviourConfig } from '@/creativeshire/schema'
 import { getWidget } from '@/creativeshire/content/widgets/registry'
 import { BehaviourWrapper } from '@/creativeshire/experience/behaviours'
+import { executeAction } from '@/creativeshire/experience/actions'
 import { ErrorBoundary } from './ErrorBoundary'
 import type { WidgetRendererProps } from './types'
+
+/**
+ * Capitalize first letter of a string.
+ * Used to convert event names to React handler format: click → onClick
+ */
+function capitalize(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
 
 /**
  * Extract behaviour ID from behaviour config.
@@ -91,14 +101,27 @@ export function WidgetRenderer({
   const behaviourId = extractBehaviourId(widget.behaviour)
   const behaviourOptions = extractBehaviourOptions(widget.behaviour)
 
+  // Wire schema.on events to action registry
+  // Maps { click: 'action-id' } → { onClick: (payload) => executeAction('action-id', payload) }
+  const eventHandlers = useMemo(() => {
+    if (!widget.on) return {}
+    return Object.fromEntries(
+      Object.entries(widget.on).map(([event, actionId]) => [
+        `on${capitalize(event)}`, // click → onClick
+        (payload: unknown) => executeAction(actionId, payload),
+      ])
+    )
+  }, [widget.on])
+
   // Recursively render child widgets for layout containers
   const children = widget.widgets?.map((child, i) => (
     <WidgetRenderer key={child.id ?? i} widget={child} index={i} />
   ))
 
-  // Prepare props - pass style, className, and widgets directly from schema
+  // Prepare props - pass style, className, widgets, and event handlers from schema
   const componentProps = {
     ...widget.props,
+    ...eventHandlers,
     ...(widget.id && { id: widget.id }),
     ...(widget.style && { style: widget.style }),
     ...(widget.className && { className: widget.className }),

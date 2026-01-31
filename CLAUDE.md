@@ -9,18 +9,27 @@ PRIMITIVES (atoms - no children, single purpose)
   Text, Image, Icon, Button, Link
 
 LAYOUT (structure - holds children)
-  Stack, Grid, Flex, Split, Container
+  Stack, Grid, Flex, Split, Container, Box
 
-COMPOSITES (layout + primitives assembled, OR complex state)
-  ProjectCard = Stack(Image, Text, Text)
-  HeroContent = Split(Text, Video)
-  Video = Complex state (hover-play, visibility, modal)
-  VideoPlayer = Complex state (controls, scrubber, fullscreen)
+PATTERNS (factory functions → WidgetSchema)
+  ProjectCard = createProjectCard() → {type: 'Flex', widgets: [...]}
+  LogoLink = createLogoLink() → {type: 'Link', widgets: [...]}
+
+INTERACTIVE (React components with state)
+  Video = hover-play, visibility, modal integration
+  VideoPlayer = controls, scrubber, fullscreen
+  ContactPrompt = copy-to-clipboard, flip animation
+  ExpandableGalleryRow = coordinated hover expansion
+  GalleryThumbnail = expandable with metadata
 ```
 
 ## Architecture
 
 ```
+PLATFORM             Creativeshire CMS (external)
+       ↓             (passes schema, receives events)
+INTERFACE            EngineProvider, Controller, Events
+       ↓             (validates, manages state, live updates)
 SITE INSTANCE        site/config.ts, site/pages/
        ↓             (the assembled site - what gets deployed)
 PRESET               creativeshire/presets/{name}/
@@ -33,11 +42,16 @@ RENDERER             Site → Page → Section → Widget
 │                  │                   │
 │ • Primitives     │ • Modes           │
 │ • Layout         │ • Behaviours      │
-│ • Composites     │ • Effects         │
+│ • Patterns       │ • Effects         │
+│ • Interactive    │                   │
 │ • Sections       │ • Drivers         │
 │ • Chrome         │ • Triggers        │
 └──────────────────┴───────────────────┘
          ↕ CSS Variables ↕
+
+SCHEMA               TypeScript types + version
+VALIDATION           Build-time checks (assertValidSite)
+MIGRATIONS           Version transforms (auto at build)
 ```
 
 **L1/L2 Rule:** Content renders. Experience animates. They communicate via CSS variables only.
@@ -60,9 +74,10 @@ Effects named by MECHANISM: `fade`, `transform/`, `mask/`
 creativeshire/
 ├── content/
 │   ├── widgets/
-│   │   ├── primitives/    Text, Image, Video, Icon...
-│   │   ├── layout/        Stack, Grid, Flex, Split...
-│   │   └── composite/     ProjectCard, HeroContent...
+│   │   ├── primitives/    Text, Image, Icon, Button, Link
+│   │   ├── layout/        Stack, Grid, Flex, Split, Container, Box
+│   │   ├── patterns/      Factory functions → WidgetSchema
+│   │   └── interactive/   React components with state
 │   ├── sections/
 │   │   └── patterns/      Hero, About, ProjectGrid...
 │   └── chrome/
@@ -83,9 +98,15 @@ creativeshire/
 │   │   └── page/          Route transitions (later)
 │   ├── drivers/           ScrollDriver, VisibilityDriver
 │   └── modes/             stacking, parallax...
+├── interface/             Platform ↔ Engine contract
+│   ├── EngineProvider     Root provider with controller
+│   ├── EngineStore        Zustand state management
+│   └── validation/        Runtime constraint validators
+├── migrations/            Schema version transforms
+├── validation/            Build-time schema validation
 ├── presets/{name}/        Site-specific configurations
 ├── renderer/              SiteRenderer, SectionRenderer...
-└── schema/                TypeScript types
+└── schema/                TypeScript types + version + shell
 ```
 
 ## How to Work

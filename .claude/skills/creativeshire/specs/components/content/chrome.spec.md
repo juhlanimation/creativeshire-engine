@@ -193,22 +193,48 @@ export default function Cursor(props: { schema: OverlaySchema }): JSX.Element
 
 1. Viewport units (`100vh`, `100vw`, `100dvh`) - BehaviourWrapper handles sizing
 2. Scroll/resize listeners - triggers handle this in L2
-3. Imports from `experience/` - layer violation
-4. `position: fixed/sticky` in component - BehaviourWrapper handles positioning
-5. Direct CSS variable manipulation (only READ them)
+3. `position: fixed/sticky` in component - BehaviourWrapper handles positioning
+4. Direct CSS variable manipulation (only READ them)
+
+### Regions vs Overlays: L1/L2 Boundary
+
+**Regions** (Header, Footer, Sidebar) are pure L1:
+- Render once, stay idle
+- No imports from `experience/`
+- Animation via CSS variables set by L2 drivers
+
+**Overlays** (Modal, CursorLabel) are L1/L2 **hybrid**:
+- Render UI (L1) but require direct experience access for:
+  - **GSAP timeline control**: Modal uses `RevealTransition` for sequenced animations (wipe → content fade) that CSS cannot achieve
+  - **Store state**: CursorLabel reads `cursorX`/`cursorY` from experience store
+  - **ScrollSmoother control**: Modal pauses/resumes smooth scrolling on open/close
+
+This is an architectural decision: overlays that animate themselves need L2 access.
+
+```
+REGION (pure L1)              OVERLAY (L1/L2 hybrid)
+─────────────────             ─────────────────────
+Header, Footer, Sidebar       Modal, CursorLabel, Tooltip
+
+Renders content               Renders content (L1)
+CSS vars for animation        + Controls animation (L2)
+No experience imports         May import experience/
+```
 
 ## Validation Rules
 
 > Each rule maps 1:1 to `chrome.validator.ts`
 
-| # | Rule | Function | Files |
-|---|------|----------|-------|
-| 1 | Default export required | `checkDefaultExport` | `.tsx` |
-| 2 | No scroll/resize listeners | `checkNoScrollListeners` | `.tsx`, `.ts` |
-| 3 | No fixed/sticky position | `checkNoPositionFixed` | `.tsx`, `.css` |
-| 4 | No viewport units | `checkNoViewportUnits` | `.tsx`, `.css` |
-| 5 | No experience imports | `checkNoExperienceImports` | `.tsx`, `.ts` |
-| 6 | CSS var fallbacks | `checkCssVariableFallbacks` | `.tsx`, `.css` |
+| # | Rule | Function | Files | Scope |
+|---|------|----------|-------|-------|
+| 1 | Default export required | `checkDefaultExport` | `.tsx` | All |
+| 2 | No scroll/resize listeners | `checkNoScrollListeners` | `.tsx`, `.ts` | All |
+| 3 | No fixed/sticky position | `checkNoPositionFixed` | `.tsx`, `.css` | All |
+| 4 | No viewport units | `checkNoViewportUnits` | `.tsx`, `.css` | All |
+| 5 | No experience imports | `checkNoExperienceImports` | `.tsx`, `.ts` | **Regions only** |
+| 6 | CSS var fallbacks | `checkCssVariableFallbacks` | `.tsx`, `.css` | All |
+
+**Note:** Rule #5 applies to regions only. Overlays are L1/L2 hybrid and may import from experience/.
 
 ## CSS Variables
 

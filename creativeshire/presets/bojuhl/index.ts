@@ -56,6 +56,7 @@ export const bojuhlPreset: SitePreset = {
     },
     overlays: {
       floatingContact: floatingContactConfig,
+      modal: { component: 'ModalRoot' },
     },
   },
   pages: {

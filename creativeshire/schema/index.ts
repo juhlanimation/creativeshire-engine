@@ -51,7 +51,7 @@ export type {
 export type { PageSchema, PageHeadSchema } from './page'
 
 // Site types
-export type { SiteSchema, PageReference, ModeDefaults } from './site'
+export type { SiteSchema, PageReference } from './site'
 
 // Theme types
 export type {
@@ -61,3 +61,32 @@ export type {
   TypographyConfig,
   SectionTransitionConfig,
 } from './theme'
+
+// Shell types
+export type { ShellConfig, ShellResponsive } from './shell'
+
+// Version types and utilities
+export type { EngineVersion } from './version'
+export {
+  ENGINE_VERSION,
+  MIN_SUPPORTED_VERSION,
+  isCompatible,
+  requiresMigration,
+  parseVersion,
+  versionToString,
+  compareVersions,
+} from './version'
+
+// Settings types
+export type {
+  SettingType,
+  SettingConfig,
+  SettingValue,
+  SettingChoice,
+  SettingValidation,
+  SettingsConfig,
+} from './settings'
+
+// Component meta types
+export type { ComponentCategory, ComponentMeta, MetaProps } from './meta'
+export { defineMeta } from './meta'

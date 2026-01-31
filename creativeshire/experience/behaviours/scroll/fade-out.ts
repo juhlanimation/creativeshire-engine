@@ -17,6 +17,12 @@ const scrollFadeOut: Behaviour = {
   name: 'Scroll Fade Out',
   requires: ['sectionVisibility', 'prefersReducedMotion'],
 
+  cssTemplate: `
+    opacity: var(--section-opacity, 1);
+    transform: translateY(var(--section-y, 0px));
+    will-change: opacity, transform;
+  `,
+
   compute: (state) => {
     const { sectionVisibility, prefersReducedMotion } = state
 

@@ -3,7 +3,7 @@
  * Featured projects grid with alternating ProjectCard layouts.
  */
 
-import { createProjectCard } from '@/creativeshire/content/widgets/composite'
+import { createProjectCard } from '@/creativeshire/content/widgets/patterns'
 import type { SectionSchema } from '@/creativeshire/schema'
 import type { FeaturedProjectsProps } from './types'
 

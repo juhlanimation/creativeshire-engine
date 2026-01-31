@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "../creativeshire/experience/effects/index.css";
-@import "../creativeshire/content/widgets/composite/styles/project-card.css";
-@import "../creativeshire/content/widgets/composite/styles/logo-link.css";
+@import "../creativeshire/content/widgets/patterns/styles/project-card.css";
+@import "../creativeshire/content/widgets/patterns/styles/logo-link.css";
 @import "../creativeshire/presets/bojuhl/styles/sections.css";
 
 @source "../creativeshire/**/*.tsx";

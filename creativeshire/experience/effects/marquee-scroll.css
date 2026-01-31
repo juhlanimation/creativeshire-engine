@@ -16,6 +16,7 @@
 
 [data-effect~="marquee-scroll"] [data-marquee-track] {
   animation: marquee-scroll var(--marquee-duration, 43s) linear infinite;
+  will-change: transform;
 }
 
 [data-effect~="marquee-scroll"][data-direction="reverse"] [data-marquee-track] {

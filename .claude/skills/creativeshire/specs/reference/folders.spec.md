@@ -30,26 +30,38 @@
 │   │   ├── site.ts, page.ts             # SiteSchema, PageSchema
 │   │   ├── section.ts, widget.ts        # SectionSchema, WidgetSchema
 │   │   ├── chrome.ts                    # ChromeSchema
-│   │   └── experience.ts                # ExperienceConfig, BehaviourConfig
+│   │   ├── experience.ts                # ExperienceConfig, BehaviourConfig
+│   │   ├── version.ts                   # ENGINE_VERSION, compatibility utils
+│   │   └── shell.ts                     # ShellConfig (platform wrapper)
 │   │
 │   ├── content/                         # LAYER 1: WHAT'S ON THE PAGE
 │   │   │
 │   │   ├── widgets/
 │   │   │   ├── primitives/              # LEAF NODES
-│   │   │   │   └── {Name}/              # Text, Image, Video, Button, etc.
+│   │   │   │   └── {Name}/              # Text, Image, Icon, Button, Link
 │   │   │   │       ├── index.tsx        # React component
 │   │   │   │       ├── types.ts         # Props interface
+│   │   │   │       ├── meta.ts          # ComponentMeta for platform UI
 │   │   │   │       └── styles.css       # CSS with var() mappings
 │   │   │   │
 │   │   │   ├── layout/                  # CONTAINERS
-│   │   │   │   └── {Name}/              # Flex, Grid, Stack, Carousel, etc.
+│   │   │   │   └── {Name}/              # Flex, Grid, Stack, Split, etc.
 │   │   │   │       ├── index.tsx
-│   │   │   │       └── types.ts
+│   │   │   │       ├── types.ts
+│   │   │   │       └── meta.ts          # ComponentMeta for platform UI
 │   │   │   │
-│   │   │   └── composite/               # WIDGET FACTORIES
-│   │   │       └── {Name}/              # IconButton, CardWithMeta, etc.
-│   │   │           ├── index.ts         # create{Name}(props) -> WidgetSchema
-│   │   │           └── types.ts
+│   │   │   ├── patterns/                # FACTORY FUNCTIONS → WidgetSchema
+│   │   │   │   └── {Name}/              # ProjectCard, LogoLink, etc.
+│   │   │   │       ├── index.ts         # create{Name}(props) -> WidgetSchema
+│   │   │   │       ├── types.ts
+│   │   │   │       └── meta.ts          # ComponentMeta (component: false)
+│   │   │   │
+│   │   │   └── interactive/             # STATEFUL REACT COMPONENTS
+│   │   │       └── {Name}/              # Video, VideoPlayer, ContactPrompt, etc.
+│   │   │           ├── index.tsx        # React component with hooks/state
+│   │   │           ├── types.ts
+│   │   │           ├── meta.ts          # ComponentMeta (component: true)
+│   │   │           └── styles.css       # Component-specific styles
 │   │   │
 │   │   ├── sections/
 │   │   │   ├── Section.tsx              # Base section component
@@ -109,8 +121,18 @@
 │   │
 │   ├── interface/                       # PLATFORM <-> ENGINE CONTRACT
 │   │   ├── types.ts                     # EngineInput, EngineController, EngineEvents
+│   │   ├── EngineStore.ts               # Zustand store for schema state
 │   │   ├── EngineProvider.tsx           # Root provider wrapping engine
-│   │   └── useEngineController.ts       # Hook for platform control
+│   │   ├── useEngineController.ts       # Hook for platform control
+│   │   └── validation/                  # Runtime constraint validators
+│   │
+│   ├── migrations/                      # SCHEMA VERSION TRANSFORMS
+│   │   ├── types.ts                     # Migration interface
+│   │   ├── index.ts                     # Migration runner
+│   │   └── v{X.Y.Z}/                    # Migrations per version
+│   │
+│   ├── validation/                      # BUILD-TIME VALIDATION
+│   │   └── site-validator.ts            # assertValidSite()
 │   │
 │   └── presets/                         # FULL CONFIGURATIONS
 │       └── {name}/                      # starter, showcase, editorial
@@ -163,16 +185,29 @@ A preset **includes** a mode selection plus content structure.
 
 | Category | Location | Purpose | Output |
 |----------|----------|---------|--------|
-| **Primitives** | `widgets/primitives/` | Display actual content (leaf nodes) | React component |
-| **Layout** | `widgets/layout/` | Arrange other widgets (containers) | React component |
-| **Composite** | `widgets/composite/` | Pre-assembled patterns (factories) | WidgetSchema |
+| **Primitives** | `widgets/primitives/` | Leaf nodes (Text, Image, Icon, Button, Link) | React component |
+| **Layout** | `widgets/layout/` | Containers (Flex, Grid, Stack, Split, etc.) | React component |
+| **Patterns** | `widgets/patterns/` | Factory functions (ProjectCard, LogoLink) | WidgetSchema |
+| **Interactive** | `widgets/interactive/` | Stateful components (Video, VideoPlayer, etc.) | React component |
 
-### Composite Levels
+### Pattern Levels
 
 | Level | Location | Returns | Used In |
 |-------|----------|---------|---------|
 | **Section Pattern** | `sections/patterns/` | `SectionSchema` | Page definition |
-| **Widget Composite** | `widgets/composite/` | `WidgetSchema` | Section content |
+| **Widget Pattern** | `widgets/patterns/` | `WidgetSchema` | Section content |
+
+### ComponentMeta System
+
+Every component folder has a `meta.ts` file that provides platform UI hints:
+
+| Field | Purpose |
+|-------|---------|
+| `id` | Unique component identifier |
+| `name` | Human-readable display name |
+| `category` | primitive, layout, pattern, interactive, section, region, overlay |
+| `component` | true = React component, false = factory function |
+| `settings` | SettingConfig for each configurable prop |
 
 ---
 
@@ -182,8 +217,9 @@ A preset **includes** a mode selection plus content structure.
 |------------|----------|
 | Add a primitive widget | `creativeshire/content/widgets/primitives/{Name}/` |
 | Add a layout widget | `creativeshire/content/widgets/layout/{Name}/` |
-| Add a widget composite | `creativeshire/content/widgets/composite/{Name}/` |
-| Add a section composite | `creativeshire/content/sections/patterns/{Name}/` |
+| Add a widget pattern | `creativeshire/content/widgets/patterns/{Name}/` |
+| Add an interactive widget | `creativeshire/content/widgets/interactive/{Name}/` |
+| Add a section pattern | `creativeshire/content/sections/patterns/{Name}/` |
 | Add chrome region | `creativeshire/content/chrome/regions/{Name}.tsx` |
 | Add chrome overlay | `creativeshire/content/chrome/overlays/{Name}.tsx` |
 | Add experience definition | `creativeshire/experience/experiences/{name}.ts` |
@@ -193,6 +229,8 @@ A preset **includes** a mode selection plus content structure.
 | Add driver | `creativeshire/experience/drivers/{Name}Driver.ts` |
 | Define schema types | `creativeshire/schema/{entity}.ts` |
 | Define interface contract | `creativeshire/interface/types.ts` |
+| Add a migration | `creativeshire/migrations/v{X.Y.Z}/{name}.ts` |
+| Add build-time validation | `creativeshire/validation/site-validator.ts` |
 | Add full preset | `creativeshire/presets/{name}/` |
 | Add site page | `site/pages/{name}.ts` |
 | Add site content | `site/data/{name}.ts` |
@@ -201,9 +239,25 @@ A preset **includes** a mode selection plus content structure.
 
 ---
 
-## The Three Layers
+## The Layers
 
 ```
+┌─────────────────────────────────────────────────────────────────┐
+│                      PLATFORM (external)                         │
+│                   Creativeshire CMS / Editor                     │
+└─────────────────────────────────────────────────────────────────┘
+                              │ passes schema via
+                              v
+┌─────────────────────────────────────────────────────────────────┐
+│                   creativeshire/interface/                       │
+│                    (Platform ↔ Engine)                           │
+│                                                                  │
+│   EngineProvider  ->  Wraps engine, exposes controller           │
+│   EngineStore     ->  Zustand state with validation              │
+│   Events          ->  onReady, onError, onStateChange            │
+└─────────────────────────────────────────────────────────────────┘
+                              │ validates & renders
+                              v
 ┌─────────────────────────────────────────────────────────────────┐
 │                      creativeshire/presets/                      │
 │                         (Starting Points)                        │
@@ -239,6 +293,15 @@ A preset **includes** a mode selection plus content structure.
 │   sections/                        behaviours/                   │
 │   chrome/                          drivers/                      │
 │                                    triggers/                     │
+└─────────────────────────────────────────────────────────────────┘
+                              │ validated by
+                              v
+┌─────────────────────────────────────────────────────────────────┐
+│   creativeshire/schema/            creativeshire/validation/     │
+│   (Types + Version)                (Build-time Checks)           │
+│                                                                  │
+│   migrations/                      assertValidSite()             │
+│   (Version Transforms)                                           │
 └─────────────────────────────────────────────────────────────────┘
 ```
 

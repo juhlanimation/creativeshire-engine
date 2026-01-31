@@ -11,7 +11,6 @@ import { useScrollIndicatorFade } from './hooks'
 import { PageRenderer } from './PageRenderer'
 import { ChromeRenderer } from './ChromeRenderer'
 import { ThemeProvider } from './ThemeProvider'
-import { ModalRoot } from '../content/chrome/overlays/Modal'
 import type { SiteSchema, PageSchema } from '../schema'
 
 // Register built-in modes
@@ -68,16 +67,13 @@ export function SiteRenderer({ site, page }: SiteRendererProps) {
             />
 
             {/* Overlay chrome - uses portals to escape transform context.
-                Stays in React tree for context access, portals to body for DOM. */}
+                Stays in React tree for context access, portals to body for DOM.
+                Includes built-in Modal infrastructure (always available). */}
             <ChromeRenderer
               siteChrome={site.chrome}
               pageChrome={page.chrome}
               position="overlays"
             />
-
-            {/* Modal root - uses portals (same pattern as overlays).
-                Inside React tree for useSmoothScroll() context access. */}
-            <ModalRoot />
           </SmoothScrollProvider>
         </TriggerInitializer>
       </ExperienceProvider>

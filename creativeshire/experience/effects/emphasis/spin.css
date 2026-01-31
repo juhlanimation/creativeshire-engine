@@ -1,0 +1,26 @@
+/**
+ * Spin Effect
+ *
+ * Continuous rotation animation for loading spinners and similar elements.
+ * Used by: VideoPlayer loading spinner
+ *
+ * Variables:
+ *   --spin-duration: Rotation speed (default: 1s)
+ *   --spin-easing: Timing function (default: linear)
+ */
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+[data-effect="spin"] {
+  animation: spin var(--spin-duration, 1s) var(--spin-easing, linear) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-effect="spin"] {
+    animation: none;
+  }
+}

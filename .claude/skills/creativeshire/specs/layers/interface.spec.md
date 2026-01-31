@@ -292,9 +292,109 @@ The EngineProvider wraps the entire engine. It initializes the controller and ne
 
 ---
 
+## Implementation Details
+
+### Folder Structure (Implemented)
+
+```
+creativeshire/interface/
+├── CLAUDE.md               # Folder context for agents
+├── index.ts                # Barrel exports
+├── types.ts                # EngineInput, Controller, Events, etc.
+├── EngineStore.ts          # Zustand store factory
+├── EngineProvider.tsx      # Root provider component
+├── useEngineController.ts  # Controller hook export
+└── validation/
+    ├── CLAUDE.md           # Folder context
+    ├── index.ts            # Barrel exports
+    └── validators.ts       # Constraint validators
+```
+
+### Store Architecture
+
+Uses Zustand with immer middleware for immutable updates:
+
+| Choice | Reason |
+|--------|--------|
+| Zustand over Context | Better performance for frequent updates |
+| immer middleware | Mutable syntax, immutable result |
+| Selector pattern | Optimal re-renders |
+
+### Validation-on-Write Pattern
+
+Controller methods return `ValidationResult` immediately:
+
+```typescript
+interface ValidationResult {
+  valid: boolean
+  error?: ConstraintViolation | EngineError
+}
+
+// Usage
+const result = controller.addSection(section)
+if (!result.valid) {
+  toast.error(result.error.message)
+}
+```
+
+### Updated Interfaces (Implemented)
+
+```typescript
+interface EngineInput {
+  site: SiteSchema
+  page: PageSchema
+  experienceId?: string
+  isPreview?: boolean
+  shell?: ShellConfig  // For platform wrapper mode
+  events?: EngineEvents
+}
+
+interface EngineController {
+  // Section operations - return ValidationResult
+  updateSection(id: string, changes: Partial<SectionSchema>): ValidationResult
+  addSection(section: SectionSchema, position?: number): ValidationResult
+  removeSection(id: string): ValidationResult
+  reorderSections(order: string[]): ValidationResult
+
+  // Widget operations
+  updateWidget(path: WidgetPath, changes: Partial<WidgetSchema>): ValidationResult
+  addWidget(sectionId: string, widget: WidgetSchema, position?: number): ValidationResult
+  removeWidget(path: WidgetPath): ValidationResult
+
+  // Experience
+  setExperience(id: string): void
+
+  // Site
+  updateTheme(changes: Partial<ThemeSchema>): void
+  updateChrome(changes: Partial<ChromeSchema>): void
+
+  // State queries
+  getState(): EngineStateSnapshot
+  subscribe(listener: (state: EngineStateSnapshot) => void): () => void
+}
+
+interface EngineEvents {
+  onReady?: () => void
+  onError?: (error: EngineError) => void
+  onConstraintViolation?: (violation: ConstraintViolation) => void
+  onStateChange?: (snapshot: EngineStateSnapshot) => void
+}
+```
+
+### Hooks
+
+| Hook | Purpose |
+|------|---------|
+| `useEngineController()` | Access controller for platform UI |
+| `useEngineState(selector)` | Access state with selector |
+| `useEngineStore()` | Access raw Zustand store (advanced) |
+
+---
+
 ## Related Documents
 
 - [platform.spec.md](../core/platform.spec.md) - Platform overview
 - [experience.spec.md](./experience.spec.md) - Experience definitions
 - [schema.spec.md](./schema.spec.md) - Schema types
 - [renderer.spec.md](./renderer.spec.md) - Schema-to-component bridges
+- [engine-provider.spec.md](../components/interface/engine-provider.spec.md) - EngineProvider details

@@ -3,34 +3,40 @@
 /**
  * useGsapReveal - GSAP-powered reveal animations.
  *
- * Provides wipe and expand transitions matching bojuhl.com:
- * - wipe-left: clip from right, reveal left-to-right
- * - wipe-right: clip from left, reveal right-to-left
- * - expand: clip from sourceRect, expand to fullscreen
- * - fade: simple opacity transition
+ * Uses the transition registry for pluggable animations.
+ * Supports any registered transition type (wipe-left, wipe-right, expand, fade, etc).
  *
  * Features:
  * - GSAP timeline for precise control
- * - Sequenced content fade (content fades in after wipe)
+ * - Sequenced content fade (content fades in after main animation)
  * - timeline.reverse() for smooth close animations
- * - sourceRect support for expand-from-element
+ * - Registry-based: add new transitions without modifying this file
  */
 
 import { useRef, useLayoutEffect, useEffect } from 'react'
 import { gsap } from 'gsap'
+import { resolveTransition } from './transitions/resolve'
+import type { TransitionContext, TransitionOptions } from './transitions/types'
 
-// Animation constants (matching bojuhl.com)
-const DURATIONS = {
-  WIPE: 0.8,
-  FADE: 0.3,
+// Import transitions barrel to ensure auto-registration
+import './transitions'
+
+// Default durations (used when transition doesn't specify)
+const DEFAULT_DURATIONS = {
+  standard: 0.8,
+  fade: 0.3,
 }
 
-export type RevealType = 'wipe-left' | 'wipe-right' | 'expand' | 'fade'
+/**
+ * Reveal type - now accepts any registered transition ID.
+ * @deprecated Use string directly for type safety with custom transitions
+ */
+export type RevealType = string
 
 export interface UseGsapRevealOptions {
-  /** Duration in seconds (default: 0.8 for wipe, 0.3 for fade) */
+  /** Duration in seconds (overrides transition default) */
   duration?: number
-  /** GSAP easing (default: 'power3.inOut') */
+  /** GSAP easing (overrides transition default) */
   ease?: string
   /** For expand: source element bounds */
   sourceRect?: DOMRect | null
@@ -41,50 +47,16 @@ export interface UseGsapRevealOptions {
 }
 
 interface UseGsapRevealProps {
-  type: RevealType
+  /** Transition type ID (e.g., 'wipe-left', 'expand', 'fade') */
+  type: string
+  /** Whether content is revealed (true) or hidden (false) */
   revealed: boolean
+  /** Animation options (override transition defaults) */
   options?: UseGsapRevealOptions
+  /** Called when reveal animation completes */
   onComplete?: () => void
+  /** Called when reverse (close) animation completes */
   onReverseComplete?: () => void
-}
-
-/**
- * Computes the initial clip-path for a reveal type.
- *
- * For 'expand': Adjusts for scrollbar width difference. The sourceRect is
- * captured with scrollbar visible, but the modal fills the full viewport
- * after scroll lock hides the scrollbar.
- */
-function getInitialClipPath(type: RevealType, sourceRect?: DOMRect | null): string {
-  switch (type) {
-    case 'wipe-left':
-      // Hidden on right side, reveals left-to-right
-      return 'inset(0 100% 0 0)'
-    case 'wipe-right':
-      // Hidden on left side, reveals right-to-left
-      return 'inset(0 0 0 100%)'
-    case 'expand':
-      if (sourceRect) {
-        // Use clientWidth/clientHeight for calculations since sourceRect
-        // coordinates are relative to the content area, not the full viewport.
-        // This ensures the clip-path scales correctly across the entire width.
-        const vw = document.documentElement.clientWidth
-        const vh = document.documentElement.clientHeight
-
-        const top = (sourceRect.top / vh) * 100
-        const bottom = ((vh - sourceRect.bottom) / vh) * 100
-        const left = (sourceRect.left / vw) * 100
-        const right = ((vw - sourceRect.right) / vw) * 100
-        return `inset(${top}% ${right}% ${bottom}% ${left}%)`
-      }
-      // Fallback: expand from center
-      return 'inset(50% 50% 50% 50%)'
-    case 'fade':
-      // Fade doesn't use clip-path
-      return 'inset(0 0 0 0)'
-    default:
-      return 'inset(0 0 0 0)'
-  }
 }
 
 export function useGsapReveal({
@@ -99,12 +71,16 @@ export function useGsapReveal({
   const timelineRef = useRef<gsap.core.Timeline | null>(null)
   const isInitializedRef = useRef(false)
 
+  // Resolve transition from registry
+  const transition = resolveTransition(type)
+
+  // Merge user options with transition defaults
   const {
-    duration = type === 'fade' ? DURATIONS.FADE : DURATIONS.WIPE,
-    ease = 'power3.inOut',
+    duration = transition?.defaults.duration ?? DEFAULT_DURATIONS.standard,
+    ease = transition?.defaults.ease ?? 'power3.inOut',
     sourceRect,
     sequenceContentFade = false,
-    contentFadeDuration = DURATIONS.FADE,
+    contentFadeDuration = DEFAULT_DURATIONS.fade,
   } = options
 
   // Handle reveal/hide animations
@@ -114,22 +90,41 @@ export function useGsapReveal({
     const content = contentRef.current
     if (!container) return
 
+    // If transition not found, log warning and skip animation
+    if (!transition) {
+      console.warn(`Transition "${type}" not found in registry`)
+      return
+    }
+
     // Kill existing timeline to prevent conflicts
     timelineRef.current?.kill()
+
+    // Build transition context
+    const context: TransitionContext = {
+      container,
+      content: content ?? undefined,
+      viewport: {
+        width: document.documentElement.clientWidth,
+        height: document.documentElement.clientHeight,
+      },
+      sourceRect,
+    }
+
+    // Build merged options
+    const mergedOptions: TransitionOptions = {
+      duration,
+      ease,
+      sequenceContentFade,
+      contentFadeDuration,
+      sourceRect,
+    }
 
     if (revealed) {
       // === OPENING ANIMATION ===
 
-      // Set initial hidden state BEFORE paint
-      const initialClip = getInitialClipPath(type, sourceRect)
-
-      if (type === 'fade') {
-        // For fade: start fully transparent
-        gsap.set(container, { opacity: 0, visibility: 'visible' })
-      } else {
-        // For wipe/expand: start with clip-path hiding content
-        gsap.set(container, { clipPath: initialClip, visibility: 'visible' })
-      }
+      // Get initial state from transition
+      const initialState = transition.getInitialState(context, mergedOptions)
+      gsap.set(container, initialState)
 
       // Hide content for sequenced fade
       if (sequenceContentFade && content) {
@@ -139,7 +134,7 @@ export function useGsapReveal({
       // Build the reveal timeline
       timelineRef.current = gsap.timeline({
         onComplete: () => {
-          // After wipe completes, fade content in if sequencing
+          // After main animation completes, fade content in if sequencing
           if (sequenceContentFade && content) {
             gsap.to(content, {
               opacity: 1,
@@ -153,16 +148,14 @@ export function useGsapReveal({
         },
       })
 
-      // Add the reveal animation
-      if (type === 'fade') {
-        timelineRef.current.to(container, {
-          opacity: 1,
-          duration,
-          ease,
-        })
+      // Use custom buildTimeline if provided, otherwise interpolate states
+      if (transition.buildTimeline) {
+        transition.buildTimeline(timelineRef.current, context, mergedOptions)
       } else {
+        // Get final state and animate to it
+        const finalState = transition.getFinalState(context, mergedOptions)
         timelineRef.current.to(container, {
-          clipPath: 'inset(0% 0% 0% 0%)',
+          ...finalState,
           duration,
           ease,
         })
@@ -173,7 +166,7 @@ export function useGsapReveal({
       // === CLOSING ANIMATION (reverse) ===
 
       if (sequenceContentFade && content) {
-        // First fade content out, then reverse the wipe
+        // First fade content out, then reverse the main animation
         gsap.to(content, {
           opacity: 0,
           duration: contentFadeDuration,
@@ -186,14 +179,14 @@ export function useGsapReveal({
           },
         })
       } else {
-        // Just reverse the wipe/fade timeline
+        // Just reverse the timeline
         timelineRef.current?.reverse()
         timelineRef.current?.eventCallback('onReverseComplete', () => {
           onReverseComplete?.()
         })
       }
     }
-  }, [revealed, type, duration, ease, sourceRect, sequenceContentFade, contentFadeDuration, onComplete, onReverseComplete])
+  }, [revealed, type, transition, duration, ease, sourceRect, sequenceContentFade, contentFadeDuration, onComplete, onReverseComplete])
 
   // Cleanup on unmount
   useEffect(() => {

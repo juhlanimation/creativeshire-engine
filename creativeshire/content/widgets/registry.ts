@@ -3,11 +3,12 @@
  * Content Layer (L1) - static component lookup.
  *
  * Widget categories:
- * - primitives/ : Leaf nodes (Text, Image, Icon, Button, Link)
- * - layout/     : Containers (Flex, Box, Stack, Grid, Split, Container)
- * - composite/  : Assembled widgets with state/logic (Video, ContactPrompt, etc.)
+ * - primitives/   : Leaf nodes (Text, Image, Icon, Button, Link)
+ * - layout/       : Containers (Flex, Box, Stack, Grid, Split, Container)
+ * - interactive/  : Stateful widgets (Video, VideoPlayer, ContactPrompt, etc.)
+ * - patterns/     : Factory functions (NOT registered - they return WidgetSchema)
  *
- * Note: Factory-based composites (createLogoLink, createProjectCard) are NOT registered here.
+ * Note: Patterns (createLogoLink, createProjectCard) are NOT registered here.
  * They return WidgetSchema which the renderer expands into registered widgets.
  */
 
@@ -20,9 +21,6 @@ import Icon from './primitives/Icon'
 import Button from './primitives/Button'
 import Link from './primitives/Link'
 
-// Video (composite - has state and hooks)
-import Video from './composite/Video'
-
 // Layout (containers)
 import Flex from './layout/Flex'
 import Box from './layout/Box'
@@ -31,9 +29,12 @@ import Grid from './layout/Grid'
 import Split from './layout/Split'
 import Container from './layout/Container'
 
-// Composites (assembled widgets with state/logic)
-import ContactPrompt from './composite/ContactPrompt'
-import ExpandableGalleryRow from './composite/ExpandableGalleryRow'
+// Interactive (stateful widgets)
+import Video from './interactive/Video'
+import VideoPlayer from './interactive/VideoPlayer'
+import ContactPrompt from './interactive/ContactPrompt'
+import ExpandableGalleryRow from './interactive/ExpandableGalleryRow'
+import GalleryThumbnail from './interactive/GalleryThumbnail'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Widget props vary by type
 type WidgetComponent = ComponentType<any>
@@ -48,8 +49,6 @@ export const widgetRegistry: Record<string, WidgetComponent> = {
   Icon,
   Button,
   Link,
-  // Video (composite - has state and hooks)
-  Video,
   // Layout
   Flex,
   Box,
@@ -57,9 +56,12 @@ export const widgetRegistry: Record<string, WidgetComponent> = {
   Grid,
   Split,
   Container,
-  // Composites
+  // Interactive
+  Video,
+  VideoPlayer,
   ContactPrompt,
   ExpandableGalleryRow,
+  GalleryThumbnail,
 }
 
 /**

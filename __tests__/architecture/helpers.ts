@@ -23,6 +23,25 @@ export async function getFiles(pattern: string): Promise<string[]> {
 }
 
 /**
+ * Get all directories matching a glob pattern within creativeshire/
+ */
+export async function getFolders(pattern: string): Promise<string[]> {
+  return fg(pattern, {
+    cwd: CREATIVESHIRE,
+    absolute: true,
+    onlyDirectories: true,
+    ignore: ['**/node_modules/**', '**/styles/**'],
+  })
+}
+
+/**
+ * Get component name from folder path (last segment)
+ */
+export function getComponentName(folderPath: string): string {
+  return path.basename(folderPath)
+}
+
+/**
  * Read file contents
  */
 export async function readFile(filePath: string): Promise<string> {
@@ -80,6 +99,14 @@ export function hasSSRGuard(content: string): boolean {
  * Extract behaviour ID from behaviour file
  */
 export function extractBehaviourId(content: string): string | null {
+  const match = content.match(/id:\s*['"]([^'"]+)['"]/)
+  return match ? match[1] : null
+}
+
+/**
+ * Extract transition ID from transition file
+ */
+export function extractTransitionId(content: string): string | null {
   const match = content.match(/id:\s*['"]([^'"]+)['"]/)
   return match ? match[1] : null
 }
