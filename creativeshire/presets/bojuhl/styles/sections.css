@@ -278,10 +278,10 @@
   box-sizing: border-box;
   background-color: #ffffff;
   color: #000000;
-  display: none; /* Hide on mobile (md:block = 768px+) */
+  display: none; /* Hide on mobile/tablet (lg:block = 1024px+) */
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .other-projects-section {
     display: flex;
     flex-direction: column;

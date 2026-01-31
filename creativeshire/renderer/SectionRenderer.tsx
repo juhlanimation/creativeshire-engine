@@ -71,12 +71,15 @@ export function SectionRenderer({ section, index }: SectionRendererProps) {
     ? { backgroundColor: section.style.backgroundColor }
     : undefined
 
+  // Pass section className to wrapper for responsive visibility (e.g., display:none)
+  const wrapperClassName = section.className
+
   // All behaviours go through BehaviourWrapper which:
   // - Calls resolveBehaviour() to get the behaviour definition
   // - Registers scroll-based behaviours with ScrollDriver for 60fps
   // - Computes CSS variables for non-scroll behaviours
   return (
-    <div ref={ref} data-section-id={section.id} style={wrapperStyle}>
+    <div ref={ref} data-section-id={section.id} style={wrapperStyle} className={wrapperClassName}>
       <BehaviourWrapper
         behaviourId={behaviourId}
         options={{ ...behaviourOptions, sectionIndex: index }}

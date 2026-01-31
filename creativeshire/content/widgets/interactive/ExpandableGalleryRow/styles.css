@@ -141,7 +141,7 @@
   text-transform: uppercase;
 }
 
-/* Hide on mobile/tablet (< 1024px) */
+/* Hide on mobile/tablet (< 1024px) - matches section visibility */
 @media (max-width: 1023px) {
   .expandable-gallery-row {
     display: none;
