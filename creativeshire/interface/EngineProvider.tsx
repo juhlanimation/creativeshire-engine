@@ -65,28 +65,35 @@ export function EngineProvider({ input, children }: EngineProviderProps) {
     [store]
   )
 
-  // Get experience mode
+  // Get experience mode with fallback to stacking
   const experienceId = useStore(store, (s) => s.experienceId)
-  const mode = useMemo(() => getMode(experienceId), [experienceId])
-  const experienceStore = useMemo(() => mode?.createStore() ?? null, [mode])
+  const resolvedMode = useMemo(() => {
+    const requested = getMode(experienceId)
+    if (requested) return requested
+
+    // Fallback to stacking mode with warning
+    console.warn(
+      `[Creativeshire] Unknown experience mode "${experienceId}", falling back to "stacking"`
+    )
+    const fallback = getMode('stacking')
+    if (!fallback) {
+      throw new Error(
+        '[Creativeshire] Critical: "stacking" mode not registered. Ensure modes are imported.'
+      )
+    }
+    return fallback
+  }, [experienceId])
+
+  const experienceStore = useMemo(() => resolvedMode.createStore(), [resolvedMode])
 
   // Mark ready after initial render
   useEffect(() => {
     store.getState().setReady(true)
   }, [store])
 
-  // Handle unknown mode
-  if (!mode || !experienceStore) {
-    return (
-      <div data-error="unknown-mode" className="p-4 text-red-500">
-        Error: Unknown experience mode &quot;{experienceId}&quot;
-      </div>
-    )
-  }
-
   return (
     <EngineContext.Provider value={{ store, controller }}>
-      <ExperienceProvider mode={mode} store={experienceStore}>
+      <ExperienceProvider mode={resolvedMode} store={experienceStore}>
         {children}
       </ExperienceProvider>
     </EngineContext.Provider>

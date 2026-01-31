@@ -28,16 +28,15 @@ export function SiteRenderer({ site, page }: SiteRendererProps) {
   // Fade out scroll indicator on scroll (GSAP-based for cross-browser support)
   useScrollIndicatorFade('#hero-scroll')
 
-  // Resolve mode from site experience config
+  // Resolve mode from site experience config with fallback
   const modeId = site.experience.mode
-  const mode = getMode(modeId)
+  let mode = getMode(modeId)
 
   if (!mode) {
-    return (
-      <div data-error={`Unknown mode: ${modeId}`}>
-        Error: Unknown experience mode &quot;{modeId}&quot;
-      </div>
+    console.warn(
+      `[Creativeshire] Unknown experience mode "${modeId}", falling back to "stacking"`
     )
+    mode = stackingMode
   }
 
   // Create store for this render
