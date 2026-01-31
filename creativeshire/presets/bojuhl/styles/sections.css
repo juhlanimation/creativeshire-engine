@@ -271,9 +271,8 @@
    ============================================ */
 
 .other-projects-section {
-  /* Reference: paddingY xl = 8rem = 128px */
-  /* Reference: -mt-1 to overlap with previous section */
-  padding: 128px 8px; /* Horizontal padding on section itself */
+  /* Reduced from 128px to 64px for tighter spacing */
+  padding: 64px 8px;
   margin-top: -4px;
   box-sizing: border-box;
   background-color: #ffffff;
