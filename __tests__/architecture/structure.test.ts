@@ -75,12 +75,24 @@ describe('Component Structure Validation', () => {
       expect(missing, `Primitives missing index.tsx:\\n${missing.join('\\n')}`).toHaveLength(0)
     })
 
-    // VIOLATION: All primitives have styles.css - should use effects instead
-    it.skip('primitives have no CSS files (all have styles.css)', async () => {
+    /**
+     * Component CSS is ALLOWED for structural styling.
+     * What's NOT allowed:
+     * - @keyframes (animations belong in effects/)
+     * - Hardcoded colors (should use CSS variables)
+     */
+    it('primitive CSS has no @keyframes (animations belong in effects/)', async () => {
       const cssFiles = await getFiles('content/widgets/primitives/**/*.css')
-      const violations = cssFiles.map(f => relativePath(f))
+      const violations: string[] = []
 
-      expect(violations, `CSS files in primitives (use effects instead):\\n${violations.join('\\n')}`).toHaveLength(0)
+      for (const file of cssFiles) {
+        const content = await readFile(file)
+        if (/@keyframes\s/.test(content)) {
+          violations.push(relativePath(file))
+        }
+      }
+
+      expect(violations, `@keyframes in primitives (use effects/ instead):\\n${violations.join('\\n')}`).toHaveLength(0)
     })
 
     it('primitives have no hooks folders', async () => {
@@ -122,12 +134,18 @@ describe('Component Structure Validation', () => {
       expect(missing, `Layouts missing index.tsx:\\n${missing.join('\\n')}`).toHaveLength(0)
     })
 
-    // VIOLATION: All layouts have styles.css - should use effects instead
-    it.skip('layouts have no CSS files (all have styles.css)', async () => {
+    it('layout CSS has no @keyframes (animations belong in effects/)', async () => {
       const cssFiles = await getFiles('content/widgets/layout/**/*.css')
-      const violations = cssFiles.map(f => relativePath(f))
+      const violations: string[] = []
 
-      expect(violations, `CSS files in layouts (use effects instead):\\n${violations.join('\\n')}`).toHaveLength(0)
+      for (const file of cssFiles) {
+        const content = await readFile(file)
+        if (/@keyframes\s/.test(content)) {
+          violations.push(relativePath(file))
+        }
+      }
+
+      expect(violations, `@keyframes in layouts (use effects/ instead):\\n${violations.join('\\n')}`).toHaveLength(0)
     })
 
     it('layouts have no hooks folders', async () => {
@@ -163,14 +181,18 @@ describe('Component Structure Validation', () => {
       expect(missing, `Composites missing index file:\\n${missing.join('\\n')}`).toHaveLength(0)
     })
 
-    // VIOLATION: Composites have CSS files - Video, VideoPlayer, ContactPrompt, GalleryThumbnail, etc.
-    describe.skip('No CSS files (composites have styles.css)', () => {
-      it('composites have no CSS files', async () => {
-        const cssFiles = await getFiles('content/widgets/composite/**/*.css')
-        const violations = cssFiles.map(f => relativePath(f))
+    it('composite CSS has no @keyframes (animations belong in effects/)', async () => {
+      const cssFiles = await getFiles('content/widgets/composite/**/*.css')
+      const violations: string[] = []
 
-        expect(violations, `CSS files in composites (use effects instead):\\n${violations.join('\\n')}`).toHaveLength(0)
-      })
+      for (const file of cssFiles) {
+        const content = await readFile(file)
+        if (/@keyframes\s/.test(content)) {
+          violations.push(relativePath(file))
+        }
+      }
+
+      expect(violations, `@keyframes in composites (use effects/ instead):\\n${violations.join('\\n')}`).toHaveLength(0)
     })
   })
 
@@ -231,8 +253,7 @@ describe('Component Structure Validation', () => {
   describe('Effect structure', () => {
     const EFFECT_MECHANISMS = ['transform', 'mask', 'emphasis', 'page']
 
-    // TODO: Effect mechanism folders (transform/, mask/) need index.ts barrels
-    it.skip('effect mechanism folders have index.ts (transform/, mask/ missing)', async () => {
+    it('effect mechanism folders have index.ts', async () => {
       const missing: string[] = []
 
       for (const mechanism of EFFECT_MECHANISMS) {

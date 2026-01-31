@@ -1,0 +1,25 @@
+/**
+ * Spin effect - continuous rotation animation
+ * Used for loading indicators, spinners, etc.
+ */
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Centered spin (for absolutely positioned elements) */
+@keyframes spin-centered {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.effect-spin {
+  animation: spin 1s linear infinite;
+}
+
+.effect-spin-centered {
+  animation: spin-centered 1s linear infinite;
+}

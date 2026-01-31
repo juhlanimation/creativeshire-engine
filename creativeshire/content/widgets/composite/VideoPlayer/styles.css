@@ -229,7 +229,7 @@
   border: none;
 }
 
-/* Buffering indicator */
+/* Buffering indicator - uses spin-centered effect from effects/emphasis/spin.css */
 .video-player__buffering {
   position: absolute;
   top: 50%;
@@ -240,13 +240,10 @@
   border: 3px solid rgba(255, 255, 255, 0.3);
   border-top-color: white;
   border-radius: 50%;
-  animation: video-player-spin 1s linear infinite;
 }
 
-@keyframes video-player-spin {
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
+.video-player__buffering.effect-spin-centered {
+  /* Animation applied via effect class */
 }
 
 /* Mobile adjustments */

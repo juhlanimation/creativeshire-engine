@@ -28,6 +28,7 @@
 import { useRef, useState, useCallback, useEffect, memo } from 'react'
 import { gsap } from 'gsap'
 import { useVideoControls, useAutoSavePosition } from './hooks'
+import '../../../../experience/effects/emphasis/spin.css'
 import type { VideoPlayerProps, VideoPlayerControls } from './types'
 import './styles.css'
 
@@ -283,9 +284,9 @@ const VideoPlayer = memo(function VideoPlayer({
         </div>
       </div>
 
-      {/* Buffering indicator */}
+      {/* Buffering indicator - uses spin effect from effects/emphasis/ */}
       {controls.isBuffering && (
-        <div className="video-player__buffering" aria-label="Loading" />
+        <div className="video-player__buffering effect-spin-centered" aria-label="Loading" />
       )}
     </div>
   )
