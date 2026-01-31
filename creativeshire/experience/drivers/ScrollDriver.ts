@@ -65,6 +65,12 @@ export class ScrollDriver implements Driver {
   /** Flag to track if driver is destroyed */
   private isDestroyed = false
 
+  /** Cached reduced motion preference (checked once at start, updated on change) */
+  private prefersReducedMotion = false
+
+  /** MediaQueryList for reduced motion */
+  private reducedMotionQuery: MediaQueryList | null = null
+
   constructor() {
     // Only run in browser environment
     if (typeof window === 'undefined') return
@@ -82,8 +88,20 @@ export class ScrollDriver implements Driver {
       threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
     })
 
+    // Cache reduced motion preference (avoid calling matchMedia every frame)
+    this.reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    this.prefersReducedMotion = this.reducedMotionQuery.matches
+    this.reducedMotionQuery.addEventListener('change', this.onReducedMotionChange)
+
     // Start the animation loop
     this.tick()
+  }
+
+  /**
+   * Reduced motion preference change handler.
+   */
+  private onReducedMotionChange = (e: MediaQueryListEvent): void => {
+    this.prefersReducedMotion = e.matches
   }
 
   /**
@@ -155,9 +173,7 @@ export class ScrollDriver implements Driver {
         sectionIndex: 0,
         totalSections: 1,
         isActive: true,
-        prefersReducedMotion:
-          typeof window !== 'undefined' &&
-          window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+        prefersReducedMotion: this.prefersReducedMotion, // Use cached value
       }
 
       // Compute CSS variables from behaviour
@@ -223,6 +239,12 @@ export class ScrollDriver implements Driver {
     // Remove scroll listener
     if (typeof window !== 'undefined') {
       window.removeEventListener('scroll', this.onScroll)
+    }
+
+    // Remove reduced motion listener
+    if (this.reducedMotionQuery) {
+      this.reducedMotionQuery.removeEventListener('change', this.onReducedMotionChange)
+      this.reducedMotionQuery = null
     }
 
     // Disconnect IntersectionObserver
