@@ -28,4 +28,4 @@ Key rules:
 4. **Behaviours = TRIGGER** — scroll/, hover/, visibility/
 5. **Effects = MECHANISM** — fade, mask/, transform/
 
-See: [ARCHITECTURE-AUDIT.md](/.claude/ARCHITECTURE-AUDIT.md)
+See: [Root CLAUDE.md](/CLAUDE.md) for full architecture details.
