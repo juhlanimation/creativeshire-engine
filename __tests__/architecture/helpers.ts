@@ -1,7 +1,7 @@
 /**
  * Architecture Test Helpers
  *
- * Utilities for validating Creativeshire architecture rules.
+ * Utilities for validating Creativeshire Engine architecture rules.
  */
 
 import fg from 'fast-glob'
@@ -9,25 +9,25 @@ import fs from 'fs/promises'
 import path from 'path'
 
 const ROOT = process.cwd()
-const CREATIVESHIRE = path.join(ROOT, 'creativeshire')
+const ENGINE = path.join(ROOT, 'engine')
 
 /**
- * Get all files matching a glob pattern within creativeshire/
+ * Get all files matching a glob pattern within engine/
  */
 export async function getFiles(pattern: string): Promise<string[]> {
   return fg(pattern, {
-    cwd: CREATIVESHIRE,
+    cwd: ENGINE,
     absolute: true,
     ignore: ['**/node_modules/**', '**/*.test.ts'],
   })
 }
 
 /**
- * Get all directories matching a glob pattern within creativeshire/
+ * Get all directories matching a glob pattern within engine/
  */
 export async function getFolders(pattern: string): Promise<string[]> {
   return fg(pattern, {
-    cwd: CREATIVESHIRE,
+    cwd: ENGINE,
     absolute: true,
     onlyDirectories: true,
     ignore: ['**/node_modules/**', '**/styles/**'],
@@ -183,10 +183,10 @@ export function hasCalcWithVar(content: string): boolean {
 }
 
 /**
- * Get relative path from creativeshire folder
+ * Get relative path from engine folder
  */
 export function relativePath(filePath: string): string {
-  return path.relative(CREATIVESHIRE, filePath).replace(/\\/g, '/')
+  return path.relative(ENGINE, filePath).replace(/\\/g, '/')
 }
 
 /**
@@ -211,7 +211,7 @@ export function isL1ToL2Import(filePath: string, importPath: string): boolean {
 
   // L1 (content) importing from L2 (experience) is a violation
   return importPath.includes('experience/') ||
-         importPath.includes('@/creativeshire/experience')
+         importPath.includes('@/engine/experience')
 }
 
 /**

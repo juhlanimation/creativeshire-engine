@@ -3,8 +3,8 @@
  * Sourced from reference implementation.
  */
 
-import type { FeaturedProject } from '@/creativeshire/content/sections/patterns/FeaturedProjects/types'
-import type { OtherProject } from '@/creativeshire/content/sections/patterns/OtherProjects/types'
+import type { FeaturedProject } from '@/engine/content/sections/patterns/FeaturedProjects/types'
+import type { OtherProject } from '@/engine/content/sections/patterns/OtherProjects/types'
 
 /**
  * Featured projects - shown with full cards and descriptions.

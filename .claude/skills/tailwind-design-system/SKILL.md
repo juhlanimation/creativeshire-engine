@@ -453,4 +453,4 @@ npm install clsx tailwind-merge class-variance-authority
 ## See Also
 
 - [Tailwind v4 Skill](../.claude/skills/tailwind-v4-skill/SKILL.md) - Configuration
-- [Styling Spec](../.claude/skills/creativeshire/specs/reference/styling.spec.md) - Project conventions
+- [Styling Spec](../.claude/skills/engine/specs/reference/styling.spec.md) - Project conventions

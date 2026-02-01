@@ -53,7 +53,7 @@ import { describe, it, expect } from 'vitest'
 import { getFiles, readFile, relativePath, fileExists } from './helpers'
 import path from 'path'
 
-const CREATIVESHIRE = path.join(process.cwd(), 'creativeshire')
+const ENGINE = path.join(process.cwd(), 'engine')
 
 describe('Component Structure Validation', () => {
   describe('Primitives structure', () => {
@@ -72,7 +72,7 @@ describe('Component Structure Validation', () => {
 
       const missing: string[] = []
       for (const folder of folders) {
-        const indexPath = path.join(CREATIVESHIRE, 'content/widgets/primitives', folder, 'index.tsx')
+        const indexPath = path.join(ENGINE, 'content/widgets/primitives', folder, 'index.tsx')
         if (!(await fileExists(indexPath))) {
           missing.push(`content/widgets/primitives/${folder}/index.tsx`)
         }
@@ -156,7 +156,7 @@ describe('Component Structure Validation', () => {
 
       const missing: string[] = []
       for (const folder of folders) {
-        const indexPath = path.join(CREATIVESHIRE, 'content/widgets/layout', folder, 'index.tsx')
+        const indexPath = path.join(ENGINE, 'content/widgets/layout', folder, 'index.tsx')
         if (!(await fileExists(indexPath))) {
           missing.push(`content/widgets/layout/${folder}/index.tsx`)
         }
@@ -206,8 +206,8 @@ describe('Component Structure Validation', () => {
 
       const missing: string[] = []
       for (const folder of folders) {
-        const indexTsx = path.join(CREATIVESHIRE, 'content/widgets/composite', folder, 'index.tsx')
-        const indexTs = path.join(CREATIVESHIRE, 'content/widgets/composite', folder, 'index.ts')
+        const indexTsx = path.join(ENGINE, 'content/widgets/composite', folder, 'index.tsx')
+        const indexTs = path.join(ENGINE, 'content/widgets/composite', folder, 'index.ts')
         if (!(await fileExists(indexTsx)) && !(await fileExists(indexTs))) {
           missing.push(`content/widgets/composite/${folder}/index.{ts,tsx}`)
         }
@@ -300,7 +300,7 @@ describe('Component Structure Validation', () => {
       for (const trigger of BEHAVIOUR_TRIGGERS) {
         const folderFiles = await getFiles(`experience/behaviours/${trigger}/*.ts`)
         if (folderFiles.length > 0) {
-          const indexPath = path.join(CREATIVESHIRE, 'experience/behaviours', trigger, 'index.ts')
+          const indexPath = path.join(ENGINE, 'experience/behaviours', trigger, 'index.ts')
           if (!(await fileExists(indexPath))) {
             missing.push(`experience/behaviours/${trigger}/index.ts`)
           }
@@ -390,7 +390,7 @@ describe('Component Structure Validation', () => {
 
       const missing: string[] = []
       for (const folder of folders) {
-        const indexPath = path.join(CREATIVESHIRE, 'content/sections/patterns', folder, 'index.ts')
+        const indexPath = path.join(ENGINE, 'content/sections/patterns', folder, 'index.ts')
         if (!(await fileExists(indexPath))) {
           missing.push(`content/sections/patterns/${folder}/index.ts`)
         }
@@ -438,7 +438,7 @@ describe('Component Structure Validation', () => {
 
       const missing: string[] = []
       for (const folder of folders) {
-        const indexPath = path.join(CREATIVESHIRE, 'content/chrome/regions', folder, 'index.tsx')
+        const indexPath = path.join(ENGINE, 'content/chrome/regions', folder, 'index.tsx')
         if (!(await fileExists(indexPath))) {
           missing.push(`content/chrome/regions/${folder}/index.tsx`)
         }
@@ -461,7 +461,7 @@ describe('Component Structure Validation', () => {
 
       const missing: string[] = []
       for (const folder of folders) {
-        const indexPath = path.join(CREATIVESHIRE, 'content/chrome/overlays', folder, 'index.tsx')
+        const indexPath = path.join(ENGINE, 'content/chrome/overlays', folder, 'index.tsx')
         if (!(await fileExists(indexPath))) {
           missing.push(`content/chrome/overlays/${folder}/index.tsx`)
         }
@@ -574,7 +574,7 @@ describe('Component Structure Validation', () => {
 
       const missing: string[] = []
       for (const folder of folders) {
-        const indexPath = path.join(CREATIVESHIRE, 'experience/modes', folder, 'index.ts')
+        const indexPath = path.join(ENGINE, 'experience/modes', folder, 'index.ts')
         if (!(await fileExists(indexPath))) {
           missing.push(`experience/modes/${folder}/index.ts`)
         }
@@ -621,7 +621,7 @@ describe('Component Structure Validation', () => {
 
       const missing: string[] = []
       for (const preset of presets) {
-        const indexPath = path.join(CREATIVESHIRE, 'presets', preset, 'index.ts')
+        const indexPath = path.join(ENGINE, 'presets', preset, 'index.ts')
         if (!(await fileExists(indexPath))) {
           missing.push(`presets/${preset}/index.ts`)
         }
@@ -644,7 +644,7 @@ describe('Component Structure Validation', () => {
 
       const missing: string[] = []
       for (const preset of presets) {
-        const indexPath = path.join(CREATIVESHIRE, 'presets', preset, 'pages', 'index.ts')
+        const indexPath = path.join(ENGINE, 'presets', preset, 'pages', 'index.ts')
         if (!(await fileExists(indexPath))) {
           missing.push(`presets/${preset}/pages/index.ts`)
         }

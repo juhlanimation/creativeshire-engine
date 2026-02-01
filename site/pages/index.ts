@@ -3,7 +3,7 @@
  * Central registry for all site pages with lookup utilities.
  */
 
-import type { PageSchema } from '@/creativeshire/schema'
+import type { PageSchema } from '@/engine/schema'
 import { homePage } from './home'
 
 /**

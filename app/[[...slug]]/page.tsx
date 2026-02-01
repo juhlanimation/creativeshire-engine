@@ -11,7 +11,7 @@
 import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import { Suspense } from 'react'
-import { SiteRenderer } from '@/creativeshire/renderer'
+import { SiteRenderer } from '@/engine/renderer'
 import { siteConfig } from '@/site/config'
 import { getAllPages, getPageBySlug } from '@/site/pages'
 

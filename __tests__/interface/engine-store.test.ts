@@ -4,9 +4,9 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { createEngineStore, createSnapshot } from '@/creativeshire/interface/EngineStore'
-import type { EngineInput, EngineEvents, EngineState } from '@/creativeshire/interface/types'
-import type { SiteSchema, PageSchema, SectionSchema } from '@/creativeshire/schema'
+import { createEngineStore, createSnapshot } from '@/engine/interface/EngineStore'
+import type { EngineInput, EngineEvents, EngineState } from '@/engine/interface/types'
+import type { SiteSchema, PageSchema, SectionSchema } from '@/engine/schema'
 
 // =============================================================================
 // Test Fixtures

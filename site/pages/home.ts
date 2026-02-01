@@ -3,16 +3,16 @@
  * Bo Juhl portfolio landing page.
  */
 
-import type { PageSchema } from '../../creativeshire/schema'
+import type { PageSchema } from '../../engine/schema'
 import {
   createHeroSection,
   createAboutSection,
   createFeaturedProjectsSection,
   createOtherProjectsSection,
-} from '../../creativeshire/content/sections/patterns'
+} from '../../engine/content/sections/patterns'
 
 // Import preset styles
-import { bojuhlHeroStyles } from '../../creativeshire/presets/bojuhl/pages'
+import { bojuhlHeroStyles } from '../../engine/presets/bojuhl/pages'
 
 // Import content data
 import { featuredProjects, otherProjects } from '../data/projects'

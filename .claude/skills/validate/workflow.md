@@ -86,9 +86,9 @@ For each built component, verify against its spec:
 
 | Component | Check Against |
 |-----------|---------------|
-| Widget | `../creativeshire/specs/components/content/widget.spec.md` |
-| Section | `../creativeshire/specs/components/content/section.spec.md` |
-| Behaviour | `../creativeshire/specs/components/experience/behaviour.spec.md` |
+| Widget | `../engine/specs/components/content/widget.spec.md` |
+| Section | `../engine/specs/components/content/section.spec.md` |
+| Behaviour | `../engine/specs/components/experience/behaviour.spec.md` |
 
 **Review Checklist:**
 - [ ] Correct file structure

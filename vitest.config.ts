@@ -12,7 +12,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '.'),
-      'creativeshire': path.resolve(__dirname, 'creativeshire'),
+      'engine': path.resolve(__dirname, 'engine'),
     },
   },
 })

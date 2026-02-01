@@ -3,8 +3,8 @@
  * Uses bojuhlPreset with chrome components.
  */
 
-import type { SiteSchema } from '../creativeshire/schema'
-import { bojuhlPreset } from '../creativeshire/presets/bojuhl'
+import type { SiteSchema } from '../engine/schema'
+import { bojuhlPreset } from '../engine/presets/bojuhl'
 
 /**
  * Main site configuration.

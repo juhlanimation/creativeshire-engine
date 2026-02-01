@@ -98,7 +98,7 @@ Map the task to relevant skills/specs for the **References** field:
 ### 5. Backlog Creation
 
 Read the backlog item template:
-- `../creativeshire/templates/backlog-item.md`
+- `../engine/templates/backlog-item.md`
 
 **Determine next ID:**
 ```bash
@@ -133,7 +133,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 
 ## Reference
 
-See `../creativeshire/templates/backlog-item.md` for:
+See `../engine/templates/backlog-item.md` for:
 - Domain prefixes (WIDGET, SECTION, etc.)
 - Priority guide (P0-P3)
 - Estimate guide (S/M/L/XL)
@@ -206,7 +206,7 @@ After all component items (widgets, sections, behaviours, chrome), add:
 - **Description:** Preset that assembles all components into a complete site
 - **Context:** Analysis at `.claude/analyze/{name}/`
 - **Approach:**
-  1. Create preset in `creativeshire/presets/{name}/`
+  1. Create preset in `engine/presets/{name}/`
   2. Define `site.ts` with experience mode and behaviour defaults
   3. Create page templates in `pages/` using section composites
   4. Configure chrome regions and overlays

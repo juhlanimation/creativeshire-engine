@@ -14,7 +14,7 @@ site/
 ```
 
 **Site vs Preset:**
-- Preset = template (starting point in creativeshire/presets/)
+- Preset = template (starting point in engine/presets/)
 - Site = assembled instance (this folder)
 
 Flow: Pick preset → copy to site/ → customize

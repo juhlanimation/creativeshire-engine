@@ -19,11 +19,11 @@ import * as path from 'path'
 describe('ScrollDriver', () => {
   const driverPath = path.join(
     process.cwd(),
-    'creativeshire/experience/drivers/ScrollDriver.ts'
+    'engine/experience/drivers/ScrollDriver.ts'
   )
   const typesPath = path.join(
     process.cwd(),
-    'creativeshire/experience/drivers/types.ts'
+    'engine/experience/drivers/types.ts'
   )
 
   describe('file structure', () => {

@@ -249,6 +249,6 @@ The Experience layer is where distinctive motion lives. The Content layer is whe
 
 ## See Also
 
-- [Styling Spec](../creativeshire/specs/reference/styling.spec.md) - Tailwind/CSS patterns
-- [Widget Spec](../creativeshire/specs/components/content/widget.spec.md) - Component rules
-- [Experience Layer](../creativeshire/specs/layers/experience.spec.md) - Animation system
+- [Styling Spec](../engine/specs/reference/styling.spec.md) - Tailwind/CSS patterns
+- [Widget Spec](../engine/specs/components/content/widget.spec.md) - Component rules
+- [Experience Layer](../engine/specs/layers/experience.spec.md) - Animation system

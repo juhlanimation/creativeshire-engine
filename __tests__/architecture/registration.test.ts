@@ -17,10 +17,10 @@ import {
 } from './helpers'
 
 // Import registries
-import { widgetRegistry } from '../../creativeshire/content/widgets/registry'
-import { chromeRegistry } from '../../creativeshire/content/chrome/registry'
-import { behaviourRegistry } from '../../creativeshire/experience/behaviours/registry'
-import { transitionRegistry } from '../../creativeshire/experience/drivers/gsap/transitions/registry'
+import { widgetRegistry } from '../../engine/content/widgets/registry'
+import { chromeRegistry } from '../../engine/content/chrome/registry'
+import { behaviourRegistry } from '../../engine/experience/behaviours/registry'
+import { transitionRegistry } from '../../engine/experience/drivers/gsap/transitions/registry'
 
 describe('Registration Validation', () => {
   describe('Widget Registry', () => {

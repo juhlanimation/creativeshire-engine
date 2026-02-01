@@ -16,8 +16,8 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'Creativeshire',
-  description: 'Built with Creativeshire Engine',
+  title: 'Engine Dev',
+  description: 'Local development environment for Creativeshire Engine',
 }
 
 export default function RootLayout({

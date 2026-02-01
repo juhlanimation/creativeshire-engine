@@ -1,6 +1,32 @@
 # Creativeshire Engine
 
-A CMS engine. Think Squarespace/Webflow. Everything is generic and configurable.
+A CMS engine library. Think Squarespace/Webflow. Everything is generic and configurable.
+
+## Package Info
+
+This is a **library package** (`@creativeshire/engine`).
+
+- Exports components for use by creativeshire-platform
+- Does NOT know about platform (auth, routing, API)
+- React is a peer dependency (platform provides it)
+- Local development uses `app/` folder (not exported)
+
+### Importing (from platform)
+
+```typescript
+import { SiteRenderer } from '@creativeshire/engine'
+import { bojuhlPreset } from '@creativeshire/engine/presets'
+```
+
+### Subpath Imports
+
+```typescript
+import { SiteRenderer } from '@creativeshire/engine/renderer'
+import type { SiteSchema } from '@creativeshire/engine/schema'
+import { bojuhlPreset } from '@creativeshire/engine/presets'
+```
+
+---
 
 ## Widget Hierarchy
 
@@ -32,7 +58,7 @@ INTERFACE            EngineProvider, Controller, Events
        ↓             (validates, manages state, live updates)
 SITE INSTANCE        site/config.ts, site/pages/
        ↓             (the assembled site - what gets deployed)
-PRESET               creativeshire/presets/{name}/
+PRESET               engine/presets/{name}/
        ↓             (template copied as starting point)
 RENDERER             Site → Page → Section → Widget
        ↓
@@ -71,7 +97,7 @@ Effects named by MECHANISM: `fade`, `transform/`, `mask/`
 ## File Locations
 
 ```
-creativeshire/
+engine/
 ├── content/
 │   ├── widgets/
 │   │   ├── primitives/    Text, Image, Icon, Button, Link
@@ -138,8 +164,8 @@ Browser automation captures **screenshots** (static snapshots). It cannot percei
 
 | Topic | Location |
 |-------|----------|
-| **Architecture** | [SKILL.md](.claude/skills/creativeshire/SKILL.md) |
-| **All Specs** | [specs/index.spec.md](.claude/skills/creativeshire/specs/index.spec.md) |
+| **Architecture** | [SKILL.md](.claude/skills/engine/SKILL.md) |
+| **All Specs** | [specs/index.spec.md](.claude/skills/engine/specs/index.spec.md) |
 | **Audit/Refactor** | [ARCHITECTURE-AUDIT.md](.claude/ARCHITECTURE-AUDIT.md) |
 
 ## Commands (Optional)

@@ -14,7 +14,7 @@ import { describe, it, expect } from 'vitest'
 import { getFiles, readFile, relativePath, fileExists } from './helpers'
 import path from 'path'
 
-const CREATIVESHIRE = path.join(process.cwd(), 'creativeshire')
+const ENGINE = path.join(process.cwd(), 'engine')
 
 describe('ComponentMeta Validation', () => {
   describe('Widget meta.ts files', () => {

@@ -97,25 +97,25 @@ Based on component type, read from creativeshire skill:
 
 | Building... | Read |
 |-------------|------|
-| Widget | `../creativeshire/specs/components/content/widget.spec.md` |
-| Section | `../creativeshire/specs/components/content/section.spec.md` |
-| Chrome | `../creativeshire/specs/components/content/chrome.spec.md` |
-| Behaviour | `../creativeshire/specs/components/experience/behaviour.spec.md` |
-| Driver | `../creativeshire/specs/components/experience/driver.spec.md` |
-| Trigger | `../creativeshire/specs/components/experience/trigger.spec.md` |
-| Preset | `../creativeshire/specs/components/preset/preset.spec.md` |
+| Widget | `../engine/specs/components/content/widget.spec.md` |
+| Section | `../engine/specs/components/content/section.spec.md` |
+| Chrome | `../engine/specs/components/content/chrome.spec.md` |
+| Behaviour | `../engine/specs/components/experience/behaviour.spec.md` |
+| Driver | `../engine/specs/components/experience/driver.spec.md` |
+| Trigger | `../engine/specs/components/experience/trigger.spec.md` |
+| Preset | `../engine/specs/components/preset/preset.spec.md` |
 
 Also read:
-- `../creativeshire/specs/patterns/common.spec.md` for patterns
-- `../creativeshire/specs/patterns/anti-patterns.spec.md` for what to avoid
+- `../engine/specs/patterns/common.spec.md` for patterns
+- `../engine/specs/patterns/anti-patterns.spec.md` for what to avoid
 
 ### 4. Find Existing Examples
 
 Search for similar components:
 ```
-creativeshire/components/content/widgets/
-creativeshire/components/content/sections/
-creativeshire/components/experience/behaviours/
+engine/content/widgets/
+engine/content/sections/
+engine/experience/behaviours/
 ```
 
 Follow existing patterns for consistency.
@@ -245,8 +245,8 @@ When resuming (`/build continue`):
 - **Item:** WIDGET-003
 - **Status:** Ready for validation
 - **Files:**
-  - `creativeshire/components/content/widgets/MyWidget/MyWidget.tsx`
-  - `creativeshire/components/content/widgets/MyWidget/index.ts`
+  - `engine/content/widgets/MyWidget/MyWidget.tsx`
+  - `engine/content/widgets/MyWidget/index.ts`
 - **Branch:** sprint/widget-003-video-player
 
 Next: `/validate WIDGET-003` or `/build WIDGET-004`

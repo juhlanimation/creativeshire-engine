@@ -1,0 +1,320 @@
+/**
+ * Bojuhl Preset - Section Styles
+ * Site-specific section styling for the Bojuhl portfolio.
+ *
+ * These are NOT generic - they target specific section IDs.
+ * Generic section styles live in engine/content/sections/styles.css
+ */
+
+/* ============================================
+   HERO SECTION STYLES
+   Full viewport with video background
+   Reference: bojuhl.com hero-section.tsx
+
+   Structure:
+   - Section (#hero) - viewport height container
+   - Video (.video-widget--background) - absolute, covers section
+   - Flex (#hero-content) - content wrapper, positioned at bottom
+     - Text (#hero-intro) - intro text
+     - Text (#hero-role-*) - role titles
+   - Text (#hero-scroll) - scroll indicator, absolutely positioned
+
+   All text styling is via features (inline styles).
+   CSS handles positioning and blend mode transform overrides.
+   ============================================ */
+
+#hero {
+  height: 100svh;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  background-color: #000;
+}
+
+/* Content wrapper - positioned at bottom, auto height */
+/* Note: No z-index or transform to allow mix-blend-mode to work with video behind */
+#hero > .flex-widget {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  /* Override default transform to prevent stacking context - needed for blend mode */
+  transform: none;
+  /* Horizontal padding - px-8 = 32px mobile */
+  padding: 0 32px;
+  /* Bottom padding: 12% from bottom (reference proportional position) */
+  padding-bottom: calc(12svh + env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+  /* Gap between elements - viewport-relative to match reference scaling */
+  /* Reference: gap-[2vh] md:gap-[2.5vh] */
+  gap: 2vh;
+}
+
+/* All text widgets in hero - override transform for blend mode to work */
+/* Typography and blend mode are set via features (inline styles) */
+#hero .text-widget {
+  transform: none;
+}
+
+/* Intro text - extra margin for ~3.5vh total gap to first role (2.5vh gap + 1vh margin) */
+#hero-intro {
+  margin-bottom: 1vh;
+}
+
+/* Scroll indicator - absolutely positioned at bottom center */
+/* Note: Higher specificity to override the general transform: none rule */
+/* Fade-out animation is handled by GSAP ScrollTrigger (useScrollIndicatorFade hook) */
+#hero #hero-scroll {
+  position: absolute;
+  bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Tablet (768px+) - md:px-16 = 64px, md:gap-[2.5vh] */
+@media (min-width: 768px) {
+  #hero > .flex-widget {
+    padding: 0 64px;
+    padding-bottom: calc(12svh + env(safe-area-inset-bottom, 0px));
+    gap: 2.5vh;
+  }
+}
+
+/* Desktop (1024px+) - lg:px-24 = 96px */
+@media (min-width: 1024px) {
+  #hero > .flex-widget {
+    padding: 0 96px;
+    padding-bottom: calc(12svh + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ============================================
+   ABOUT SECTION STYLES
+   Two-column layout with bio and image
+   Reference: bojuhl.com about-section.tsx
+   ============================================ */
+
+#about {
+  position: relative;
+  min-height: 100svh;
+  box-sizing: border-box;
+  background-color: #000;
+  color: white;
+  overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+}
+
+/* Mobile background image (30% opacity) */
+#about-mobile-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+#about-mobile-bg .image-widget {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  opacity: 0.3;
+}
+
+@media (min-width: 768px) {
+  #about-mobile-bg {
+    display: none;
+  }
+}
+
+/* Content wrapper - ScrollFade equivalent */
+#about-content {
+  position: relative;
+  display: flex;
+  min-height: 100svh;
+}
+
+/* Bio column - vertically centered on mobile, top-aligned on desktop */
+#about-bio-column {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center horizontally on mobile */
+  padding: 0 32px;
+  min-height: 100svh;
+}
+
+#about-bio-column > .box-widget {
+  max-width: 500px;
+}
+
+/* Bio text - reference: text-sm (14px), leading-relaxed */
+#about .text-widget {
+  font-family: var(--font-paragraph);
+  font-size: 14px;
+  line-height: 1.625; /* leading-relaxed */
+  color: white; /* Inherits from section - no opacity reduction */
+  text-align: justify;
+  white-space: pre-line;
+}
+
+/* Signature styling - reference: italic, right-aligned */
+#about .text-widget[data-variant="signature"] {
+  font-family: var(--font-paragraph);
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 400;
+  color: white;
+  margin-top: 16px;
+  text-align: right;
+}
+
+/* Image column - hidden on mobile */
+#about-image-column {
+  display: none;
+}
+
+/* Image fills 110% height for "zoomed in" crop effect - matches original */
+#about-image-column .image-widget {
+  width: 100%;
+  height: 110%;
+  object-fit: cover;
+}
+
+/* Gradient overlay above logo marquee */
+#about-gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30svh;
+  background: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+  pointer-events: none;
+}
+
+/* Logo marquee container - absolute positioned at bottom */
+#about-logos {
+  display: none; /* Hidden on mobile */
+  position: absolute;
+  bottom: 32px;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: 48px 0;
+  overflow: hidden;
+}
+
+/* Tablet+ visibility */
+@media (min-width: 768px) {
+  #about-logos {
+    display: block;
+  }
+}
+
+/* Marquee track - contains duplicated content for seamless loop */
+#about-logos-track {
+  width: max-content; /* Size to content for accurate -50% translation */
+  will-change: transform;
+}
+
+/* Tablet (768px+) */
+@media (min-width: 768px) {
+  #about-bio-column {
+    width: 50%;
+    align-items: flex-start;
+    justify-content: flex-start; /* Left-aligned on tablet+ (matches original) */
+    padding: 160px 64px 0;
+    min-height: auto;
+  }
+
+  #about-image-column {
+    display: block;
+    width: 50%;
+    overflow: hidden;
+    height: 100svh;
+  }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+  #about-bio-column {
+    padding: 160px 96px 0;
+  }
+}
+
+/* ============================================
+   FEATURED PROJECTS SECTION STYLES
+   Project cards with alternating layout
+   Reference: bojuhl.com projects-section.tsx
+
+   Structure:
+   - Section (#featured-projects) - full width background, vertical padding
+   - Content wrapper (.featured-projects__content) - max-width, centered, gap
+   - Project cards inside content wrapper
+   ============================================ */
+
+#featured-projects {
+  padding: 0; /* No section padding - card margins handle spacing */
+  box-sizing: border-box;
+  background-color: #fff;
+}
+
+/* Content wrapper - matches content-container px-2 from reference */
+.featured-projects__content {
+  max-width: 2400px;
+  margin: 0 auto; /* Centered horizontally */
+  padding: 0 8px; /* px-2 horizontal padding only */
+  /* No gap - card margins handle spacing between cards */
+}
+
+/* ============================================
+   OTHER PROJECTS SECTION STYLES
+   Expandable horizontal gallery with thumbnails
+   Reference: bojuhl.com more-projects-section.tsx
+   ============================================ */
+
+.other-projects-section {
+  /* Reduced from 128px to 64px for tighter spacing */
+  padding: 64px 8px;
+  margin-top: -4px;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  color: #000000;
+  display: none; /* Hide on mobile/tablet (lg:block = 1024px+) */
+}
+
+@media (min-width: 1024px) {
+  .other-projects-section {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* Children stretch full width */
+  }
+}
+
+/* Header - left-aligned, shrink to fit content */
+/* Reference: flex justify-start mb-8 > flex flex-col */
+/* Note: No margin-bottom here - gallery has mt-9 (36px) which handles spacing.
+   In reference (block context), margins collapse: max(mb-8, mt-9) = 36px.
+   In our flex context, margins don't collapse, so we only use one. */
+.other-projects-header {
+  width: fit-content !important; /* Shrink to content width */
+  margin-right: auto !important; /* Push to left (not centered) */
+  margin-left: 0 !important; /* Ensure left edge */
+}
+
+/* Section heading - reference: font-title text-[10px] font-bold uppercase text-right */
+/* Uses font-weight: 900 (black) to match ProjectCard title styling */
+.other-projects-heading {
+  font-family: var(--font-title);
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-align: right;
+  color: inherit;
+}
+
+/* Year range - reference: font-paragraph text-[10px] text-right */
+.other-projects-year-range {
+  font-family: var(--font-paragraph);
+  font-size: 10px;
+  font-weight: 400;
+  text-align: right;
+  color: inherit;
+}

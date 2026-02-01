@@ -22,4 +22,4 @@ See [workflow.md](workflow.md) for detailed steps.
 
 ## Output
 
-Backlog items in `.claude/tasks/backlog.md` using the format from `../creativeshire/templates/backlog-item.md`.
+Backlog items in `.claude/tasks/backlog.md` using the format from `../engine/templates/backlog-item.md`.
