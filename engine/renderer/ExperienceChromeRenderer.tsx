@@ -12,7 +12,7 @@
 
 import { createPortal } from 'react-dom'
 import { useEffect, useState } from 'react'
-import { WidgetRenderer } from './WidgetRenderer'
+import { getChromeComponent } from '../content/chrome/registry'
 import type { ExperienceChrome } from '../experience/experiences/types'
 
 interface ExperienceChromeRendererProps {
@@ -24,6 +24,7 @@ interface ExperienceChromeRendererProps {
 
 /**
  * Renders experience-owned chrome items.
+ * Looks up components from the chrome registry.
  * For overlays, uses portal to escape transform context.
  */
 export function ExperienceChromeRenderer({
@@ -41,16 +42,14 @@ export function ExperienceChromeRenderer({
 
   const content = (
     <>
-      {items.map((item, index) => (
-        <WidgetRenderer
-          key={`experience-chrome-${item.type}-${index}`}
-          widget={{
-            type: item.type,
-            props: item.props,
-          }}
-          index={index}
-        />
-      ))}
+      {items.map((item, index) => {
+        const Component = getChromeComponent(item.type)
+        if (!Component) {
+          console.warn(`[ExperienceChromeRenderer] Unknown chrome component: ${item.type}`)
+          return null
+        }
+        return <Component key={`experience-chrome-${item.type}-${index}`} {...item.props} />
+      })}
     </>
   )
 

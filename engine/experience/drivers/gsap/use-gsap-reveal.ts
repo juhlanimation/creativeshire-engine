@@ -127,7 +127,6 @@ export function useGsapReveal({
 
       // Get initial state from transition
       const initialState = transition.getInitialState(context, mergedOptions)
-      gsap.set(container, initialState)
 
       // Hide content for sequenced fade
       if (sequenceContentFade && content) {
@@ -153,15 +152,22 @@ export function useGsapReveal({
 
       // Use custom buildTimeline if provided, otherwise interpolate states
       if (transition.buildTimeline) {
+        // Custom timelines manage their own initial state
+        gsap.set(container, initialState)
         transition.buildTimeline(timelineRef.current, context, mergedOptions)
       } else {
-        // Get final state and animate to it
+        // Get final state and animate from initial to final
+        // Using fromTo() instead of set() + to() to avoid race conditions
+        // where to() might read the old value before set() is applied
         const finalState = transition.getFinalState(context, mergedOptions)
-        timelineRef.current.to(container, {
-          ...finalState,
-          duration,
-          ease,
-        })
+        timelineRef.current.fromTo(container,
+          initialState,
+          {
+            ...finalState,
+            duration,
+            ease,
+          }
+        )
       }
 
       isInitializedRef.current = true

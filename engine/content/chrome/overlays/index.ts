@@ -10,3 +10,6 @@ export { default as CursorLabel } from './CursorLabel'
 
 export { default as SlideIndicators } from './SlideIndicators'
 export type { SlideIndicatorsProps } from './SlideIndicators/types'
+
+export { default as NavTimeline } from './NavTimeline'
+export type { NavTimelineProps } from './NavTimeline/types'

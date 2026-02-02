@@ -5,8 +5,83 @@
  */
 
 import type { StoreApi } from 'zustand'
-import type { ExperienceState } from '../modes/types'
 import type { SerializableValue } from '../../schema/types'
+
+// =============================================================================
+// Experience State Types
+// =============================================================================
+
+/**
+ * State managed by the experience store.
+ * Updated by drivers, consumed by behaviours.
+ */
+export interface ExperienceState {
+  scrollProgress: number
+  viewportHeight: number
+  isScrolling: boolean
+  /** User prefers reduced motion (a11y) */
+  prefersReducedMotion: boolean
+  /** Section visibility ratios (0-1) keyed by section ID */
+  sectionVisibilities: Record<string, number>
+  /** Cursor X position in viewport pixels */
+  cursorX: number
+  /** Cursor Y position in viewport pixels */
+  cursorY: number
+}
+
+/**
+ * Navigation state for experiences with section navigation.
+ * Used by slideshow, horizontal scroll, and other navigable experiences.
+ */
+export interface NavigationState {
+  /** Currently active section index (0-based) */
+  activeSection: number
+  /** Previous active section index */
+  previousSection: number
+  /** Total number of navigable sections */
+  totalSections: number
+  /** Whether a transition is in progress */
+  isTransitioning: boolean
+  /** Transition progress (0-1) */
+  transitionProgress: number
+  /** Direction of current transition */
+  transitionDirection: 'forward' | 'backward' | null
+  /** Last navigation input that caused the transition */
+  lastInputType: string | null
+  /** Whether navigation is currently locked */
+  isLocked: boolean
+}
+
+/**
+ * Combined state for navigable experiences.
+ * Extends base ExperienceState with navigation capabilities.
+ */
+export interface NavigableExperienceState extends ExperienceState, NavigationState {}
+
+/**
+ * State for infinite carousel experiences.
+ * Uses continuous scroll progress with momentum physics.
+ */
+export interface InfiniteCarouselState extends NavigableExperienceState {
+  /** Scroll velocity in sections per frame (decays with friction) */
+  velocity: number
+  /** Target section for snap animation (-1 when free-scrolling) */
+  snapTarget: number
+  /** Whether currently snapping to a section */
+  isSnapping: boolean
+  /** Experience phase: 'intro' for initial animation, 'ready' for interaction */
+  phase: 'intro' | 'ready'
+  /** Whether user has looped through all sections (enables backward scroll at start) */
+  hasLooped: boolean
+  /** Section IDs in order (for NavTimeline labels) */
+  sectionIds: string[]
+  /**
+   * Progress through the clip/transition phase (0-1).
+   * For tall sections, this is 0 during internal scroll and 0-1 during clip.
+   * NavTimeline uses this for pointer animation instead of raw scrollProgress.
+   */
+  clipProgress: number
+}
 
 /**
  * Configuration for a trigger that updates store state.
@@ -78,10 +153,11 @@ export interface ExperienceConstraints {
  * Controls how sections are visually arranged.
  */
 export type PresentationModel =
-  | 'stacking'    // Default: sections stack vertically, scroll to navigate
-  | 'slideshow'   // One section visible at a time, discrete transitions
-  | 'parallax'    // Layered depth effect, sections overlap
-  | 'horizontal'  // Horizontal layout, scroll/swipe to navigate
+  | 'stacking'           // Default: sections stack vertically, scroll to navigate
+  | 'slideshow'          // One section visible at a time, discrete transitions
+  | 'parallax'           // Layered depth effect, sections overlap
+  | 'horizontal'         // Horizontal layout, scroll/swipe to navigate
+  | 'infinite-carousel'  // Transform-based infinite vertical scroll with momentum
 
 /**
  * Presentation configuration.
@@ -270,7 +346,7 @@ export interface ExperienceActions {
 
 /**
  * Experience definition.
- * Bundles state provider (what Mode did) + behaviour defaults.
+ * Bundles state provider + behaviour defaults.
  * Chrome structure stays in Preset; chrome behaviours come from behaviourDefaults.
  *
  * For structural experiences (slideshow, gallery), use:
@@ -289,7 +365,7 @@ export interface Experience {
   /** Description of what the experience does */
   description: string
 
-  // State provider (absorbed from Mode)
+  // State provider
 
   /** State fields the experience's store exposes */
   provides: string[]
@@ -329,9 +405,6 @@ export interface Experience {
   /** Section IDs to hide from rendering */
   hideSections?: string[]
 }
-
-// Re-export ExperienceState for convenience
-export type { ExperienceState } from '../modes/types'
 
 // Re-export provider types from parent
 export type { ExperienceContextValue, ExperienceProviderProps } from '../types'

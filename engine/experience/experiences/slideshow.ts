@@ -4,8 +4,7 @@
  */
 
 import { createStore } from 'zustand'
-import type { Experience } from './types'
-import type { NavigableExperienceState } from '../modes/types'
+import type { Experience, NavigableExperienceState } from './types'
 import { registerExperience } from './registry'
 
 export const slideshowExperience: Experience = {

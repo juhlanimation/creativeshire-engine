@@ -8,10 +8,11 @@ import { bojuhlPreset } from '../engine/presets/bojuhl'
 
 /**
  * Toggle experience mode for testing.
- * Set to 'slideshow' to test new navigation system.
+ * Set to 'slideshow' to test slideshow navigation.
+ * Set to 'infinite-carousel' to test momentum-based infinite scroll.
  * Set to 'default' to use preset's cinematic-portfolio experience.
  */
-const EXPERIENCE_MODE: 'default' | 'slideshow' = 'default'
+const EXPERIENCE_MODE: 'default' | 'slideshow' | 'infinite-carousel' = 'infinite-carousel'
 
 /**
  * Main site configuration.
@@ -23,6 +24,8 @@ export const siteConfig: SiteSchema = {
   theme: bojuhlPreset.theme,
   experience: EXPERIENCE_MODE === 'slideshow'
     ? { id: 'slideshow' }
+    : EXPERIENCE_MODE === 'infinite-carousel'
+    ? { id: 'infinite-carousel' }
     : bojuhlPreset.experience,
   chrome: {
     regions: {

@@ -69,7 +69,7 @@ describe('EngineStore', () => {
       expect(state.lastError).toBe(null)
     })
 
-    it('uses site.experience.mode as default experienceId', () => {
+    it('uses site.experience.id as default experienceId', () => {
       const input = createTestInput()
       const store = createEngineStore(input)
 

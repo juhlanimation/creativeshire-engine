@@ -24,10 +24,14 @@ export {
 export { stackingExperience } from './stacking'
 export { cinematicPortfolioExperience } from './cinematic-portfolio'
 export { slideshowExperience } from './slideshow'
+export { infiniteCarouselExperience } from './infinite-carousel'
 
 // Presentation wrapper (applies experience presentation config)
 export { PresentationWrapper } from './PresentationWrapper'
 export type { PresentationWrapperProps } from './PresentationWrapper'
+
+// Infinite carousel controller (initializes MomentumDriver, positions sections)
+export { InfiniteCarouselController } from './InfiniteCarouselController'
 
 // Types
 export type {

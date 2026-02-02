@@ -1,0 +1,167 @@
+/**
+ * NavTimeline styles
+ * Vertical timeline showing scroll progress between sections
+ */
+
+.nav-timeline {
+  position: fixed;
+  top: 50%;
+  z-index: 50;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+/* Position variants */
+.nav-timeline[data-position="center"] {
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.nav-timeline[data-position="left"] {
+  left: 48px;
+  transform: translateY(-50%);
+}
+
+.nav-timeline[data-position="right"] {
+  right: 48px;
+  transform: translateY(-50%);
+}
+
+/* Timeline container - holds line and arrows */
+.nav-timeline-container {
+  position: relative;
+  height: 12.5vh;
+}
+
+/* Line + arrows wrapper */
+.nav-timeline-spine {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Vertical line */
+.nav-timeline-line {
+  width: 1.5px;
+  height: 100%;
+  background: white;
+  transform-origin: center;
+}
+
+/* Arrow common styles */
+.nav-timeline-arrow {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+}
+
+.nav-timeline-arrow--top {
+  top: 0;
+  transform: translateX(-50%) translateY(-100%);
+}
+
+.nav-timeline-arrow--bottom {
+  bottom: 0;
+  transform: translateX(-50%) translateY(100%);
+}
+
+/* Pointer dot - positioned at vertical center */
+.nav-timeline-pointer-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.nav-timeline-pointer-inner {
+  transform: translateY(-50%);
+}
+
+.nav-timeline-pointer {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+
+/* Label container - on one side of the line */
+.nav-timeline-label-wrapper {
+  position: absolute;
+  top: 50%;
+}
+
+.nav-timeline-label-wrapper[data-side="left"] {
+  left: calc(50% + 12px);
+  right: auto;
+}
+
+.nav-timeline-label-wrapper[data-side="right"] {
+  left: auto;
+  right: calc(50% + 12px);
+}
+
+.nav-timeline-label-inner {
+  transform: translateY(-50%);
+}
+
+.nav-timeline-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: white;
+  font-weight: 500;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.nav-timeline-label[data-align="left"] {
+  text-align: left;
+}
+
+.nav-timeline-label[data-align="right"] {
+  text-align: right;
+}
+
+/* Number container - opposite side of label */
+.nav-timeline-number-wrapper {
+  position: absolute;
+  top: 50%;
+}
+
+.nav-timeline-number-wrapper[data-side="left"] {
+  left: calc(50% + 12px);
+  right: auto;
+}
+
+.nav-timeline-number-wrapper[data-side="right"] {
+  left: auto;
+  right: calc(50% + 12px);
+}
+
+.nav-timeline-number-inner {
+  transform: translateY(-50%);
+}
+
+.nav-timeline-number {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: white;
+  font-weight: 500;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.nav-timeline-number[data-align="left"] {
+  text-align: left;
+}
+
+.nav-timeline-number[data-align="right"] {
+  text-align: right;
+}

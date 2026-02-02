@@ -27,6 +27,7 @@ export {
 
 // Class-based drivers (spec-compliant)
 export { ScrollDriver } from './ScrollDriver'
+export { MomentumDriver } from './MomentumDriver'
 
 // Hook-based drivers (legacy - for migration)
 export { useScrollFadeDriver } from './useScrollFadeDriver'
@@ -37,4 +38,4 @@ export { RevealTransition, useGsapReveal } from './gsap'
 export type { RevealType, UseGsapRevealOptions, RevealTransitionProps } from './gsap'
 
 // Types
-export type { DriverConfig, ElementDriverProps, Driver, Target } from './types'
+export type { DriverConfig, ElementDriverProps, Driver, Target, MomentumDriverConfig } from './types'

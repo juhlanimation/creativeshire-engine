@@ -554,58 +554,6 @@ describe('Component Structure Validation', () => {
     })
   })
 
-  describe('Mode structure', () => {
-    it('modes folder has index.ts', async () => {
-      const indexFiles = await getFiles('experience/modes/index.ts')
-      expect(indexFiles.length, 'Missing experience/modes/index.ts').toBeGreaterThan(0)
-    })
-
-    it('each mode folder has index.ts', async () => {
-      const allFiles = await getFiles('experience/modes/**/*.ts')
-      const folders = new Set<string>()
-
-      for (const file of allFiles) {
-        const rel = relativePath(file)
-        const parts = rel.split('/')
-        if (parts.length >= 3 && !parts[2].includes('.')) {
-          folders.add(parts[2])
-        }
-      }
-
-      const missing: string[] = []
-      for (const folder of folders) {
-        const indexPath = path.join(ENGINE, 'experience/modes', folder, 'index.ts')
-        if (!(await fileExists(indexPath))) {
-          missing.push(`experience/modes/${folder}/index.ts`)
-        }
-      }
-
-      expect(missing, `Mode folders missing index.ts:\\n${missing.join('\\n')}`).toHaveLength(0)
-    })
-
-    it('mode folders are kebab-case', async () => {
-      const allFiles = await getFiles('experience/modes/**/*.ts')
-      const folders = new Set<string>()
-
-      for (const file of allFiles) {
-        const rel = relativePath(file)
-        const parts = rel.split('/')
-        if (parts.length >= 3 && !parts[2].includes('.')) {
-          folders.add(parts[2])
-        }
-      }
-
-      const violations: string[] = []
-      for (const folder of folders) {
-        if (!/^[a-z][a-z0-9-]*$/.test(folder)) {
-          violations.push(`experience/modes/${folder}: not kebab-case`)
-        }
-      }
-
-      expect(violations, `Mode folders not kebab-case:\\n${violations.join('\\n')}`).toHaveLength(0)
-    })
-  })
-
   describe('Preset structure', () => {
     it('each preset has index.ts', async () => {
       const allFiles = await getFiles('presets/**/*.ts')

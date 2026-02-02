@@ -24,8 +24,11 @@
 
 import { useCallback, useMemo } from 'react'
 import type { StoreApi } from 'zustand'
-import type { NavigableExperienceState } from '../modes/types'
-import type { NavigationConfig, ExperienceActions } from '../experiences/types'
+import type {
+  NavigableExperienceState,
+  NavigationConfig,
+  ExperienceActions,
+} from '../experiences/types'
 
 /**
  * Hook that returns programmatic navigation actions.

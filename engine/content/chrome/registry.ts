@@ -14,6 +14,7 @@ import Footer from './regions/Footer'
 import CursorLabel from './overlays/CursorLabel'
 import { ModalRoot } from './overlays/Modal'
 import SlideIndicators from './overlays/SlideIndicators'
+import NavTimeline from './overlays/NavTimeline'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Chrome props vary by type
 type ChromeComponent = ComponentType<any>
@@ -32,6 +33,7 @@ export const chromeRegistry: Record<string, ChromeComponent> = {
   CursorLabel,
   ModalRoot,
   SlideIndicators,
+  NavTimeline,
 }
 
 /**

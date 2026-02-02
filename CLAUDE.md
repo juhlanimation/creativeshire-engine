@@ -66,7 +66,7 @@ RENDERER             Site → Page → Section → Widget
 │ L1 CONTENT       │ L2 EXPERIENCE     │
 │ (renders once)   │ (animates 60fps)  │
 │                  │                   │
-│ • Primitives     │ • Modes           │
+│ • Primitives     │ • Experiences     │
 │ • Layout         │ • Behaviours      │
 │ • Patterns       │ • Effects         │
 │ • Interactive    │                   │
@@ -123,7 +123,7 @@ engine/
 │   │   ├── emphasis/      pulse, shake, bounce
 │   │   └── page/          Route transitions (later)
 │   ├── drivers/           ScrollDriver, VisibilityDriver
-│   └── modes/             stacking, parallax...
+│   └── experiences/       stacking, slideshow, infinite-carousel...
 ├── interface/             Platform ↔ Engine contract
 │   ├── EngineProvider     Root provider with controller
 │   ├── EngineStore        Zustand state management

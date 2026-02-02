@@ -11,6 +11,10 @@ export type {
   ExperienceState,
   ExperienceTriggerConfig,
   BehaviourDefaults,
+  // State types
+  NavigableExperienceState,
+  InfiniteCarouselState,
+  NavigationState,
   // Presentation & navigation
   PresentationModel,
   PresentationConfig,
@@ -21,16 +25,6 @@ export type {
   TransitionTask,
   ExperienceActions,
 } from './experiences/types'
-
-// Re-export Mode types for backward compatibility (deprecated)
-export type {
-  Mode,
-  ModeState,
-  ModeOptions,
-  ModeTriggerConfig,
-  ModeOptionConfig,
-  ModeDefaults,
-} from './modes/types'
 
 /**
  * Context value distributed by ExperienceProvider.

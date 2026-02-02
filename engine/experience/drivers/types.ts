@@ -52,6 +52,33 @@ export interface Target {
   options: Record<string, unknown>
 }
 
+// =============================================================================
+// Momentum Driver types
+// =============================================================================
+
+/**
+ * Configuration for momentum-based scrolling driver.
+ * Used by infinite carousel and similar transform-based scroll experiences.
+ */
+export interface MomentumDriverConfig {
+  /** Friction coefficient (0.90 = high friction, 0.98 = low friction). Default: 0.92 */
+  friction: number
+  /** Minimum velocity before snapping (sections per frame). Default: 0.00005 */
+  snapThreshold: number
+  /** Velocity multiplier for wheel input. Default: 0.00005 */
+  wheelMultiplier: number
+  /** Snap animation duration (ms). Default: 150 */
+  snapDuration: number
+  /** Snap easing function. Default: 'power2.out' */
+  snapEasing: string
+  /** Whether to enable infinite looping. Default: true */
+  infinite: boolean
+  /** Delay before snap begins after scroll stops (ms). Default: 400 */
+  snapDelay: number
+  /** Progress threshold for snap decision (0-0.5). Default: 0.25 */
+  snapProgressThreshold: number
+}
+
 /**
  * Driver interface for class-based drivers.
  * Manages element registration and applies CSS variables at 60fps.

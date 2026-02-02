@@ -17,10 +17,6 @@ import type { ThemeSchema } from '../schema/theme'
 export interface PresetExperienceConfig {
   /** Experience identifier (e.g., 'stacking', 'cinematic-portfolio') */
   id: string
-  /**
-   * @deprecated Use `id` instead. Kept for backward compatibility.
-   */
-  mode?: string
 }
 
 /**

@@ -7,8 +7,11 @@
 
 import { useEffect } from 'react'
 import type { StoreApi } from 'zustand'
-import type { NavigationConfig, NavigationInputOptions } from '../experiences/types'
-import type { NavigableExperienceState } from '../modes/types'
+import type {
+  NavigationConfig,
+  NavigationInputOptions,
+  NavigableExperienceState,
+} from '../experiences/types'
 import { useWheelNavigation } from './useWheelNavigation'
 import { useKeyboardNavigation } from './useKeyboardNavigation'
 import { useSwipeNavigation } from './useSwipeNavigation'

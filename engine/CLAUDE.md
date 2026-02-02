@@ -15,7 +15,7 @@ engine/
 │   ├── behaviours/   # Named by TRIGGER
 │   ├── effects/      # Named by MECHANISM
 │   ├── drivers/      # Infrastructure
-│   └── modes/        # Page-level config
+│   └── experiences/  # Experience definitions
 ├── presets/          # Templates (copied to site/)
 ├── renderer/         # Schema → React
 └── schema/           # TypeScript types

@@ -18,8 +18,12 @@
 
 import { useEffect, useRef } from 'react'
 import type { StoreApi } from 'zustand'
-import type { NavigableExperienceState } from '../modes/types'
-import type { NavigationConfig, NavigationInput, NavigationInputOptions } from '../experiences/types'
+import type {
+  NavigableExperienceState,
+  NavigationConfig,
+  NavigationInput,
+  NavigationInputOptions,
+} from '../experiences/types'
 
 export interface WheelNavigationOptions {
   /** Zustand store with navigation state */

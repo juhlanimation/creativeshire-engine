@@ -20,10 +20,11 @@ import {
   getExperience,
   stackingExperience,
   PresentationWrapper,
+  InfiniteCarouselController,
 } from '../experience'
 import { BehaviourWrapper } from '../experience/behaviours'
 import { TransitionProvider, useTransitionOptional, NavigationInitializer } from '../experience/navigation'
-import type { NavigableExperienceState } from '../experience/modes/types'
+import type { NavigableExperienceState } from '../experience/experiences/types'
 import { useScrollIndicatorFade } from './hooks'
 import { PageRenderer } from './PageRenderer'
 import { ChromeRenderer } from './ChromeRenderer'
@@ -121,8 +122,7 @@ export function SiteRenderer({ site, page }: SiteRendererProps) {
   useScrollIndicatorFade('#hero-scroll')
 
   // Resolve experience from site config with fallback
-  // Support both `id` (new) and `mode` (deprecated) for backward compatibility
-  const experienceId = site.experience?.id ?? site.experience?.mode ?? 'stacking'
+  const experienceId = site.experience?.id ?? 'stacking'
   let experience = getExperience(experienceId)
 
   if (!experience) {
@@ -169,12 +169,17 @@ export function SiteRenderer({ site, page }: SiteRendererProps) {
               )}
 
               {/* Navigation input handlers for navigable experiences */}
-              {experience.navigation && (
+              {experience.navigation && experience.presentation?.model !== 'infinite-carousel' && (
                 <NavigationInitializer
                   store={store as StoreApi<NavigableExperienceState>}
                   config={experience.navigation}
                   totalSections={page.sections?.length ?? 0}
                 />
+              )}
+
+              {/* Infinite carousel controller - handles MomentumDriver and section transforms */}
+              {experience.presentation?.model === 'infinite-carousel' && (
+                <InfiniteCarouselController />
               )}
 
               {/* Page content - wrapped by presentation and experience pageWrapper */}

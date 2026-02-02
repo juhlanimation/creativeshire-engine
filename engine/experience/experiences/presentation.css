@@ -68,3 +68,60 @@ body:has(.presentation-wrapper[data-presentation='slideshow']) {
 /* Performance: rendering optimization now handled by SectionLifecycleProvider.
  * It unmounts distant unvisited sections and keeps visited sections mounted.
  * No CSS content-visibility needed - it caused flicker on quick navigation. */
+
+/* ============================================================================
+ * Infinite Carousel Mode
+ * Transform-based infinite vertical scroll with momentum physics.
+ * Sections positioned via CSS transforms, not native scroll.
+ * ============================================================================ */
+
+.presentation-wrapper[data-presentation='infinite-carousel'] {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 2400px;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: black;
+}
+
+html:has(.presentation-wrapper[data-presentation='infinite-carousel']),
+body:has(.presentation-wrapper[data-presentation='infinite-carousel']) {
+  overflow: hidden;
+  height: 100vh;
+  height: 100dvh;
+  scrollbar-gutter: auto;
+}
+
+/* Sections are positioned absolutely, transformed by MomentumDriver */
+.presentation-wrapper[data-presentation='infinite-carousel'] [data-section-id] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* Use min-height so sections can be taller than 100vh */
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  will-change: transform, clip-path;
+  /* Position controlled via inline style transform from driver */
+}
+
+/* Section stacking: sections with higher index render on top during transition */
+.presentation-wrapper[data-presentation='infinite-carousel'] [data-section-id][data-section-index] {
+  /* z-index is managed dynamically based on scroll progress */
+}
+
+/* Intro phase: hide sections until ready */
+.presentation-wrapper[data-presentation='infinite-carousel'][data-phase='intro'] [data-section-id] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.presentation-wrapper[data-presentation='infinite-carousel'][data-phase='ready'] [data-section-id] {
+  opacity: 1;
+  pointer-events: auto;
+}

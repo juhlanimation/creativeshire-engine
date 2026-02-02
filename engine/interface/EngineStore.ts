@@ -44,8 +44,7 @@ export function createEngineStore(
       // -----------------------------------------------------------------------
       site: input.site,
       page: input.page,
-      // Support both `id` (new) and `mode` (deprecated) for backward compatibility
-      experienceId: input.experienceId ?? input.site.experience?.id ?? input.site.experience?.mode ?? 'stacking',
+      experienceId: input.experienceId ?? input.site.experience?.id ?? 'stacking',
       isPreview: input.isPreview ?? false,
       isReady: false,
       lastError: null,

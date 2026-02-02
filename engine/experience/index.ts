@@ -19,7 +19,9 @@ export {
   stackingExperience,
   cinematicPortfolioExperience,
   slideshowExperience,
+  infiniteCarouselExperience,
   PresentationWrapper,
+  InfiniteCarouselController,
 } from './experiences'
 export type {
   Experience,
@@ -56,6 +58,7 @@ export {
   useSmoothScroll,
   useSmoothScrollContainer,
   ScrollDriver,
+  MomentumDriver,
   useScrollFadeDriver,
   RevealTransition,
   useGsapReveal,
@@ -64,6 +67,7 @@ export type {
   UseScrollFadeDriverOptions,
   DriverConfig,
   ElementDriverProps,
+  MomentumDriverConfig,
   RevealType,
   UseGsapRevealOptions,
   RevealTransitionProps,
@@ -100,10 +104,12 @@ export type {
   SectionLifecycleProviderProps,
 } from './lifecycle'
 
-// Legacy type exports for backward compatibility
+// State types
 export type {
   ExperienceState,
+  NavigableExperienceState,
+  InfiniteCarouselState,
+  NavigationState,
   ExperienceTriggerConfig,
   BehaviourDefaults,
-  Mode,
 } from './types'

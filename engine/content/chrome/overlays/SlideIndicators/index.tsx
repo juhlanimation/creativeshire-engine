@@ -8,7 +8,7 @@
 import { useSyncExternalStore, useCallback } from 'react'
 import type { StoreApi } from 'zustand'
 import { useExperience } from '@/engine/experience'
-import type { NavigableExperienceState } from '@/engine/experience/modes/types'
+import type { NavigableExperienceState } from '@/engine/experience/experiences/types'
 import './styles.css'
 
 export interface SlideIndicatorsProps {

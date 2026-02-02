@@ -108,7 +108,8 @@ const Thumbnail = memo(function Thumbnail({
 
     if (isExpanded && Math.abs(currentWidth - targetWidthPx) < 2) {
       // Already fully expanded - capture immediately (no delay)
-      onClick(container.getBoundingClientRect())
+      const rect = container.getBoundingClientRect()
+      onClick(rect)
       return
     }
 
@@ -124,6 +125,7 @@ const Thumbnail = memo(function Thumbnail({
       onMouseEnter={onExpand}
       onClick={handleClick}
       data-cursor-label-target={project.videoUrl ? true : undefined}
+      data-project-id={project.id}
     >
       {/* Poster image */}
       <img

@@ -58,9 +58,4 @@ export type BehaviourConfig =
 export interface ExperienceConfig {
   /** Experience ID (e.g., 'stacking', 'cinematic-portfolio') */
   id: string
-  /**
-   * @deprecated Use `id` instead. Kept for backward compatibility.
-   * If both are provided, `id` takes precedence.
-   */
-  mode?: string
 }

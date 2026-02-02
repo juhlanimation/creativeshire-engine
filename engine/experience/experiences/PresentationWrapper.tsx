@@ -32,8 +32,7 @@ import {
   type ReactNode,
 } from 'react'
 import type { StoreApi } from 'zustand'
-import type { PresentationConfig } from './types'
-import type { NavigableExperienceState, ExperienceState } from '../modes/types'
+import type { PresentationConfig, NavigableExperienceState, InfiniteCarouselState, ExperienceState } from './types'
 
 export interface PresentationWrapperProps {
   /** Presentation configuration from experience */
@@ -51,6 +50,15 @@ function hasNavigationState(
   state: ExperienceState
 ): state is NavigableExperienceState {
   return 'activeSection' in state && typeof state.activeSection === 'number'
+}
+
+/**
+ * Check if store has infinite carousel state
+ */
+function hasInfiniteCarouselState(
+  state: ExperienceState
+): state is InfiniteCarouselState {
+  return 'phase' in state && typeof (state as InfiniteCarouselState).phase === 'string'
 }
 
 export function PresentationWrapper({
@@ -126,11 +134,15 @@ export function PresentationWrapper({
     return <>{children}</>
   }
 
+  // Get phase for infinite-carousel (defaults to 'ready' if not present)
+  const phase = hasInfiniteCarouselState(state) ? state.phase : undefined
+
   return (
     <div
       className="presentation-wrapper"
       style={combinedStyles}
       data-presentation={config.model}
+      data-phase={phase}
     >
       {children}
     </div>

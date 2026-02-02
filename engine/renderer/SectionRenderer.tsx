@@ -20,7 +20,7 @@ import { SectionLifecycleProvider } from '../experience/lifecycle'
 import { useExperience, useSmoothScrollContainer } from '../experience'
 import type { SectionSchema } from '../schema'
 import type { Experience } from '../experience'
-import type { NavigableExperienceState } from '../experience/modes/types'
+import type { NavigableExperienceState } from '../experience/experiences/types'
 
 interface SectionRendererProps {
   section: SectionSchema
