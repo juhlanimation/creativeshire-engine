@@ -105,11 +105,14 @@ describe('Registration Validation', () => {
       const primitives = await getFolders('content/widgets/primitives/*')
       const layouts = await getFolders('content/widgets/layout/*')
       const interactives = await getFolders('content/widgets/interactive/*')
+      // Chrome overlays can be registered as widgets for use with ExperienceChromeRenderer
+      const chromeOverlays = await getFolders('content/chrome/overlays/*')
 
       const allFolderNames = new Set([
         ...primitives.map(getComponentName),
         ...layouts.map(getComponentName),
         ...interactives.map(getComponentName),
+        ...chromeOverlays.map(getComponentName),
       ])
 
       const violations: string[] = []

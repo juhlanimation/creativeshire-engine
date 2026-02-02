@@ -14,9 +14,14 @@
  *
  * Uses IntersectionObserver to detect when video leaves viewport,
  * then imperatively controls play/pause for performance.
+ *
+ * LIFECYCLE-AWARE: In navigable experiences (where SectionLifecycleProvider exists),
+ * this hook responds immediately to lifecycle.isActive instead of relying on
+ * IntersectionObserver. This provides instant pause/resume on section transitions.
  */
 
 import { useEffect, type RefObject } from 'react'
+import { useSectionLifecycle } from '@/engine/experience'
 
 /**
  * Pauses video when scrolled out of view, resumes when visible.
@@ -30,11 +35,27 @@ export function useVisibilityPlayback(
   enabled: boolean = true,
   threshold: number = 0.1
 ): void {
+  const lifecycle = useSectionLifecycle()
+
   useEffect(() => {
     if (!enabled) return
     const video = videoRef.current
     if (!video) return
 
+    // If in navigable experience (lifecycle context available),
+    // use lifecycle.isActive instead of IntersectionObserver
+    if (lifecycle) {
+      if (lifecycle.isActive) {
+        video.play().catch(() => {
+          // Autoplay may be blocked by browser - silent fail
+        })
+      } else {
+        video.pause()
+      }
+      return // Skip IO setup - lifecycle handles visibility
+    }
+
+    // Normal mode (stacking): use IntersectionObserver
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -50,5 +71,5 @@ export function useVisibilityPlayback(
 
     observer.observe(video)
     return () => observer.disconnect()
-  }, [videoRef, enabled, threshold])
+  }, [videoRef, enabled, threshold, lifecycle?.isActive])
 }

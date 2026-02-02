@@ -36,6 +36,9 @@ import ContactPrompt from './interactive/ContactPrompt'
 import ExpandableGalleryRow from './interactive/ExpandableGalleryRow'
 import GalleryThumbnail from './interactive/GalleryThumbnail'
 
+// Chrome overlays (used by experience chrome)
+import SlideIndicators from '../chrome/overlays/SlideIndicators'
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Widget props vary by type
 type WidgetComponent = ComponentType<any>
 
@@ -62,6 +65,8 @@ export const widgetRegistry: Record<string, WidgetComponent> = {
   ContactPrompt,
   ExpandableGalleryRow,
   GalleryThumbnail,
+  // Chrome overlays
+  SlideIndicators,
 }
 
 /**

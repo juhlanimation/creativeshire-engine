@@ -14,6 +14,17 @@
  * 2. Hook-based (legacy): useScrollFadeDriver for existing code
  */
 
+// Smooth scroll driver (GSAP ScrollSmoother) - page-level
+export { SmoothScrollProvider, useSmoothScroll } from './SmoothScrollProvider'
+
+// Smooth scroll for any container - unified hook
+export {
+  useSmoothScrollContainer,
+  type SmoothScrollContainerConfig,
+  type SmoothScrollContainerReturn,
+  type BoundaryDirection,
+} from './useSmoothScrollContainer'
+
 // Class-based drivers (spec-compliant)
 export { ScrollDriver } from './ScrollDriver'
 

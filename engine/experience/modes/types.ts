@@ -24,6 +24,35 @@ export interface ExperienceState {
 }
 
 /**
+ * Navigation state for experiences with section navigation.
+ * Used by slideshow, horizontal scroll, and other navigable experiences.
+ */
+export interface NavigationState {
+  /** Currently active section index (0-based) */
+  activeSection: number
+  /** Previous active section index */
+  previousSection: number
+  /** Total number of navigable sections */
+  totalSections: number
+  /** Whether a transition is in progress */
+  isTransitioning: boolean
+  /** Transition progress (0-1) */
+  transitionProgress: number
+  /** Direction of current transition */
+  transitionDirection: 'forward' | 'backward' | null
+  /** Last navigation input that caused the transition */
+  lastInputType: string | null
+  /** Whether navigation is currently locked */
+  isLocked: boolean
+}
+
+/**
+ * Combined state for navigable experiences.
+ * Extends base ExperienceState with navigation capabilities.
+ */
+export interface NavigableExperienceState extends ExperienceState, NavigationState {}
+
+/**
  * Mode-specific state fields (extensible).
  * Each mode defines its own state shape.
  */

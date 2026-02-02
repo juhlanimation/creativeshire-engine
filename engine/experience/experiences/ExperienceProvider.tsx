@@ -1,7 +1,7 @@
 'use client'
 
 /**
- * ExperienceProvider - distributes mode and store context.
+ * ExperienceProvider - distributes experience and store context.
  * Experience Layer (L2) - provides state for behaviours and drivers.
  */
 
@@ -9,7 +9,7 @@ import { createContext, useContext, type ReactNode } from 'react'
 import type { ExperienceContextValue, ExperienceProviderProps } from './types'
 
 /**
- * Experience context for mode and store distribution.
+ * Experience context for experience and store distribution.
  */
 const ExperienceContext = createContext<ExperienceContextValue | null>(null)
 
@@ -27,19 +27,19 @@ export function useExperience(): ExperienceContextValue {
 
 /**
  * ExperienceProvider component.
- * Wraps app tree to provide mode and store context.
+ * Wraps app tree to provide experience and store context.
  *
- * @param mode - The mode configuration
+ * @param experience - The experience configuration
  * @param store - The Zustand store instance
  * @param children - Child components
  */
 export function ExperienceProvider({
-  mode,
+  experience,
   store,
   children,
 }: ExperienceProviderProps): ReactNode {
   return (
-    <ExperienceContext.Provider value={{ mode, store }}>
+    <ExperienceContext.Provider value={{ experience, store }}>
       {children}
     </ExperienceContext.Provider>
   )

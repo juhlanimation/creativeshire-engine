@@ -53,13 +53,14 @@ export type BehaviourConfig =
 
 /**
  * Experience configuration for a site.
- * Defines the default mode, available modes, and global behaviour settings.
+ * References an experience by ID. Behaviour defaults live in the Experience definition.
  */
 export interface ExperienceConfig {
-  /** Default experience mode */
-  mode: string
-  /** Available experience modes */
-  modes?: string[]
-  /** Global behaviour options */
-  behaviourDefaults?: Record<string, Record<string, string | number | boolean>>
+  /** Experience ID (e.g., 'stacking', 'cinematic-portfolio') */
+  id: string
+  /**
+   * @deprecated Use `id` instead. Kept for backward compatibility.
+   * If both are provided, `id` takes precedence.
+   */
+  mode?: string
 }

@@ -54,6 +54,40 @@ export default function Video({
   const [isHovered, setIsHovered] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Debounced hover handlers to prevent flicker during scroll
+  // Small delay prevents brief mouse passes from triggering video playback
+  const handleMouseEnter = useCallback(() => {
+    // Clear any pending leave timeout
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current)
+      hoverTimeoutRef.current = null
+    }
+    // Small delay before starting video (prevents scroll flicker)
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsHovered(true)
+    }, 50) // 50ms delay - fast enough to feel instant, slow enough to filter scroll
+  }, [])
+
+  const handleMouseLeave = useCallback(() => {
+    // Clear any pending enter timeout
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current)
+      hoverTimeoutRef.current = null
+    }
+    // Immediate leave for responsive feel
+    setIsHovered(false)
+  }, [])
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current)
+      }
+    }
+  }, [])
 
   // Playback position persistence
   const { getPosition } = usePlaybackPosition()
@@ -135,8 +169,8 @@ export default function Video({
       ref={containerRef}
       className={containerClasses}
       style={containerStyle}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onClick={handleClick}
       data-behaviour={dataBehaviour}
     >

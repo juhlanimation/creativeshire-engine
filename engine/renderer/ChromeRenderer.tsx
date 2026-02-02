@@ -31,6 +31,8 @@ export interface ChromeRendererProps {
   pageChrome?: PageChromeOverrides
   /** Which chrome position to render */
   position: 'header' | 'footer' | 'overlays'
+  /** Chrome IDs to hide (from experience.hideChrome) */
+  hideChrome?: string[]
 }
 
 /**
@@ -98,7 +100,10 @@ const POSITION_CLASSES: Record<string, string> = {
  * - ModalRoot registers actions (e.g., 'open-video-modal') for widgets to trigger
  * - If not configured, modal actions gracefully do nothing
  */
-function renderOverlays(overlays: ChromeSchema['overlays'] | undefined): React.ReactNode {
+function renderOverlays(
+  overlays: ChromeSchema['overlays'] | undefined,
+  hideChrome?: string[]
+): React.ReactNode {
   const elements: React.ReactNode[] = []
 
   // No overlays configured
@@ -108,6 +113,9 @@ function renderOverlays(overlays: ChromeSchema['overlays'] | undefined): React.R
 
   Object.entries(overlays).forEach(([key, overlay]) => {
     if (!overlay) return
+
+    // Skip if this overlay is in the hide list
+    if (hideChrome?.includes(key)) return
 
     const typedOverlay = overlay as OverlaySchema
 
@@ -153,17 +161,20 @@ function renderOverlays(overlays: ChromeSchema['overlays'] | undefined): React.R
 /**
  * Renders chrome for the specified position.
  */
-export function ChromeRenderer({ siteChrome, pageChrome, position }: ChromeRendererProps): React.ReactNode {
+export function ChromeRenderer({ siteChrome, pageChrome, position, hideChrome }: ChromeRendererProps): React.ReactNode {
   // Render overlays (ModalRoot, CursorLabel, etc.)
   if (position === 'overlays') {
-    return renderOverlays(siteChrome?.overlays)
+    return renderOverlays(siteChrome?.overlays, hideChrome)
   }
 
   // Regions require siteChrome configuration
   if (!siteChrome) return null
 
-  // Handle page chrome overrides
+  // Handle page chrome overrides and experience hiding
   const getRegion = (regionName: 'header' | 'footer' | 'sidebar'): RegionSchema | undefined => {
+    // Check if experience hides this region
+    if (hideChrome?.includes(regionName)) return undefined
+
     const pageOverride = pageChrome?.regions?.[regionName]
 
     // Check for page override

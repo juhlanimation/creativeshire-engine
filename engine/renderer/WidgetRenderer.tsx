@@ -17,6 +17,7 @@ import { useMemo, type ReactNode } from 'react'
 import type { WidgetSchema, BehaviourConfig } from '@/engine/schema'
 import { getWidget } from '@/engine/content/widgets/registry'
 import { BehaviourWrapper } from '@/engine/experience/behaviours'
+import { useExperience, type Experience } from '@/engine/experience'
 import { executeAction } from '@/engine/experience/actions'
 import { ErrorBoundary } from './ErrorBoundary'
 import type { WidgetRendererProps } from './types'
@@ -30,13 +31,21 @@ function capitalize(str: string): string {
 }
 
 /**
- * Extract behaviour ID from behaviour config.
- * Handles both string format and object format.
+ * Resolves behaviour for a widget.
+ * Priority: explicit schema → experience defaults by widget type.
  */
-function extractBehaviourId(behaviour?: BehaviourConfig): string | undefined {
-  if (!behaviour) return undefined
-  if (typeof behaviour === 'string') return behaviour
-  return behaviour.id
+function resolveWidgetBehaviour(
+  widget: WidgetSchema,
+  experience: Experience
+): string | null {
+  // Explicit behaviour in schema takes priority
+  if (widget.behaviour) {
+    if (typeof widget.behaviour === 'string') return widget.behaviour
+    return widget.behaviour.id ?? null
+  }
+
+  // Check experience defaults by widget type (e.g., 'HeroTitle', 'ProjectCard')
+  return experience.behaviourDefaults[widget.type] ?? null
 }
 
 /**
@@ -88,6 +97,8 @@ export function WidgetRenderer({
   widget,
   index,
 }: WidgetRendererProps): ReactNode {
+  const { experience } = useExperience()
+
   // Look up widget component from registry
   // Registry returns stable component references, not new components
   const Component = getWidget(widget.type)
@@ -97,8 +108,8 @@ export function WidgetRenderer({
     return <UnknownWidgetFallback type={widget.type} />
   }
 
-  // Extract behaviour configuration
-  const behaviourId = extractBehaviourId(widget.behaviour)
+  // Resolve behaviour from explicit schema or experience defaults
+  const behaviourId = resolveWidgetBehaviour(widget, experience)
   const behaviourOptions = extractBehaviourOptions(widget.behaviour)
 
   // Wire schema.on events to action registry

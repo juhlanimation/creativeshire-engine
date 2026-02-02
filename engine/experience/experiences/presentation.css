@@ -1,0 +1,70 @@
+/**
+ * Presentation model base styles.
+ * CSS variables are set by PresentationWrapper.
+ */
+
+/* Fix React Suspense boundary visibility issue in Next.js streaming */
+body > [id^="S:"],
+body > [id^="S:"][hidden] {
+  display: contents !important;
+}
+
+.presentation-wrapper {
+  /* Layout from config */
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-gap, 0);
+}
+
+.presentation-wrapper[data-presentation='horizontal'] {
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+}
+
+/* Slideshow mode: locked body, sections stacked */
+.presentation-wrapper[data-presentation='slideshow'] {
+  position: relative;
+  overflow: hidden;
+  height: 100vh;
+  height: 100dvh;
+}
+
+html:has(.presentation-wrapper[data-presentation='slideshow']),
+body:has(.presentation-wrapper[data-presentation='slideshow']) {
+  overflow: hidden;
+  height: 100vh;
+  height: 100dvh;
+  scrollbar-gutter: auto;
+}
+
+/* Sections inside presentation wrapper inherit min-height */
+.presentation-wrapper > * {
+  min-height: var(--section-min-height, auto);
+  overflow: var(--section-overflow, visible);
+}
+
+/* Slideshow: stack sections, show only active */
+.presentation-wrapper[data-presentation='slideshow'] [data-section-id] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  overflow-y: auto;
+  transition:
+    opacity var(--transition-duration, 300ms) var(--transition-easing, ease),
+    visibility 0s var(--transition-duration, 300ms);
+}
+
+.presentation-wrapper[data-presentation='slideshow'] [data-section-id][data-active='true'] {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity var(--transition-duration, 300ms) var(--transition-easing, ease),
+    visibility 0s 0s;
+}
+
+/* Performance: rendering optimization now handled by SectionLifecycleProvider.
+ * It unmounts distant unvisited sections and keeps visited sections mounted.
+ * No CSS content-visibility needed - it caused flicker on quick navigation. */

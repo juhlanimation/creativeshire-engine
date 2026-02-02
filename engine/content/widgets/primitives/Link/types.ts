@@ -36,4 +36,11 @@ export interface LinkProps {
   'data-behaviour'?: string
   /** Data attribute for effect binding */
   'data-effect'?: string
+
+  // Page transition options
+
+  /** Skip page transitions for this link (navigate immediately) */
+  skipTransition?: boolean
+  /** Click handler (called before transition starts) */
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void
 }

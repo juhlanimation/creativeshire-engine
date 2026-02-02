@@ -11,14 +11,14 @@
  */
 
 import type { ReactNode } from 'react'
-import { useExperience } from './ExperienceProvider'
+import { useExperience } from '../experiences'
 import {
   useScrollProgress,
   useIntersection,
   usePrefersReducedMotion,
   useViewport,
   useCursorPosition,
-} from './triggers'
+} from './'
 
 export interface TriggerInitializerProps {
   children: ReactNode

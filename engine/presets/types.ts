@@ -15,10 +15,12 @@ import type { ThemeSchema } from '../schema/theme'
  * Experience configuration for a preset.
  */
 export interface PresetExperienceConfig {
-  /** Mode identifier (e.g., 'stacking', 'parallax', 'reveal') */
-  mode: string
-  /** Mode-specific options */
-  options?: Record<string, unknown>
+  /** Experience identifier (e.g., 'stacking', 'cinematic-portfolio') */
+  id: string
+  /**
+   * @deprecated Use `id` instead. Kept for backward compatibility.
+   */
+  mode?: string
 }
 
 /**
@@ -69,16 +71,15 @@ export interface PresetChromeConfig {
 /**
  * Complete site preset definition.
  * Bundles theme, experience, chrome, and pages into a ready-to-use configuration.
+ * Behaviour defaults now live in the Experience definition (not in preset).
  */
 export interface SitePreset {
   /** Theme configuration (scrollbar, smooth scroll, colors) */
   theme?: ThemeSchema
-  /** Experience mode and options */
+  /** Experience configuration (references an Experience by ID) */
   experience: PresetExperienceConfig
   /** Chrome regions and overlays */
   chrome: PresetChromeConfig
   /** Page templates keyed by page ID */
   pages: Record<string, PageSchema>
-  /** Default behaviour mappings by widget type */
-  behaviours?: Record<string, string>
 }

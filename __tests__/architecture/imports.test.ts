@@ -18,19 +18,41 @@ import {
 
 describe('Import Boundaries', () => {
   describe('L1 Content → L2 Experience', () => {
-    it('primitives do not import from experience/', async () => {
+    /**
+     * Most primitives are pure L1 content - they render once and stay idle.
+     *
+     * Exception: Link is an L1/L2 HYBRID component.
+     * It renders UI (L1) but requires navigation access for page transitions:
+     * - TransitionProvider integration (intercept navigation for exit animations)
+     *
+     * This is an architectural decision documented here.
+     */
+    it('primitives do not import from experience/ (except Link)', async () => {
       const files = await getFiles('content/widgets/primitives/**/*.{ts,tsx}')
       const violations: string[] = []
+      const linkImports: string[] = []
 
       for (const file of files) {
         const content = await readFile(file)
         const imports = extractImports(content)
+        const isLinkFile = file.includes('/Link/')
 
         for (const imp of imports) {
           if (isL1ToL2Import(file, imp)) {
-            violations.push(`${relativePath(file)}: imports "${imp}"`)
+            if (isLinkFile) {
+              // Document Link's hybrid nature (informational)
+              linkImports.push(`${relativePath(file)}: imports "${imp}"`)
+            } else {
+              violations.push(`${relativePath(file)}: imports "${imp}"`)
+            }
           }
         }
+      }
+
+      // Document Link's hybrid imports (informational, not a failure)
+      if (linkImports.length > 0) {
+        console.log('Link navigation imports (expected hybrid behavior):')
+        linkImports.forEach(i => console.log(`  ${i}`))
       }
 
       expect(violations, `L1 primitives importing from L2:\n${violations.join('\n')}`).toHaveLength(0)

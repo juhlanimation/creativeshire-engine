@@ -1,12 +1,28 @@
 /**
  * Experience provider types.
  * Defines the context value and provider props.
- * Mode types are re-exported from their canonical source in modes/types.ts.
  */
 import type { StoreApi } from 'zustand'
-import type { ExperienceState, Mode } from './modes/types'
+import type { Experience, ExperienceState } from './experiences/types'
 
-// Re-export Mode types from canonical source
+// Re-export Experience types
+export type {
+  Experience,
+  ExperienceState,
+  ExperienceTriggerConfig,
+  BehaviourDefaults,
+  // Presentation & navigation
+  PresentationModel,
+  PresentationConfig,
+  NavigationInput,
+  NavigationInputConfig,
+  NavigationConfig,
+  PageTransitionConfig,
+  TransitionTask,
+  ExperienceActions,
+} from './experiences/types'
+
+// Re-export Mode types for backward compatibility (deprecated)
 export type {
   Mode,
   ModeState,
@@ -14,14 +30,13 @@ export type {
   ModeTriggerConfig,
   ModeOptionConfig,
   ModeDefaults,
-  ExperienceState,
 } from './modes/types'
 
 /**
  * Context value distributed by ExperienceProvider.
  */
 export interface ExperienceContextValue {
-  mode: Mode
+  experience: Experience
   store: StoreApi<ExperienceState>
 }
 
@@ -29,7 +44,7 @@ export interface ExperienceContextValue {
  * Props for ExperienceProvider component.
  */
 export interface ExperienceProviderProps {
-  mode: Mode
+  experience: Experience
   store: StoreApi<ExperienceState>
   children: React.ReactNode
 }

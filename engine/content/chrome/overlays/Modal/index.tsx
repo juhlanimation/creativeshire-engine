@@ -21,8 +21,7 @@ import { useEffect, useCallback, useRef, memo } from 'react'
 import { createPortal } from 'react-dom'
 import { useStore } from 'zustand'
 import { useModalStore } from './store'
-import { useSmoothScroll } from '@/engine/experience/SmoothScrollProvider'
-import { useSmoothModalScroll } from './useSmoothModalScroll'
+import { useSmoothScroll, useSmoothScrollContainer } from '@/engine/experience'
 // ARCHITECTURE EXCEPTION: Overlays may import driver utilities for enter/exit animations.
 // RevealTransition is driver infrastructure (not a behaviour), providing GSAP timeline
 // control for sequenced modal transitions that CSS cannot achieve.
@@ -58,7 +57,7 @@ const Modal = memo(function Modal() {
   const smoothScroll = useSmoothScroll()
 
   // Apply GSAP smooth scrolling to modal content (uses site-wide settings)
-  useSmoothModalScroll(contentRef, transitionPhase === 'open')
+  useSmoothScrollContainer(contentRef, { enabled: transitionPhase === 'open' })
 
   const config = activeModal?.config
   const closeOnBackdrop = config?.closeOnBackdrop ?? true

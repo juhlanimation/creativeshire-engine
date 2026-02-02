@@ -8,8 +8,7 @@
 import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react'
 import { useStore, type StoreApi } from 'zustand'
 import { createEngineStore, createSnapshot } from './EngineStore'
-import { ExperienceProvider } from '../experience/ExperienceProvider'
-import { getMode } from '../experience/modes'
+import { ExperienceProvider, getExperience, stackingExperience } from '../experience'
 import type {
   EngineInput,
   EngineState,
@@ -65,26 +64,20 @@ export function EngineProvider({ input, children }: EngineProviderProps) {
     [store]
   )
 
-  // Get experience mode with fallback to stacking
+  // Get experience with fallback to stacking
   const experienceId = useStore(store, (s) => s.experienceId)
-  const resolvedMode = useMemo(() => {
-    const requested = getMode(experienceId)
+  const resolvedExperience = useMemo(() => {
+    const requested = getExperience(experienceId)
     if (requested) return requested
 
-    // Fallback to stacking mode with warning
+    // Fallback to stacking experience with warning
     console.warn(
-      `[Creativeshire] Unknown experience mode "${experienceId}", falling back to "stacking"`
+      `[Creativeshire] Unknown experience "${experienceId}", falling back to "stacking"`
     )
-    const fallback = getMode('stacking')
-    if (!fallback) {
-      throw new Error(
-        '[Creativeshire] Critical: "stacking" mode not registered. Ensure modes are imported.'
-      )
-    }
-    return fallback
+    return stackingExperience
   }, [experienceId])
 
-  const experienceStore = useMemo(() => resolvedMode.createStore(), [resolvedMode])
+  const experienceStore = useMemo(() => resolvedExperience.createStore(), [resolvedExperience])
 
   // Mark ready after initial render
   useEffect(() => {
@@ -93,7 +86,7 @@ export function EngineProvider({ input, children }: EngineProviderProps) {
 
   return (
     <EngineContext.Provider value={{ store, controller }}>
-      <ExperienceProvider mode={resolvedMode} store={experienceStore}>
+      <ExperienceProvider experience={resolvedExperience} store={experienceStore}>
         {children}
       </ExperienceProvider>
     </EngineContext.Provider>

@@ -8,6 +8,11 @@
  * Browser Event → Trigger → Store → BehaviourWrapper → CSS Variables
  */
 
+// Trigger initializer (orchestrates all triggers)
+export { TriggerInitializer } from './TriggerInitializer'
+export type { TriggerInitializerProps } from './TriggerInitializer'
+
+// Individual triggers
 export { useScrollProgress } from './useScrollProgress'
 export { useIntersection } from './useIntersection'
 export { usePrefersReducedMotion } from './usePrefersReducedMotion'

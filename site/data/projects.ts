@@ -38,6 +38,18 @@ export const featuredProjects: FeaturedProject[] = [
     client: 'SUPERCELL',
     studio: 'SUN CREATURE',
   },
+  {
+    thumbnailSrc: '/images/01-elements-of-time/thumbnail.webp',
+    thumbnailAlt: 'Arcane Season 2 thumbnail',
+    videoSrc: '/videos/01-elements-of-time/hover.webm',
+    videoUrl: TEST_VIDEO_URL, // Using test video for development
+    title: 'ARCANE SEASON 2',
+    description: "The highly anticipated continuation of the groundbreaking animated series. A visually stunning exploration of the conflict between Piltover and Zaun, pushing the boundaries of animation storytelling.",
+    year: '2024',
+    role: 'Executive Producer',
+    client: 'RIOT GAMES',
+    studio: 'FORTICHE',
+  },
 ]
 
 /**

@@ -14,7 +14,7 @@
  */
 
 import type { SitePreset } from '../types'
-import { experienceConfig, behaviourDefaults } from './site'
+import { experienceConfig } from './site'
 import { footerConfig, floatingContactConfig } from './chrome'
 import { homePageTemplate } from './pages'
 
@@ -62,5 +62,4 @@ export const bojuhlPreset: SitePreset = {
   pages: {
     home: homePageTemplate,
   },
-  behaviours: behaviourDefaults,
 }

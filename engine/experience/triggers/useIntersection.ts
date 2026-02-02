@@ -39,7 +39,13 @@ export function useIntersection({ store }: TriggerProps): void {
 
         entries.forEach((entry) => {
           const id = entry.target.getAttribute('data-section-id')
-          if (id) {
+
+          // Skip elements managed by lifecycle (e.g., slideshow sections at inset:0)
+          // Their visibility is determined by activeSection state, not intersection
+          const hasLifecycle = entry.target.hasAttribute('data-lifecycle-scope') ||
+                               entry.target.closest('[data-lifecycle-scope]')
+
+          if (id && !hasLifecycle) {
             updates[id] = entry.intersectionRatio
           }
         })

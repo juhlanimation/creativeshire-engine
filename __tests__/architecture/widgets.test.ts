@@ -43,14 +43,22 @@ describe('Widget Structure Validation', () => {
       expect(indexFiles.length, 'Missing primitives/index.ts').toBeGreaterThan(0)
     })
 
-    it('primitives do not have onClick handlers', async () => {
+    /**
+     * Most primitives should avoid onClick - use BehaviourWrapper for event handling.
+     * This ensures RSC (React Server Components) serialization compatibility.
+     *
+     * Exception: Link requires onClick for navigation interception.
+     * Link intercepts clicks to run exit transitions before navigation.
+     * This is fundamental to page transition coordination.
+     */
+    it('primitives do not have onClick handlers (except Link)', async () => {
       const files = await getFiles('content/widgets/primitives/**/*.tsx')
       const violations: string[] = []
 
-      // All primitives should avoid onClick - use BehaviourWrapper for event handling
-      // This ensures RSC (React Server Components) serialization compatibility
-
       for (const file of files) {
+        // Link is allowed onClick for navigation interception
+        if (file.includes('/Link/')) continue
+
         const content = await readFile(file)
 
         // Check for onClick props

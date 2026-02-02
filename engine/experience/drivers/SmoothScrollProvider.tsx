@@ -19,7 +19,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrollSmoother } from 'gsap/ScrollSmoother'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
-import type { SmoothScrollConfig } from '../schema'
+import type { SmoothScrollConfig } from '../../schema'
 
 // Register GSAP plugins (client-only)
 if (typeof window !== 'undefined') {

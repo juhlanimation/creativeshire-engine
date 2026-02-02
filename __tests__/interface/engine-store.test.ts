@@ -17,7 +17,7 @@ function createTestSite(): SiteSchema {
     id: 'test-site',
     schemaVersion: '2.0.0',
     pages: [{ id: 'home', slug: '/' }],
-    experience: { mode: 'stacking' },
+    experience: { id: 'stacking' },
     chrome: { regions: {}, overlays: {} },
   }
 }
@@ -29,6 +29,7 @@ function createTestPage(): PageSchema {
     sections: [
       {
         id: 'section-1',
+        layout: { type: 'stack' },
         widgets: [
           { type: 'Text', props: { content: 'Hello' } },
           { type: 'Image', props: { src: '/test.jpg' } },
@@ -36,6 +37,7 @@ function createTestPage(): PageSchema {
       },
       {
         id: 'section-2',
+        layout: { type: 'stack' },
         widgets: [{ type: 'Button', props: { label: 'Click' } }],
       },
     ],
@@ -145,6 +147,7 @@ describe('EngineStore', () => {
       // Create section with too deep nesting (> 3 levels)
       const deeplyNested: SectionSchema = {
         id: 'deep',
+        layout: { type: 'stack' },
         widgets: [
           {
             type: 'Flex',
@@ -181,7 +184,7 @@ describe('EngineStore', () => {
       const store = createEngineStore(input)
       const initialCount = store.getState().page.sections.length
 
-      const newSection: SectionSchema = { id: 'new-section', widgets: [] }
+      const newSection: SectionSchema = { id: 'new-section', layout: { type: 'stack' }, widgets: [] }
       const result = store.getState().addSection(newSection)
 
       expect(result.valid).toBe(true)
@@ -193,7 +196,7 @@ describe('EngineStore', () => {
       const input = createTestInput()
       const store = createEngineStore(input)
 
-      const newSection: SectionSchema = { id: 'inserted', widgets: [] }
+      const newSection: SectionSchema = { id: 'inserted', layout: { type: 'stack' }, widgets: [] }
       store.getState().addSection(newSection, 0)
 
       expect(store.getState().page.sections[0].id).toBe('inserted')
@@ -204,17 +207,18 @@ describe('EngineStore', () => {
       // Create page with 19 sections
       input.page.sections = Array.from({ length: 19 }, (_, i) => ({
         id: `section-${i}`,
+        layout: { type: 'stack' as const },
         widgets: [],
       }))
 
       const store = createEngineStore(input)
 
       // 20th section should succeed
-      const result1 = store.getState().addSection({ id: 'section-20', widgets: [] })
+      const result1 = store.getState().addSection({ id: 'section-20', layout: { type: 'stack' }, widgets: [] })
       expect(result1.valid).toBe(true)
 
       // 21st section should fail
-      const result2 = store.getState().addSection({ id: 'section-21', widgets: [] })
+      const result2 = store.getState().addSection({ id: 'section-21', layout: { type: 'stack' }, widgets: [] })
       expect(result2.valid).toBe(false)
       expect(result2.error?.type).toBe('section-limit')
     })

@@ -1,0 +1,85 @@
+/**
+ * SlideIndicators styles
+ */
+
+.slide-indicators {
+  position: fixed;
+  z-index: 100;
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+}
+
+/* Position variants */
+.slide-indicators[data-position="right"] {
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  flex-direction: column;
+}
+
+.slide-indicators[data-position="left"] {
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  flex-direction: column;
+}
+
+.slide-indicators[data-position="bottom"] {
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: row;
+}
+
+/* Indicator items */
+.slide-indicator-item {
+  border: none;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.slide-indicator-item:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.slide-indicator-item[data-active="true"] {
+  background: white;
+}
+
+/* Dots style */
+.slide-indicators[data-style="dots"] .slide-indicator-item {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.slide-indicators[data-style="dots"] .slide-indicator-item[data-active="true"] {
+  width: 12px;
+  height: 12px;
+}
+
+/* Lines style */
+.slide-indicators[data-style="lines"] .slide-indicator-item {
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.slide-indicators[data-style="lines"] .slide-indicator-item[data-active="true"] {
+  width: 32px;
+}
+
+/* Numbers style */
+.slide-indicators[data-style="numbers"] .slide-indicator-item {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -16,12 +16,51 @@ import { useStore } from 'zustand'
 import Section from '../content/sections'
 import { WidgetRenderer } from './WidgetRenderer'
 import { BehaviourWrapper } from '../experience/behaviours'
-import { useExperience } from '../experience'
+import { SectionLifecycleProvider } from '../experience/lifecycle'
+import { useExperience, useSmoothScrollContainer } from '../experience'
 import type { SectionSchema } from '../schema'
+import type { Experience } from '../experience'
+import type { NavigableExperienceState } from '../experience/modes/types'
 
 interface SectionRendererProps {
   section: SectionSchema
   index: number
+}
+
+/**
+ * Capitalize first letter of a string.
+ * Used to match section IDs to pattern names (e.g., 'about' → 'About').
+ */
+function capitalize(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+/**
+ * Resolves behaviour for a section.
+ * Priority: explicit schema → experience defaults by section ID → experience section fallback.
+ */
+function resolveSectionBehaviour(
+  section: SectionSchema,
+  experience: Experience
+): string | null {
+  // Explicit behaviour in schema takes priority
+  if (section.behaviour) {
+    return typeof section.behaviour === 'string'
+      ? section.behaviour
+      : section.behaviour.id ?? null
+  }
+
+  // Check experience defaults by section ID (try both exact and capitalized)
+  // e.g., 'about' or 'About' for section id='about'
+  const byExactId = experience.behaviourDefaults[section.id]
+  if (byExactId) return byExactId
+
+  const capitalizedId = capitalize(section.id)
+  const byCapitalizedId = experience.behaviourDefaults[capitalizedId]
+  if (byCapitalizedId) return byCapitalizedId
+
+  // Fall back to generic section default
+  return experience.behaviourDefaults.section ?? null
 }
 
 /**
@@ -31,12 +70,29 @@ interface SectionRendererProps {
  */
 export function SectionRenderer({ section, index }: SectionRendererProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const { store } = useExperience()
+  const { experience, store } = useExperience()
 
-  // Extract behaviour ID from schema (can be string or object with id)
-  const behaviourId = typeof section.behaviour === 'string'
-    ? section.behaviour
-    : section.behaviour?.id
+  // Check if experience has navigation (slideshow, etc.)
+  // Subscribe to active section if navigable experience
+  const hasNavigation = 'activeSection' in store.getState()
+  const activeSection = useStore(
+    store,
+    (state) =>
+      'activeSection' in state ? (state as NavigableExperienceState).activeSection : -1
+  )
+  const isActive = hasNavigation ? activeSection === index : true
+
+  // Apply smooth scrolling to active section in slideshow mode
+  // Only enabled when section is active (avoids multiple wheel listeners)
+  const isSlideshow = experience.presentation?.model === 'slideshow'
+  const smoothScrollEnabled = isSlideshow && isActive
+
+  useSmoothScrollContainer(ref, {
+    enabled: smoothScrollEnabled,
+  })
+
+  // Resolve behaviour from explicit schema or experience defaults
+  const behaviourId = resolveSectionBehaviour(section, experience)
 
   // Extract behaviour options if provided as object
   const behaviourOptions = typeof section.behaviour === 'object'
@@ -78,15 +134,41 @@ export function SectionRenderer({ section, index }: SectionRendererProps) {
   // - Calls resolveBehaviour() to get the behaviour definition
   // - Registers scroll-based behaviours with ScrollDriver for 60fps
   // - Computes CSS variables for non-scroll behaviours
+
+  // Conditionally wrap with lifecycle provider for navigable experiences
+  const behaviourContent = (
+    <BehaviourWrapper
+      behaviourId={behaviourId}
+      options={{ ...behaviourOptions, sectionIndex: index }}
+      initialState={{ sectionVisibility, sectionIndex: index }}
+    >
+      {content}
+    </BehaviourWrapper>
+  )
+
+  const wrappedContent = hasNavigation ? (
+    <SectionLifecycleProvider
+      isActive={isActive}
+      sectionIndex={index}
+      activeSection={activeSection}
+    >
+      {behaviourContent}
+    </SectionLifecycleProvider>
+  ) : (
+    behaviourContent
+  )
+
   return (
-    <div ref={ref} data-section-id={section.id} style={wrapperStyle} className={wrapperClassName}>
-      <BehaviourWrapper
-        behaviourId={behaviourId}
-        options={{ ...behaviourOptions, sectionIndex: index }}
-        initialState={{ sectionVisibility, sectionIndex: index }}
-      >
-        {content}
-      </BehaviourWrapper>
+    <div
+      ref={ref}
+      data-section-id={section.id}
+      data-section-index={index}
+      data-active={isActive}
+      data-slideshow={isSlideshow}
+      style={wrapperStyle}
+      className={wrapperClassName}
+    >
+      {wrappedContent}
     </div>
   )
 }

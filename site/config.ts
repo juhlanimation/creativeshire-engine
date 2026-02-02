@@ -7,6 +7,13 @@ import type { SiteSchema } from '../engine/schema'
 import { bojuhlPreset } from '../engine/presets/bojuhl'
 
 /**
+ * Toggle experience mode for testing.
+ * Set to 'slideshow' to test new navigation system.
+ * Set to 'default' to use preset's cinematic-portfolio experience.
+ */
+const EXPERIENCE_MODE: 'default' | 'slideshow' = 'default'
+
+/**
  * Main site configuration.
  * Easy to swap: change bojuhlPreset to another preset.
  * Sites inherit from presets and can override specific values.
@@ -14,7 +21,9 @@ import { bojuhlPreset } from '../engine/presets/bojuhl'
 export const siteConfig: SiteSchema = {
   id: 'bojuhl',
   theme: bojuhlPreset.theme,
-  experience: bojuhlPreset.experience,
+  experience: EXPERIENCE_MODE === 'slideshow'
+    ? { id: 'slideshow' }
+    : bojuhlPreset.experience,
   chrome: {
     regions: {
       footer: {

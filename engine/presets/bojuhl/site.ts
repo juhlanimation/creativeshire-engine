@@ -1,26 +1,17 @@
 /**
  * Bojuhl preset site-level defaults.
- * Experience mode and behaviour mappings.
+ * Experience configuration.
+ *
+ * Behaviour defaults now live in the Experience definition:
+ * @see engine/experience/experiences/cinematic-portfolio.ts
  */
 
 import type { PresetExperienceConfig } from '../types'
 
 /**
  * Experience configuration for Bojuhl preset.
- * Uses stacking mode with scroll-based behaviours.
+ * Uses cinematic-portfolio experience with scroll-driven behaviours.
  */
 export const experienceConfig: PresetExperienceConfig = {
-  mode: 'stacking',
-}
-
-/**
- * Default behaviour mappings by widget type.
- * Uses trigger-based behaviour names (scroll/, hover/, animation/).
- */
-export const behaviourDefaults: Record<string, string> = {
-  HeroTitle: 'scroll/color-shift',
-  ScrollIndicator: 'scroll/progress',
-  VideoThumbnail: 'hover/scale',
-  ProjectCard: 'hover/scale',
-  LogoMarquee: 'animation/marquee',
+  id: 'cinematic-portfolio',
 }
