@@ -77,6 +77,8 @@ export interface MomentumDriverConfig {
   snapDelay: number
   /** Progress threshold for snap decision (0-0.5). Default: 0.25 */
   snapProgressThreshold: number
+  /** Smoothness factor for lerp interpolation (0.1 = very smooth, 0.3 = responsive). Default: 0.12 */
+  smoothness: number
 }
 
 /**

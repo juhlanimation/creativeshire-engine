@@ -36,6 +36,7 @@ const DEFAULT_CONFIG: MomentumDriverConfig = {
   infinite: true,
   snapDelay: 400,
   snapProgressThreshold: 0.25,
+  smoothness: 0.12,
 }
 
 /**
@@ -44,8 +45,10 @@ const DEFAULT_CONFIG: MomentumDriverConfig = {
 interface MomentumState {
   /** Current scroll velocity (sections per frame) */
   velocity: number
-  /** Current scroll progress (continuous float) */
+  /** Current scroll progress (continuous float, smoothly interpolated) */
   scrollProgress: number
+  /** Target scroll progress (where input wants to go, velocity applied here) */
+  targetProgress: number
   /** Target scroll progress for snap animation ref */
   targetScroll: { current: number }
   /** Last touch Y position */
@@ -91,6 +94,7 @@ export class MomentumDriver {
   private state: MomentumState = {
     velocity: 0,
     scrollProgress: 0,
+    targetProgress: 0,
     targetScroll: { current: 0 },
     lastTouchY: 0,
     velocityZeroTime: null,
@@ -122,6 +126,7 @@ export class MomentumDriver {
     // Initialize state from store
     const storeState = store.getState()
     this.state.scrollProgress = storeState.scrollProgress
+    this.state.targetProgress = storeState.scrollProgress
     this.state.targetScroll.current = storeState.scrollProgress
     this.totalSections = storeState.totalSections
 
@@ -341,13 +346,15 @@ export class MomentumDriver {
       duration: this.config.snapDuration / 1000,
       ease: this.config.snapEasing,
       onUpdate: () => {
-        // Update scroll progress from animated target
+        // Update scroll progress from animated target (bypasses lerp during snap)
         this.state.scrollProgress = this.state.targetScroll.current
+        this.state.targetProgress = this.state.targetScroll.current
         this.updateStore()
       },
       onComplete: () => {
         // Snap to exact integer to avoid floating-point imprecision
         this.state.scrollProgress = snapTarget
+        this.state.targetProgress = snapTarget
         this.state.targetScroll.current = snapTarget
         this.updateStore()
         this.state.snapTween = null
@@ -376,7 +383,7 @@ export class MomentumDriver {
 
   /**
    * Animation frame tick - arrow function for stable reference.
-   * Applies friction and updates store.
+   * Applies friction to velocity, updates targetProgress, and lerps scrollProgress.
    */
   private tick = (): void => {
     if (this.isDestroyed) return
@@ -385,7 +392,7 @@ export class MomentumDriver {
 
     // Don't apply physics during snap animation or intro
     if (!isSnapping && phase === 'ready') {
-      // Apply friction
+      // Apply friction to velocity
       this.state.velocity *= this.config.friction
 
       // Stop tiny velocities
@@ -411,27 +418,48 @@ export class MomentumDriver {
         this.resetSnapTimer()
       }
 
-      // Apply velocity to progress
-      this.state.scrollProgress += this.state.velocity
+      // Apply velocity to TARGET progress (not scrollProgress directly)
+      this.state.targetProgress += this.state.velocity
 
-      // Handle infinite wrapping
+      // Handle infinite wrapping on target
       if (this.config.infinite && this.totalSections > 0) {
         const total = this.totalSections
 
         // Check if we've looped
-        if (this.state.scrollProgress >= total) {
+        if (this.state.targetProgress >= total) {
           this.store.setState({ hasLooped: true })
         }
 
-        // Wrap progress
-        this.state.scrollProgress = ((this.state.scrollProgress % total) + total) % total
+        // Wrap target progress
+        this.state.targetProgress = ((this.state.targetProgress % total) + total) % total
       } else {
-        // Clamp progress for non-infinite mode
-        this.state.scrollProgress = Math.max(0, Math.min(this.state.scrollProgress, this.totalSections - 1))
+        // Clamp target for non-infinite mode
+        this.state.targetProgress = Math.max(0, Math.min(this.state.targetProgress, this.totalSections - 1))
       }
 
-      // Keep targetScroll in sync when not snapping
-      this.state.targetScroll.current = this.state.scrollProgress
+      // Lerp scrollProgress toward targetProgress (smooth interpolation)
+      let diff = this.state.targetProgress - this.state.scrollProgress
+
+      // Handle wrap-around: take shortest path in infinite mode
+      if (this.config.infinite && this.totalSections > 0) {
+        const total = this.totalSections
+        if (Math.abs(diff) > total / 2) {
+          // Crossing the wrap boundary - adjust diff to take shorter path
+          diff = diff > 0 ? diff - total : diff + total
+        }
+      }
+
+      // Apply lerp interpolation
+      this.state.scrollProgress += diff * this.config.smoothness
+
+      // Handle wrapping on scrollProgress after lerp
+      if (this.config.infinite && this.totalSections > 0) {
+        const total = this.totalSections
+        this.state.scrollProgress = ((this.state.scrollProgress % total) + total) % total
+      }
+
+      // Keep targetScroll in sync for snap animation compatibility
+      this.state.targetScroll.current = this.state.targetProgress
 
       // Update store with new state
       this.updateStore()
