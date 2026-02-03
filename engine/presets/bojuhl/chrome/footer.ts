@@ -11,48 +11,23 @@
  *     - Left: Navigation stack
  *     - Right: Contact + Studio sections
  *   - Copyright text
+ *
+ * Content bindings:
+ * - navLinks: Array of { label, href } for navigation
+ * - contactHeading, email, linkedinUrl: Contact section
+ * - studioHeading, studioUrl, studioEmail, studioSocials: Studio section
+ * - copyright: Copyright text
  */
 
 import type { PresetRegionConfig } from '../../types'
 import type { WidgetSchema } from '../../../schema'
 
 /**
- * Creates navigation links for the footer.
- */
-function createNavLinks(links: Array<{ label: string; href: string }>): WidgetSchema[] {
-  return links.map((link, index) => ({
-    id: `footer-nav-${index}`,
-    type: 'Link',
-    props: {
-      href: link.href,
-      children: link.label,
-    },
-    className: 'footer-chrome__nav-link',
-  }))
-}
-
-/**
- * Creates social links for the footer.
- */
-function createSocialLinks(socials: Array<{ platform: string; url: string }>): WidgetSchema[] {
-  return socials.map((social, index) => ({
-    id: `footer-social-${index}`,
-    type: 'Link',
-    props: {
-      href: social.url,
-      children: social.platform,
-      target: '_blank',
-    },
-    className: 'footer-chrome__social-link',
-  }))
-}
-
-/**
  * Creates a section with heading and content.
  */
 function createSection(
   id: string,
-  heading: string,
+  headingBinding: string,
   content: WidgetSchema[]
 ): WidgetSchema {
   return {
@@ -64,7 +39,7 @@ function createSection(
       {
         id: `${id}-heading`,
         type: 'Text',
-        props: { content: heading, as: 'h2' },
+        props: { content: headingBinding, as: 'h2' },
         className: 'footer-chrome__heading',
       },
       ...content,
@@ -76,6 +51,9 @@ function createSection(
  * Footer region configuration.
  * Widget-based: ChromeRenderer provides semantic <footer> wrapper,
  * widgets define the configurable content.
+ *
+ * Content values use binding expressions ({{ content.xxx }}) that
+ * are resolved at runtime by the platform.
  */
 export const footerConfig: PresetRegionConfig = {
   widgets: [
@@ -109,13 +87,12 @@ export const footerConfig: PresetRegionConfig = {
                 {
                   id: 'footer-nav',
                   type: 'Stack',
-                  props: { gap: 8 },
+                  props: {
+                    gap: 8,
+                    navLinks: '{{ content.footer.navLinks }}',
+                  },
                   className: 'footer-chrome__nav',
-                  widgets: createNavLinks([
-                    { label: 'HOME', href: '#hero' },
-                    { label: 'ABOUT', href: '#about' },
-                    { label: 'PROJECTS', href: '#projects' },
-                  ]),
+                  widgets: [],
                 },
               ],
             },
@@ -127,12 +104,12 @@ export const footerConfig: PresetRegionConfig = {
               className: 'footer-chrome__right',
               widgets: [
                 // Contact section
-                createSection('footer-contact', 'CONTACT', [
+                createSection('footer-contact', '{{ content.footer.contactHeading }}', [
                   {
                     id: 'footer-contact-email',
                     type: 'ContactPrompt',
                     props: {
-                      email: 'hello@example.com',
+                      email: '{{ content.footer.email }}',
                       showPrompt: false,
                     },
                     className: 'footer-chrome__link',
@@ -141,7 +118,7 @@ export const footerConfig: PresetRegionConfig = {
                     id: 'footer-contact-linkedin',
                     type: 'Link',
                     props: {
-                      href: 'https://linkedin.com',
+                      href: '{{ content.footer.linkedinUrl }}',
                       children: 'linkedin',
                       target: '_blank',
                     },
@@ -149,13 +126,13 @@ export const footerConfig: PresetRegionConfig = {
                   },
                 ]),
                 // Studio section
-                createSection('footer-studio', 'STUDIO', [
+                createSection('footer-studio', '{{ content.footer.studioHeading }}', [
                   {
                     id: 'footer-studio-url',
                     type: 'Link',
                     props: {
-                      href: 'https://example.com',
-                      children: 'example.com',
+                      href: '{{ content.footer.studioUrl }}',
+                      children: '{{ content.footer.studioUrlLabel }}',
                       target: '_blank',
                     },
                     className: 'footer-chrome__link',
@@ -164,16 +141,21 @@ export const footerConfig: PresetRegionConfig = {
                     id: 'footer-studio-email',
                     type: 'ContactPrompt',
                     props: {
-                      email: 'studio@example.com',
+                      email: '{{ content.footer.studioEmail }}',
                       showPrompt: false,
                     },
                     className: 'footer-chrome__link',
                   },
-                  ...createSocialLinks([
-                    { platform: 'linkedin', url: 'https://linkedin.com' },
-                    { platform: 'instagram', url: 'https://instagram.com' },
-                    { platform: 'facebook', url: 'https://facebook.com' },
-                  ]),
+                  {
+                    id: 'footer-studio-socials',
+                    type: 'Stack',
+                    props: {
+                      gap: 8,
+                      socialLinks: '{{ content.footer.studioSocials }}',
+                    },
+                    className: 'footer-chrome__socials',
+                    widgets: [],
+                  },
                 ]),
               ],
             },
@@ -184,7 +166,7 @@ export const footerConfig: PresetRegionConfig = {
           id: 'footer-copyright',
           type: 'Text',
           props: {
-            content: 'Copyright © Your Name / All rights reserved',
+            content: '{{ content.footer.copyright }}',
             as: 'p',
           },
           className: 'footer-chrome__copyright',

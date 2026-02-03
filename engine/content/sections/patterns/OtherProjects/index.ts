@@ -11,6 +11,7 @@
 
 import type { SectionSchema, WidgetSchema, SerializableValue } from '../../../../schema'
 import type { OtherProjectsProps } from './types'
+import { isBindingExpression } from '../utils'
 
 /**
  * Creates an OtherProjectsSection schema with expandable gallery.
@@ -52,12 +53,16 @@ export function createOtherProjectsSection(props: OtherProjectsProps): SectionSc
   }
 
   // Gallery: ExpandableGalleryRow with projects
-  if (props.projects.length > 0) {
+  // Handle binding expressions: if projects is a binding, always render (platform will resolve)
+  const hasProjects = isBindingExpression(props.projects) || props.projects.length > 0
+
+  if (hasProjects) {
     widgets.push({
       id: 'other-projects-gallery',
       type: 'ExpandableGalleryRow',
       props: {
         // Type assertion needed: OtherProject[] is serializable but TS can't infer it
+        // Also handles binding expressions which are strings
         projects: props.projects as unknown as SerializableValue,
         height: '32rem',
         gap: '4px',

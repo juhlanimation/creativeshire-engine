@@ -12,7 +12,7 @@ import { bojuhlPreset } from '../engine/presets/bojuhl'
  * Set to 'infinite-carousel' to test momentum-based infinite scroll.
  * Set to 'default' to use preset's cinematic-portfolio experience.
  */
-const EXPERIENCE_MODE: 'default' | 'slideshow' | 'infinite-carousel' = 'infinite-carousel'
+const EXPERIENCE_MODE: 'default' | 'slideshow' | 'infinite-carousel' = 'default'
 
 /**
  * Main site configuration.

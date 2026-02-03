@@ -20,8 +20,8 @@ export const floatingContactConfig: PresetOverlayConfig = {
     id: 'floating-contact',
     type: 'ContactPrompt',
     props: {
-      promptText: 'How can I help you?',
-      email: 'hello@example.com',
+      promptText: '{{ content.contact.promptText }}',
+      email: '{{ content.contact.email }}',
     },
     behaviour: {
       id: 'hover/reveal',

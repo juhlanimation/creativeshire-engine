@@ -35,6 +35,7 @@ import VideoPlayer from './interactive/VideoPlayer'
 import ContactPrompt from './interactive/ContactPrompt'
 import ExpandableGalleryRow from './interactive/ExpandableGalleryRow'
 import GalleryThumbnail from './interactive/GalleryThumbnail'
+import HeroRoles from './interactive/HeroRoles'
 
 // Chrome overlays (used by experience chrome)
 import SlideIndicators from '../chrome/overlays/SlideIndicators'
@@ -65,6 +66,7 @@ export const widgetRegistry: Record<string, WidgetComponent> = {
   ContactPrompt,
   ExpandableGalleryRow,
   GalleryThumbnail,
+  HeroRoles,
   // Chrome overlays
   SlideIndicators,
 }

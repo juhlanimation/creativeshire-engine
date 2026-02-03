@@ -29,3 +29,7 @@ export type { ExpandableGalleryRowProps } from './ExpandableGalleryRow/types'
 // GalleryThumbnail - expandable thumbnail with video and metadata
 export { default as GalleryThumbnail } from './GalleryThumbnail'
 export type { GalleryThumbnailProps, GalleryProject } from './GalleryThumbnail'
+
+// HeroRoles - role titles for hero sections (supports binding expressions)
+export { default as HeroRoles } from './HeroRoles'
+export type { HeroRolesProps } from './HeroRoles/types'

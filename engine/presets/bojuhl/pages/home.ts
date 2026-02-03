@@ -1,18 +1,16 @@
 /**
  * Bojuhl preset home page template.
- * Assembles Hero, About, FeaturedProjects, OtherProjects sections.
+ * Defines section schemas with binding expressions.
  *
- * Defines bojuhl-specific visual styles for each section pattern.
+ * Content values use binding expressions ({{ content.xxx }}) that
+ * are resolved at runtime by the platform before rendering.
+ *
+ * Note: We don't use factory functions here because they would execute
+ * at module import time before bindings can be resolved.
  */
 
-import type { PageSchema } from '../../../schema/page'
+import type { PageSchema, SectionSchema } from '../../../schema'
 import type { HeroTextStyles } from '../../../content/sections/patterns/Hero/types'
-import {
-  createHeroSection,
-  createAboutSection,
-  createFeaturedProjectsSection,
-  createOtherProjectsSection,
-} from '../../../content/sections/patterns'
 
 /**
  * Bojuhl-specific hero text styles.
@@ -21,7 +19,7 @@ import {
 export const bojuhlHeroStyles: HeroTextStyles = {
   intro: {
     fontFamily: 'var(--font-body, Plus Jakarta Sans, system-ui, sans-serif)',
-    fontSize: 'clamp(0.875rem, 0.125rem + 1vw, 1rem)', // 14px mobile → 16px @ ~1400px
+    fontSize: 'clamp(0.875rem, 0.125rem + 1vw, 1rem)',
     fontWeight: 500,
     letterSpacing: '0.05em',
     color: 'white',
@@ -48,40 +46,285 @@ export const bojuhlHeroStyles: HeroTextStyles = {
 }
 
 /**
- * Home page template with placeholder content.
- * Sites extend this with real content data.
+ * Hero section schema with binding expressions.
+ */
+const heroSection: SectionSchema = {
+  id: 'hero',
+  layout: {
+    type: 'stack',
+    direction: 'column',
+    align: 'start'
+  },
+  widgets: [
+    {
+      id: 'hero-video',
+      type: 'Video',
+      props: {
+        src: '{{ content.hero.videoSrc }}',
+        autoplay: true,
+        loop: true,
+        muted: true,
+        background: true
+      }
+    },
+    {
+      id: 'hero-content',
+      type: 'Flex',
+      props: {
+        direction: 'column',
+        align: 'start',
+        justify: 'end'
+      },
+      widgets: [
+        {
+          id: 'hero-intro',
+          type: 'Text',
+          props: {
+            content: '{{ content.hero.introText }}',
+            as: 'p'
+          },
+          style: bojuhlHeroStyles.intro
+        },
+        {
+          id: 'hero-roles',
+          type: 'HeroRoles',
+          props: {
+            roles: '{{ content.hero.roles }}',
+            firstAs: 'h1',
+            restAs: 'h2'
+          },
+          // Style applied to each role text
+          style: bojuhlHeroStyles.roleTitle
+        }
+      ]
+    },
+    {
+      id: 'hero-scroll',
+      type: 'Text',
+      props: {
+        content: '{{ content.hero.scrollIndicatorText }}',
+        as: 'span'
+      },
+      style: bojuhlHeroStyles.scrollIndicator
+    }
+  ]
+}
+
+/**
+ * About section schema with binding expressions.
+ */
+const aboutSection: SectionSchema = {
+  id: 'about',
+  layout: {
+    type: 'stack',
+    direction: 'column',
+    align: 'stretch'
+  },
+  style: {
+    backgroundColor: 'rgb(0, 0, 0)'
+  },
+  behaviour: 'scroll/fade',
+  widgets: [
+    // Mobile background
+    {
+      id: 'about-mobile-bg',
+      type: 'Box',
+      props: {},
+      widgets: [
+        {
+          id: 'about-mobile-bg-image',
+          type: 'Image',
+          props: {
+            src: '{{ content.about.photoSrc }}',
+            alt: '',
+            decorative: true
+          }
+        }
+      ]
+    },
+    // Main content
+    {
+      id: 'about-content',
+      type: 'Flex',
+      props: { direction: 'row' },
+      widgets: [
+        // Bio column
+        {
+          id: 'about-bio-column',
+          type: 'Box',
+          props: {},
+          widgets: [
+            {
+              id: 'about-bio-inner',
+              type: 'Box',
+              props: {},
+              widgets: [
+                {
+                  id: 'about-bio-text',
+                  type: 'Text',
+                  props: {
+                    content: '{{ content.about.bioParagraphs }}',
+                    as: 'p',
+                    html: true
+                  }
+                },
+                {
+                  id: 'about-signature',
+                  type: 'Text',
+                  props: {
+                    content: '{{ content.about.signature }}',
+                    as: 'p',
+                    variant: 'signature'
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        // Image column
+        {
+          id: 'about-image-column',
+          type: 'Box',
+          props: {},
+          widgets: [
+            {
+              id: 'about-image',
+              type: 'Image',
+              props: {
+                src: '{{ content.about.photoSrc }}',
+                alt: '{{ content.about.photoAlt }}'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    // Gradient overlay
+    {
+      id: 'about-gradient',
+      type: 'Box',
+      props: {}
+    },
+    // Logo marquee (platform handles LogoMarquee widget or resolves binding)
+    {
+      id: 'about-logos',
+      type: 'LogoMarquee',
+      props: {
+        logos: '{{ content.about.clientLogos }}',
+        duration: 43,
+        logoWidth: 120,
+        logoGap: 96
+      }
+    }
+  ]
+}
+
+/**
+ * Featured projects section schema with binding expressions.
+ */
+const featuredProjectsSection: SectionSchema = {
+  id: 'projects',
+  layout: {
+    type: 'stack',
+    direction: 'column',
+    align: 'stretch'
+  },
+  style: {
+    backgroundColor: '#fff'
+  },
+  widgets: [
+    {
+      id: 'featured-projects-content',
+      type: 'FeaturedProjectsGrid',
+      className: 'featured-projects__content',
+      props: {
+        projects: '{{ content.projects.featured }}',
+        startReversed: false
+      }
+    }
+  ]
+}
+
+/**
+ * Other projects section schema with binding expressions.
+ */
+const otherProjectsSection: SectionSchema = {
+  id: 'other-projects',
+  layout: {
+    type: 'stack',
+    direction: 'column',
+    align: 'stretch',
+    gap: 0
+  },
+  style: {
+    backgroundColor: '#ffffff',
+    color: '#000000'
+  },
+  className: 'other-projects-section',
+  widgets: [
+    // Header
+    {
+      id: 'other-projects-header',
+      type: 'Flex',
+      className: 'other-projects-header',
+      props: {
+        direction: 'column',
+        align: 'stretch',
+        gap: 0
+      },
+      widgets: [
+        {
+          id: 'other-projects-heading',
+          type: 'Text',
+          props: {
+            content: '{{ content.projects.otherHeading }}',
+            as: 'h2'
+          },
+          className: 'other-projects-heading'
+        },
+        {
+          id: 'other-projects-year-range',
+          type: 'Text',
+          props: {
+            content: '{{ content.projects.yearRange }}',
+            as: 'span'
+          },
+          className: 'other-projects-year-range'
+        }
+      ]
+    },
+    // Gallery
+    {
+      id: 'other-projects-gallery',
+      type: 'ExpandableGalleryRow',
+      props: {
+        projects: '{{ content.projects.other }}',
+        height: '32rem',
+        gap: '4px',
+        expandedWidth: '32rem',
+        transitionDuration: 400,
+        cursorLabel: 'WATCH'
+      },
+      on: { click: 'open-video-modal' }
+    }
+  ]
+}
+
+/**
+ * Home page template with binding expressions.
+ * Platform resolves bindings before rendering.
  */
 export const homePageTemplate: PageSchema = {
   id: 'home',
   slug: '/',
   head: {
-    title: 'Portfolio',
-    description: 'Executive Producer & Editor portfolio',
+    title: '{{ content.head.title }}',
+    description: '{{ content.head.description }}'
   },
   sections: [
-    createHeroSection({
-      introText: "I'm",
-      roles: ['EXECUTIVE PRODUCER', 'PRODUCER', 'EDITOR'],
-      videoSrc: '/videos/hero.mp4',
-      scrollIndicatorText: '(SCROLL)',
-      styles: bojuhlHeroStyles,
-    }),
-    createAboutSection({
-      bioParagraphs: [
-        'Bio paragraph placeholder.',
-      ],
-      signature: 'Name',
-      photoSrc: '/images/about.jpg',
-      photoAlt: 'Portrait',
-      clientLogos: [],
-    }),
-    createFeaturedProjectsSection({
-      projects: [],
-    }),
-    createOtherProjectsSection({
-      heading: 'OTHER PROJECTS',
-      yearRange: '2020 - 2024',
-      projects: [],
-    }),
-  ],
+    heroSection,
+    aboutSection,
+    featuredProjectsSection,
+    otherProjectsSection
+  ]
 }

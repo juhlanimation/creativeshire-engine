@@ -9,6 +9,7 @@
 
 import type { SectionSchema, WidgetSchema } from '../../../../schema'
 import type { AboutProps } from './types'
+import { isBindingExpression } from '../utils'
 
 /**
  * Creates an AboutSection schema matching bojuhl.com layout.
@@ -58,11 +59,14 @@ export function createAboutSection(props: AboutProps): SectionSchema {
             props: {},
             widgets: [
               // Single paragraph with all bio text (pre-line handles line breaks)
+              // Handle both real arrays and binding expressions
               {
                 id: 'about-bio-text',
                 type: 'Text',
                 props: {
-                  content: props.bioParagraphs.join('\n\n'),
+                  content: isBindingExpression(props.bioParagraphs)
+                    ? props.bioParagraphs  // Pass binding through for runtime resolution
+                    : props.bioParagraphs.join('\n\n'),
                   as: 'p',
                   html: true
                 }
@@ -109,72 +113,93 @@ export function createAboutSection(props: AboutProps): SectionSchema {
 
   // Logo marquee (absolute positioned at bottom via CSS)
   // Structure: Box (overflow:hidden, effect) > Flex (track) > [Box > Image, ...] x2 (duplicated)
-  if (props.clientLogos && props.clientLogos.length > 0) {
+  // Handle binding expressions: if logos is a binding, create a placeholder widget
+  const hasLogos = isBindingExpression(props.clientLogos)
+    ? true  // Assume logos exist when binding - platform will resolve
+    : props.clientLogos && props.clientLogos.length > 0
+
+  if (hasLogos) {
     const duration = props.marqueeDuration ?? 43
     const logoWidth = 120
     const logoGap = 96
 
-    // Calculate max height from all logos for uniform container height
-    const maxHeight = Math.max(...props.clientLogos.map(l => l.height), 48)
+    // For binding expressions, use default height; otherwise calculate from logos
+    const maxHeight = isBindingExpression(props.clientLogos)
+      ? 48  // Default height for bindings
+      : Math.max(...props.clientLogos!.map(l => l.height), 48)
 
-    // Create logo container widgets (Box with Image inside)
-    const createLogoWidgets = (prefix: string): WidgetSchema[] =>
-      props.clientLogos!.map((logo, index) => ({
-        id: `about-logo-${prefix}-${index}`,
+    // For binding expressions, create a LogoMarquee widget that handles the array at runtime
+    if (isBindingExpression(props.clientLogos)) {
+      widgets.push({
+        id: 'about-logos',
+        type: 'LogoMarquee',
+        props: {
+          logos: props.clientLogos,  // Binding expression passed through
+          duration,
+          logoWidth,
+          logoGap
+        }
+      })
+    } else {
+      // Create logo container widgets (Box with Image inside)
+      const createLogoWidgets = (prefix: string): WidgetSchema[] =>
+        props.clientLogos!.map((logo, index) => ({
+          id: `about-logo-${prefix}-${index}`,
+          type: 'Box',
+          props: {},
+          style: {
+            width: `${logoWidth}px`,
+            height: `${maxHeight}px`,
+            marginRight: `${logoGap}px`,
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          },
+          widgets: [
+            {
+              id: `about-logo-${prefix}-${index}-img`,
+              type: 'Image',
+              props: {
+                src: logo.src,
+                alt: logo.alt,
+                decorative: true,
+                objectFit: 'contain'
+              },
+              style: {
+                width: 'auto',
+                height: `${logo.height}px`,
+                maxWidth: `${logoWidth}px`,
+                filter: 'brightness(0) invert(1)',
+                opacity: 0.5
+              }
+            }
+          ]
+        }))
+
+      widgets.push({
+        id: 'about-logos',
         type: 'Box',
-        props: {},
-        style: {
-          width: `${logoWidth}px`,
-          height: `${maxHeight}px`,
-          marginRight: `${logoGap}px`,
-          flexShrink: 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
+        props: {
+          'data-effect': 'marquee-scroll'
         },
+        style: {
+          '--marquee-duration': `${duration}s`,
+          minHeight: `${maxHeight}px`
+        } as React.CSSProperties,
         widgets: [
           {
-            id: `about-logo-${prefix}-${index}-img`,
-            type: 'Image',
+            id: 'about-logos-track',
+            type: 'Flex',
             props: {
-              src: logo.src,
-              alt: logo.alt,
-              decorative: true,
-              objectFit: 'contain'
+              direction: 'row',
+              'data-marquee-track': true
             },
-            style: {
-              width: 'auto',
-              height: `${logo.height}px`,
-              maxWidth: `${logoWidth}px`,
-              filter: 'brightness(0) invert(1)',
-              opacity: 0.5
-            }
+            widgets: [...createLogoWidgets('a'), ...createLogoWidgets('b')]
           }
         ]
-      }))
-
-    widgets.push({
-      id: 'about-logos',
-      type: 'Box',
-      props: {
-        'data-effect': 'marquee-scroll'
-      },
-      style: {
-        '--marquee-duration': `${duration}s`,
-        minHeight: `${maxHeight}px`
-      } as React.CSSProperties,
-      widgets: [
-        {
-          id: 'about-logos-track',
-          type: 'Flex',
-          props: {
-            direction: 'row',
-            'data-marquee-track': true
-          },
-          widgets: [...createLogoWidgets('a'), ...createLogoWidgets('b')]
-        }
-      ]
-    })
+      })
+    }
   }
 
   return {

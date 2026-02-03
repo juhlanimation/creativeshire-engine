@@ -17,6 +17,7 @@ import type { CSSProperties } from 'react'
 import type { SectionSchema, WidgetSchema } from '../../../../schema'
 import type { HeroProps } from './types'
 import { DEFAULT_HERO_STYLES } from './types'
+import { isBindingExpression } from '../utils'
 
 /**
  * Merge two style objects.
@@ -54,16 +55,29 @@ export function createHeroSection(props: HeroProps): SectionSchema {
       },
       style: styles.intro
     },
-    // Role titles as Text widgets with display typography
-    ...props.roles.map((role, index) => ({
-      id: `hero-role-${index}`,
-      type: 'Text',
-      props: {
-        content: role,
-        as: index === 0 ? 'h1' : 'h2'
-      },
-      style: styles.roleTitle
-    }))
+    // Role titles - handle both real arrays and binding expressions
+    ...(isBindingExpression(props.roles)
+      ? [{
+          // Binding expression: create a single widget that receives the binding
+          // Platform resolves {{ content.hero.roles }} to an array at runtime
+          id: 'hero-roles',
+          type: 'HeroRoles',
+          props: {
+            roles: props.roles,
+            firstAs: 'h1',
+            restAs: 'h2',
+            roleStyle: styles.roleTitle
+          }
+        }]
+      : props.roles.map((role, index) => ({
+          id: `hero-role-${index}`,
+          type: 'Text',
+          props: {
+            content: role,
+            as: index === 0 ? 'h1' : 'h2'
+          },
+          style: styles.roleTitle
+        })))
   ]
 
   // Main widgets array

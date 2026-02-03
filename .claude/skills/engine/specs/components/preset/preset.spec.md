@@ -119,6 +119,9 @@ Key fields: `mode` (underlying mode), `wrappers` (byPosition, byType, default), 
 10. Experience `wrappers.default` always present
 11. Experience `mode` references valid mode from registry
 12. All behaviour IDs reference registered behaviours
+13. All content props use binding expressions: `'{{ content.xxx }}'`
+14. No hardcoded emails, URLs, or placeholder text in presets
+15. No empty arrays for content (use `'{{ content.xxx }}'` instead)
 
 ### Must Not
 
@@ -311,7 +314,9 @@ See [Registry Spec](../renderer/registry.spec.md#bundle-implications) for detail
 
 | Anti-Pattern | Problem | Correct Approach |
 |--------------|---------|------------------|
-| Hardcode instance data | Content in preset | Use empty arrays; site fills data |
+| Hardcode instance data | Content in preset | Use binding expressions: `{{ content.xxx }}` |
+| Empty arrays for content | `projects: []` | Use binding: `'{{ content.projects }}'` |
+| Literal emails/URLs | `'hello@example.com'` | Use binding: `'{{ content.email }}'` |
 | Import from `site/*` | Breaks portability | Presets are self-contained |
 | Missing section default | Undefined behaviour | Always define `defaults.section` |
 | DOM manipulation in store | Store holds state only | Drivers modify DOM |
@@ -320,6 +325,46 @@ See [Registry Spec](../renderer/registry.spec.md#bundle-implications) for detail
 | Barrel file imports | Loads entire library | Direct imports or optimizePackageImports |
 | Eager analytics import | Blocks hydration | `dynamic(() => import(), { ssr: false })` |
 | No preload on user intent | Slow perceived load | Preload on hover/focus for heavy modules |
+
+## Binding Expressions
+
+Presets define structure; platform provides content. Use binding expressions for all content values.
+
+### Syntax
+
+```typescript
+// Scalar values
+props: { email: '{{ content.footer.email }}' }
+
+// Arrays
+props: { projects: '{{ content.projects.featured }}' }
+
+// Nested paths
+props: { src: '{{ content.about.photo.src }}' }
+```
+
+### Resolution
+
+Engine passes binding expressions as opaque strings. Platform resolves them at runtime by:
+1. Parsing `{{ content.xxx }}` syntax
+2. Looking up value in content store
+3. Substituting resolved value into props
+
+### Content Schema
+
+Each preset should document its expected content structure:
+
+```typescript
+// presets/bojuhl/content-schema.ts
+export interface BojuhlContentSchema {
+  hero: { introText: string; roles: string[]; videoSrc: string }
+  about: { bioParagraphs: string[]; signature: string; photoSrc: string; photoAlt: string; clientLogos: LogoData[] }
+  projects: { featured: ProjectData[]; other: ProjectData[]; otherHeading: string; yearRange: string }
+  footer: { email: string; navLinks: LinkData[]; contactHeading: string; linkedinUrl: string; studioHeading: string; studioUrl: string; studioEmail: string; studioSocials: SocialData[]; copyright: string }
+  contact: { promptText: string; email: string }
+  head: { title: string; description: string }
+}
+```
 
 ## Testing
 
