@@ -13,7 +13,7 @@
 import React, { memo, forwardRef, useCallback, type MouseEvent } from 'react'
 import NextLink from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useTransitionOptional } from '@/engine/experience/navigation'
+import { useTransitionOptional } from '../../../../experience/navigation'
 import type { LinkProps } from './types'
 import './styles.css'
 

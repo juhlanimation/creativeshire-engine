@@ -9,7 +9,7 @@
  * Reference: bojuhl.com "Other Selected Projects" section
  */
 
-import type { SectionSchema, WidgetSchema, SerializableValue } from '@/engine/schema'
+import type { SectionSchema, WidgetSchema, SerializableValue } from '../../../../schema'
 import type { OtherProjectsProps } from './types'
 
 /**

@@ -21,7 +21,7 @@
  */
 
 import { useEffect, type RefObject } from 'react'
-import { useSectionLifecycle } from '@/engine/experience'
+import { useSectionLifecycle } from '../../../../experience'
 
 /**
  * Pauses video when scrolled out of view, resumes when visible.

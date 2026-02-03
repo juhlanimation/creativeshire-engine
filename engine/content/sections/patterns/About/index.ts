@@ -7,7 +7,7 @@
  * - Gradient overlay above marquee
  */
 
-import type { SectionSchema, WidgetSchema } from '@/engine/schema'
+import type { SectionSchema, WidgetSchema } from '../../../../schema'
 import type { AboutProps } from './types'
 
 /**

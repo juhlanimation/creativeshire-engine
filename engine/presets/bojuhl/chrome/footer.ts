@@ -14,7 +14,7 @@
  */
 
 import type { PresetRegionConfig } from '../../types'
-import type { WidgetSchema } from '@/engine/schema'
+import type { WidgetSchema } from '../../../schema'
 
 /**
  * Creates navigation links for the footer.

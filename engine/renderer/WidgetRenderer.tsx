@@ -14,11 +14,11 @@
  */
 
 import { useMemo, type ReactNode } from 'react'
-import type { WidgetSchema, BehaviourConfig } from '@/engine/schema'
-import { getWidget } from '@/engine/content/widgets/registry'
-import { BehaviourWrapper } from '@/engine/experience/behaviours'
-import { useExperience, type Experience } from '@/engine/experience'
-import { executeAction } from '@/engine/experience/actions'
+import type { WidgetSchema, BehaviourConfig } from '../schema'
+import { getWidget } from '../content/widgets/registry'
+import { BehaviourWrapper } from '../experience/behaviours'
+import { useExperience, type Experience } from '../experience'
+import { executeAction } from '../experience/actions'
 import { ErrorBoundary } from './ErrorBoundary'
 import type { WidgetRendererProps } from './types'
 

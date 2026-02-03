@@ -2,7 +2,7 @@
  * Split layout widget metadata for platform UI.
  */
 
-import { defineMeta } from '@/engine/schema/meta'
+import { defineMeta } from '../../../../schema/meta'
 import type { SplitProps } from './types'
 
 export const meta = defineMeta<SplitProps>({

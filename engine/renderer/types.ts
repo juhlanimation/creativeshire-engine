@@ -3,7 +3,7 @@
  * Types for widget and section rendering components.
  */
 
-import type { WidgetSchema, SectionSchema } from '@/engine/schema'
+import type { WidgetSchema, SectionSchema } from '../schema'
 
 /**
  * Props for WidgetRenderer component.

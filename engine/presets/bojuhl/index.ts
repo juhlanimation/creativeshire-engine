@@ -4,7 +4,7 @@
  *
  * Usage:
  * ```typescript
- * import { bojuhlPreset } from '@/engine/presets/bojuhl'
+ * import { bojuhlPreset } from './'
  *
  * export const siteConfig: SiteSchema = {
  *   id: 'my-site',

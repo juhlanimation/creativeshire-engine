@@ -6,7 +6,7 @@
  */
 
 import React, { memo, forwardRef } from 'react'
-import ContactPrompt from '@/engine/content/widgets/interactive/ContactPrompt'
+import ContactPrompt from '../../../widgets/interactive/ContactPrompt'
 import type { FooterProps } from './types'
 import './styles.css'
 

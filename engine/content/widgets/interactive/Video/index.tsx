@@ -26,7 +26,7 @@
 
 import { useState, useRef, useEffect, useCallback, type CSSProperties } from 'react'
 import { useVisibilityPlayback } from './useVisibilityPlayback'
-import { usePlaybackPosition } from '@/engine/content/widgets/interactive/VideoPlayer/hooks'
+import { usePlaybackPosition } from '../VideoPlayer/hooks'
 import type { VideoProps } from './types'
 import './styles.css'
 

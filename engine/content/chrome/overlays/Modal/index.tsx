@@ -21,12 +21,12 @@ import { useEffect, useCallback, useRef, memo } from 'react'
 import { createPortal } from 'react-dom'
 import { useStore } from 'zustand'
 import { useModalStore } from './store'
-import { useSmoothScroll, useSmoothScrollContainer } from '@/engine/experience'
+import { useSmoothScroll, useSmoothScrollContainer } from '../../../../experience'
 // ARCHITECTURE EXCEPTION: Overlays may import driver utilities for enter/exit animations.
 // RevealTransition is driver infrastructure (not a behaviour), providing GSAP timeline
 // control for sequenced modal transitions that CSS cannot achieve.
-import { RevealTransition } from '@/engine/experience/drivers/gsap'
-import type { RevealType } from '@/engine/experience/drivers/gsap'
+import { RevealTransition } from '../../../../experience/drivers/gsap'
+import type { RevealType } from '../../../../experience/drivers/gsap'
 import './styles.css'
 
 /**

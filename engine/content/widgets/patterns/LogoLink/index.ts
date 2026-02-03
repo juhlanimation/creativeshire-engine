@@ -13,7 +13,7 @@
  * Styles are applied via className for CSS targeting.
  */
 
-import type { WidgetSchema } from '@/engine/schema'
+import type { WidgetSchema } from '../../../../schema'
 import type { LogoLinkConfig } from './types'
 
 export type { LogoLinkConfig }

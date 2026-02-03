@@ -14,7 +14,7 @@
  */
 
 import { useState, useCallback, useRef, useEffect, memo, type CSSProperties } from 'react'
-import CursorLabel from '@/engine/content/chrome/overlays/CursorLabel'
+import CursorLabel from '../../../chrome/overlays/CursorLabel'
 import type { ExpandableGalleryRowProps, GalleryProject } from './types'
 import './styles.css'
 

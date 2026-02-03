@@ -2,7 +2,7 @@
  * ProjectCard pattern metadata for platform UI.
  */
 
-import { defineMeta } from '@/engine/schema/meta'
+import { defineMeta } from '../../../../schema/meta'
 import type { ProjectCardConfig } from './types'
 
 export const meta = defineMeta<ProjectCardConfig>({

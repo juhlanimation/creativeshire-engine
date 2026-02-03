@@ -2,7 +2,7 @@
  * Container layout widget metadata for platform UI.
  */
 
-import { defineMeta } from '@/engine/schema/meta'
+import { defineMeta } from '../../../../schema/meta'
 import type { ContainerProps } from './types'
 
 export const meta = defineMeta<ContainerProps>({

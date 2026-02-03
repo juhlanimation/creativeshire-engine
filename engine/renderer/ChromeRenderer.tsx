@@ -16,7 +16,7 @@
  */
 
 import { createPortal } from 'react-dom'
-import type { ChromeSchema, PageChromeOverrides, RegionSchema, OverlaySchema } from '@/engine/schema'
+import type { ChromeSchema, PageChromeOverrides, RegionSchema, OverlaySchema } from '../schema'
 import { getChromeComponent } from '../content/chrome/registry'
 import { WidgetRenderer } from './WidgetRenderer'
 import './chrome.css'

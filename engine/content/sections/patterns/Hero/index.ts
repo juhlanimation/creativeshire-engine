@@ -14,7 +14,7 @@
  */
 
 import type { CSSProperties } from 'react'
-import type { SectionSchema, WidgetSchema } from '@/engine/schema'
+import type { SectionSchema, WidgetSchema } from '../../../../schema'
 import type { HeroProps } from './types'
 import { DEFAULT_HERO_STYLES } from './types'
 

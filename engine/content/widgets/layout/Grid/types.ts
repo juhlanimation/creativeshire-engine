@@ -4,7 +4,7 @@
  */
 
 import type { CSSProperties } from 'react'
-import type { WidgetSchema } from '@/engine/schema'
+import type { WidgetSchema } from '../../../../schema'
 
 /**
  * Props for the Grid layout widget.

@@ -8,8 +8,8 @@
 import { useEffect, useRef, useSyncExternalStore } from 'react'
 import { gsap } from 'gsap'
 import type { StoreApi } from 'zustand'
-import { useExperience } from '@/engine/experience'
-import type { InfiniteCarouselState } from '@/engine/experience/experiences/types'
+import { useExperience } from '../../../../experience'
+import type { InfiniteCarouselState } from '../../../../experience/experiences/types'
 import type { NavTimelineProps } from './types'
 import './styles.css'
 

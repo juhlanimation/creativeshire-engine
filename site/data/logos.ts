@@ -2,7 +2,7 @@
  * Client logo data for the bojuhl portfolio.
  */
 
-import type { LogoItem } from '@/engine/content/sections/patterns/About/types'
+import type { LogoItem } from '../../engine/content/sections/patterns/About/types'
 
 /**
  * Client logos for the marquee.

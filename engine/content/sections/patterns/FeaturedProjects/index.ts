@@ -3,8 +3,8 @@
  * Featured projects grid with alternating ProjectCard layouts.
  */
 
-import { createProjectCard } from '@/engine/content/widgets/patterns'
-import type { SectionSchema } from '@/engine/schema'
+import { createProjectCard } from '../../../widgets/patterns'
+import type { SectionSchema } from '../../../../schema'
 import type { FeaturedProjectsProps } from './types'
 
 /**

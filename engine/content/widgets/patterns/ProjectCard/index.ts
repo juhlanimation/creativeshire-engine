@@ -6,7 +6,7 @@
  * Composes: Flex, Box, Video, Text
  */
 
-import type { WidgetSchema } from '@/engine/schema'
+import type { WidgetSchema } from '../../../../schema'
 import type { ProjectCardConfig } from './types'
 
 export type { ProjectCardConfig }

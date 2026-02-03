@@ -13,7 +13,7 @@
  */
 
 import { useRef, useEffect, useCallback, memo, type CSSProperties } from 'react'
-import { usePlaybackPosition } from '@/engine/content/widgets/interactive/VideoPlayer/hooks'
+import { usePlaybackPosition } from '../VideoPlayer/hooks'
 import type { GalleryThumbnailProps } from './types'
 import './styles.css'
 

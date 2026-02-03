@@ -2,7 +2,7 @@
  * Flex layout widget metadata for platform UI.
  */
 
-import { defineMeta } from '@/engine/schema/meta'
+import { defineMeta } from '../../../../schema/meta'
 import type { FlexProps } from './types'
 
 export const meta = defineMeta<FlexProps>({

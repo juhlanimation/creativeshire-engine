@@ -8,7 +8,7 @@
  */
 
 import React, { memo, forwardRef, type CSSProperties } from 'react'
-import { WidgetRenderer } from '@/engine/renderer/WidgetRenderer'
+import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
 import type { ContainerProps } from './types'
 import './styles.css'
 

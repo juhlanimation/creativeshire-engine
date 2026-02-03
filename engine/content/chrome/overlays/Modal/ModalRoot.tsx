@@ -20,8 +20,8 @@ import { openModal } from './store'
 import {
   registerAction,
   unregisterAction,
-} from '@/engine/experience/actions'
-import { VideoPlayer } from '@/engine/content/widgets/interactive'
+} from '../../../../experience/actions'
+import { VideoPlayer } from '../../../widgets/interactive'
 
 /**
  * Payload for open-video-modal action.
