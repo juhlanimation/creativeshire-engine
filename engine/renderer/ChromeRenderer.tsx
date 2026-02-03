@@ -19,6 +19,7 @@ import { createPortal } from 'react-dom'
 import type { ChromeSchema, PageChromeOverrides, RegionSchema, OverlaySchema } from '../schema'
 import { getChromeComponent } from '../content/chrome/registry'
 import { WidgetRenderer } from './WidgetRenderer'
+import { useContainer } from '../interface/ContainerContext'
 import './chrome.css'
 
 /**
@@ -89,9 +90,9 @@ const POSITION_CLASSES: Record<string, string> = {
 /**
  * Renders overlays.
  *
- * Widget-based overlays are portaled to document.body to escape CSS transform
- * contexts (like GSAP ScrollSmoother). This is necessary because `position: fixed`
- * becomes relative to the nearest transformed ancestor, not the viewport.
+ * Widget-based overlays are portaled to the portal target (container or document.body)
+ * to escape CSS transform contexts (like GSAP ScrollSmoother). This is necessary because
+ * `position: fixed` becomes relative to the nearest transformed ancestor, not the viewport.
  *
  * Component-based overlays handle their own positioning (and portals if needed).
  *
@@ -102,7 +103,8 @@ const POSITION_CLASSES: Record<string, string> = {
  */
 function renderOverlays(
   overlays: ChromeSchema['overlays'] | undefined,
-  hideChrome?: string[]
+  hideChrome: string[] | undefined,
+  portalTarget: HTMLElement | null
 ): React.ReactNode {
   const elements: React.ReactNode[] = []
 
@@ -110,6 +112,9 @@ function renderOverlays(
   if (!overlays) {
     return null
   }
+
+  // Resolve portal target with fallback
+  const target = portalTarget || (typeof window !== 'undefined' ? document.body : null)
 
   Object.entries(overlays).forEach(([key, overlay]) => {
     if (!overlay) return
@@ -134,7 +139,7 @@ function renderOverlays(
       return
     }
 
-    // Widget-based: portal to document.body to escape transform context
+    // Widget-based: portal to target to escape transform context
     if (typedOverlay.widget) {
       const positionClass = typedOverlay.position
         ? POSITION_CLASSES[typedOverlay.position]
@@ -146,9 +151,9 @@ function renderOverlays(
         </div>
       )
 
-      // Portal to body (SSR-safe: only portal on client)
-      if (typeof window !== 'undefined') {
-        elements.push(createPortal(content, document.body))
+      // Portal to target (SSR-safe: only portal on client)
+      if (target) {
+        elements.push(createPortal(content, target))
       } else {
         elements.push(content)
       }
@@ -162,9 +167,11 @@ function renderOverlays(
  * Renders chrome for the specified position.
  */
 export function ChromeRenderer({ siteChrome, pageChrome, position, hideChrome }: ChromeRendererProps): React.ReactNode {
+  const { portalTarget } = useContainer()
+
   // Render overlays (ModalRoot, CursorLabel, etc.)
   if (position === 'overlays') {
-    return renderOverlays(siteChrome?.overlays, hideChrome)
+    return renderOverlays(siteChrome?.overlays, hideChrome, portalTarget ?? null)
   }
 
   // Regions require siteChrome configuration

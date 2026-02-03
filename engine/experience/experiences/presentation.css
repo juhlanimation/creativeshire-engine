@@ -40,8 +40,8 @@ body > [id^="S:"][hidden] {
   height: var(--viewport-height, 100dvh);
 }
 
-html:has(.presentation-wrapper[data-presentation='slideshow']),
-body:has(.presentation-wrapper[data-presentation='slideshow']) {
+html:has(.presentation-wrapper[data-presentation='slideshow']):not(:has([data-container-mode])),
+body:has(.presentation-wrapper[data-presentation='slideshow']):not(:has([data-container-mode])) {
   overflow: hidden;
   height: 100vh;
   height: 100dvh;
@@ -85,10 +85,10 @@ body:has(.presentation-wrapper[data-presentation='slideshow']) {
  * ============================================================================ */
 
 .presentation-wrapper[data-presentation='infinite-carousel'] {
-  position: fixed;
+  position: var(--carousel-position, fixed);
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: var(--carousel-left, 50%);
+  transform: var(--carousel-transform, translateX(-50%));
   width: 100%;
   max-width: 2400px;
   height: var(--viewport-height, 100dvh);
@@ -96,8 +96,8 @@ body:has(.presentation-wrapper[data-presentation='slideshow']) {
   background: black;
 }
 
-html:has(.presentation-wrapper[data-presentation='infinite-carousel']),
-body:has(.presentation-wrapper[data-presentation='infinite-carousel']) {
+html:has(.presentation-wrapper[data-presentation='infinite-carousel']):not(:has([data-container-mode])),
+body:has(.presentation-wrapper[data-presentation='infinite-carousel']):not(:has([data-container-mode])) {
   overflow: hidden;
   height: 100vh;
   height: 100dvh;

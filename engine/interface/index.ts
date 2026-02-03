@@ -5,6 +5,16 @@
 // Provider and hooks
 export { EngineProvider, useEngineController, useEngineState, useEngineStore } from './EngineProvider'
 
+// Container context for contained/preview mode
+export {
+  ContainerProvider,
+  useContainer,
+  useIsContained,
+  type ContainerMode,
+  type ContainerConfig,
+  type ContainerProviderProps,
+} from './ContainerContext'
+
 // Store factory
 export { createEngineStore, createSnapshot } from './EngineStore'
 

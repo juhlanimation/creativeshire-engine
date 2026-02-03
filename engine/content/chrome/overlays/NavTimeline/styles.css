@@ -31,7 +31,7 @@
 /* Timeline container - holds line and arrows */
 .nav-timeline-container {
   position: relative;
-  height: 12.5vh;
+  height: calc(var(--vh, 1svh) * 12.5);
 }
 
 /* Line + arrows wrapper */

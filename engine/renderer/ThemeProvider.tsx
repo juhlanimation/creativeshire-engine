@@ -7,6 +7,7 @@
 
 import { useEffect } from 'react'
 import type { ThemeSchema } from '../schema'
+import { useContainer } from '../interface/ContainerContext'
 
 interface ThemeProviderProps {
   theme?: ThemeSchema
@@ -31,13 +32,21 @@ const DEFAULTS = {
 }
 
 /**
- * Injects theme as CSS variables on document root.
- * Typography vars are set on body where Next.js font vars are available.
+ * Injects theme as CSS variables on document root or container.
+ * In contained mode, scopes variables to the container element.
+ * Typography vars are set on body/container where font vars are available.
  */
 export function ThemeProvider({ theme, children }: ThemeProviderProps): React.ReactNode {
+  const { mode, containerRef } = useContainer()
+
   useEffect(() => {
-    const root = document.documentElement
-    const body = document.body
+    // Use container in contained mode, otherwise document elements
+    const root = mode === 'contained' && containerRef?.current
+      ? containerRef.current
+      : document.documentElement
+    const body = mode === 'contained' && containerRef?.current
+      ? containerRef.current
+      : document.body
 
     // Scrollbar variables (on root for global scroll)
     const scrollbar = theme?.scrollbar
@@ -62,7 +71,7 @@ export function ThemeProvider({ theme, children }: ThemeProviderProps): React.Re
       scrollbar?.trackDark ?? DEFAULTS.scrollbar.trackDark
     )
 
-    // Typography variables (on body where Next.js font vars are defined)
+    // Typography variables (on body/container where font vars are defined)
     const typography = theme?.typography
     body.style.setProperty(
       '--font-title',
@@ -98,7 +107,7 @@ export function ThemeProvider({ theme, children }: ThemeProviderProps): React.Re
       root.style.removeProperty('--section-fade-duration')
       root.style.removeProperty('--section-fade-easing')
     }
-  }, [theme])
+  }, [theme, mode, containerRef])
 
   return <>{children}</>
 }

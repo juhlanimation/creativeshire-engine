@@ -80,7 +80,7 @@
 
 @media (min-width: 768px) {
   .project-card__thumbnail-column {
-    width: 55vw;
+    width: var(--card-width, 55vw);
     flex-shrink: 0;
     min-width: 0;
   }

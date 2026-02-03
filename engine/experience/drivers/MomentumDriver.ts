@@ -111,6 +111,10 @@ export class MomentumDriver {
   /** Snap delay timeout ID */
   private snapTimeoutId: ReturnType<typeof setTimeout> | null = null
 
+  /** Custom viewport height getter (for container-aware mode) */
+  private getViewportHeight: () => number = () =>
+    typeof window !== 'undefined' ? window.innerHeight : 0
+
   constructor(
     container: HTMLElement,
     store: StoreApi<InfiniteCarouselState>,
@@ -159,6 +163,14 @@ export class MomentumDriver {
     this.sectionHeights = heights.map(h => ({
       heightRatio: h.heightRatio,
     }))
+  }
+
+  /**
+   * Set custom viewport height getter for container-aware mode.
+   * In contained mode, returns container height instead of window.innerHeight.
+   */
+  setViewportHeightGetter(getter: () => number): void {
+    this.getViewportHeight = getter
   }
 
   /**

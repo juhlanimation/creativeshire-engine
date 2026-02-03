@@ -12,6 +12,7 @@
 import { useEffect, useRef } from 'react'
 import { useStore } from 'zustand'
 import { useExperience } from './ExperienceProvider'
+import { useContainer } from '../../interface/ContainerContext'
 import { MomentumDriver } from '../drivers/MomentumDriver'
 import type { InfiniteCarouselState } from './types'
 import type { StoreApi } from 'zustand'
@@ -159,6 +160,7 @@ function calculateSectionTransforms(
 export function InfiniteCarouselController(): null {
   const { store } = useExperience()
   const carouselStore = store as StoreApi<InfiniteCarouselState>
+  const { getViewportHeight } = useContainer()
 
   const driverRef = useRef<MomentumDriver | null>(null)
   const sectionsRef = useRef<HTMLElement[]>([])
@@ -203,10 +205,11 @@ export function InfiniteCarouselController(): null {
     // Create MomentumDriver
     driverRef.current = new MomentumDriver(wrapper, carouselStore, {})
     driverRef.current.setTotalSections(sections.length)
+    driverRef.current.setViewportHeightGetter(getViewportHeight)
 
-    // Measure section heights
+    // Measure section heights (container-aware)
     const measureHeights = () => {
-      const viewportHeight = window.innerHeight
+      const viewportHeight = getViewportHeight()
       sectionHeightsRef.current = Array.from(sections).map((el) => {
         // Find the tallest descendant element (wrappers may be constrained to 100vh)
         const allDescendants = el.querySelectorAll('*')
@@ -260,7 +263,7 @@ export function InfiniteCarouselController(): null {
         driverRef.current = null
       }
     }
-  }, [carouselStore])
+  }, [carouselStore, getViewportHeight])
 
   // Update section transforms and clipProgress when scroll progress changes
   useEffect(() => {
