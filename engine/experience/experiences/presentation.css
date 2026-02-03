@@ -1,6 +1,16 @@
 /**
  * Presentation model base styles.
  * CSS variables are set by PresentationWrapper.
+ *
+ * VIEWPORT UNITS:
+ * Uses CSS custom properties for viewport-relative sizing.
+ * This allows the platform to override for canvas/preview contexts.
+ *
+ * Default (full page):
+ *   --viewport-height: 100dvh (with 100vh fallback)
+ *
+ * Canvas/preview mode (platform sets):
+ *   --viewport-height: 100%
  */
 
 /* Fix React Suspense boundary visibility issue in Next.js streaming */
@@ -27,8 +37,7 @@ body > [id^="S:"][hidden] {
 .presentation-wrapper[data-presentation='slideshow'] {
   position: relative;
   overflow: hidden;
-  height: 100vh;
-  height: 100dvh;
+  height: var(--viewport-height, 100dvh);
 }
 
 html:has(.presentation-wrapper[data-presentation='slideshow']),
@@ -82,8 +91,7 @@ body:has(.presentation-wrapper[data-presentation='slideshow']) {
   transform: translateX(-50%);
   width: 100%;
   max-width: 2400px;
-  height: 100vh;
-  height: 100dvh;
+  height: var(--viewport-height, 100dvh);
   overflow: hidden;
   background: black;
 }
@@ -102,9 +110,8 @@ body:has(.presentation-wrapper[data-presentation='infinite-carousel']) {
   top: 0;
   left: 0;
   right: 0;
-  /* Use min-height so sections can be taller than 100vh */
-  min-height: 100vh;
-  min-height: 100dvh;
+  /* Use min-height so sections can be taller than viewport */
+  min-height: var(--viewport-height, 100dvh);
   width: 100%;
   will-change: transform, clip-path;
   /* Position controlled via inline style transform from driver */

@@ -1,0 +1,78 @@
+/**
+ * Engine Core Styles
+ *
+ * Single entry point for all engine CSS.
+ * Platform imports this once: import '@creativeshire/engine/styles'
+ *
+ * Includes:
+ * - Effects (fade, transform, mask, etc.)
+ * - Presentation (slideshow, carousel containers)
+ * - Widget styles (primitives, layout, interactive, patterns)
+ * - Chrome styles (regions, overlays)
+ * - Renderer styles
+ *
+ * Does NOT include preset-specific styles - those are bundled with each preset.
+ */
+
+/* =============================================================================
+ * EXPERIENCE
+ * ============================================================================= */
+
+/* Effects - visual animations (fade, scale, slide, mask, etc.) */
+@import './experience/effects/index.css';
+
+/* Presentation - experience containers (slideshow, carousel) */
+@import './experience/experiences/presentation.css';
+
+/* =============================================================================
+ * CONTENT - Widgets
+ * ============================================================================= */
+
+/* Primitives */
+@import './content/widgets/primitives/Text/styles.css';
+@import './content/widgets/primitives/Image/styles.css';
+@import './content/widgets/primitives/Icon/styles.css';
+@import './content/widgets/primitives/Button/styles.css';
+@import './content/widgets/primitives/Link/styles.css';
+
+/* Layout */
+@import './content/widgets/layout/Stack/styles.css';
+@import './content/widgets/layout/Flex/styles.css';
+@import './content/widgets/layout/Grid/styles.css';
+@import './content/widgets/layout/Split/styles.css';
+@import './content/widgets/layout/Container/styles.css';
+@import './content/widgets/layout/Box/styles.css';
+
+/* Patterns */
+@import './content/widgets/patterns/styles/project-card.css';
+@import './content/widgets/patterns/styles/logo-link.css';
+
+/* Interactive */
+@import './content/widgets/interactive/Video/styles.css';
+@import './content/widgets/interactive/VideoPlayer/styles.css';
+@import './content/widgets/interactive/ContactPrompt/styles.css';
+@import './content/widgets/interactive/ExpandableGalleryRow/styles.css';
+@import './content/widgets/interactive/GalleryThumbnail/styles.css';
+
+/* =============================================================================
+ * CONTENT - Sections
+ * ============================================================================= */
+@import './content/sections/styles.css';
+
+/* =============================================================================
+ * CONTENT - Chrome
+ * ============================================================================= */
+
+/* Regions */
+@import './content/chrome/regions/Footer/styles.css';
+
+/* Overlays */
+@import './content/chrome/overlays/Modal/styles.css';
+@import './content/chrome/overlays/CursorLabel/styles.css';
+@import './content/chrome/overlays/NavTimeline/styles.css';
+@import './content/chrome/overlays/SlideIndicators/styles.css';
+
+/* =============================================================================
+ * RENDERER
+ * ============================================================================= */
+@import './renderer/chrome.css';

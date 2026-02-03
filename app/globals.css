@@ -1,8 +1,10 @@
 @import "tailwindcss";
-@import "../engine/experience/effects/index.css";
-@import "../engine/content/widgets/patterns/styles/project-card.css";
-@import "../engine/content/widgets/patterns/styles/logo-link.css";
-@import "../engine/presets/bojuhl/styles/sections.css";
+
+/* Engine core styles - widgets, effects, chrome */
+@import "../engine/styles.css";
+
+/* Preset styles - bojuhl-specific section styling */
+@import "../engine/presets/bojuhl/styles/index.css";
 
 @source "../engine/**/*.tsx";
 @source "../app/**/*.tsx";

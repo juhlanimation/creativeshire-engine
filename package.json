@@ -11,7 +11,11 @@
     "./experience": "./engine/experience/index.ts",
     "./presets": "./engine/presets/index.ts",
     "./presets/*": "./engine/presets/*/index.ts",
-    "./interface": "./engine/interface/index.ts"
+    "./interface": "./engine/interface/index.ts",
+    "./styles": "./engine/styles.css",
+    "./styles.css": "./engine/styles.css",
+    "./presets/bojuhl/styles": "./engine/presets/bojuhl/styles/index.css",
+    "./presets/bojuhl/styles.css": "./engine/presets/bojuhl/styles/index.css"
   },
   "peerDependencies": {
     "react": "^19.0.0",
