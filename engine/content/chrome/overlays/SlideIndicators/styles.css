@@ -2,8 +2,9 @@
  * SlideIndicators styles
  */
 
+/* Container-aware: uses CSS variable for positioning */
 .slide-indicators {
-  position: fixed;
+  position: var(--overlay-position, fixed);
   z-index: 100;
   display: flex;
   gap: 8px;

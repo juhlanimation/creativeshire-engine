@@ -4,10 +4,17 @@
  *
  * Architecture:
  * Browser Event → Trigger → Store → BehaviourWrapper → CSS Variables
+ *
+ * Container-aware:
+ * Triggers support both fullpage and contained modes. In contained mode
+ * (e.g., CMS canvas preview), triggers observe the container element
+ * instead of window/document.
  */
 
 import type { StoreApi } from 'zustand'
+import type { RefObject } from 'react'
 import type { ExperienceState } from '../types'
+import type { ContainerMode } from '../../interface/ContainerContext'
 
 /**
  * Configuration for a trigger.
@@ -27,4 +34,8 @@ export interface TriggerConfig {
  */
 export interface TriggerProps {
   store: StoreApi<ExperienceState>
+  /** Container mode for contained rendering */
+  containerMode?: ContainerMode
+  /** Container element ref for contained mode */
+  containerRef?: RefObject<HTMLElement | null>
 }

@@ -5,11 +5,15 @@
  * - Overlay positioning styles for widget-based overlays
  * - Footer styles are imported separately in engine/styles.css (before this file)
  * - Component-based chrome handles its own styles
+ *
+ * Container-aware:
+ * Uses --overlay-position CSS variable to switch between fixed (fullpage)
+ * and absolute (contained/preview) positioning.
  */
 
 /* Base overlay - shared properties */
 .chrome-overlay {
-  position: fixed;
+  position: var(--overlay-position, fixed);
   z-index: 100;
   pointer-events: auto;
 }

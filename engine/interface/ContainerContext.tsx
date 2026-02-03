@@ -89,6 +89,8 @@ export interface ContainerProviderProps {
  * - --carousel-position: absolute
  * - --carousel-left: 0
  * - --carousel-transform: none
+ * - --modal-position: absolute (for modal/overlay positioning)
+ * - --overlay-position: absolute (for chrome overlays)
  */
 export function ContainerProvider({
   mode = 'fullpage',
@@ -117,6 +119,10 @@ export function ContainerProvider({
     container.style.setProperty('--carousel-left', '0')
     container.style.setProperty('--carousel-transform', 'none')
 
+    // Modal and overlay positioning for contained mode
+    container.style.setProperty('--modal-position', 'absolute')
+    container.style.setProperty('--overlay-position', 'absolute')
+
     // Mark container for CSS selectors
     container.setAttribute('data-container-mode', 'contained')
 
@@ -130,6 +136,8 @@ export function ContainerProvider({
       container.style.removeProperty('--carousel-position')
       container.style.removeProperty('--carousel-left')
       container.style.removeProperty('--carousel-transform')
+      container.style.removeProperty('--modal-position')
+      container.style.removeProperty('--overlay-position')
       container.removeAttribute('data-container-mode')
     }
   }, [mode, containerRef])

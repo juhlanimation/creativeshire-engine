@@ -3,8 +3,9 @@
  * Vertical timeline showing scroll progress between sections
  */
 
+/* Container-aware: uses CSS variable for positioning */
 .nav-timeline {
-  position: fixed;
+  position: var(--overlay-position, fixed);
   top: 50%;
   z-index: 50;
   pointer-events: none;

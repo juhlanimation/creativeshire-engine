@@ -14,10 +14,14 @@
  *   .modal__container (RevealTransition wrapper)
  *     .modal__container-inner
  *       .modal__content (scrollable)
+ *
+ * Container-aware:
+ * Uses --modal-position CSS variable to switch between fixed (fullpage)
+ * and absolute (contained/preview) positioning.
  */
 
 .modal {
-  position: fixed;
+  position: var(--modal-position, fixed);
   inset: 0;
   z-index: 200;
   display: flex;
@@ -108,7 +112,7 @@
 /* Close button - matches bojuhl: top-6 left-6 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm */
 /* MOVED TO L2: data-effect="button-hover" */
 .modal__close {
-  position: fixed;
+  position: var(--modal-position, fixed);
   top: 1.5rem;        /* top-6 = 24px = 1.5rem */
   left: 1.5rem;       /* left-6 = 24px = 1.5rem (TOP-LEFT, not right!) */
   z-index: 210;

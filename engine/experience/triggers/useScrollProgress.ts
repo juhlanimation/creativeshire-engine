@@ -1,11 +1,14 @@
 'use client'
 
 /**
- * useScrollProgress - tracks global scroll position and updates store.
+ * useScrollProgress - tracks scroll position and updates store.
  *
  * Writes:
  * - scrollProgress: 0-1 ratio of scroll position
  * - isScrolling: true while actively scrolling
+ *
+ * Container-aware:
+ * In contained mode, tracks the container's scroll instead of window scroll.
  */
 
 import { useEffect, useRef } from 'react'
@@ -17,17 +20,33 @@ import type { TriggerProps } from './types'
  *
  * Uses requestAnimationFrame for 60fps updates during active scroll.
  * Debounces isScrolling state to prevent flickering.
+ *
+ * In contained mode, listens to container scroll instead of window scroll.
  */
-export function useScrollProgress({ store }: TriggerProps): void {
+export function useScrollProgress({ store, containerMode, containerRef }: TriggerProps): void {
   const isScrollingTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
   const rafId = useRef<number>(undefined)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
 
+    // Determine scroll target based on container mode
+    const isContained = containerMode === 'contained' && containerRef?.current
+    const scrollTarget = isContained ? containerRef.current : window
+
     const updateScroll = () => {
-      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight
-      const scrollProgress = scrollHeight > 0 ? window.scrollY / scrollHeight : 0
+      let scrollProgress: number
+
+      if (isContained && containerRef?.current) {
+        // Container mode: use container's scroll dimensions
+        const container = containerRef.current
+        const scrollHeight = container.scrollHeight - container.clientHeight
+        scrollProgress = scrollHeight > 0 ? container.scrollTop / scrollHeight : 0
+      } else {
+        // Fullpage mode: use window scroll
+        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight
+        scrollProgress = scrollHeight > 0 ? window.scrollY / scrollHeight : 0
+      }
 
       store.setState({
         scrollProgress: Math.max(0, Math.min(1, scrollProgress)),
@@ -54,10 +73,10 @@ export function useScrollProgress({ store }: TriggerProps): void {
     // Initial update
     updateScroll()
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
+    scrollTarget?.addEventListener('scroll', handleScroll, { passive: true })
 
     return () => {
-      window.removeEventListener('scroll', handleScroll)
+      scrollTarget?.removeEventListener('scroll', handleScroll)
       if (rafId.current) {
         cancelAnimationFrame(rafId.current)
       }
@@ -65,5 +84,5 @@ export function useScrollProgress({ store }: TriggerProps): void {
         clearTimeout(isScrollingTimeout.current)
       }
     }
-  }, [store])
+  }, [store, containerMode, containerRef])
 }

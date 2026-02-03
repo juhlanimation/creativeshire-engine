@@ -11,12 +11,16 @@
  * - Sequenced content fade (content fades in after main animation)
  * - timeline.reverse() for smooth close animations
  * - Registry-based: add new transitions without modifying this file
+ *
+ * Container-aware:
+ * In contained mode, uses container dimensions instead of window dimensions.
  */
 
 import { useRef, useLayoutEffect, useEffect } from 'react'
 import { gsap } from 'gsap'
 import { resolveTransition } from './transitions/resolve'
 import type { TransitionContext, TransitionOptions } from './transitions/types'
+import { useContainer } from '../../../interface/ContainerContext'
 
 // Import transitions barrel to ensure auto-registration
 import './transitions'
@@ -71,6 +75,9 @@ export function useGsapReveal({
   const timelineRef = useRef<gsap.core.Timeline | null>(null)
   const isInitializedRef = useRef(false)
 
+  // Get container context for contained mode
+  const { getViewportWidth, getViewportHeight } = useContainer()
+
   // Resolve transition from registry
   const transition = resolveTransition(type)
 
@@ -100,15 +107,15 @@ export function useGsapReveal({
     timelineRef.current?.kill()
 
     // Build transition context
-    // Use innerWidth/Height since modal fills the full viewport including scrollbar area
-    // (position: fixed; inset: 0). getBoundingClientRect coords are relative to visible
-    // viewport, but clip-path percentages are relative to the element's actual dimensions.
+    // Use container-aware viewport dimensions for contained mode support.
+    // In fullpage mode, getViewportWidth/Height returns window dimensions.
+    // In contained mode, returns container dimensions.
     const context: TransitionContext = {
       container,
       content: content ?? undefined,
       viewport: {
-        width: window.innerWidth,
-        height: window.innerHeight,
+        width: getViewportWidth(),
+        height: getViewportHeight(),
       },
       sourceRect,
     }

@@ -1,14 +1,17 @@
 'use client'
 
 /**
- * useCursorPosition - tracks global cursor position and updates store.
+ * useCursorPosition - tracks cursor position and updates store.
  *
  * Writes:
- * - cursorX: cursor X position in viewport pixels
- * - cursorY: cursor Y position in viewport pixels
+ * - cursorX: cursor X position in pixels
+ * - cursorY: cursor Y position in pixels
  *
  * Observation trigger for cursor movement.
  * Uses throttling for performance (16ms ~ 60fps).
+ *
+ * Container-aware:
+ * In contained mode, tracks cursor position relative to the container.
  */
 
 import { useEffect, useRef } from 'react'
@@ -24,9 +27,11 @@ export interface CursorPositionOptions {
  * Updates store.cursorX and store.cursorY on mousemove events.
  *
  * Uses passive listener and throttling for 60fps updates.
+ *
+ * In contained mode, positions are relative to the container element.
  */
 export function useCursorPosition(
-  { store }: TriggerProps,
+  { store, containerMode, containerRef }: TriggerProps,
   options?: CursorPositionOptions
 ): void {
   const lastTime = useRef(0)
@@ -35,19 +40,32 @@ export function useCursorPosition(
   useEffect(() => {
     if (typeof window === 'undefined') return
 
+    const isContained = containerMode === 'contained' && containerRef?.current
+    const target = isContained ? containerRef.current : document
+
     const handler = (e: MouseEvent) => {
       // Throttle for performance
       const now = performance.now()
       if (now - lastTime.current < throttleMs) return
       lastTime.current = now
 
-      store.setState({
-        cursorX: e.clientX,
-        cursorY: e.clientY,
-      })
+      if (isContained && containerRef?.current) {
+        // Container mode: calculate position relative to container
+        const rect = containerRef.current.getBoundingClientRect()
+        store.setState({
+          cursorX: e.clientX - rect.left,
+          cursorY: e.clientY - rect.top,
+        })
+      } else {
+        // Fullpage mode: use viewport position
+        store.setState({
+          cursorX: e.clientX,
+          cursorY: e.clientY,
+        })
+      }
     }
 
-    document.addEventListener('mousemove', handler, { passive: true })
-    return () => document.removeEventListener('mousemove', handler)
-  }, [store, throttleMs])
+    target?.addEventListener('mousemove', handler as EventListener, { passive: true })
+    return () => target?.removeEventListener('mousemove', handler as EventListener)
+  }, [store, containerMode, containerRef, throttleMs])
 }

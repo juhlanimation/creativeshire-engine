@@ -10,6 +10,10 @@
  * - Auto-discovers sections with data-section-id attribute
  * - Uses MutationObserver to watch for dynamically added sections
  * - Updates store with intersection ratios for smooth transitions
+ *
+ * Container-aware:
+ * In contained mode, uses the container as the IntersectionObserver root
+ * and scopes element discovery to the container.
  */
 
 import { useEffect, useRef } from 'react'
@@ -21,18 +25,25 @@ import type { TriggerProps } from './types'
  *
  * Uses 21 thresholds (0, 0.05, 0.10, ... 1.0) for smooth visibility transitions.
  * Automatically discovers new sections via MutationObserver.
+ *
+ * In contained mode, uses container as root for IntersectionObserver.
  */
-export function useIntersection({ store }: TriggerProps): void {
+export function useIntersection({ store, containerMode, containerRef }: TriggerProps): void {
   const observerRef = useRef<IntersectionObserver | null>(null)
   const mutationObserverRef = useRef<MutationObserver | null>(null)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
 
+    // Determine root and scope based on container mode
+    const isContained = containerMode === 'contained' && containerRef?.current
+    const observerRoot = isContained ? containerRef.current : null // null = viewport
+    const scopeElement = isContained ? containerRef.current : document.body
+
     // Create thresholds for smooth visibility updates (0, 0.05, 0.10, ... 1.0)
     const thresholds = Array.from({ length: 21 }, (_, i) => i / 20)
 
-    // Create IntersectionObserver
+    // Create IntersectionObserver with container as root in contained mode
     const observer = new IntersectionObserver(
       (entries) => {
         const updates: Record<string, number> = {}
@@ -57,7 +68,7 @@ export function useIntersection({ store }: TriggerProps): void {
           }))
         }
       },
-      { threshold: thresholds }
+      { threshold: thresholds, root: observerRoot }
     )
     observerRef.current = observer
 
@@ -68,8 +79,8 @@ export function useIntersection({ store }: TriggerProps): void {
       }
     }
 
-    // Observe existing sections
-    document.querySelectorAll('[data-section-id]').forEach(observeElement)
+    // Observe existing sections within scope
+    scopeElement?.querySelectorAll('[data-section-id]').forEach(observeElement)
 
     // Watch for dynamically added sections
     const mutationObserver = new MutationObserver((mutations) => {
@@ -86,10 +97,12 @@ export function useIntersection({ store }: TriggerProps): void {
     })
     mutationObserverRef.current = mutationObserver
 
-    mutationObserver.observe(document.body, {
-      childList: true,
-      subtree: true,
-    })
+    if (scopeElement) {
+      mutationObserver.observe(scopeElement, {
+        childList: true,
+        subtree: true,
+      })
+    }
 
     return () => {
       observer.disconnect()
@@ -97,5 +110,5 @@ export function useIntersection({ store }: TriggerProps): void {
       observerRef.current = null
       mutationObserverRef.current = null
     }
-  }, [store])
+  }, [store, containerMode, containerRef])
 }

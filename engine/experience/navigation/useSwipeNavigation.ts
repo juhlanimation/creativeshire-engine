@@ -6,6 +6,9 @@
  * Tracks touchstart/touchmove/touchend to detect swipe gestures.
  * Navigates if swipe distance exceeds threshold within maxDuration.
  *
+ * Container-aware:
+ * In contained mode, listens to touch events on the container element.
+ *
  * @example
  * ```tsx
  * useSwipeNavigation({
@@ -24,6 +27,7 @@ import type {
   NavigationInput,
   NavigationInputOptions,
 } from '../experiences/types'
+import { useContainer } from '../../interface/ContainerContext'
 
 export interface SwipeNavigationOptions {
   /** Zustand store with navigation state */
@@ -49,6 +53,9 @@ interface TouchStart {
 export function useSwipeNavigation(hookOptions: SwipeNavigationOptions): void {
   const { store, config, enabled = true, options: overrideOptions } = hookOptions
 
+  // Get container context for contained mode
+  const { mode: containerMode, containerRef } = useContainer()
+
   // Find swipe input config
   const swipeInput = config.inputs.find((i) => i.type === 'swipe')
   const isSwipeEnabled = enabled && swipeInput?.enabled
@@ -60,6 +67,10 @@ export function useSwipeNavigation(hookOptions: SwipeNavigationOptions): void {
   useEffect(() => {
     if (!isSwipeEnabled) return
     if (typeof window === 'undefined') return
+
+    // Determine event target based on container mode
+    const isContained = containerMode === 'contained' && containerRef?.current
+    const eventTarget = isContained ? containerRef.current : document
 
     // Use override options if provided, otherwise use config options
     const inputOptions = overrideOptions ?? swipeInput?.options ?? {}
@@ -182,16 +193,16 @@ export function useSwipeNavigation(hookOptions: SwipeNavigationOptions): void {
 
     // Add listeners
     // Use passive: false only for touchmove if we need preventDefault
-    document.addEventListener('touchstart', handleTouchStart, { passive: true })
-    document.addEventListener('touchend', handleTouchEnd, { passive: true })
-    document.addEventListener('touchcancel', handleTouchCancel, { passive: true })
+    eventTarget?.addEventListener('touchstart', handleTouchStart as EventListener, { passive: true })
+    eventTarget?.addEventListener('touchend', handleTouchEnd as EventListener, { passive: true })
+    eventTarget?.addEventListener('touchcancel', handleTouchCancel as EventListener, { passive: true })
 
     return () => {
-      document.removeEventListener('touchstart', handleTouchStart)
-      document.removeEventListener('touchend', handleTouchEnd)
-      document.removeEventListener('touchcancel', handleTouchCancel)
+      eventTarget?.removeEventListener('touchstart', handleTouchStart as EventListener)
+      eventTarget?.removeEventListener('touchend', handleTouchEnd as EventListener)
+      eventTarget?.removeEventListener('touchcancel', handleTouchCancel as EventListener)
     }
-  }, [isSwipeEnabled, swipeInput, config, store, overrideOptions])
+  }, [isSwipeEnabled, swipeInput, config, store, overrideOptions, containerMode, containerRef])
 }
 
 export default useSwipeNavigation

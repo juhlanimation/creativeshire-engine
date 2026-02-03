@@ -17,6 +17,7 @@ import { useEffect, useState, useCallback, memo } from 'react'
 import { createPortal } from 'react-dom'
 import { useStore } from 'zustand'
 import { useExperience } from '../../../../experience'
+import { useContainer } from '../../../../interface/ContainerContext'
 import './styles.css'
 
 interface CursorLabelProps {
@@ -46,6 +47,9 @@ const CursorLabel = memo(function CursorLabel({
 
   // Check for touch device
   const [isTouchDevice, setIsTouchDevice] = useState(false)
+
+  // Get container context for portal target
+  const { portalTarget } = useContainer()
 
   // Read cursor position from experience store (set by useCursorPosition trigger)
   const { store } = useExperience()
@@ -106,7 +110,7 @@ const CursorLabel = memo(function CursorLabel({
     >
       {label}
     </div>,
-    document.body
+    portalTarget || document.body
   )
 })
 

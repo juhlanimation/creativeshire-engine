@@ -6,6 +6,10 @@
  * Accumulates wheel delta until snapThreshold is reached, then navigates.
  * Respects debounce and lockDuringTransition settings.
  *
+ * Container-aware:
+ * In contained mode, listens to wheel events on the container element
+ * and queries sections within the container.
+ *
  * @example
  * ```tsx
  * useWheelNavigation({
@@ -24,6 +28,7 @@ import type {
   NavigationInput,
   NavigationInputOptions,
 } from '../experiences/types'
+import { useContainer } from '../../interface/ContainerContext'
 
 export interface WheelNavigationOptions {
   /** Zustand store with navigation state */
@@ -43,6 +48,9 @@ export interface WheelNavigationOptions {
 export function useWheelNavigation(hookOptions: WheelNavigationOptions): void {
   const { store, config, enabled = true, options: overrideOptions } = hookOptions
 
+  // Get container context for contained mode
+  const { mode: containerMode, containerRef } = useContainer()
+
   // Find wheel input config
   const wheelInput = config.inputs.find((i) => i.type === 'wheel')
   const isWheelEnabled = enabled && wheelInput?.enabled
@@ -54,6 +62,11 @@ export function useWheelNavigation(hookOptions: WheelNavigationOptions): void {
   useEffect(() => {
     if (!isWheelEnabled) return
     if (typeof window === 'undefined') return
+
+    // Determine event target based on container mode
+    const isContained = containerMode === 'contained' && containerRef?.current
+    const eventTarget = isContained ? containerRef.current : window
+    const queryRoot = isContained ? containerRef.current : document
 
     // Use override options if provided, otherwise use config options
     const inputOptions = overrideOptions ?? wheelInput?.options ?? {}
@@ -157,8 +170,8 @@ export function useWheelNavigation(hookOptions: WheelNavigationOptions): void {
 
       const state = store.getState()
 
-      // Find the active section element
-      const activeSection = document.querySelector(
+      // Find the active section element (within container or document)
+      const activeSection = queryRoot?.querySelector(
         `[data-section-id][data-active="true"]`
       )
 
@@ -189,12 +202,12 @@ export function useWheelNavigation(hookOptions: WheelNavigationOptions): void {
     }
 
     // Add listener (passive: false to allow preventDefault at boundaries)
-    window.addEventListener('wheel', handleWheel, { passive: false })
+    eventTarget?.addEventListener('wheel', handleWheel as EventListener, { passive: false })
 
     return () => {
-      window.removeEventListener('wheel', handleWheel)
+      eventTarget?.removeEventListener('wheel', handleWheel as EventListener)
     }
-  }, [isWheelEnabled, wheelInput, config, store, overrideOptions])
+  }, [isWheelEnabled, wheelInput, config, store, overrideOptions, containerMode, containerRef])
 }
 
 export default useWheelNavigation

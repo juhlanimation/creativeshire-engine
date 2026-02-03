@@ -10,11 +10,22 @@
  * - Only uses element.style.setProperty() for CSS variables
  * - IntersectionObserver tracks per-element visibility for sectionVisibility
  * - destroy() removes listeners and clears Map
+ *
+ * Container-aware:
+ * Can operate on a container element instead of window for iframe/preview mode.
  */
 
 import type { Driver, Target } from './types'
 import type { Behaviour } from '../behaviours/types'
 import type { BehaviourState } from '../../schema/experience'
+
+/**
+ * Configuration options for ScrollDriver.
+ */
+export interface ScrollDriverConfig {
+  /** Container element to track scroll on (defaults to window) */
+  container?: HTMLElement | null
+}
 
 /**
  * Internal scroll state tracked by the driver.
@@ -74,20 +85,32 @@ export class ScrollDriver implements Driver {
   /** MediaQueryList for reduced motion */
   private reducedMotionQuery: MediaQueryList | null = null
 
-  constructor() {
+  /** Container element for contained mode (null = window) */
+  private container: HTMLElement | null = null
+
+  /** Scroll target (container or window) */
+  private scrollTarget: HTMLElement | Window
+
+  constructor(config?: ScrollDriverConfig) {
     // Only run in browser environment
     if (typeof window === 'undefined') return
 
+    // Set container mode
+    this.container = config?.container ?? null
+    this.scrollTarget = this.container ?? window
+
     // Initialize state
-    this.state.lastScrollY = window.scrollY
+    this.state.lastScrollY = this.getScrollY()
     this.state.lastTime = performance.now()
 
     // Add scroll listener with passive: true for non-blocking scroll
-    window.addEventListener('scroll', this.onScroll, { passive: true })
+    this.scrollTarget.addEventListener('scroll', this.onScroll, { passive: true })
 
     // Create IntersectionObserver for visibility tracking
     // Uses threshold array for smooth visibility values
+    // In container mode, use container as root
     this.observer = new IntersectionObserver(this.onIntersection, {
+      root: this.container, // null = viewport, HTMLElement = container
       threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
     })
 
@@ -98,6 +121,26 @@ export class ScrollDriver implements Driver {
 
     // Start the animation loop
     this.tick()
+  }
+
+  /**
+   * Get current scroll position (container or window).
+   */
+  private getScrollY(): number {
+    if (this.container) {
+      return this.container.scrollTop
+    }
+    return window.scrollY
+  }
+
+  /**
+   * Get max scroll distance (container or document).
+   */
+  private getMaxScroll(): number {
+    if (this.container) {
+      return this.container.scrollHeight - this.container.clientHeight
+    }
+    return document.body.scrollHeight - window.innerHeight
   }
 
   /**
@@ -130,8 +173,8 @@ export class ScrollDriver implements Driver {
    */
   private onScroll = (): void => {
     const now = performance.now()
-    const scrollY = window.scrollY
-    const maxScroll = document.body.scrollHeight - window.innerHeight
+    const scrollY = this.getScrollY()
+    const maxScroll = this.getMaxScroll()
     const deltaTime = now - this.state.lastTime
 
     // Calculate velocity (pixels per millisecond)
@@ -254,9 +297,9 @@ export class ScrollDriver implements Driver {
     // Mark as destroyed to prevent further updates
     this.isDestroyed = true
 
-    // Remove scroll listener
+    // Remove scroll listener from the correct target
     if (typeof window !== 'undefined') {
-      window.removeEventListener('scroll', this.onScroll)
+      this.scrollTarget.removeEventListener('scroll', this.onScroll)
     }
 
     // Remove reduced motion listener

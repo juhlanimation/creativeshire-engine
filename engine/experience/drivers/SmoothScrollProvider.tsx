@@ -12,6 +12,10 @@
  * - Mac trackpads: Reduced smoothing (native inertia already exists)
  * - Desktop mice: Full smoothing
  * - Reduced motion preference: Disabled
+ *
+ * Container-aware:
+ * In contained mode (iframe/preview), uses CSS scroll-behavior for smooth scrolling
+ * instead of ScrollSmoother, which is designed for page-level scrolling.
  */
 
 import { useRef, createContext, useContext, useLayoutEffect, useMemo, useState } from 'react'
@@ -20,6 +24,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrollSmoother } from 'gsap/ScrollSmoother'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import type { SmoothScrollConfig } from '../../schema'
+import { useContainer } from '../../interface/ContainerContext'
 
 // Register GSAP plugins (client-only)
 if (typeof window !== 'undefined') {
@@ -72,6 +77,7 @@ const DEFAULTS: Required<SmoothScrollConfig> = {
 
 /**
  * Provides smooth scrolling via GSAP ScrollSmoother.
+ * In contained mode, uses CSS scroll-behavior instead.
  */
 export function SmoothScrollProvider({ config, children }: SmoothScrollProviderProps): React.ReactNode {
   const smootherRef = useRef<ScrollSmoother | null>(null)
@@ -80,13 +86,115 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
   const smoothValueRef = useRef<number>(0)
   const [isReady, setIsReady] = useState(false)
 
+  // Get container context for contained mode support
+  const { mode: containerMode, containerRef } = useContainer()
+  const isContained = containerMode === 'contained'
+
   // Merge config with defaults
   const settings = { ...DEFAULTS, ...config }
 
+  // Extract stable primitive values for deps (avoid undefined in dep arrays)
+  const smoothValue = settings.smooth ?? DEFAULTS.smooth
+  const smoothMacValue = settings.smoothMac ?? DEFAULTS.smoothMac
+  const effectsValue = settings.effects ?? DEFAULTS.effects
+  const enabledValue = settings.enabled ?? DEFAULTS.enabled
+
+  // Contained mode: Use wheel interpolation for smooth scrolling
+  // CSS scroll-behavior only affects programmatic scrolling, not wheel input.
+  // This implements proper smooth scrolling via wheel event interception + lerp.
   useLayoutEffect(() => {
-    // Skip if disabled
-    if (!settings.enabled) {
-      setIsReady(true)
+    if (!isContained || !enabledValue) return
+
+    const container = containerRef?.current
+    if (!container) return
+
+    // Smooth scroll state
+    let targetScroll = container.scrollTop
+    let currentScroll = container.scrollTop
+    let rafId: number | null = null
+    let isScrolling = false
+
+    // Smoothing factor (0-1, lower = smoother but slower)
+    const smoothFactor = 0.1 + (1 - Math.min(smoothValue, 2) / 2) * 0.1
+
+    // Lerp function for smooth interpolation
+    const lerp = (start: number, end: number, factor: number) =>
+      start + (end - start) * factor
+
+    // Animation loop
+    const animate = () => {
+      if (!container) return
+
+      // Calculate difference
+      const diff = targetScroll - currentScroll
+
+      // If close enough, snap to target
+      if (Math.abs(diff) < 0.5) {
+        currentScroll = targetScroll
+        container.scrollTop = currentScroll
+        isScrolling = false
+        rafId = null
+        return
+      }
+
+      // Interpolate scroll position
+      currentScroll = lerp(currentScroll, targetScroll, smoothFactor)
+      container.scrollTop = currentScroll
+
+      // Continue animation
+      rafId = requestAnimationFrame(animate)
+    }
+
+    // Wheel event handler
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault()
+
+      // Update target scroll position
+      const maxScroll = container.scrollHeight - container.clientHeight
+      targetScroll = Math.max(0, Math.min(targetScroll + e.deltaY, maxScroll))
+
+      // Start animation if not already running
+      if (!isScrolling) {
+        isScrolling = true
+        rafId = requestAnimationFrame(animate)
+      }
+    }
+
+    // Sync current scroll on manual scroll (e.g., scrollbar drag)
+    const handleScroll = () => {
+      if (!isScrolling) {
+        currentScroll = container.scrollTop
+        targetScroll = container.scrollTop
+      }
+    }
+
+    // Reset scroll position
+    container.scrollTop = 0
+    currentScroll = 0
+    targetScroll = 0
+
+    // Store smooth value for context
+    smoothValueRef.current = smoothValue
+
+    // Add event listeners
+    container.addEventListener('wheel', handleWheel, { passive: false })
+    container.addEventListener('scroll', handleScroll, { passive: true })
+
+    setIsReady(true)
+
+    return () => {
+      container.removeEventListener('wheel', handleWheel)
+      container.removeEventListener('scroll', handleScroll)
+      if (rafId) cancelAnimationFrame(rafId)
+    }
+    // Note: containerRef excluded from deps - refs are stable by design
+  }, [isContained, enabledValue, smoothValue])
+
+  // Fullpage mode: Use GSAP ScrollSmoother
+  useLayoutEffect(() => {
+    // Skip if contained mode or disabled
+    if (isContained || !enabledValue) {
+      if (!isContained) setIsReady(true)
       return
     }
 
@@ -117,21 +225,21 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
     gsap.ticker.lagSmoothing(500, 33)
 
     // Determine smooth value based on device
-    const smoothValue = prefersReducedMotion || isTouchDevice
+    const deviceSmoothValue = prefersReducedMotion || isTouchDevice
       ? 0
       : isMac
-        ? settings.smoothMac
-        : settings.smooth
+        ? smoothMacValue
+        : smoothValue
 
     // Store for context access
-    smoothValueRef.current = smoothValue
+    smoothValueRef.current = deviceSmoothValue
 
     // Create ScrollSmoother
     const smoother = ScrollSmoother.create({
       wrapper: wrapperRef.current!,
       content: contentRef.current!,
-      smooth: smoothValue,
-      effects: settings.effects,
+      smooth: deviceSmoothValue,
+      effects: effectsValue,
       smoothTouch: false, // Never smooth touch input
     })
 
@@ -199,7 +307,7 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
       smoother.kill()
       smootherRef.current = null
     }
-  }, [settings.enabled, settings.smooth, settings.smoothMac, settings.effects])
+  }, [isContained, enabledValue, smoothValue, smoothMacValue, effectsValue])
 
   // Memoize context value
   const contextValue = useMemo<SmoothScrollContextValue>(() => ({
@@ -207,18 +315,45 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
     stop: () => smootherRef.current?.paused(true),
     start: () => smootherRef.current?.paused(false),
     scrollTo: (target, smooth = true) => {
-      smootherRef.current?.scrollTo(target, smooth)
+      if (isContained && containerRef?.current) {
+        // Contained mode: use native scrollIntoView or scroll to position
+        if (typeof target === 'string') {
+          const element = containerRef.current.querySelector(target)
+          element?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' })
+        } else {
+          target.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' })
+        }
+      } else {
+        // Fullpage mode: use ScrollSmoother
+        smootherRef.current?.scrollTo(target, smooth)
+      }
     },
-    getScroll: () => smootherRef.current?.scrollTop() || 0,
+    getScroll: () => {
+      if (isContained && containerRef?.current) {
+        return containerRef.current.scrollTop
+      }
+      return smootherRef.current?.scrollTop() || 0
+    },
     getSmoothValue: () => smoothValueRef.current,
-    isEnabled: () => settings.enabled,
-  }), [isReady, settings.enabled])
+    isEnabled: () => enabledValue,
+    // Note: containerRef excluded - refs are stable and accessed via closure
+  }), [isReady, enabledValue, isContained])
 
   // If disabled, render children directly
-  if (!settings.enabled) {
+  if (!enabledValue) {
     return <>{children}</>
   }
 
+  // Contained mode: render children without ScrollSmoother wrapper
+  if (isContained) {
+    return (
+      <SmoothScrollContext.Provider value={contextValue}>
+        {children}
+      </SmoothScrollContext.Provider>
+    )
+  }
+
+  // Fullpage mode: render with ScrollSmoother wrapper
   return (
     <SmoothScrollContext.Provider value={contextValue}>
       <div id="smooth-wrapper" ref={wrapperRef}>
