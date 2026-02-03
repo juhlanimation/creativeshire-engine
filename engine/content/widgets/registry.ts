@@ -36,6 +36,7 @@ import ContactPrompt from './interactive/ContactPrompt'
 import ExpandableGalleryRow from './interactive/ExpandableGalleryRow'
 import GalleryThumbnail from './interactive/GalleryThumbnail'
 import HeroRoles from './interactive/HeroRoles'
+import FeaturedProjectsGrid from './interactive/FeaturedProjectsGrid'
 
 // Chrome overlays (used by experience chrome)
 import SlideIndicators from '../chrome/overlays/SlideIndicators'
@@ -67,6 +68,7 @@ export const widgetRegistry: Record<string, WidgetComponent> = {
   ExpandableGalleryRow,
   GalleryThumbnail,
   HeroRoles,
+  FeaturedProjectsGrid,
   // Chrome overlays
   SlideIndicators,
 }

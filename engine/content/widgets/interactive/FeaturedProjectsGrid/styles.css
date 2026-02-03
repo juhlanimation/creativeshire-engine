@@ -1,0 +1,10 @@
+/**
+ * FeaturedProjectsGrid widget styles.
+ * Container for dynamically rendered project cards.
+ */
+
+.featured-projects-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}

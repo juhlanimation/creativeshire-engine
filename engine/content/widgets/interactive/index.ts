@@ -33,3 +33,7 @@ export type { GalleryThumbnailProps, GalleryProject } from './GalleryThumbnail'
 // HeroRoles - role titles for hero sections (supports binding expressions)
 export { default as HeroRoles } from './HeroRoles'
 export type { HeroRolesProps } from './HeroRoles/types'
+
+// FeaturedProjectsGrid - featured project cards (supports binding expressions)
+export { default as FeaturedProjectsGrid } from './FeaturedProjectsGrid'
+export type { FeaturedProjectsGridProps, FeaturedProject } from './FeaturedProjectsGrid/types'
