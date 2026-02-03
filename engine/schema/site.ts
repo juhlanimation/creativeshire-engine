@@ -5,6 +5,7 @@
 
 import type { ChromeSchema } from './chrome'
 import type { ExperienceConfig } from './experience'
+import type { PageSchema } from './page'
 import type { ThemeSchema } from './theme'
 
 /**
@@ -43,4 +44,18 @@ export interface SiteSchema {
   chrome: ChromeSchema
   /** List of pages in this site */
   pages: PageReference[]
+}
+
+/**
+ * Fully assembled schema combining site configuration with page content.
+ * This is the unified format the engine receives for rendering.
+ *
+ * Platforms assemble this from their storage (e.g., joining site + pages tables).
+ * The engine doesn't know how data is stored—it just receives this unified schema.
+ */
+export interface FullSchema {
+  /** Site configuration (theme, chrome, experience, page references) */
+  site: SiteSchema
+  /** Full page content (sections, widgets, head metadata) */
+  pages: PageSchema[]
 }
