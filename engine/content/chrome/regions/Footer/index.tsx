@@ -43,7 +43,7 @@ const Footer = memo(forwardRef<HTMLElement, FooterProps>(function Footer(
         {/* Left: Navigation (centered over copyright) */}
         <div className="footer-chrome__left">
           <nav className="footer-chrome__nav" aria-label="Footer navigation">
-            {navLinks.map((link) => (
+            {Array.isArray(navLinks) && navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
@@ -80,7 +80,7 @@ const Footer = memo(forwardRef<HTMLElement, FooterProps>(function Footer(
           </div>
 
           {/* Studio Section */}
-          {(studioUrl || studioEmail || studioSocials.length > 0) ? (
+          {(studioUrl || studioEmail || (Array.isArray(studioSocials) && studioSocials.length > 0)) ? (
             <div className="footer-chrome__section">
               <h2 className="footer-chrome__heading">{studioHeading}</h2>
               {studioUrl ? (
@@ -101,7 +101,7 @@ const Footer = memo(forwardRef<HTMLElement, FooterProps>(function Footer(
                   className="footer-chrome__link"
                 />
               ) : null}
-              {studioSocials.map((social) => (
+              {Array.isArray(studioSocials) && studioSocials.map((social) => (
                 <a
                   key={social.platform}
                   href={social.url}

@@ -65,9 +65,9 @@ export function createHeroSection(props: HeroProps): SectionSchema {
           props: {
             roles: props.roles,
             firstAs: 'h1',
-            restAs: 'h2',
-            roleStyle: styles.roleTitle
-          }
+            restAs: 'h2'
+          },
+          style: styles.roleTitle
         }]
       : props.roles.map((role, index) => ({
           id: `hero-role-${index}`,

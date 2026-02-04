@@ -8,7 +8,7 @@
  */
 
 import type { SectionSchema, WidgetSchema } from '../../../../schema'
-import type { AboutProps } from './types'
+import type { AboutProps, LogoItem } from './types'
 import { isBindingExpression } from '../utils'
 
 /**
@@ -142,8 +142,9 @@ export function createAboutSection(props: AboutProps): SectionSchema {
       })
     } else {
       // Create logo container widgets (Box with Image inside)
+      const logos = props.clientLogos as LogoItem[]
       const createLogoWidgets = (prefix: string): WidgetSchema[] =>
-        props.clientLogos!.map((logo, index) => ({
+        logos.map((logo, index) => ({
           id: `about-logo-${prefix}-${index}`,
           type: 'Box',
           props: {},

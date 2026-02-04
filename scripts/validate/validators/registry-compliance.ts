@@ -42,7 +42,7 @@ async function parseRegistryFile(registryPath: string): Promise<Set<string>> {
     // Pattern: export const widgetRegistry: Record<...> = { ... }
     // or: export const chromeRegistry: Record<...> = { ... }
     const registryMatch = content.match(
-      /(?:widgetRegistry|chromeRegistry)[^{]*\{([^}]+(?:\{[^}]*\}[^}]*)*)\}/s
+      /(?:widgetRegistry|chromeRegistry)[^{]*\{([^}]+(?:\{[^}]*\}[^}]*)*)\}/
     )
 
     if (registryMatch) {

@@ -16,7 +16,7 @@ export const meta = defineMeta<FeaturedProjectsGridProps>({
 
   settings: {
     projects: {
-      type: 'array',
+      type: 'custom',
       label: 'Projects',
       default: [],
       description: 'Array of featured projects or binding expression',

@@ -370,6 +370,7 @@ async function generateInventory(): Promise<CategoryInfo[]> {
       hasStyles: true,
       hasDataBinding: false,
       bindingProps: [],
+      bindableProps: [],
       files: [path.basename(file)],
     }))
   categories.push({

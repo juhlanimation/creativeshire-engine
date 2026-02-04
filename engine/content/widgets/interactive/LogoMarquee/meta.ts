@@ -16,7 +16,7 @@ export const meta = defineMeta<LogoMarqueeProps>({
 
   settings: {
     logos: {
-      type: 'array',
+      type: 'custom',
       label: 'Logos',
       default: [],
       description: 'Array of logo items or binding expression',
