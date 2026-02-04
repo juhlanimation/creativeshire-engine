@@ -240,3 +240,55 @@
   color: rgba(0, 0, 0, 0.6);
   margin: 0;
 }
+
+/* ===========================================
+   NTH-CHILD ALTERNATING LAYOUT
+   For binding expressions where reversed prop can't be set per-item.
+   Uses :nth-child to alternate: odd=left, even=right
+   =========================================== */
+
+/* Even cards (2nd, 4th, 6th...) get reversed layout on tablet+ */
+@container site (min-width: 768px) {
+  /* Reversed layout via flex-direction: row-reverse */
+  .featured-projects__content > .project-card:nth-child(even).flex-widget {
+    flex-direction: row-reverse;
+    justify-content: flex-start; /* Items flow from right edge */
+  }
+
+  /* Reversed: metadata aligned right */
+  .featured-projects__content > .project-card:nth-child(even) .project-card__meta.flex-widget {
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  /* Reversed: content aligned right */
+  .featured-projects__content > .project-card:nth-child(even) .project-card__content {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  /* Reversed: description text-align-last right */
+  .featured-projects__content > .project-card:nth-child(even) .project-card__description {
+    text-align-last: right;
+  }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .featured-projects__content > .project-card:nth-child(even).flex-widget {
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .featured-projects__content > .project-card:nth-child(even) .project-card__meta.flex-widget {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .featured-projects__content > .project-card:nth-child(even) .project-card__content {
+  align-items: flex-end;
+  text-align: right;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .featured-projects__content > .project-card:nth-child(even) .project-card__description {
+  text-align-last: right;
+}

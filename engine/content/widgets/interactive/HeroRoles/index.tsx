@@ -28,7 +28,32 @@ export default function HeroRoles({
       <>
         {widgets.map((widget, index) => {
           const Tag = index === 0 ? firstAs : restAs
-          const content = String(widget.props?.content || '')
+          // Extract content - handle various data types
+          const rawContent = widget.props?.content
+
+          // Skip null/undefined
+          if (rawContent == null) {
+            return null
+          }
+
+          // Skip unresolved binding expressions (platform will re-render)
+          if (typeof rawContent === 'string' && rawContent.startsWith('{{')) {
+            return null
+          }
+
+          // Handle different content types
+          let content: string
+          if (typeof rawContent === 'string') {
+            content = rawContent
+          } else if (typeof rawContent === 'object') {
+            // Object - try to extract meaningful value or stringify
+            content = rawContent.toString?.() !== '[object Object]'
+              ? String(rawContent)
+              : JSON.stringify(rawContent)
+          } else {
+            content = String(rawContent)
+          }
+
           return (
             <Tag key={widget.id || index} style={{ ...style, ...widget.style }}>
               {content}

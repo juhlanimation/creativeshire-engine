@@ -11,6 +11,9 @@
   /* Layout - matches hero horizontal padding */
   position: relative; /* For absolute copyright positioning */
   width: 100%;
+  max-width: 100%; /* Prevent overflow */
+  overflow: hidden; /* Contain any overflowing content */
+  box-sizing: border-box;
   padding: 64px 32px 80px; /* Mobile: 64px top, 32px horizontal, 80px bottom */
   background-color: rgb(0, 0, 0);
   color: rgb(255, 255, 255);
