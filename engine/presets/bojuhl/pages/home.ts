@@ -18,7 +18,7 @@ import type { HeroTextStyles } from '../../../content/sections/patterns/Hero/typ
  */
 export const bojuhlHeroStyles: HeroTextStyles = {
   intro: {
-    fontFamily: 'var(--font-body, Plus Jakarta Sans, system-ui, sans-serif)',
+    fontFamily: 'var(--font-paragraph, Plus Jakarta Sans, system-ui, sans-serif)',
     fontSize: 'clamp(0.875rem, 0.125rem + 1vw, 1rem)',
     fontWeight: 500,
     letterSpacing: '0.05em',
@@ -36,7 +36,7 @@ export const bojuhlHeroStyles: HeroTextStyles = {
     mixBlendMode: 'difference'
   },
   scrollIndicator: {
-    fontFamily: 'var(--font-body, Plus Jakarta Sans, system-ui, sans-serif)',
+    fontFamily: 'var(--font-paragraph, Plus Jakarta Sans, system-ui, sans-serif)',
     fontSize: '14px',
     fontWeight: 700,
     letterSpacing: '1.4px',

@@ -26,7 +26,7 @@ export interface HeroTextStyles {
  */
 export const DEFAULT_HERO_STYLES: HeroTextStyles = {
   intro: {
-    fontFamily: 'var(--font-body, Plus Jakarta Sans, system-ui, sans-serif)',
+    fontFamily: 'var(--font-paragraph, Plus Jakarta Sans, system-ui, sans-serif)',
     fontSize: '0.875rem',
     fontWeight: 500,
     letterSpacing: '0.05em',
@@ -41,7 +41,7 @@ export const DEFAULT_HERO_STYLES: HeroTextStyles = {
     color: 'white'
   },
   scrollIndicator: {
-    fontFamily: 'var(--font-body, Plus Jakarta Sans, system-ui, sans-serif)',
+    fontFamily: 'var(--font-paragraph, Plus Jakarta Sans, system-ui, sans-serif)',
     fontSize: '0.875rem',
     fontWeight: 700,
     color: 'white'

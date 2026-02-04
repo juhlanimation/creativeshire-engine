@@ -13,7 +13,7 @@
   pointer-events: none;
 
   /* Typography - reference: text-[10px] font-medium uppercase tracking-wide */
-  font-family: var(--font-body, 'Plus Jakarta Sans', system-ui, sans-serif);
+  font-family: var(--font-paragraph, 'Plus Jakarta Sans', system-ui, sans-serif);
   font-size: 10px;
   font-weight: 500;
   text-transform: uppercase;
