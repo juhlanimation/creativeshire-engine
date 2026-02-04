@@ -12,6 +12,7 @@
     "./presets": "./engine/presets/index.ts",
     "./presets/*": "./engine/presets/*/index.ts",
     "./interface": "./engine/interface/index.ts",
+    "./content/widgets": "./engine/content/widgets/index.ts",
     "./styles": "./engine/styles.css",
     "./styles.css": "./engine/styles.css",
     "./presets/bojuhl/styles": "./engine/presets/bojuhl/styles/index.css",

@@ -1,0 +1,107 @@
+/**
+ * Widget metadata registry - collects all widget meta for platform UI.
+ *
+ * This registry provides:
+ * - Type-safe lookup of widget metadata
+ * - All widget types as a union type
+ * - Iteration over all available widgets
+ *
+ * Usage from platform:
+ *   import { widgetMetaRegistry, getWidgetMeta } from '@creativeshire/engine/content/widgets'
+ */
+
+import type { ComponentMeta } from '../../schema/meta'
+
+// Primitives
+import { meta as TextMeta } from './primitives/Text/meta'
+import { meta as ImageMeta } from './primitives/Image/meta'
+import { meta as IconMeta } from './primitives/Icon/meta'
+import { meta as ButtonMeta } from './primitives/Button/meta'
+import { meta as LinkMeta } from './primitives/Link/meta'
+
+// Layout
+import { meta as FlexMeta } from './layout/Flex/meta'
+import { meta as StackMeta } from './layout/Stack/meta'
+import { meta as GridMeta } from './layout/Grid/meta'
+import { meta as BoxMeta } from './layout/Box/meta'
+import { meta as ContainerMeta } from './layout/Container/meta'
+import { meta as SplitMeta } from './layout/Split/meta'
+
+// Interactive
+import { meta as VideoMeta } from './interactive/Video/meta'
+import { meta as VideoPlayerMeta } from './interactive/VideoPlayer/meta'
+import { meta as ContactPromptMeta } from './interactive/ContactPrompt/meta'
+import { meta as ExpandableGalleryRowMeta } from './interactive/ExpandableGalleryRow/meta'
+import { meta as GalleryThumbnailMeta } from './interactive/GalleryThumbnail/meta'
+import { meta as HeroRolesMeta } from './interactive/HeroRoles/meta'
+import { meta as FeaturedProjectsGridMeta } from './interactive/FeaturedProjectsGrid/meta'
+import { meta as LogoMarqueeMeta } from './interactive/LogoMarquee/meta'
+
+// Patterns (factory functions)
+import { meta as LogoLinkMeta } from './patterns/LogoLink/meta'
+import { meta as ProjectCardMeta } from './patterns/ProjectCard/meta'
+
+/**
+ * Registry mapping widget type strings to their metadata.
+ */
+export const widgetMetaRegistry = {
+  // Primitives
+  Text: TextMeta,
+  Image: ImageMeta,
+  Icon: IconMeta,
+  Button: ButtonMeta,
+  Link: LinkMeta,
+  // Layout
+  Flex: FlexMeta,
+  Stack: StackMeta,
+  Grid: GridMeta,
+  Box: BoxMeta,
+  Container: ContainerMeta,
+  Split: SplitMeta,
+  // Interactive
+  Video: VideoMeta,
+  VideoPlayer: VideoPlayerMeta,
+  ContactPrompt: ContactPromptMeta,
+  ExpandableGalleryRow: ExpandableGalleryRowMeta,
+  GalleryThumbnail: GalleryThumbnailMeta,
+  HeroRoles: HeroRolesMeta,
+  FeaturedProjectsGrid: FeaturedProjectsGridMeta,
+  LogoMarquee: LogoMarqueeMeta,
+  // Patterns
+  LogoLink: LogoLinkMeta,
+  ProjectCard: ProjectCardMeta,
+} as const
+
+/**
+ * All registered widget type names.
+ */
+export type WidgetType = keyof typeof widgetMetaRegistry
+
+/**
+ * Retrieves metadata for a widget by type string.
+ * @param type - Widget type identifier (e.g., 'Text', 'Flex')
+ * @returns The widget metadata or undefined if not found
+ */
+export function getWidgetMeta(type: string): ComponentMeta | undefined {
+  return widgetMetaRegistry[type as WidgetType]
+}
+
+/**
+ * Get all widget metadata as an array.
+ * Useful for iterating in platform UI (component picker, etc.)
+ */
+export function getAllWidgetMeta(): ComponentMeta[] {
+  return Object.values(widgetMetaRegistry)
+}
+
+/**
+ * Get widget metadata filtered by category.
+ * @param category - Category to filter by (e.g., 'primitive', 'layout')
+ */
+export function getWidgetMetaByCategory(
+  category: ComponentMeta['category']
+): ComponentMeta[] {
+  return Object.values(widgetMetaRegistry).filter(
+    (meta) => meta.category === category
+  )
+}
