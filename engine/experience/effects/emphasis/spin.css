@@ -15,12 +15,12 @@
   }
 }
 
-[data-effect="spin"] {
+[data-effect~="spin"] {
   animation: spin var(--spin-duration, 1s) var(--spin-easing, linear) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-effect="spin"] {
+  [data-effect~="spin"] {
     animation: none;
   }
 }

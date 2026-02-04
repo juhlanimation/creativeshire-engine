@@ -111,6 +111,30 @@ describe('CSS Rule Validation', () => {
       const indexFiles = await getFiles('experience/effects/index.css')
       expect(indexFiles.length, 'Missing experience/effects/index.css').toBeGreaterThan(0)
     })
+
+    it('effect CSS files use [data-effect~=""] selector', async () => {
+      const cssFiles = await getFiles('experience/effects/**/*.css')
+      const violations: string[] = []
+
+      for (const file of cssFiles) {
+        // Skip index.css barrel - it only imports others
+        if (file.endsWith('index.css')) continue
+
+        const content = await readFile(file)
+
+        // Check for [data-effect~=""] selector pattern
+        if (!/\[data-effect~=["'][^"']+["']\]/.test(content)) {
+          violations.push(`${relativePath(file)}: missing [data-effect~=""] selector`)
+        }
+      }
+
+      if (violations.length > 0) {
+        console.log('Effect CSS files missing data-effect selector:')
+        violations.forEach((v) => console.log(`  - ${v}`))
+      }
+
+      expect(violations, `Effect CSS files missing [data-effect~=""] selector:\n${violations.join('\n')}`).toHaveLength(0)
+    })
   })
 
   describe('Effect naming conventions', () => {

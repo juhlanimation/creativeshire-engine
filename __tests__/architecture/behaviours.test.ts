@@ -48,6 +48,40 @@ describe('Behaviour Validation', () => {
 
       expect(violations, `Behaviours missing requires array:\n${violations.join('\n')}`).toHaveLength(0)
     })
+
+    it('all behaviours have compute() function', async () => {
+      const files = await getFiles('experience/behaviours/**/*.ts')
+      const behaviourFiles = files.filter(f =>
+        !f.endsWith('index.ts') &&
+        !f.endsWith('types.ts') &&
+        !f.endsWith('registry.ts') &&
+        !f.endsWith('resolve.ts') &&
+        !f.includes('BehaviourWrapper')
+      )
+
+      const violations: string[] = []
+
+      for (const file of behaviourFiles) {
+        const content = await readFile(file)
+
+        // Skip if not a behaviour definition
+        if (!content.includes('registerBehaviour') && !content.includes('id:')) {
+          continue
+        }
+
+        // Check for compute function
+        if (!content.includes('compute:') && !content.includes('compute(')) {
+          violations.push(relativePath(file))
+        }
+      }
+
+      if (violations.length > 0) {
+        console.log('Behaviours missing compute():')
+        violations.forEach((v) => console.log(`  - ${v}`))
+      }
+
+      expect(violations, `Behaviours missing compute() function:\n${violations.join('\n')}`).toHaveLength(0)
+    })
   })
 
   describe('Behaviour ID naming', () => {
