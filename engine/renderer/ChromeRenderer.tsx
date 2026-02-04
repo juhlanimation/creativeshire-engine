@@ -10,9 +10,13 @@
  * Supports both widget-based and component-based chrome definitions.
  *
  * Portal Pattern:
- * Widget-based overlays are portaled to document.body to escape CSS transform
- * contexts (e.g., GSAP ScrollSmoother). This keeps them in the React tree
- * for context access while positioning them correctly in the DOM.
+ * Widget-based overlays are portaled to the SITE CONTAINER (not document.body!)
+ * to escape CSS transform contexts while maintaining:
+ * - Container query context (@container site)
+ * - Iframe embedding support
+ *
+ * IMPORTANT: Never use document.body for portals - it breaks container queries
+ * and iframe support. See ESLint rule local/no-document-events.
  */
 
 import { createPortal } from 'react-dom'
@@ -20,6 +24,7 @@ import type { ChromeSchema, PageChromeOverrides, RegionSchema, OverlaySchema } f
 import { getChromeComponent } from '../content/chrome/registry'
 import { WidgetRenderer } from './WidgetRenderer'
 import { useContainer } from '../interface/ContainerContext'
+import { useSiteContainer } from './SiteContainerContext'
 import './chrome.css'
 
 /**
@@ -88,11 +93,14 @@ const POSITION_CLASSES: Record<string, string> = {
 }
 
 /**
- * Renders overlays.
+ * OverlaysRenderer component.
  *
- * Widget-based overlays are portaled to the portal target (container or document.body)
- * to escape CSS transform contexts (like GSAP ScrollSmoother). This is necessary because
- * `position: fixed` becomes relative to the nearest transformed ancestor, not the viewport.
+ * Widget-based overlays are portaled to the site container to:
+ * 1. Escape CSS transform contexts (like GSAP ScrollSmoother)
+ * 2. Maintain container query context (@container site)
+ * 3. Support iframe embedding (never escapes the container)
+ *
+ * IMPORTANT: Never portal to document.body - it breaks container queries and iframe support.
  *
  * Component-based overlays handle their own positioning (and portals if needed).
  *
@@ -101,20 +109,30 @@ const POSITION_CLASSES: Record<string, string> = {
  * - ModalRoot registers actions (e.g., 'open-video-modal') for widgets to trigger
  * - If not configured, modal actions gracefully do nothing
  */
-function renderOverlays(
-  overlays: ChromeSchema['overlays'] | undefined,
-  hideChrome: string[] | undefined,
+function OverlaysRenderer({
+  overlays,
+  hideChrome,
+  portalTarget,
+  siteContainer,
+}: {
+  overlays: ChromeSchema['overlays'] | undefined
+  hideChrome: string[] | undefined
   portalTarget: HTMLElement | null
-): React.ReactNode {
-  const elements: React.ReactNode[] = []
-
+  siteContainer: HTMLElement | null
+}): React.ReactNode {
   // No overlays configured
   if (!overlays) {
     return null
   }
 
-  // Resolve portal target with fallback
-  const target = portalTarget || (typeof window !== 'undefined' ? document.body : null)
+  const elements: React.ReactNode[] = []
+
+  // Portal target priority:
+  // 1. portalTarget from ContainerContext (for contained/iframe mode)
+  // 2. siteContainer from SiteContainerContext (for fullpage mode)
+  // 3. null (renders inline - SSR or before mount)
+  // NEVER use document.body - breaks container queries and iframe support
+  const target = portalTarget || siteContainer
 
   Object.entries(overlays).forEach(([key, overlay]) => {
     if (!overlay) return
@@ -151,7 +169,7 @@ function renderOverlays(
         </div>
       )
 
-      // Portal to target (SSR-safe: only portal on client)
+      // Portal to target only after mount (prevents hydration mismatch)
       if (target) {
         elements.push(createPortal(content, target))
       } else {
@@ -168,10 +186,18 @@ function renderOverlays(
  */
 export function ChromeRenderer({ siteChrome, pageChrome, position, hideChrome }: ChromeRendererProps): React.ReactNode {
   const { portalTarget } = useContainer()
+  const { siteContainer } = useSiteContainer()
 
   // Render overlays (ModalRoot, CursorLabel, etc.)
   if (position === 'overlays') {
-    return renderOverlays(siteChrome?.overlays, hideChrome, portalTarget ?? null)
+    return (
+      <OverlaysRenderer
+        overlays={siteChrome?.overlays}
+        hideChrome={hideChrome}
+        portalTarget={portalTarget ?? null}
+        siteContainer={siteContainer}
+      />
+    )
   }
 
   // Regions require siteChrome configuration

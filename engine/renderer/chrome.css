@@ -7,6 +7,10 @@
  * - Component-based chrome handles its own styles
  *
  * Container-aware:
+ * Uses container queries to respond to the site container size (for iframe/preview support).
+ * Overlays must be portaled to the site container (not document.body) to maintain
+ * container query context.
+ *
  * Uses --overlay-position CSS variable to switch between fixed (fullpage)
  * and absolute (contained/preview) positioning.
  */

@@ -1,28 +1,22 @@
 /**
  * LogoMarquee widget - horizontal marquee of client logos.
  *
- * Accepts either:
- * - An array of LogoItem objects (renders immediately)
- * - A binding expression string (returns null, platform resolves and re-renders)
+ * Supports two patterns:
+ * 1. Children via __repeat (preferred): Receives widgets array, visible in hierarchy
+ * 2. Legacy logos prop: Receives logos array directly (hidden in hierarchy)
  *
- * This widget exists to support binding expressions in presets where
- * the logo array isn't known at definition time.
+ * The widget duplicates content for seamless infinite scrolling.
  */
 
 'use client'
 
 import type { LogoMarqueeProps, LogoItem } from './types'
+import { WidgetRenderer } from '../../../../renderer'
 import './styles.css'
 
 /**
- * Check if a value is a binding expression (starts with {{ content.)
- */
-function isBindingExpression(value: unknown): value is string {
-  return typeof value === 'string' && value.startsWith('{{ content.')
-}
-
-/**
  * Renders a single logo, optionally wrapped in a link.
+ * Used only for legacy logos prop pattern.
  */
 function LogoImage({
   logo,
@@ -66,30 +60,25 @@ function LogoImage({
 
 export default function LogoMarquee({
   logos,
+  widgets,
   duration = 30,
   logoWidth = 120,
   logoGap = 48,
   className,
   style,
 }: LogoMarqueeProps) {
-  // If logos is a binding expression, render nothing
-  // Platform will resolve the binding and re-render with actual array
-  if (isBindingExpression(logos)) {
-    return null
+  // Prefer widgets (children via __repeat) over logos prop
+  const hasChildren = widgets && widgets.length > 0
+
+  // If using legacy logos prop, check if it's a binding expression
+  if (!hasChildren && typeof logos === 'string') {
+    return null // Platform will resolve binding
   }
 
-  // If not an array (shouldn't happen but defensive), render nothing
-  if (!Array.isArray(logos)) {
+  // Empty state
+  if (!hasChildren && (!Array.isArray(logos) || logos.length === 0)) {
     return null
   }
-
-  // Empty array - render nothing
-  if (logos.length === 0) {
-    return null
-  }
-
-  // Duplicate logos for seamless loop (animation goes from 0 to -50%)
-  const duplicatedLogos = [...logos, ...logos]
 
   return (
     <div
@@ -100,14 +89,41 @@ export default function LogoMarquee({
         className="logo-marquee__track"
         style={{ '--marquee-duration': `${duration}s` } as React.CSSProperties}
       >
-        {duplicatedLogos.map((logo, index) => (
-          <LogoImage
-            key={`${logo.src}-${index}`}
-            logo={logo}
-            width={logoWidth}
-            gap={logoGap}
-          />
-        ))}
+        {hasChildren ? (
+          <>
+            {/* Render children twice for seamless loop */}
+            <div className="logo-marquee__group">
+              {widgets.map((widget, index) => (
+                <WidgetRenderer key={widget.id || index} widget={widget} index={index} />
+              ))}
+            </div>
+            <div className="logo-marquee__group" aria-hidden="true">
+              {widgets.map((widget, index) => (
+                <WidgetRenderer key={`dup-${widget.id || index}`} widget={widget} index={index} />
+              ))}
+            </div>
+          </>
+        ) : (
+          // Legacy: render logos prop twice
+          <>
+            {(logos as LogoItem[]).map((logo, index) => (
+              <LogoImage
+                key={`a-${logo.src}-${index}`}
+                logo={logo}
+                width={logoWidth}
+                gap={logoGap}
+              />
+            ))}
+            {(logos as LogoItem[]).map((logo, index) => (
+              <LogoImage
+                key={`b-${logo.src}-${index}`}
+                logo={logo}
+                width={logoWidth}
+                gap={logoGap}
+              />
+            ))}
+          </>
+        )}
       </div>
     </div>
   )

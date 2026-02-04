@@ -115,6 +115,7 @@
 
 | File | Describes |
 |------|-----------|
+| [collections.spec.md](patterns/collections.spec.md) | `__repeat` pattern for hierarchy-visible collections |
 | [common.spec.md](patterns/common.spec.md) | Proven solutions: Frame pattern, CSS variable bridge, cleanup |
 | [anti-patterns.spec.md](patterns/anti-patterns.spec.md) | What to avoid: scroll in widgets, viewport units, React state for animation |
 | [analytics-integration.spec.md](patterns/analytics-integration.spec.md) | Analytics patterns: page views, events, consent, lazy loading |
@@ -143,6 +144,7 @@
 | [metadata.spec.md](reference/metadata.spec.md) | SEO, Open Graph, JSON-LD, sitemap generation |
 | [responsive-design.spec.md](reference/responsive-design.spec.md) | Breakpoints, responsive props, layout adaptation |
 | [development-workflow.spec.md](reference/development-workflow.spec.md) | HMR, debugging, React DevTools, profiling |
+| [hierarchy-panel.spec.md](reference/hierarchy-panel.spec.md) | Platform editor hierarchy panel structure |
 
 ### diagrams/ — Visual References
 
@@ -163,6 +165,7 @@
 | Check before creating something new | [extension.spec.md](core/extension.spec.md) |
 | Find existing CSS variables | [tech-stack/styling.md](reference/tech-stack/styling.md#css-variable-catalog) |
 | Build a widget | [widget.spec.md](components/content/widget.spec.md) |
+| Build a collection widget | [collections.spec.md](patterns/collections.spec.md) |
 | Build a layout widget | [layout-widget.spec.md](components/content/layout-widget.spec.md) |
 | Build animation | [behaviour.spec.md](components/experience/behaviour.spec.md) |
 | Define animation CSS | [effect.spec.md](components/experience/effect.spec.md) |

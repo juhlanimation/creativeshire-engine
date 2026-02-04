@@ -34,8 +34,8 @@ const eslintConfig = defineConfig([
       local: localPlugin,
     },
     rules: {
-      // Warn on document.addEventListener - use container-aware targets
-      "local/no-document-events": "warn",
+      // Error on document-level APIs - breaks iframe/container support
+      "local/no-document-events": "error",
     },
   },
 ]);

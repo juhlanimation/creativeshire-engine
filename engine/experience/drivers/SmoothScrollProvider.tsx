@@ -291,7 +291,10 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
       }
     }
 
-    document.addEventListener('click', handleAnchorClick)
+    // Add click listener to wrapper for anchor navigation
+    // Scoped to wrapper element instead of document for iframe support
+    const wrapper = wrapperRef.current
+    wrapper?.addEventListener('click', handleAnchorClick)
 
     // Handle orientation changes
     let orientationTimeout: ReturnType<typeof setTimeout> | null = null
@@ -326,7 +329,7 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
 
     // Cleanup
     return () => {
-      document.removeEventListener('click', handleAnchorClick)
+      wrapper?.removeEventListener('click', handleAnchorClick)
       window.removeEventListener('orientationchange', handleOrientationChange)
       window.removeEventListener('resize', handleResize)
       if (orientationTimeout) clearTimeout(orientationTimeout)

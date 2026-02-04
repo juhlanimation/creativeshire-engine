@@ -4,6 +4,7 @@
  */
 
 import type { WidgetBaseProps } from '../../types'
+import type { WidgetSchema } from '../../../../schema'
 import type { GalleryProject as GalleryProjectType } from '../GalleryThumbnail'
 
 /** Re-export GalleryProject type */
@@ -33,8 +34,17 @@ export interface ExpandableGalleryClickPayload {
  * Props for the ExpandableGalleryRow widget.
  */
 export interface ExpandableGalleryRowProps extends WidgetBaseProps {
-  /** Array of projects to display OR binding expression string */
-  projects: GalleryProjectType[] | string
+  /**
+   * Child widgets (via __repeat). Preferred pattern - visible in hierarchy.
+   * Each child should have props: thumbnailSrc, thumbnailAlt, videoSrc, videoUrl,
+   * title, client, studio, year, role.
+   */
+  widgets?: WidgetSchema[]
+  /**
+   * Legacy: Array of projects to display OR binding expression string.
+   * @deprecated Use widgets via __repeat instead for hierarchy visibility.
+   */
+  projects?: GalleryProjectType[] | string
   /** Row height (default: '32rem') */
   height?: string
   /** Gap between thumbnails (default: '4px') */

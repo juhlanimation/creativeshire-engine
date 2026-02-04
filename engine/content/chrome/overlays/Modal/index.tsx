@@ -23,6 +23,7 @@ import { useStore } from 'zustand'
 import { useModalStore } from './store'
 import { useSmoothScroll, useSmoothScrollContainer } from '../../../../experience'
 import { useContainer } from '../../../../interface/ContainerContext'
+import { useSiteContainer } from '../../../../renderer/SiteContainerContext'
 // ARCHITECTURE EXCEPTION: Overlays may import driver utilities for enter/exit animations.
 // RevealTransition is driver infrastructure (not a behaviour), providing GSAP timeline
 // control for sequenced modal transitions that CSS cannot achieve.
@@ -57,6 +58,7 @@ const Modal = memo(function Modal() {
   const previousFocusRef = useRef<HTMLElement | null>(null)
   const smoothScroll = useSmoothScroll()
   const { mode, containerRef, portalTarget } = useContainer()
+  const { siteContainer } = useSiteContainer()
 
   // Apply GSAP smooth scrolling to modal content (uses site-wide settings)
   useSmoothScrollContainer(contentRef, { enabled: transitionPhase === 'open' })
@@ -127,15 +129,19 @@ const Modal = memo(function Modal() {
   useEffect(() => {
     if (transitionPhase === 'closed') return
 
-    // Use container in contained mode, otherwise document.body
+    // Use container in contained mode, otherwise site container
+    // Never use document.body - breaks iframe support
     const scrollTarget = mode === 'contained' && containerRef?.current
       ? containerRef.current
-      : document.body
+      : siteContainer
+
+    // Skip if no scroll target yet (SSR or before mount)
+    if (!scrollTarget) return
 
     const originalOverflow = scrollTarget.style.overflow
     const originalPaddingRight = scrollTarget.style.paddingRight
 
-    // Calculate scrollbar width to prevent layout shift (only relevant for body)
+    // Calculate scrollbar width to prevent layout shift (only relevant for fullpage)
     const scrollbarWidth = mode === 'contained'
       ? 0
       : window.innerWidth - document.documentElement.clientWidth
@@ -148,7 +154,7 @@ const Modal = memo(function Modal() {
       scrollTarget.style.overflow = originalOverflow
       scrollTarget.style.paddingRight = originalPaddingRight
     }
-  }, [transitionPhase, mode, containerRef])
+  }, [transitionPhase, mode, containerRef, siteContainer])
 
   // Pause ScrollSmoother when modal is visible
   useEffect(() => {
@@ -213,8 +219,11 @@ const Modal = memo(function Modal() {
     }
   }, [closeOnBackdrop, transitionPhase, handleClose])
 
-  // Don't render if closed or not in browser
-  if (transitionPhase === 'closed' || typeof window === 'undefined') {
+  // Resolve portal target: contained mode uses containerRef, fullpage uses siteContainer
+  const resolvedPortalTarget = portalTarget || siteContainer
+
+  // Don't render if closed, not in browser, or no portal target
+  if (transitionPhase === 'closed' || typeof window === 'undefined' || !resolvedPortalTarget) {
     return null
   }
 
@@ -270,7 +279,7 @@ const Modal = memo(function Modal() {
         </div>
       </RevealTransition>
     </div>,
-    portalTarget || document.body
+    resolvedPortalTarget
   )
 })
 

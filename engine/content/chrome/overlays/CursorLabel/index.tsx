@@ -18,6 +18,7 @@ import { createPortal } from 'react-dom'
 import { useStore } from 'zustand'
 import { useExperience } from '../../../../experience'
 import { useContainer } from '../../../../interface/ContainerContext'
+import { useSiteContainer } from '../../../../renderer/SiteContainerContext'
 import type { CursorLabelProps } from './types'
 import './styles.css'
 
@@ -40,6 +41,7 @@ const CursorLabel = memo(function CursorLabel({
 
   // Get container context for portal target and event scoping
   const { mode, containerRef, portalTarget } = useContainer()
+  const { siteContainer } = useSiteContainer()
 
   // Read cursor position from experience store (set by useCursorPosition trigger)
   const { store } = useExperience()
@@ -89,8 +91,12 @@ const CursorLabel = memo(function CursorLabel({
     }
   }, [mounted, isTouchDevice, handleMouseOver, handleMouseOut, mode, containerRef])
 
-  // Don't render on server or touch devices
-  if (!mounted || isTouchDevice) {
+  // Resolve portal target: contained mode uses containerRef, fullpage uses siteContainer
+  // Never use document.body - breaks iframe support
+  const resolvedPortalTarget = portalTarget || siteContainer
+
+  // Don't render on server, touch devices, or if no portal target
+  if (!mounted || isTouchDevice || !resolvedPortalTarget) {
     return null
   }
 
@@ -105,7 +111,7 @@ const CursorLabel = memo(function CursorLabel({
     >
       {label}
     </div>,
-    portalTarget || document.body
+    resolvedPortalTarget
   )
 })
 

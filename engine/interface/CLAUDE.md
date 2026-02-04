@@ -97,4 +97,4 @@ function MyComponent() {
 }
 ```
 
-**ESLint enforces this:** `local/no-document-events` warns on `document.addEventListener` in engine code.
+**ESLint enforces this:** `local/no-document-events` errors on `document.addEventListener` and `document.body` in engine code.

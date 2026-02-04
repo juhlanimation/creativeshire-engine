@@ -1,43 +1,53 @@
 /**
  * HeroRoles widget - renders role titles for hero sections.
  *
- * Accepts either:
- * - An array of role strings (renders immediately)
- * - A binding expression string (returns null, platform resolves and re-renders)
- *
- * This widget exists to support binding expressions in presets where
- * the role array isn't known at definition time.
+ * Supports two patterns:
+ * 1. Children via __repeat (preferred): Receives widgets array, visible in hierarchy
+ * 2. Legacy roles prop: Receives roles array directly (hidden in hierarchy)
  */
 
 'use client'
 
+import { WidgetRenderer } from '../../../../renderer'
 import type { HeroRolesProps } from './types'
-
-/**
- * Check if a value is a binding expression (starts with {{ content.)
- */
-function isBindingExpression(value: unknown): value is string {
-  return typeof value === 'string' && value.startsWith('{{ content.')
-}
 
 export default function HeroRoles({
   roles,
+  widgets,
   firstAs = 'h1',
   restAs = 'h2',
   style,
 }: HeroRolesProps) {
-  // If roles is a binding expression, render nothing
-  // Platform will resolve the binding and re-render with actual array
-  if (isBindingExpression(roles)) {
+  // Prefer widgets (children via __repeat) over roles prop
+  const hasChildren = widgets && widgets.length > 0
+
+  if (hasChildren) {
+    // Render children with appropriate heading tags
+    // Children are Text widgets with content prop
+    return (
+      <>
+        {widgets.map((widget, index) => {
+          const Tag = index === 0 ? firstAs : restAs
+          const content = String(widget.props?.content || '')
+          return (
+            <Tag key={widget.id || index} style={{ ...style, ...widget.style }}>
+              {content}
+            </Tag>
+          )
+        })}
+      </>
+    )
+  }
+
+  // Legacy: roles prop
+  if (typeof roles === 'string') {
+    return null // Binding expression - platform will resolve
+  }
+
+  if (!Array.isArray(roles) || roles.length === 0) {
     return null
   }
 
-  // If not an array (shouldn't happen but defensive), render nothing
-  if (!Array.isArray(roles)) {
-    return null
-  }
-
-  // Render each role as a text element
   return (
     <>
       {roles.map((role, index) => {

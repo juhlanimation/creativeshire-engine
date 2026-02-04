@@ -8,6 +8,7 @@
 import { useEffect } from 'react'
 import type { ThemeSchema } from '../schema'
 import { useContainer } from '../interface/ContainerContext'
+import { useSiteContainer } from './SiteContainerContext'
 
 interface ThemeProviderProps {
   theme?: ThemeSchema
@@ -38,15 +39,17 @@ const DEFAULTS = {
  */
 export function ThemeProvider({ theme, children }: ThemeProviderProps): React.ReactNode {
   const { mode, containerRef } = useContainer()
+  const { siteContainer } = useSiteContainer()
 
   useEffect(() => {
-    // Use container in contained mode, otherwise document elements
+    // Use container in contained mode, otherwise site container
+    // Never use document.body - breaks iframe support
     const root = mode === 'contained' && containerRef?.current
       ? containerRef.current
-      : document.documentElement
+      : siteContainer ?? document.documentElement
     const body = mode === 'contained' && containerRef?.current
       ? containerRef.current
-      : document.body
+      : siteContainer
 
     // Scrollbar variables (on root for global scroll)
     const scrollbar = theme?.scrollbar
@@ -73,16 +76,18 @@ export function ThemeProvider({ theme, children }: ThemeProviderProps): React.Re
 
     // Typography variables (on body/container where font vars are defined)
     const typography = theme?.typography
-    body.style.setProperty(
-      '--font-title',
-      typography?.title ?? DEFAULTS.typography.title
-    )
-    body.style.setProperty(
-      '--font-paragraph',
-      typography?.paragraph ?? DEFAULTS.typography.paragraph
-    )
-    if (typography?.ui) {
-      body.style.setProperty('--font-ui', typography.ui)
+    if (body) {
+      body.style.setProperty(
+        '--font-title',
+        typography?.title ?? DEFAULTS.typography.title
+      )
+      body.style.setProperty(
+        '--font-paragraph',
+        typography?.paragraph ?? DEFAULTS.typography.paragraph
+      )
+      if (typography?.ui) {
+        body.style.setProperty('--font-ui', typography.ui)
+      }
     }
 
     // Section transition variables
@@ -101,13 +106,15 @@ export function ThemeProvider({ theme, children }: ThemeProviderProps): React.Re
       root.style.removeProperty('--scrollbar-track')
       root.style.removeProperty('--scrollbar-thumb-dark')
       root.style.removeProperty('--scrollbar-track-dark')
-      body.style.removeProperty('--font-title')
-      body.style.removeProperty('--font-paragraph')
-      body.style.removeProperty('--font-ui')
+      if (body) {
+        body.style.removeProperty('--font-title')
+        body.style.removeProperty('--font-paragraph')
+        body.style.removeProperty('--font-ui')
+      }
       root.style.removeProperty('--section-fade-duration')
       root.style.removeProperty('--section-fade-easing')
     }
-  }, [theme, mode, containerRef])
+  }, [theme, mode, containerRef, siteContainer])
 
   return <>{children}</>
 }

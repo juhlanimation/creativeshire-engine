@@ -89,12 +89,22 @@ const heroSection: SectionSchema = {
           id: 'hero-roles',
           type: 'HeroRoles',
           props: {
-            roles: '{{ content.hero.roles }}',
             firstAs: 'h1',
             restAs: 'h2'
           },
           // Style applied to each role text
-          style: bojuhlHeroStyles.roleTitle
+          style: bojuhlHeroStyles.roleTitle,
+          // Uses __repeat for hierarchy visibility
+          widgets: [
+            {
+              __repeat: '{{ content.hero.roles }}',
+              id: 'role',
+              type: 'Text',
+              props: {
+                content: '{{ item }}'
+              }
+            }
+          ]
         }
       ]
     },
@@ -205,16 +215,31 @@ const aboutSection: SectionSchema = {
       type: 'Box',
       props: {}
     },
-    // Logo marquee (platform handles LogoMarquee widget or resolves binding)
+    // Logo marquee - uses __repeat for hierarchy visibility
     {
       id: 'about-logos',
       type: 'LogoMarquee',
       props: {
-        logos: '{{ content.about.clientLogos }}',
         duration: 43,
         logoWidth: 120,
         logoGap: 96
-      }
+      },
+      widgets: [
+        {
+          __repeat: '{{ content.about.clientLogos }}',
+          id: 'logo',
+          type: 'Image',
+          props: {
+            src: '{{ item.src }}',
+            alt: '{{ item.alt }}'
+          },
+          style: {
+            width: 120,
+            marginRight: 96,
+            opacity: 0.7
+          }
+        }
+      ]
     }
   ]
 }
@@ -376,19 +401,36 @@ const otherProjectsSection: SectionSchema = {
         }
       ]
     },
-    // Gallery
+    // Gallery - uses __repeat for hierarchy visibility
     {
       id: 'other-projects-gallery',
       type: 'ExpandableGalleryRow',
       props: {
-        projects: '{{ content.projects.other }}',
         height: '32rem',
         gap: '4px',
         expandedWidth: '32rem',
         transitionDuration: 400,
         cursorLabel: 'WATCH'
       },
-      on: { click: 'open-video-modal' }
+      on: { click: 'open-video-modal' },
+      widgets: [
+        {
+          __repeat: '{{ content.projects.other }}',
+          id: 'gallery-item',
+          type: 'GalleryThumbnail',
+          props: {
+            thumbnailSrc: '{{ item.thumbnailSrc }}',
+            thumbnailAlt: '{{ item.thumbnailAlt }}',
+            videoSrc: '{{ item.videoSrc }}',
+            videoUrl: '{{ item.videoUrl }}',
+            title: '{{ item.title }}',
+            client: '{{ item.client }}',
+            studio: '{{ item.studio }}',
+            year: '{{ item.year }}',
+            role: '{{ item.role }}'
+          }
+        }
+      ]
     }
   ]
 }

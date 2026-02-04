@@ -11,7 +11,7 @@
  * - pageTransition: exit/entry animations when navigating
  */
 
-import { useMemo, useEffect, useState, type CSSProperties, type ReactNode } from 'react'
+import { useMemo, useEffect, useState, useRef, type CSSProperties, type ReactNode } from 'react'
 import type { StoreApi } from 'zustand'
 import {
   ExperienceProvider,
@@ -28,6 +28,7 @@ import type { NavigableExperienceState } from '../experience/experiences/types'
 import { useScrollIndicatorFade } from './hooks'
 import { PageRenderer } from './PageRenderer'
 import { ChromeRenderer } from './ChromeRenderer'
+import { SiteContainerProvider, SiteContainerRegistrar } from './SiteContainerContext'
 import { ThemeProvider } from './ThemeProvider'
 import { ExperienceChromeRenderer } from './ExperienceChromeRenderer'
 import type { SiteSchema, PageSchema } from '../schema'
@@ -177,8 +178,15 @@ export function SiteRenderer({ site, page }: SiteRendererProps) {
   // In contained mode, ContainerProvider sets it on the container element
   const breakpointAttr = mode === 'fullpage' ? breakpoint : undefined
 
+  // Ref to the site container for portal targets
+  // Overlays portal here to maintain container query context
+  const siteContainerRef = useRef<HTMLDivElement>(null)
+
   return (
-    <div data-site-renderer data-breakpoint={breakpointAttr}>
+    <SiteContainerProvider>
+    <div ref={siteContainerRef} data-site-renderer data-breakpoint={breakpointAttr}>
+      {/* Register site container for portal targets */}
+      <SiteContainerRegistrar containerRef={siteContainerRef} />
     <ThemeProvider theme={site.theme}>
       <ExperienceProvider experience={experience} store={store}>
         <TransitionProvider config={experience.pageTransition}>
@@ -235,9 +243,8 @@ export function SiteRenderer({ site, page }: SiteRendererProps) {
                 hideChrome={experience.hideChrome}
               />
 
-              {/* Overlay chrome - uses portals to escape transform context.
-                  Stays in React tree for context access, portals to body for DOM.
-                  Includes built-in Modal infrastructure (always available). */}
+              {/* Overlay chrome - uses portals to site container to escape transform context
+                  while maintaining container query support and iframe compatibility. */}
               <ChromeRenderer
                 siteChrome={site.chrome}
                 pageChrome={page.chrome}
@@ -258,6 +265,7 @@ export function SiteRenderer({ site, page }: SiteRendererProps) {
       </ExperienceProvider>
     </ThemeProvider>
     </div>
+    </SiteContainerProvider>
   )
 }
 

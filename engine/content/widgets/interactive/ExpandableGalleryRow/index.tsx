@@ -4,6 +4,10 @@
  * ExpandableGalleryRow layout widget.
  * Horizontal row of expandable thumbnails with coordinated hover.
  *
+ * Supports two patterns:
+ * 1. Children via __repeat (preferred): Receives widgets array, visible in hierarchy
+ * 2. Legacy projects prop: Receives projects array directly (hidden in hierarchy)
+ *
  * Architecture (matches reference):
  * - Thumbnails row: expandable images/videos
  * - Labels row: separate row below with matching flex sizing
@@ -15,8 +19,29 @@
 
 import { useState, useCallback, useRef, useEffect, memo, type CSSProperties } from 'react'
 import CursorLabel from '../../../chrome/overlays/CursorLabel'
+import type { WidgetSchema } from '../../../../schema'
 import type { ExpandableGalleryRowProps, GalleryProject } from './types'
 import './styles.css'
+
+/**
+ * Extract GalleryProject data from a widget schema's props.
+ * Used when receiving children via __repeat pattern.
+ */
+function extractProjectFromWidget(widget: WidgetSchema, index: number): GalleryProject {
+  const props = widget.props || {}
+  return {
+    id: widget.id || `project-${index}`,
+    thumbnailSrc: String(props.thumbnailSrc || props.poster || props.src || ''),
+    thumbnailAlt: String(props.thumbnailAlt || props.alt || ''),
+    videoSrc: props.videoSrc ? String(props.videoSrc) : undefined,
+    videoUrl: props.videoUrl ? String(props.videoUrl) : undefined,
+    title: String(props.title || ''),
+    client: String(props.client || ''),
+    studio: String(props.studio || ''),
+    year: String(props.year || ''),
+    role: String(props.role || ''),
+  }
+}
 
 /** Thumbnail component - just image/video, no labels */
 const Thumbnail = memo(function Thumbnail({
@@ -191,15 +216,9 @@ const ProjectLabels = memo(function ProjectLabels({
   )
 })
 
-/**
- * Check if a value is a binding expression (starts with {{ content.)
- */
-function isBindingExpression(value: unknown): value is string {
-  return typeof value === 'string' && value.startsWith('{{ content.')
-}
-
 const ExpandableGalleryRow = memo(function ExpandableGalleryRow({
   projects,
+  widgets,
   height = '32rem',
   gap = '4px',
   expandedWidth = '32rem',
@@ -209,14 +228,25 @@ const ExpandableGalleryRow = memo(function ExpandableGalleryRow({
   className,
   onClick,
 }: ExpandableGalleryRowProps) {
-  // If projects is a binding expression, render nothing
-  // Platform will resolve the binding and re-render with actual array
-  if (isBindingExpression(projects)) {
-    return null
-  }
+  // Prefer widgets (children via __repeat) over projects prop
+  // Extract project data from widget props for internal state management
+  const resolvedProjects: GalleryProject[] = (() => {
+    // Pattern 1: Children via __repeat (preferred)
+    if (widgets && widgets.length > 0) {
+      return widgets.map((widget, index) => extractProjectFromWidget(widget, index))
+    }
+    // Pattern 2: Legacy projects prop
+    if (typeof projects === 'string') {
+      return [] // Binding expression - platform will resolve
+    }
+    if (Array.isArray(projects)) {
+      return projects
+    }
+    return []
+  })()
 
-  // If not an array (shouldn't happen but defensive), render nothing
-  if (!Array.isArray(projects)) {
+  // Empty state
+  if (resolvedProjects.length === 0) {
     return null
   }
 
@@ -286,7 +316,7 @@ const ExpandableGalleryRow = memo(function ExpandableGalleryRow({
         style={{ height, gap }}
         onMouseLeave={handleMouseLeave}
       >
-        {projects.map((project) => (
+        {resolvedProjects.map((project) => (
           <Thumbnail
             key={project.id}
             project={project}
@@ -306,7 +336,7 @@ const ExpandableGalleryRow = memo(function ExpandableGalleryRow({
         className="expandable-gallery-row__labels-row"
         style={{ gap }}
       >
-        {projects.map((project) => (
+        {resolvedProjects.map((project) => (
           <ProjectLabels
             key={project.id}
             project={project}

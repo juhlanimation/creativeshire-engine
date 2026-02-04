@@ -38,7 +38,11 @@ export function useIntersection({ store, containerMode, containerRef }: TriggerP
     // Determine root and scope based on container mode
     const isContained = containerMode === 'contained' && containerRef?.current
     const observerRoot = isContained ? containerRef.current : null // null = viewport
-    const scopeElement = isContained ? containerRef.current : document.body
+    // Scope to container in contained mode, or site container in fullpage mode
+    // Never use document.body directly - breaks iframe support
+    const scopeElement = isContained
+      ? containerRef.current
+      : document.querySelector<HTMLElement>('[data-site-renderer]')
 
     // Create thresholds for smooth visibility updates (0, 0.05, 0.10, ... 1.0)
     const thresholds = Array.from({ length: 21 }, (_, i) => i / 20)

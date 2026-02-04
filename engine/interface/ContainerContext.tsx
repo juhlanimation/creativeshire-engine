@@ -47,7 +47,7 @@ export interface ContainerConfig {
   mode: ContainerMode
   /** Reference to container element (required for contained mode) */
   containerRef?: RefObject<HTMLElement | null>
-  /** Target element for portals (defaults to container or document.body) */
+  /** Target element for portals (defaults to container or site container) */
   portalTarget?: HTMLElement | null
   /** Get current viewport height (container or window) */
   getViewportHeight: () => number
@@ -76,7 +76,7 @@ export interface ContainerProviderProps {
   mode?: ContainerMode
   /** Reference to container element (required for contained mode) */
   containerRef?: RefObject<HTMLElement | null>
-  /** Custom portal target (defaults to containerRef or document.body) */
+  /** Custom portal target (defaults to containerRef or site container) */
   portalTarget?: HTMLElement | null
   children: ReactNode
 }

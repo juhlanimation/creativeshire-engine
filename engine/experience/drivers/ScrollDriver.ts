@@ -135,12 +135,15 @@ export class ScrollDriver implements Driver {
 
   /**
    * Get max scroll distance (container or document).
+   * Uses document.documentElement for fullpage mode (not document.body).
    */
   private getMaxScroll(): number {
     if (this.container) {
       return this.container.scrollHeight - this.container.clientHeight
     }
-    return document.body.scrollHeight - window.innerHeight
+    // Use documentElement for cross-browser compatibility
+    // (document.body can have quirks, documentElement is more reliable)
+    return document.documentElement.scrollHeight - window.innerHeight
   }
 
   /**

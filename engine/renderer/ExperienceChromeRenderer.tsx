@@ -15,11 +15,12 @@ import { useEffect, useState } from 'react'
 import { getChromeComponent } from '../content/chrome/registry'
 import type { ExperienceChrome } from '../experience/experiences/types'
 import { useContainer } from '../interface/ContainerContext'
+import { useSiteContainer } from './SiteContainerContext'
 
 interface ExperienceChromeRendererProps {
   /** Chrome items to render */
   items: ExperienceChrome[]
-  /** Whether to render as overlays (portaled to body) */
+  /** Whether to render as overlays (portaled to site container) */
   isOverlay?: boolean
 }
 
@@ -34,6 +35,7 @@ export function ExperienceChromeRenderer({
 }: ExperienceChromeRendererProps) {
   // Get container context for portal target
   const { portalTarget } = useContainer()
+  const { siteContainer } = useSiteContainer()
 
   // Track portal mount state for SSR safety
   const [mounted, setMounted] = useState(false)
@@ -57,12 +59,13 @@ export function ExperienceChromeRenderer({
     </>
   )
 
-  // Overlays portal to container (or body) to escape transform context
-  if (isOverlay && mounted && typeof document !== 'undefined') {
-    const target = portalTarget || document.body
+  // Overlays portal to container to escape transform context
+  // NEVER use document.body - breaks container queries and iframe support
+  const resolvedTarget = portalTarget || siteContainer
+  if (isOverlay && mounted && resolvedTarget) {
     return createPortal(
       <div data-experience-chrome="overlay">{content}</div>,
-      target
+      resolvedTarget
     )
   }
 
