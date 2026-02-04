@@ -90,3 +90,14 @@ export type {
 // Component meta types
 export type { ComponentCategory, ComponentMeta, MetaProps } from './meta'
 export { defineMeta } from './meta'
+
+// Schema utilities
+export {
+  getValueAtPath,
+  setValueAtPath,
+  hasValueAtPath,
+  getAllPaths,
+  deepClone,
+  mergeOverrides,
+  extractOverrides,
+} from './utils'
