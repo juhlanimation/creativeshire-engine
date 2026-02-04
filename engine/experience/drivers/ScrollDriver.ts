@@ -89,7 +89,7 @@ export class ScrollDriver implements Driver {
   private container: HTMLElement | null = null
 
   /** Scroll target (container or window) */
-  private scrollTarget: HTMLElement | Window
+  private scrollTarget!: HTMLElement | Window
 
   constructor(config?: ScrollDriverConfig) {
     // Only run in browser environment
