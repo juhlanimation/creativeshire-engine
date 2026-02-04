@@ -7,7 +7,9 @@
  * - Email-only mode: Just shows email with copy icon on hover
  */
 
-export interface ContactPromptProps {
+import type { WidgetBaseProps } from '../../types'
+
+export interface ContactPromptProps extends WidgetBaseProps {
   /** Email address to copy on click. Required. */
   email: string
   /** Prompt text shown by default. Only used when showPrompt=true. Default: "How can I help you?" */

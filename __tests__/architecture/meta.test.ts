@@ -236,5 +236,45 @@ describe('ComponentMeta Validation', () => {
 
       expect(violations, `Meta files missing required fields:\n${violations.join('\n')}`).toHaveLength(0)
     })
+
+    it('meta.category is a valid value', async () => {
+      const VALID_CATEGORIES = [
+        'primitive',
+        'layout',
+        'interactive',
+        'pattern',
+        'section',
+        'region',
+        'overlay',
+        'chrome' // Some may use 'chrome' instead of region/overlay
+      ]
+
+      const metaFiles = await getFiles('content/**/meta.ts')
+      const violations: string[] = []
+
+      for (const file of metaFiles) {
+        const content = await readFile(file)
+
+        // Extract category value: category: 'xxx' or category: "xxx"
+        const categoryMatch = content.match(/category:\s*['"](\w+)['"]/)
+
+        if (categoryMatch) {
+          const category = categoryMatch[1]
+          if (!VALID_CATEGORIES.includes(category)) {
+            violations.push(
+              `${relativePath(file)}: Invalid category "${category}" (expected: ${VALID_CATEGORIES.join(', ')})`
+            )
+          }
+        }
+        // Note: If no category found, the existing 'meta.ts has required fields' test should catch it
+      }
+
+      if (violations.length > 0) {
+        console.log('Invalid meta.category values:')
+        violations.forEach((v) => console.log(`  - ${v}`))
+      }
+
+      expect(violations).toHaveLength(0)
+    })
   })
 })

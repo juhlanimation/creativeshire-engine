@@ -3,8 +3,9 @@
  */
 
 import type { CSSProperties } from 'react'
+import type { WidgetBaseProps } from '../../types'
 
-export interface HeroRolesProps {
+export interface HeroRolesProps extends WidgetBaseProps {
   /** Array of role titles to display, or binding expression */
   roles: string[] | string
   /** HTML element to use for the first role (default: h1) */

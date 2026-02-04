@@ -3,6 +3,8 @@
  * Full-featured video player for modal playback.
  */
 
+import type { WidgetBaseProps } from '../../types'
+
 /**
  * Exposed control methods for external callers.
  * Allows parent components to control playback without coupling.
@@ -19,7 +21,7 @@ export interface VideoPlayerControls {
 /**
  * VideoPlayer props.
  */
-export interface VideoPlayerProps {
+export interface VideoPlayerProps extends WidgetBaseProps {
   /** Video source URL */
   src: string
   /** Poster image URL */

@@ -179,6 +179,33 @@ describe('Widget Structure Validation', () => {
 
       expect(violations, `Interactive widgets missing index.tsx:\\n${violations.join('\\n')}`).toHaveLength(0)
     })
+
+    it('interactive widget props extend WidgetBaseProps', async () => {
+      const typeFiles = await getFiles('content/widgets/interactive/*/types.ts')
+      const violations: string[] = []
+
+      for (const file of typeFiles) {
+        const content = await readFile(file)
+
+        // Check if file imports WidgetBaseProps
+        const importsWidgetBaseProps = content.includes('WidgetBaseProps')
+
+        // Check if the main props interface extends it
+        // Pattern: "interface XxxProps extends WidgetBaseProps" or "extends WidgetBaseProps {"
+        const extendsWidgetBaseProps = /extends\s+WidgetBaseProps/.test(content)
+
+        if (!importsWidgetBaseProps || !extendsWidgetBaseProps) {
+          violations.push(`${relativePath(file)}: Props should extend WidgetBaseProps`)
+        }
+      }
+
+      if (violations.length > 0) {
+        console.log('Widget props not extending WidgetBaseProps:')
+        violations.forEach((v) => console.log(`  - ${v}`))
+      }
+
+      expect(violations).toHaveLength(0)
+    })
   })
 
   describe('Section patterns', () => {

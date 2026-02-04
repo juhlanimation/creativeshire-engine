@@ -50,7 +50,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { getFiles, readFile, relativePath, fileExists } from './helpers'
+import { getFiles, getFolders, readFile, relativePath, fileExists } from './helpers'
 import path from 'path'
 
 const ENGINE = path.join(process.cwd(), 'engine')
@@ -512,20 +512,33 @@ describe('Component Structure Validation', () => {
       const files = await getFiles('experience/drivers/*.ts')
       const violations: string[] = []
 
+      // Utility files that export functions, not driver classes
+      const UTILITY_FILES = ['getDriver.ts']
+
       for (const file of files) {
-        const filename = path.basename(file, '.ts')
-        if (filename === 'index' || filename === 'types') continue
+        const filename = file.split('/').pop() || ''
+        if (filename === 'index.ts' || filename === 'types.ts') continue
 
-        // PascalCase for class drivers OR useSomething for hook drivers
-        const isPascalCase = /^[A-Z][a-zA-Z0-9]*$/.test(filename)
-        const isHookNaming = /^use[A-Z][a-zA-Z0-9]*$/.test(filename)
+        // Skip known utility files
+        if (UTILITY_FILES.includes(filename)) continue
 
-        if (!isPascalCase && !isHookNaming) {
-          violations.push(`${relativePath(file)}: "${filename}" should be PascalCase or useSomething`)
+        const name = filename.replace('.ts', '')
+
+        // Should be PascalCase (e.g., ScrollDriver) or useSomething (e.g., useScrollFadeDriver)
+        const isPascalCase = /^[A-Z][a-zA-Z0-9]*$/.test(name)
+        const isHookStyle = /^use[A-Z]/.test(name)
+
+        if (!isPascalCase && !isHookStyle) {
+          violations.push(`${relativePath(file)}: "${name}" should be PascalCase or useSomething`)
         }
       }
 
-      expect(violations, `Invalid driver file names:\\n${violations.join('\\n')}`).toHaveLength(0)
+      if (violations.length > 0) {
+        console.log('Invalid driver file names:')
+        violations.forEach((v) => console.log(`  - ${v}`))
+      }
+
+      expect(violations, `Invalid driver file names:\n${violations.join('\n')}`).toHaveLength(0)
     })
   })
 
@@ -551,6 +564,108 @@ describe('Component Structure Validation', () => {
       }
 
       expect(violations, `Invalid trigger file names:\\n${violations.join('\\n')}`).toHaveLength(0)
+    })
+  })
+
+  describe('Widget types.ts validation', () => {
+    it('all primitives have types.ts', async () => {
+      const folders = await getFolders('content/widgets/primitives/*')
+      const violations: string[] = []
+
+      for (const folder of folders) {
+        const typesPath = path.join(folder, 'types.ts')
+        const exists = await fileExists(typesPath)
+        if (!exists) {
+          violations.push(`${relativePath(folder)} missing types.ts`)
+        }
+      }
+
+      if (violations.length > 0) {
+        console.log('Missing types.ts files:')
+        violations.forEach((v) => console.log(`  - ${v}`))
+      }
+
+      expect(violations).toHaveLength(0)
+    })
+
+    it('all layout widgets have types.ts', async () => {
+      const folders = await getFolders('content/widgets/layout/*')
+      const violations: string[] = []
+
+      for (const folder of folders) {
+        const typesPath = path.join(folder, 'types.ts')
+        const exists = await fileExists(typesPath)
+        if (!exists) {
+          violations.push(`${relativePath(folder)} missing types.ts`)
+        }
+      }
+
+      if (violations.length > 0) {
+        console.log('Missing types.ts files:')
+        violations.forEach((v) => console.log(`  - ${v}`))
+      }
+
+      expect(violations).toHaveLength(0)
+    })
+
+    it('all interactive widgets have types.ts', async () => {
+      const folders = await getFolders('content/widgets/interactive/*')
+      const violations: string[] = []
+
+      for (const folder of folders) {
+        const typesPath = path.join(folder, 'types.ts')
+        const exists = await fileExists(typesPath)
+        if (!exists) {
+          violations.push(`${relativePath(folder)} missing types.ts`)
+        }
+      }
+
+      if (violations.length > 0) {
+        console.log('Missing types.ts files:')
+        violations.forEach((v) => console.log(`  - ${v}`))
+      }
+
+      expect(violations).toHaveLength(0)
+    })
+
+    it('all widget patterns have types.ts', async () => {
+      const folders = await getFolders('content/widgets/patterns/*')
+      const violations: string[] = []
+
+      for (const folder of folders) {
+        const typesPath = path.join(folder, 'types.ts')
+        const exists = await fileExists(typesPath)
+        if (!exists) {
+          violations.push(`${relativePath(folder)} missing types.ts`)
+        }
+      }
+
+      if (violations.length > 0) {
+        console.log('Missing types.ts files:')
+        violations.forEach((v) => console.log(`  - ${v}`))
+      }
+
+      expect(violations).toHaveLength(0)
+    })
+
+    it('all section patterns have types.ts', async () => {
+      const folders = await getFolders('content/sections/patterns/*')
+      const violations: string[] = []
+
+      for (const folder of folders) {
+        const typesPath = path.join(folder, 'types.ts')
+        const exists = await fileExists(typesPath)
+        if (!exists) {
+          violations.push(`${relativePath(folder)} missing types.ts`)
+        }
+      }
+
+      if (violations.length > 0) {
+        console.log('Missing types.ts files:')
+        violations.forEach((v) => console.log(`  - ${v}`))
+      }
+
+      expect(violations).toHaveLength(0)
     })
   })
 
