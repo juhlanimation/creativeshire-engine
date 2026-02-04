@@ -12,6 +12,7 @@ import type {
   NavigationInputOptions,
   NavigableExperienceState,
 } from '../experiences/types'
+import { useContainer } from '../../interface/ContainerContext'
 import { useWheelNavigation } from './useWheelNavigation'
 import { useKeyboardNavigation } from './useKeyboardNavigation'
 import { useSwipeNavigation } from './useSwipeNavigation'
@@ -28,6 +29,9 @@ export function NavigationInitializer({
   config,
   totalSections,
 }: NavigationInitializerProps): null {
+  // Get container context for contained mode support
+  const { mode: containerMode, containerRef } = useContainer()
+
   // Initialize total sections count on mount
   useEffect(() => {
     store.setState({ totalSections })
@@ -115,6 +119,8 @@ export function NavigationInitializer({
     config,
     enabled: keyboardEnabled,
     options: keyboardOptions,
+    containerMode,
+    containerRef,
   })
 
   useSwipeNavigation({

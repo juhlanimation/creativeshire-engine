@@ -74,3 +74,27 @@ function Sidebar() {
 - Update specs if interface changes
 
 Spec: [interface.spec.md](/.claude/skills/engine/specs/layers/interface.spec.md)
+
+## Container-Aware Event Pattern
+
+When adding event listeners, use container-scoped targets for iframe/contained mode support:
+
+```typescript
+import { useContainer } from '../../interface/ContainerContext'
+
+function MyComponent() {
+  const { mode, containerRef } = useContainer()
+
+  useEffect(() => {
+    // Choose event target based on mode
+    const target = mode === 'contained' && containerRef?.current
+      ? containerRef.current
+      : document
+
+    target.addEventListener('click', handler)
+    return () => target.removeEventListener('click', handler)
+  }, [mode, containerRef])
+}
+```
+
+**ESLint enforces this:** `local/no-document-events` warns on `document.addEventListener` in engine code.

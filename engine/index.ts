@@ -47,6 +47,10 @@ export {
   useEngineState,
   useEngineStore,
   createEngineStore,
+  // Container context for preview/iframe mode
+  ContainerProvider,
+  useContainer,
+  useIsContained,
 } from './interface'
 
 export type {
@@ -54,6 +58,9 @@ export type {
   EngineState,
   EngineController,
   EngineEvents,
+  ContainerMode,
+  ContainerConfig,
+  ContainerProviderProps,
 } from './interface'
 
 // Note: For full access to all exports, use subpath imports:

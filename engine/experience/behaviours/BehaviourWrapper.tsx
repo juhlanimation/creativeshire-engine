@@ -25,7 +25,8 @@ import {
   type CSSProperties,
 } from 'react'
 import { resolveBehaviour } from './resolve'
-import { ScrollDriver } from '../drivers/ScrollDriver'
+import { getDriver, releaseDriver } from '../drivers/getDriver'
+import { useContainer } from '../../interface/ContainerContext'
 import type { BehaviourState, CSSVariables } from '../../schema/experience'
 import type { Behaviour } from './types'
 
@@ -76,31 +77,6 @@ const SCROLL_DEPENDENCIES = new Set([
 ])
 
 /**
- * Lazy singleton ScrollDriver instance.
- * Created on first use, shared across all BehaviourWrappers.
- * Destroyed when no more wrappers are registered.
- */
-let sharedDriver: ScrollDriver | null = null
-let driverRefCount = 0
-
-function getDriver(): ScrollDriver {
-  if (!sharedDriver) {
-    sharedDriver = new ScrollDriver()
-  }
-  driverRefCount++
-  return sharedDriver
-}
-
-function releaseDriver(): void {
-  driverRefCount--
-  if (driverRefCount <= 0 && sharedDriver) {
-    sharedDriver.destroy()
-    sharedDriver = null
-    driverRefCount = 0
-  }
-}
-
-/**
  * Check if behaviour requires scroll driver.
  * Returns true if any of the behaviour's requires array contains scroll-related state.
  */
@@ -134,6 +110,10 @@ export function BehaviourWrapper({
   const ref = useRef<HTMLDivElement>(null)
   const id = useId()
 
+  // Get container context for contained mode support
+  const { mode, containerRef } = useContainer()
+  const container = mode === 'contained' ? containerRef?.current ?? null : null
+
   // Local interaction state
   const [isHovered, setIsHovered] = useState(false)
   const [isPressed, setIsPressed] = useState(false)
@@ -156,13 +136,14 @@ export function BehaviourWrapper({
   }, [behaviour])
 
   // Register with ScrollDriver for scroll-based behaviours
+  // Uses container-aware driver factory for contained mode support
   useEffect(() => {
     if (!behaviour || !usesScrollDriver || !ref.current) {
       return
     }
 
     const element = ref.current
-    const driver = getDriver()
+    const driver = getDriver(container)
 
     // Register element with driver
     driver.register(id, element, behaviour, options ?? {})
@@ -170,9 +151,9 @@ export function BehaviourWrapper({
     // Cleanup: unregister from driver and release reference
     return () => {
       driver.unregister(id)
-      releaseDriver()
+      releaseDriver(container)
     }
-  }, [behaviour, usesScrollDriver, id, options])
+  }, [behaviour, usesScrollDriver, id, options, container])
 
   // Event handlers
   const handleMouseEnter = useCallback(() => setIsHovered(true), [])

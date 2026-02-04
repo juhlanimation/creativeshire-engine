@@ -16,7 +16,7 @@
  * ```
  */
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type RefObject } from 'react'
 import type { StoreApi } from 'zustand'
 import type {
   NavigableExperienceState,
@@ -24,6 +24,7 @@ import type {
   NavigationInput,
   NavigationInputOptions,
 } from '../experiences/types'
+import type { ContainerMode } from '../../interface/ContainerContext'
 
 export interface KeyboardNavigationOptions {
   /** Zustand store with navigation state */
@@ -34,6 +35,10 @@ export interface KeyboardNavigationOptions {
   enabled?: boolean
   /** Override options (takes precedence over config.inputs options) */
   options?: NavigationInputOptions
+  /** Container mode for contained rendering */
+  containerMode?: ContainerMode
+  /** Container ref for contained mode */
+  containerRef?: RefObject<HTMLElement | null>
 }
 
 /** Default keys for navigation */
@@ -48,7 +53,14 @@ const DEFAULT_KEYS = {
  * Hook that listens to keyboard events and triggers section navigation.
  */
 export function useKeyboardNavigation(hookOptions: KeyboardNavigationOptions): void {
-  const { store, config, enabled = true, options: overrideOptions } = hookOptions
+  const {
+    store,
+    config,
+    enabled = true,
+    options: overrideOptions,
+    containerMode,
+    containerRef,
+  } = hookOptions
 
   // Find keyboard input config
   const keyboardInput = config.inputs.find((i) => i.type === 'keyboard')
@@ -157,13 +169,17 @@ export function useKeyboardNavigation(hookOptions: KeyboardNavigationOptions): v
       }
     }
 
-    // Add listener
-    document.addEventListener('keydown', handleKeydown)
+    // Add listener (container-aware)
+    const eventTarget = containerMode === 'contained' && containerRef?.current
+      ? containerRef.current
+      : document
+
+    eventTarget.addEventListener('keydown', handleKeydown)
 
     return () => {
-      document.removeEventListener('keydown', handleKeydown)
+      eventTarget.removeEventListener('keydown', handleKeydown)
     }
-  }, [isKeyboardEnabled, keyboardInput, config, store, overrideOptions])
+  }, [isKeyboardEnabled, keyboardInput, config, store, overrideOptions, containerMode, containerRef])
 }
 
 export default useKeyboardNavigation

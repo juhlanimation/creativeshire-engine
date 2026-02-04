@@ -222,6 +222,199 @@ const config: Config = {
 
 ---
 
+## Step 6: Contained Mode (iframe/Preview)
+
+When rendering the engine inside an iframe or preview canvas (like a CMS editor), wrap `SiteRenderer` with `ContainerProvider` in contained mode. This ensures all features work identically to fullpage mode:
+
+- Fade-in animations (IntersectionObserver scoped to container)
+- CursorLabel overlays (events scoped to container)
+- Modal keyboard handling (Escape key, focus trap)
+- Smooth scrolling (wheel lerp within container)
+- Slideshow keyboard navigation
+
+### Preview Canvas Component
+
+```tsx
+'use client'
+
+import { useRef } from 'react'
+import { SiteRenderer, ContainerProvider } from '@creativeshire/engine'
+import type { SiteSchema, PageSchema } from '@creativeshire/engine/schema'
+
+interface PreviewCanvasProps {
+  site: SiteSchema
+  page: PageSchema
+}
+
+export function PreviewCanvas({ site, page }: PreviewCanvasProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  return (
+    <div
+      ref={containerRef}
+      style={{
+        position: 'relative',
+        overflow: 'auto',
+        height: '100vh',
+        width: '100%',
+      }}
+    >
+      <ContainerProvider mode="contained" containerRef={containerRef}>
+        <SiteRenderer site={site} page={page} />
+      </ContainerProvider>
+    </div>
+  )
+}
+```
+
+### How It Works
+
+| Feature | Fullpage Mode | Contained Mode |
+|---------|--------------|----------------|
+| Scroll detection | `window` scroll | Container scroll |
+| Visibility (fade-in) | Viewport intersection | Container intersection |
+| Event listeners | `document` | `containerRef.current` |
+| Portals (modals) | `document.body` | Container element |
+| Smooth scroll | GSAP ScrollSmoother | Wheel lerp interpolation |
+
+### Container Requirements
+
+The container element must have:
+- `position: relative` (for absolute-positioned children)
+- `overflow: auto` or `overflow: scroll` (for scroll detection)
+- Explicit height (e.g., `100vh`, `600px`, `100%`)
+
+### Importing ContainerProvider
+
+```typescript
+import { ContainerProvider } from '@creativeshire/engine'
+// or
+import { ContainerProvider } from '@creativeshire/engine/interface'
+```
+
+---
+
+## Step 6b: True iframe Mode (Optional)
+
+If you need a true `<iframe>` (separate document), create a preview route with its own CSS.
+
+### Why iframe?
+
+Use true iframe when you need:
+- Complete CSS isolation from platform UI
+- Security sandbox for untrusted content
+- Separate scroll context
+
+For most CMS previews, the ContainerProvider approach (Step 6) is simpler and recommended.
+
+### Preview Route Structure
+
+```
+src/app/
+├── (platform)/           # Platform UI (dashboard, etc.)
+│   └── layout.tsx        # Platform styles
+├── preview/              # Engine preview (iframe target)
+│   ├── layout.tsx        # Engine styles ONLY
+│   ├── globals.css       # Minimal CSS for engine
+│   └── [site]/
+│       └── page.tsx      # SiteRenderer
+```
+
+### Preview Layout (iframe CSS)
+
+Create `src/app/preview/layout.tsx`:
+
+```tsx
+import './globals.css'
+
+export default function PreviewLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+
+### Preview Globals (engine-only CSS)
+
+Create `src/app/preview/globals.css`:
+
+```css
+/* Tailwind for engine components */
+@import "tailwindcss";
+
+/* Engine core styles */
+@import "@creativeshire/engine/styles";
+
+/* Preset styles (if using bojuhl) */
+@import "@creativeshire/engine/presets/bojuhl/styles";
+
+/* Scan engine components for Tailwind classes */
+@source "../../../node_modules/@creativeshire/engine/**/*.tsx";
+
+/* Minimal resets for iframe */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+```
+
+### Preview Page
+
+Create `src/app/preview/[site]/page.tsx`:
+
+```tsx
+import { SiteRenderer } from '@creativeshire/engine'
+import { bojuhlPreset } from '@creativeshire/engine/presets'
+
+interface Props {
+  params: Promise<{ site: string }>
+}
+
+export default async function PreviewPage({ params }: Props) {
+  const { site } = await params
+
+  if (site === 'bojuhl') {
+    return <SiteRenderer config={bojuhlPreset.site} page={bojuhlPreset.pages.home} />
+  }
+
+  return <div>Site not found: {site}</div>
+}
+```
+
+### Using the iframe in Platform
+
+```tsx
+// In your CMS editor component
+export function EditorCanvas() {
+  return (
+    <iframe
+      src="/preview/bojuhl"
+      style={{ width: '100%', height: '100%', border: 'none' }}
+    />
+  )
+}
+```
+
+### Tailwind Isolation
+
+With this setup:
+- **Platform CSS**: `src/app/(platform)/globals.css` - for dashboard, controls
+- **Preview CSS**: `src/app/preview/globals.css` - for engine only
+
+Each has its own Tailwind config, ensuring no class conflicts.
+
+---
+
 ## Step 7: Create Site Route
 
 Create `src/app/[site]/page.tsx`:

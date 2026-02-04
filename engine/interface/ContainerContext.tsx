@@ -26,6 +26,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useState,
   type ReactNode,
   type RefObject,
 } from 'react'
@@ -95,9 +96,21 @@ export interface ContainerProviderProps {
 export function ContainerProvider({
   mode = 'fullpage',
   containerRef,
-  portalTarget,
+  portalTarget: providedPortalTarget,
   children,
 }: ContainerProviderProps) {
+  // Track when container is mounted (for portalTarget timing)
+  // containerRef.current may be null on first render before ref is attached
+  const [mountedContainer, setMountedContainer] = useState<HTMLElement | null>(null)
+
+  // Update mounted container when ref becomes available
+  useEffect(() => {
+    if (mode === 'contained' && containerRef?.current) {
+      setMountedContainer(containerRef.current)
+    }
+    return () => setMountedContainer(null)
+  }, [mode, containerRef])
+
   // Set CSS variables on container in contained mode
   useEffect(() => {
     if (mode !== 'contained' || !containerRef?.current) return
@@ -143,6 +156,7 @@ export function ContainerProvider({
   }, [mode, containerRef])
 
   // Memoize context value
+  // Uses mountedContainer state to ensure portalTarget is available after ref attaches
   const value = useMemo<ContainerConfig>(() => {
     const getViewportHeight = () => {
       if (mode === 'contained' && containerRef?.current) {
@@ -158,14 +172,17 @@ export function ContainerProvider({
       return typeof window !== 'undefined' ? window.innerWidth : 0
     }
 
+    // Portal target: use provided, or mounted container in contained mode, or null
+    const resolvedPortalTarget = providedPortalTarget ?? (mode === 'contained' ? mountedContainer : null)
+
     return {
       mode,
       containerRef,
-      portalTarget: portalTarget ?? containerRef?.current ?? null,
+      portalTarget: resolvedPortalTarget,
       getViewportHeight,
       getViewportWidth,
     }
-  }, [mode, containerRef, portalTarget])
+  }, [mode, containerRef, providedPortalTarget, mountedContainer])
 
   return (
     <ContainerContext.Provider value={value}>

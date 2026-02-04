@@ -176,15 +176,44 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
     // Store smooth value for context
     smoothValueRef.current = smoothValue
 
+    // Handle anchor link clicks within container
+    const handleAnchorClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      const anchor = target.closest('a[href^="#"]')
+      if (anchor) {
+        const href = anchor.getAttribute('href')
+        if (href?.startsWith('#')) {
+          e.preventDefault()
+          // Scope querySelector to container
+          const targetElement = container.querySelector(href) as HTMLElement | null
+          if (targetElement) {
+            // Calculate target scroll position
+            const containerRect = container.getBoundingClientRect()
+            const targetRect = targetElement.getBoundingClientRect()
+            const targetScrollTop = container.scrollTop + (targetRect.top - containerRect.top)
+            const maxScroll = container.scrollHeight - container.clientHeight
+            targetScroll = Math.max(0, Math.min(targetScrollTop, maxScroll))
+            // Start animation if not already running
+            if (!isScrolling) {
+              isScrolling = true
+              rafId = requestAnimationFrame(animate)
+            }
+          }
+        }
+      }
+    }
+
     // Add event listeners
     container.addEventListener('wheel', handleWheel, { passive: false })
     container.addEventListener('scroll', handleScroll, { passive: true })
+    container.addEventListener('click', handleAnchorClick)
 
     setIsReady(true)
 
     return () => {
       container.removeEventListener('wheel', handleWheel)
       container.removeEventListener('scroll', handleScroll)
+      container.removeEventListener('click', handleAnchorClick)
       if (rafId) cancelAnimationFrame(rafId)
     }
     // Note: containerRef excluded from deps - refs are stable by design

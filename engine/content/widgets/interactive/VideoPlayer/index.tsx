@@ -111,6 +111,26 @@ const VideoPlayer = memo(function VideoPlayer({
   // Auto-save position
   useAutoSavePosition(videoRef, src)
 
+  // Cleanup: pause video and clear audio on unmount
+  // Without this, audio continues playing after modal closes
+  useEffect(() => {
+    const video = videoRef.current
+
+    return () => {
+      if (video) {
+        video.pause()
+        video.currentTime = 0
+        video.src = '' // Clear src to stop any buffered audio
+        video.load() // Reset the video element completely
+      }
+
+      // Clear controls timeout
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current)
+      }
+    }
+  }, [])
+
   // Handle video ready - fade in and play (matches bojuhl.com)
   const handleCanPlay = useCallback(() => {
     if (videoReady) return

@@ -6,12 +6,12 @@
  * @see engine/experience/experiences/cinematic-portfolio.ts
  */
 
-import type { PresetExperienceConfig } from '../types'
+import type { PresetExperienceConfig } from "../types";
 
 /**
  * Experience configuration for Bojuhl preset.
  * Uses cinematic-portfolio experience with scroll-driven behaviours.
  */
 export const experienceConfig: PresetExperienceConfig = {
-  id: 'cinematic-portfolio',
-}
+  id: "stacking",
+};

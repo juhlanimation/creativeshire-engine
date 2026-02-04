@@ -269,7 +269,24 @@ export class ScrollDriver implements Driver {
     this.visibility.set(id, { visibility: 0 })
     this.observer?.observe(element)
 
-    // Mark dirty to apply initial values on next frame
+    // Apply initial CSS variables synchronously to prevent flash
+    // Without this, elements flash visible for 1 frame before RAF applies vars
+    const initialState: BehaviourState = {
+      scrollProgress: this.state.scrollProgress,
+      scrollVelocity: 0,
+      sectionProgress: 0,
+      sectionVisibility: 0, // Not visible yet
+      sectionIndex: 0,
+      totalSections: 1,
+      isActive: true,
+      prefersReducedMotion: this.prefersReducedMotion,
+    }
+    const vars = behaviour.compute(initialState, options)
+    Object.entries(vars).forEach(([key, value]) => {
+      element.style.setProperty(key, String(value))
+    })
+
+    // Mark dirty to apply values on next frame (visibility may change)
     this.state.needsUpdate = true
   }
 

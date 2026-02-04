@@ -48,8 +48,8 @@ const CursorLabel = memo(function CursorLabel({
   // Check for touch device
   const [isTouchDevice, setIsTouchDevice] = useState(false)
 
-  // Get container context for portal target
-  const { portalTarget } = useContainer()
+  // Get container context for portal target and event scoping
+  const { mode, containerRef, portalTarget } = useContainer()
 
   // Read cursor position from experience store (set by useCursorPosition trigger)
   const { store } = useExperience()
@@ -85,14 +85,19 @@ const CursorLabel = memo(function CursorLabel({
 
     // Hover detection via event delegation
     // Note: mousemove is handled by useCursorPosition trigger in L2
-    document.addEventListener('mouseover', handleMouseOver)
-    document.addEventListener('mouseout', handleMouseOut)
+    // In contained mode, scope to container element
+    const eventTarget = mode === 'contained' && containerRef?.current
+      ? containerRef.current
+      : document
+
+    eventTarget.addEventListener('mouseover', handleMouseOver as EventListener)
+    eventTarget.addEventListener('mouseout', handleMouseOut as EventListener)
 
     return () => {
-      document.removeEventListener('mouseover', handleMouseOver)
-      document.removeEventListener('mouseout', handleMouseOut)
+      eventTarget.removeEventListener('mouseover', handleMouseOver as EventListener)
+      eventTarget.removeEventListener('mouseout', handleMouseOut as EventListener)
     }
-  }, [mounted, isTouchDevice, handleMouseOver, handleMouseOut])
+  }, [mounted, isTouchDevice, handleMouseOver, handleMouseOut, mode, containerRef])
 
   // Don't render on server or touch devices
   if (!mounted || isTouchDevice) {

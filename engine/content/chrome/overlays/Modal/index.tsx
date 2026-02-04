@@ -103,7 +103,7 @@ const Modal = memo(function Modal() {
     previousFocusRef.current?.focus()
   }, [setTransitionPhase, config])
 
-  // ESC key to close
+  // ESC key to close (container-aware)
   useEffect(() => {
     if (!activeModal || !closeOnEsc) return
     if (transitionPhase !== 'open') return
@@ -114,9 +114,14 @@ const Modal = memo(function Modal() {
       }
     }
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [activeModal, closeOnEsc, transitionPhase, handleClose])
+    // In contained mode, scope to container element
+    const eventTarget = mode === 'contained' && containerRef?.current
+      ? containerRef.current
+      : document
+
+    eventTarget.addEventListener('keydown', handleKeyDown as EventListener)
+    return () => eventTarget.removeEventListener('keydown', handleKeyDown as EventListener)
+  }, [activeModal, closeOnEsc, transitionPhase, handleClose, mode, containerRef])
 
   // Lock scroll when visible (container-aware)
   useEffect(() => {
@@ -192,9 +197,14 @@ const Modal = memo(function Modal() {
       }
     }
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [transitionPhase])
+    // In contained mode, scope to container element
+    const eventTarget = mode === 'contained' && containerRef?.current
+      ? containerRef.current
+      : document
+
+    eventTarget.addEventListener('keydown', handleKeyDown as EventListener)
+    return () => eventTarget.removeEventListener('keydown', handleKeyDown as EventListener)
+  }, [transitionPhase, mode, containerRef])
 
   // Handle backdrop click
   const handleBackdropClick = useCallback(() => {

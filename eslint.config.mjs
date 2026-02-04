@@ -1,6 +1,18 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
+import noDocumentEvents from "./eslint-rules/no-document-events.js";
+
+// Local plugin for engine-specific rules
+const localPlugin = {
+  meta: {
+    name: "local",
+    version: "1.0.0",
+  },
+  rules: {
+    "no-document-events": noDocumentEvents,
+  },
+};
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -15,6 +27,17 @@ const eslintConfig = defineConfig([
     // Agent tooling (not application code)
     ".claude/**",
   ]),
+  // Engine-specific rules for container awareness
+  {
+    files: ["engine/**/*.ts", "engine/**/*.tsx"],
+    plugins: {
+      local: localPlugin,
+    },
+    rules: {
+      // Warn on document.addEventListener - use container-aware targets
+      "local/no-document-events": "warn",
+    },
+  },
 ]);
 
 export default eslintConfig;

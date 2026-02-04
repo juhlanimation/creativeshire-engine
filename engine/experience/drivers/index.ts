@@ -29,6 +29,9 @@ export {
 export { ScrollDriver } from './ScrollDriver'
 export { MomentumDriver } from './MomentumDriver'
 
+// Container-aware driver factory
+export { getDriver, releaseDriver, getDriverRefCount, hasDriver } from './getDriver'
+
 // Hook-based drivers (legacy - for migration)
 export { useScrollFadeDriver } from './useScrollFadeDriver'
 export type { UseScrollFadeDriverOptions } from './useScrollFadeDriver'
