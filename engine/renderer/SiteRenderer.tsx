@@ -149,6 +149,7 @@ export function SiteRenderer({ site, page }: SiteRendererProps) {
     : site.theme?.smoothScroll
 
   return (
+    <div data-site-renderer>
     <ThemeProvider theme={site.theme}>
       <ExperienceProvider experience={experience} store={store}>
         <TransitionProvider config={experience.pageTransition}>
@@ -227,6 +228,7 @@ export function SiteRenderer({ site, page }: SiteRendererProps) {
         </TransitionProvider>
       </ExperienceProvider>
     </ThemeProvider>
+    </div>
   )
 }
 

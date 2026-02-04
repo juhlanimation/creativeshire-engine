@@ -1,0 +1,67 @@
+/**
+ * Site base styles.
+ * Applied to the rendered site, not the platform.
+ *
+ * Uses [data-site-renderer] to scope styles to the site.
+ * Platform owns generic resets (box-sizing, margin: 0, etc.)
+ * Engine owns site design defaults (typography, media, scroll).
+ */
+
+/* =============================================================================
+ * SCROLL BEHAVIOR
+ * Smooth scrolling for the site
+ * ============================================================================= */
+
+html:has([data-site-renderer]) {
+  scroll-behavior: smooth;
+}
+
+/* =============================================================================
+ * TYPOGRAPHY
+ * Site-level typography defaults
+ * ============================================================================= */
+
+/* Font smoothing for crisp text */
+[data-site-renderer] {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Links inherit color from parent (site controls link colors) */
+[data-site-renderer] a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+/* =============================================================================
+ * MEDIA
+ * Images and videos display as blocks with responsive max-width
+ * ============================================================================= */
+
+[data-site-renderer] img,
+[data-site-renderer] video {
+  display: block;
+  max-width: 100%;
+}
+
+/* =============================================================================
+ * CONTAINED MODE
+ * Same styles for iframe/preview rendering
+ * ============================================================================= */
+
+[data-engine-container] {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+[data-engine-container] a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+[data-engine-container] img,
+[data-engine-container] video {
+  display: block;
+  max-width: 100%;
+}

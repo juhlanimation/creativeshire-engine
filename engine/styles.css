@@ -9,7 +9,10 @@
  * - Presentation (slideshow, carousel containers)
  * - Widget styles (primitives, layout, interactive, patterns)
  * - Chrome styles (regions, overlays)
- * - Renderer styles
+ * - Renderer styles (chrome, base, scrollbar)
+ *
+ * Site-scoped styles (base.css, scrollbar.css) use [data-site-renderer]
+ * to target only the rendered site, not the platform.
  *
  * Does NOT include preset-specific styles - those are bundled with each preset.
  */
@@ -76,3 +79,5 @@
  * RENDERER
  * ============================================================================= */
 @import './renderer/chrome.css';
+@import './renderer/base.css';
+@import './renderer/scrollbar.css';

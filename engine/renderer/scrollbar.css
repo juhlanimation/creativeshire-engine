@@ -1,0 +1,95 @@
+/**
+ * Site scrollbar styles.
+ * Part of the site's visual design, not the platform's.
+ *
+ * Uses CSS variables set by ThemeProvider:
+ * - --scrollbar-width (default: 6px)
+ * - --scrollbar-thumb (default: #000)
+ * - --scrollbar-track (default: #fff)
+ * - --scrollbar-thumb-dark (default: #fff)
+ * - --scrollbar-track-dark (default: #0a0a0a)
+ *
+ * Container-aware:
+ * - Fullpage mode: styles html scrollbar
+ * - Contained mode: styles [data-engine-container] scrollbar
+ */
+
+/* =============================================================================
+ * FULLPAGE MODE - styles the document scrollbar
+ * Applied when SiteRenderer is the main page content
+ * ============================================================================= */
+
+html:has([data-site-renderer]) {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb, #000000) var(--scrollbar-track, #ffffff);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:has([data-site-renderer]) {
+    scrollbar-color: var(--scrollbar-thumb-dark, #ffffff) var(--scrollbar-track-dark, #0a0a0a);
+  }
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+html:has([data-site-renderer])::-webkit-scrollbar {
+  width: var(--scrollbar-width, 6px);
+}
+
+html:has([data-site-renderer])::-webkit-scrollbar-track {
+  background: var(--scrollbar-track, #ffffff);
+}
+
+html:has([data-site-renderer])::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, #000000);
+  border-radius: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:has([data-site-renderer])::-webkit-scrollbar-track {
+    background: var(--scrollbar-track-dark, #0a0a0a);
+  }
+  html:has([data-site-renderer])::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb-dark, #ffffff);
+  }
+}
+
+/* =============================================================================
+ * CONTAINED MODE - styles the container scrollbar
+ * Applied when SiteRenderer is inside an iframe/preview container
+ * ============================================================================= */
+
+[data-engine-container] {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb, #000000) var(--scrollbar-track, #ffffff);
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-engine-container] {
+    scrollbar-color: var(--scrollbar-thumb-dark, #ffffff) var(--scrollbar-track-dark, #0a0a0a);
+  }
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+[data-engine-container]::-webkit-scrollbar {
+  width: var(--scrollbar-width, 6px);
+}
+
+[data-engine-container]::-webkit-scrollbar-track {
+  background: var(--scrollbar-track, #ffffff);
+}
+
+[data-engine-container]::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, #000000);
+  border-radius: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-engine-container]::-webkit-scrollbar-track {
+    background: var(--scrollbar-track-dark, #0a0a0a);
+  }
+  [data-engine-container]::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb-dark, #ffffff);
+  }
+}

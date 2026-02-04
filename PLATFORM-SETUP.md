@@ -106,7 +106,7 @@ Create `src/app/globals.css`:
 ```css
 @import "tailwindcss";
 
-/* Engine component styles - AFTER Tailwind */
+/* Engine styles - includes site base, scrollbar, widgets, effects, chrome */
 @import "@creativeshire/engine/styles";
 
 /* If using a preset, import its styles too */
@@ -115,33 +115,23 @@ Create `src/app/globals.css`:
 /* Tell Tailwind to scan engine components */
 @source "../node_modules/@creativeshire/engine/**/*.tsx";
 
-/* Platform's base resets */
+/* =============================================================================
+ * PLATFORM RESETS ONLY
+ * Site-specific styles (scrollbar, typography, media) come from engine.
+ * These are generic resets for the platform itself.
+ * ============================================================================= */
+
 *, *::before, *::after {
   box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: var(--font-sans), system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, h5, h6, p {
   margin: 0;
-}
-
-a {
-  color: inherit;
-}
-
-img, video {
-  display: block;
-  max-width: 100%;
 }
 
 button {
@@ -152,6 +142,15 @@ button {
   font: inherit;
 }
 ```
+
+**Note:** The engine now provides site-scoped styles for:
+- Scrollbar (themed via ThemeProvider)
+- Scroll behavior (`smooth`)
+- Font smoothing
+- Link color inheritance
+- Image/video block display
+
+These are applied to `[data-site-renderer]` so they only affect the rendered site, not platform UI.
 
 ### Font Setup (Required)
 
