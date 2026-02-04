@@ -25,15 +25,38 @@ export function createFeaturedProjectsSection(props: FeaturedProjectsProps): Sec
   let contentWrapper: WidgetSchema
 
   if (isBindingExpression(props.projects)) {
-    // Binding expression: create a widget that handles the array at runtime
+    // Binding expression: use __repeat pattern for platform expansion
+    // Platform will clone this template for each item in the array
+    // and resolve {{ item.xxx }} bindings per-clone
+    const templateCard = createProjectCard({
+      id: 'project-card',
+      thumbnailSrc: '{{ item.thumbnailSrc }}',
+      thumbnailAlt: '{{ item.thumbnailAlt }}',
+      videoSrc: '{{ item.videoSrc }}',
+      videoUrl: '{{ item.videoUrl }}',
+      client: '{{ item.client }}',
+      studio: '{{ item.studio }}',
+      title: '{{ item.title }}',
+      description: '{{ item.description }}',
+      year: '{{ item.year }}',
+      role: '{{ item.role }}',
+      // Note: alternating layout requires {{ item.$index }} support in platform
+      // For now, all cards use same layout. CSS :nth-child can provide visual alternation.
+      reversed: props.startReversed ?? false,
+    })
+
     contentWrapper = {
       id: 'featured-projects-content',
-      type: 'FeaturedProjectsGrid',
+      type: 'Flex',
       className: 'featured-projects__content',
       props: {
-        projects: props.projects,  // Binding expression passed through
-        startReversed: props.startReversed ?? false
-      }
+        direction: 'column',
+        align: 'stretch'
+      },
+      widgets: [{
+        ...templateCard,
+        __repeat: props.projects,  // Platform expands this at render time
+      }]
     }
   } else {
     // Real array: generate project cards at definition time

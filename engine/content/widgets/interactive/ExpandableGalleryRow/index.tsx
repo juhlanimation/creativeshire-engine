@@ -191,6 +191,13 @@ const ProjectLabels = memo(function ProjectLabels({
   )
 })
 
+/**
+ * Check if a value is a binding expression (starts with {{ content.)
+ */
+function isBindingExpression(value: unknown): value is string {
+  return typeof value === 'string' && value.startsWith('{{ content.')
+}
+
 const ExpandableGalleryRow = memo(function ExpandableGalleryRow({
   projects,
   height = '32rem',
@@ -202,6 +209,17 @@ const ExpandableGalleryRow = memo(function ExpandableGalleryRow({
   className,
   onClick,
 }: ExpandableGalleryRowProps) {
+  // If projects is a binding expression, render nothing
+  // Platform will resolve the binding and re-render with actual array
+  if (isBindingExpression(projects)) {
+    return null
+  }
+
+  // If not an array (shouldn't happen but defensive), render nothing
+  if (!Array.isArray(projects)) {
+    return null
+  }
+
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [lockedId, setLockedId] = useState<string | null>(null)
   // Track which item was just locked (needs to wait for transition)

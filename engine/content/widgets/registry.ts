@@ -37,6 +37,7 @@ import ExpandableGalleryRow from './interactive/ExpandableGalleryRow'
 import GalleryThumbnail from './interactive/GalleryThumbnail'
 import HeroRoles from './interactive/HeroRoles'
 import FeaturedProjectsGrid from './interactive/FeaturedProjectsGrid'
+import LogoMarquee from './interactive/LogoMarquee'
 
 // Chrome overlays (used by experience chrome)
 import SlideIndicators from '../chrome/overlays/SlideIndicators'
@@ -69,6 +70,7 @@ export const widgetRegistry: Record<string, WidgetComponent> = {
   GalleryThumbnail,
   HeroRoles,
   FeaturedProjectsGrid,
+  LogoMarquee,
   // Chrome overlays
   SlideIndicators,
 }

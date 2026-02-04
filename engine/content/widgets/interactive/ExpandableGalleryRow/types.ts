@@ -33,8 +33,8 @@ export interface ExpandableGalleryClickPayload {
  * Props for the ExpandableGalleryRow widget.
  */
 export interface ExpandableGalleryRowProps extends WidgetBaseProps {
-  /** Array of projects to display */
-  projects: GalleryProjectType[]
+  /** Array of projects to display OR binding expression string */
+  projects: GalleryProjectType[] | string
   /** Row height (default: '32rem') */
   height?: string
   /** Gap between thumbnails (default: '4px') */

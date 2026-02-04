@@ -1,0 +1,41 @@
+/**
+ * LogoMarquee widget styles.
+ * Infinite horizontal scroll animation.
+ */
+
+.logo-marquee {
+  overflow: hidden;
+  width: 100%;
+}
+
+.logo-marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll var(--marquee-duration, 30s) linear infinite;
+}
+
+.logo-marquee__logo {
+  flex-shrink: 0;
+  height: auto;
+  object-fit: contain;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.logo-marquee__logo:hover {
+  opacity: 1;
+}
+
+.logo-marquee__link {
+  flex-shrink: 0;
+  display: block;
+}
+
+.logo-marquee__link:hover .logo-marquee__logo {
+  opacity: 1;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}

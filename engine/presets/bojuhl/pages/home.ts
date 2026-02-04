@@ -221,6 +221,7 @@ const aboutSection: SectionSchema = {
 
 /**
  * Featured projects section schema with binding expressions.
+ * Uses __repeat for platform expansion - enables hierarchy panel editing.
  */
 const featuredProjectsSection: SectionSchema = {
   id: 'projects',
@@ -235,12 +236,94 @@ const featuredProjectsSection: SectionSchema = {
   widgets: [
     {
       id: 'featured-projects-content',
-      type: 'FeaturedProjectsGrid',
+      type: 'Flex',
       className: 'featured-projects__content',
       props: {
-        projects: '{{ content.projects.featured }}',
-        startReversed: false
-      }
+        direction: 'column',
+        align: 'stretch'
+      },
+      widgets: [
+        {
+          // Template widget - platform expands via __repeat
+          __repeat: '{{ content.projects.featured }}',
+          id: 'project-card',
+          type: 'Flex',
+          className: 'project-card',
+          props: {
+            align: 'start'
+          },
+          widgets: [
+            // Thumbnail column
+            {
+              id: 'project-card-thumbnail-col',
+              type: 'Box',
+              className: 'project-card__thumbnail-column',
+              widgets: [
+                {
+                  id: 'project-card-thumbnail',
+                  type: 'Video',
+                  props: {
+                    src: '{{ item.videoSrc }}',
+                    poster: '{{ item.thumbnailSrc }}',
+                    alt: '{{ item.thumbnailAlt }}',
+                    hoverPlay: true,
+                    aspectRatio: '16/9',
+                    videoUrl: '{{ item.videoUrl }}',
+                    modalAnimationType: 'wipe-left'
+                  },
+                  on: { click: 'open-video-modal' }
+                },
+                {
+                  id: 'project-card-meta',
+                  type: 'Flex',
+                  className: 'project-card__meta',
+                  props: { direction: 'row' },
+                  widgets: [
+                    {
+                      type: 'Text',
+                      props: { content: 'Client {{ item.client }}', as: 'span' },
+                      className: 'project-card__meta-item'
+                    },
+                    {
+                      type: 'Text',
+                      props: { content: 'Studio {{ item.studio }}', as: 'span' },
+                      className: 'project-card__meta-item'
+                    }
+                  ]
+                }
+              ]
+            },
+            // Content column
+            {
+              id: 'project-card-content',
+              type: 'Box',
+              className: 'project-card__content',
+              widgets: [
+                {
+                  type: 'Text',
+                  props: { content: '{{ item.title }}', as: 'h3' },
+                  className: 'project-card__title'
+                },
+                {
+                  type: 'Text',
+                  props: { content: '{{ item.description }}', as: 'p' },
+                  className: 'project-card__description'
+                },
+                {
+                  type: 'Text',
+                  props: { content: '{{ item.year }}', as: 'p' },
+                  className: 'project-card__year'
+                },
+                {
+                  type: 'Text',
+                  props: { content: '{{ item.role }}', as: 'p' },
+                  className: 'project-card__role'
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -129,6 +129,41 @@ describe('Registration Validation', () => {
 
       expect(violations).toHaveLength(0)
     })
+
+    it('all widget types in preset schemas are registered', async () => {
+      // Get all preset page files
+      const presetPages = await getFiles('presets/*/pages/*.ts')
+      const violations: string[] = []
+
+      // Section layout types (not widget types)
+      const layoutTypes = new Set(['stack', 'grid', 'flex', 'split'])
+
+      for (const file of presetPages) {
+        const content = await readFile(file)
+
+        // Find all type: 'WidgetName' patterns in widget definitions
+        // Widget types start with uppercase (Text, Flex, Video)
+        // Layout types are lowercase (stack, grid) - exclude these
+        const typeMatches = content.matchAll(/type:\s*['"]([A-Z]\w*)['"]/g)
+
+        for (const match of typeMatches) {
+          const widgetType = match[1]
+          // Skip layout types (case-insensitive check just in case)
+          if (layoutTypes.has(widgetType.toLowerCase())) continue
+
+          if (!widgetRegistry[widgetType]) {
+            violations.push(`${relativePath(file)}: Uses widget type "${widgetType}" which is not registered`)
+          }
+        }
+      }
+
+      if (violations.length > 0) {
+        console.log('Unregistered widget types used in schemas:')
+        violations.forEach((v) => console.log(`  - ${v}`))
+      }
+
+      expect(violations).toHaveLength(0)
+    })
   })
 
   describe('Chrome Registry', () => {

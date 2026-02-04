@@ -37,3 +37,7 @@ export type { HeroRolesProps } from './HeroRoles/types'
 // FeaturedProjectsGrid - featured project cards (supports binding expressions)
 export { default as FeaturedProjectsGrid } from './FeaturedProjectsGrid'
 export type { FeaturedProjectsGridProps, FeaturedProject } from './FeaturedProjectsGrid/types'
+
+// LogoMarquee - horizontal marquee of client logos (supports binding expressions)
+export { default as LogoMarquee } from './LogoMarquee'
+export type { LogoMarqueeProps, LogoItem } from './LogoMarquee/types'

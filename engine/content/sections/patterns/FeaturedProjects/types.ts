@@ -35,8 +35,8 @@ export interface FeaturedProject {
 export interface FeaturedProjectsProps {
   /** Section ID override (default: 'featured-projects') */
   id?: string
-  /** Array of featured projects */
-  projects: FeaturedProject[]
+  /** Array of featured projects OR binding expression string */
+  projects: FeaturedProject[] | string
   /** Start with reversed layout (first project has thumbnail right) */
   startReversed?: boolean
 }

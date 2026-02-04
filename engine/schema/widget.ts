@@ -48,6 +48,23 @@ export interface WidgetSchema {
    * ```
    */
   on?: WidgetEventMap
+  /**
+   * Repeat directive for dynamic content.
+   * Binding expression that resolves to an array.
+   * Platform expands this widget N times, one per array item.
+   * Use {{ item.xxx }} bindings in props to access item properties.
+   *
+   * @example
+   * ```typescript
+   * {
+   *   __repeat: '{{ content.projects.featured }}',
+   *   type: 'Flex',
+   *   props: { title: '{{ item.title }}' },
+   *   widgets: [...]
+   * }
+   * ```
+   */
+  __repeat?: string
 }
 
 /**
