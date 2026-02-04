@@ -39,10 +39,14 @@ export function createEngineStore(
 ): StoreApi<EngineState> {
   // Type assertion needed to avoid "type instantiation excessively deep" error
   // with Zustand + immer middleware on complex nested state types.
-  // Keep immer<EngineState> for internal type safety, cast at boundaries.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  type SetState = (fn: (state: EngineState) => void) => void
+  type GetState = () => EngineState
+
   return createStore()(
-    immer<EngineState>((set, get) => ({
+    immer((rawSet, rawGet) => {
+      const set = rawSet as SetState
+      const get = rawGet as GetState
+      return {
       // -----------------------------------------------------------------------
       // Initial state from input
       // -----------------------------------------------------------------------
@@ -268,9 +272,8 @@ export function createEngineStore(
           events?.onError?.(error)
         }
       },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    })) as any
-  ) as StoreApi<EngineState>
+    }})
+  ) as unknown as StoreApi<EngineState>
 }
 
 // =============================================================================
