@@ -80,7 +80,7 @@
   display: flex;
   justify-content: space-between;
   padding: 8px; /* px-2 py-2 */
-  font-family: var(--font-paragraph);
+  font-family: var(--font-paragraph, system-ui, -apple-system, sans-serif);
   font-size: 10px;
   line-height: 1.5;
   color: inherit; /* Inherit from section */

@@ -79,9 +79,135 @@ Update `tsconfig.json`:
 
 ---
 
-## Step 4: Configure Tailwind
+## Step 4: Configure Styles (CRITICAL)
 
-Update Tailwind to scan engine files. In `tailwind.config.ts`:
+The engine exports **component styles only**. The platform owns global styles.
+
+### What the engine provides
+
+```
+@creativeshire/engine/styles
+├── Widget styles (primitives, layout, interactive)
+├── Effect styles (fade, transform, mask)
+├── Chrome styles (footer, modal, overlays)
+└── Preset styles (section styling)
+```
+
+### What the platform must provide
+
+1. **Tailwind initialization**
+2. **Base resets** (box-sizing, margin, etc.)
+3. **Next.js fonts** with correct variable names
+
+### Platform's globals.css
+
+Create `src/app/globals.css`:
+
+```css
+@import "tailwindcss";
+
+/* Engine component styles - AFTER Tailwind */
+@import "@creativeshire/engine/styles";
+
+/* If using a preset, import its styles too */
+@import "@creativeshire/engine/presets/bojuhl/styles";
+
+/* Tell Tailwind to scan engine components */
+@source "../node_modules/@creativeshire/engine/**/*.tsx";
+
+/* Platform's base resets */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+img, video {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+```
+
+### Font Setup (Required)
+
+The engine's ThemeProvider sets `--font-title` and `--font-paragraph` at runtime.
+By default, these reference Next.js font variables that **you must define**:
+
+```typescript
+// src/app/layout.tsx
+import { Inter, Plus_Jakarta_Sans } from 'next/font/google'
+import './globals.css'
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',  // Engine default for --font-title
+})
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-plus-jakarta',  // Engine default for --font-paragraph
+})
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={`${inter.variable} ${plusJakarta.variable}`}>
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+
+### Alternative: Custom Font Mapping
+
+If you use different fonts, configure the theme:
+
+```typescript
+// In your site config
+const siteConfig: SiteSchema = {
+  theme: {
+    typography: {
+      title: 'var(--your-heading-font), system-ui, sans-serif',
+      paragraph: 'var(--your-body-font), system-ui, sans-serif',
+    }
+  },
+  // ...
+}
+```
+
+### Font Variable Fallbacks
+
+Engine CSS now includes fallbacks (`system-ui, -apple-system, sans-serif`), so components will render even without custom fonts. But for proper branding, always define your fonts.
+
+---
+
+## Step 5: Configure Tailwind
+
+Update `tailwind.config.ts` to scan engine:
 
 ```typescript
 import type { Config } from 'tailwindcss'
@@ -97,7 +223,7 @@ const config: Config = {
 
 ---
 
-## Step 5: Create Site Route
+## Step 7: Create Site Route
 
 Create `src/app/[site]/page.tsx`:
 
@@ -124,7 +250,7 @@ export default async function SitePage({ params }: Props) {
 
 ---
 
-## Step 6: Create Platform CLAUDE.md
+## Step 8: Create Platform CLAUDE.md
 
 Create `CLAUDE.md` in platform repo:
 

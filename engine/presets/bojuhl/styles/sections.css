@@ -159,7 +159,7 @@
 
 /* Bio text - reference: text-sm (14px), leading-relaxed */
 #about .text-widget {
-  font-family: var(--font-paragraph);
+  font-family: var(--font-paragraph, system-ui, -apple-system, sans-serif);
   font-size: 14px;
   line-height: 1.625; /* leading-relaxed */
   color: white; /* Inherits from section - no opacity reduction */
@@ -169,7 +169,7 @@
 
 /* Signature styling - reference: italic, right-aligned */
 #about .text-widget[data-variant="signature"] {
-  font-family: var(--font-paragraph);
+  font-family: var(--font-paragraph, system-ui, -apple-system, sans-serif);
   font-size: 14px;
   font-style: italic;
   font-weight: 400;
@@ -314,7 +314,7 @@
 /* Section heading - reference: font-title text-[10px] font-bold uppercase text-right */
 /* Uses font-weight: 900 (black) to match ProjectCard title styling */
 .other-projects-heading {
-  font-family: var(--font-title);
+  font-family: var(--font-title, system-ui, -apple-system, sans-serif);
   font-size: 10px;
   font-weight: 900;
   text-transform: uppercase;
@@ -324,7 +324,7 @@
 
 /* Year range - reference: font-paragraph text-[10px] text-right */
 .other-projects-year-range {
-  font-family: var(--font-paragraph);
+  font-family: var(--font-paragraph, system-ui, -apple-system, sans-serif);
   font-size: 10px;
   font-weight: 400;
   text-align: right;
