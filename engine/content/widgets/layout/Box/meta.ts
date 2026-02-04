@@ -21,6 +21,7 @@ export const meta = defineMeta<BoxProps>({
       default: 'auto',
       description: 'Width (px number or CSS value like 50%, auto)',
       group: 'Size',
+      bindable: true,
     },
     height: {
       type: 'text',
@@ -28,6 +29,7 @@ export const meta = defineMeta<BoxProps>({
       default: 'auto',
       description: 'Height (px number or CSS value)',
       group: 'Size',
+      bindable: true,
     },
     minWidth: {
       type: 'text',
@@ -36,6 +38,7 @@ export const meta = defineMeta<BoxProps>({
       description: 'Minimum width constraint',
       group: 'Size',
       advanced: true,
+      bindable: true,
     },
     maxWidth: {
       type: 'text',
@@ -44,6 +47,7 @@ export const meta = defineMeta<BoxProps>({
       description: 'Maximum width constraint',
       group: 'Size',
       advanced: true,
+      bindable: true,
     },
     flexGrow: {
       type: 'number',
@@ -55,6 +59,7 @@ export const meta = defineMeta<BoxProps>({
       step: 1,
       group: 'Flex',
       advanced: true,
+      bindable: true,
     },
     flexShrink: {
       type: 'number',
@@ -66,6 +71,7 @@ export const meta = defineMeta<BoxProps>({
       step: 1,
       group: 'Flex',
       advanced: true,
+      bindable: true,
     },
   },
 })

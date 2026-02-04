@@ -21,18 +21,21 @@ export const meta = defineMeta<VideoPlayerProps>({
       default: '',
       description: 'Video file URL',
       validation: { required: true },
+      bindable: true,
     },
     poster: {
       type: 'image',
       label: 'Poster Image',
       default: '',
       description: 'Shown before video starts playing',
+      bindable: true,
     },
     autoPlay: {
       type: 'toggle',
       label: 'Auto Play',
       default: true,
       description: 'Start playback automatically',
+      bindable: true,
     },
     startTime: {
       type: 'number',
@@ -42,6 +45,7 @@ export const meta = defineMeta<VideoPlayerProps>({
       min: 0,
       step: 1,
       advanced: true,
+      bindable: true,
     },
   },
 })

@@ -21,24 +21,28 @@ export const meta = defineMeta<LogoMarqueeProps>({
       default: [],
       description: 'Array of logo items or binding expression',
       validation: { required: true },
+      bindable: true,
     },
     duration: {
       type: 'number',
       label: 'Duration',
       default: 30,
       description: 'Animation duration in seconds',
+      bindable: true,
     },
     logoWidth: {
       type: 'number',
       label: 'Logo Width',
       default: 120,
       description: 'Width of each logo in pixels',
+      bindable: true,
     },
     logoGap: {
       type: 'number',
       label: 'Logo Gap',
       default: 48,
       description: 'Gap between logos in pixels',
+      bindable: true,
     },
   },
 })

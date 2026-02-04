@@ -424,6 +424,34 @@ describe('Component Structure Validation', () => {
   })
 
   describe('Chrome structure', () => {
+    it('all chrome regions have types.ts', async () => {
+      const folders = await getFolders('content/chrome/regions/*')
+      const violations: string[] = []
+
+      for (const folder of folders) {
+        const typesPath = path.join(folder, 'types.ts')
+        if (!(await fileExists(typesPath))) {
+          violations.push(`${relativePath(folder)} missing types.ts`)
+        }
+      }
+
+      expect(violations, `Chrome regions missing types.ts:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
+    it('all chrome overlays have types.ts', async () => {
+      const folders = await getFolders('content/chrome/overlays/*')
+      const violations: string[] = []
+
+      for (const folder of folders) {
+        const typesPath = path.join(folder, 'types.ts')
+        if (!(await fileExists(typesPath))) {
+          violations.push(`${relativePath(folder)} missing types.ts`)
+        }
+      }
+
+      expect(violations, `Chrome overlays missing types.ts:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
     it('each chrome region has index.tsx', async () => {
       const allFiles = await getFiles('content/chrome/regions/**/*.tsx')
       const folders = new Set<string>()
@@ -736,6 +764,52 @@ describe('Component Structure Validation', () => {
       }
 
       expect(violations, `Preset folders not kebab-case:\\n${violations.join('\\n')}`).toHaveLength(0)
+    })
+
+    it('each preset has site.ts', async () => {
+      const allFiles = await getFiles('presets/**/*.ts')
+      const presets = new Set<string>()
+
+      for (const file of allFiles) {
+        const rel = relativePath(file)
+        const parts = rel.split('/')
+        if (parts.length >= 2 && !parts[1].includes('.')) {
+          presets.add(parts[1])
+        }
+      }
+
+      const missing: string[] = []
+      for (const preset of presets) {
+        const sitePath = path.join(ENGINE, 'presets', preset, 'site.ts')
+        if (!(await fileExists(sitePath))) {
+          missing.push(`presets/${preset}/site.ts`)
+        }
+      }
+
+      expect(missing, `Presets missing site.ts:\\n${missing.join('\\n')}`).toHaveLength(0)
+    })
+
+    it('each preset has chrome/index.ts', async () => {
+      const allFiles = await getFiles('presets/*/chrome/**/*.ts')
+      const presets = new Set<string>()
+
+      for (const file of allFiles) {
+        const rel = relativePath(file)
+        const parts = rel.split('/')
+        if (parts.length >= 2) {
+          presets.add(parts[1])
+        }
+      }
+
+      const missing: string[] = []
+      for (const preset of presets) {
+        const chromePath = path.join(ENGINE, 'presets', preset, 'chrome', 'index.ts')
+        if (!(await fileExists(chromePath))) {
+          missing.push(`presets/${preset}/chrome/index.ts`)
+        }
+      }
+
+      expect(missing, `Presets missing chrome/index.ts:\\n${missing.join('\\n')}`).toHaveLength(0)
     })
   })
 })

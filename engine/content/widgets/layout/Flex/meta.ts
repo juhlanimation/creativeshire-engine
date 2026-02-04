@@ -24,6 +24,7 @@ export const meta = defineMeta<FlexProps>({
         { value: 'row', label: 'Row (Horizontal)' },
         { value: 'column', label: 'Column (Vertical)' },
       ],
+      bindable: true,
     },
     align: {
       type: 'alignment',
@@ -36,6 +37,7 @@ export const meta = defineMeta<FlexProps>({
         { value: 'end', label: 'End' },
         { value: 'stretch', label: 'Stretch' },
       ],
+      bindable: true,
     },
     justify: {
       type: 'select',
@@ -49,18 +51,21 @@ export const meta = defineMeta<FlexProps>({
         { value: 'between', label: 'Space Between' },
         { value: 'around', label: 'Space Around' },
       ],
+      bindable: true,
     },
     wrap: {
       type: 'toggle',
       label: 'Wrap',
       default: false,
       description: 'Allow items to wrap to new lines',
+      bindable: true,
     },
     gap: {
       type: 'spacing',
       label: 'Gap',
       default: 0,
       description: 'Space between child items',
+      bindable: true,
     },
   },
 })

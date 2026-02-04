@@ -119,7 +119,7 @@
 }
 
 /* Tablet+ (768px): Two-part layout - left nav, right contact+studio */
-@media (min-width: 768px) {
+@container site (min-width: 768px) {
   .footer-chrome {
     padding: 64px 64px 80px; /* Tablet: 64px top, 64px horizontal, 80px bottom */
   }
@@ -167,8 +167,51 @@
   }
 }
 
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome {
+  padding: 64px 64px 80px;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__content {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 64px;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__left {
+  flex: none;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__right {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 64px;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__section {
+  flex: none;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__heading {
+  font-size: 16px;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__nav-link,
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__link,
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__social-link {
+  font-size: 16px;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__copyright {
+  position: absolute;
+  bottom: 8px;
+  left: 64px;
+  margin: 0;
+}
+
 /* Desktop (1024px+): Increased padding to match hero */
-@media (min-width: 1024px) {
+@container site (min-width: 1024px) {
   .footer-chrome {
     padding: 64px 96px 80px; /* Desktop: 64px top, 96px horizontal, 80px bottom */
   }
@@ -177,6 +220,15 @@
   .footer-chrome__copyright {
     left: 96px;
   }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="desktop"]) .footer-chrome {
+  padding: 64px 96px 80px;
+}
+
+:where([data-breakpoint="desktop"]) .footer-chrome__copyright {
+  left: 96px;
 }
 
 /* Behaviour targeting */

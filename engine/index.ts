@@ -51,6 +51,7 @@ export {
   ContainerProvider,
   useContainer,
   useIsContained,
+  useBreakpoint,
 } from './interface'
 
 export type {
@@ -62,6 +63,14 @@ export type {
   ContainerConfig,
   ContainerProviderProps,
 } from './interface'
+
+// Config - breakpoints and configuration
+export {
+  BREAKPOINTS,
+  getBreakpointValue,
+  type Breakpoint,
+  type BreakpointValue,
+} from './config'
 
 // Note: For full access to all exports, use subpath imports:
 // - @creativeshire/engine/schema

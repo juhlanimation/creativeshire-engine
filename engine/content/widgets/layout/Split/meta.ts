@@ -29,18 +29,21 @@ export const meta = defineMeta<SplitProps>({
         { value: '3:2', label: 'Slight Left (3:2)' },
         { value: '2:3', label: 'Slight Right (2:3)' },
       ],
+      bindable: true,
     },
     gap: {
       type: 'spacing',
       label: 'Gap',
       default: 0,
       description: 'Space between columns',
+      bindable: true,
     },
     reverse: {
       type: 'toggle',
       label: 'Reverse',
       default: false,
       description: 'Swap column order (useful for responsive layouts)',
+      bindable: true,
     },
     align: {
       type: 'alignment',
@@ -53,6 +56,7 @@ export const meta = defineMeta<SplitProps>({
         { value: 'end', label: 'Bottom' },
         { value: 'stretch', label: 'Stretch' },
       ],
+      bindable: true,
     },
   },
 })

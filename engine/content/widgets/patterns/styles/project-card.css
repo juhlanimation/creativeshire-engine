@@ -25,10 +25,15 @@
   margin: 4rem 0; /* Mobile: 4rem top/bottom, so gap = 8rem */
 }
 
-@media (min-width: 768px) {
+@container site (min-width: 768px) {
   .project-card {
     margin: 8rem 0; /* Desktop: 8rem top/bottom, so gap = 16rem */
   }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card {
+  margin: 8rem 0;
 }
 
 /* Mobile: Stack vertically with 16px gap */
@@ -44,7 +49,7 @@
 }
 
 /* Tablet+ (768px): Horizontal layout with 8px gap */
-@media (min-width: 768px) {
+@container site (min-width: 768px) {
   .project-card.flex-widget {
     flex-direction: row;
     gap: 8px; /* gap-2 */
@@ -65,6 +70,22 @@
   }
 }
 
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card.flex-widget {
+  flex-direction: row;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card--reversed .project-card__thumbnail-column {
+  order: unset;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card--reversed.flex-widget {
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
 /* ===========================================
    THUMBNAIL COLUMN
    Reference: w-full md:w-[55vw] shrink-0 min-w-0
@@ -78,12 +99,19 @@
   min-width: 0;
 }
 
-@media (min-width: 768px) {
+@container site (min-width: 768px) {
   .project-card__thumbnail-column {
     width: var(--card-width, 55vw);
     flex-shrink: 0;
     min-width: 0;
   }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card__thumbnail-column {
+  width: var(--card-width, 55vw);
+  flex-shrink: 0;
+  min-width: 0;
 }
 
 /* ===========================================
@@ -104,11 +132,17 @@
 }
 
 /* Reversed: md:justify-end md:text-right */
-@media (min-width: 768px) {
+@container site (min-width: 768px) {
   .project-card--reversed .project-card__meta.flex-widget {
     justify-content: flex-end;
     text-align: right;
   }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card--reversed .project-card__meta.flex-widget {
+  justify-content: flex-end;
+  text-align: right;
 }
 
 .project-card__meta-item {
@@ -133,11 +167,17 @@
 }
 
 /* Reversed: md:items-end, text right-aligned */
-@media (min-width: 768px) {
+@container site (min-width: 768px) {
   .project-card--reversed .project-card__content {
     align-items: flex-end;
     text-align: right;
   }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card--reversed .project-card__content {
+  align-items: flex-end;
+  text-align: right;
 }
 
 /* ===========================================
@@ -172,10 +212,15 @@
 }
 
 /* Reversed description: md:[text-align-last:right] */
-@media (min-width: 768px) {
+@container site (min-width: 768px) {
   .project-card--reversed .project-card__description {
     text-align-last: right;
   }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card--reversed .project-card__description {
+  text-align-last: right;
 }
 
 /* Year */

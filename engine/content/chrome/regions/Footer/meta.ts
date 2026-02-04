@@ -21,6 +21,7 @@ export const meta = defineMeta<FooterProps>({
       default: [],
       description: 'Footer navigation links',
       group: 'Navigation',
+      bindable: true,
     },
     contactHeading: {
       type: 'text',
@@ -28,6 +29,7 @@ export const meta = defineMeta<FooterProps>({
       default: 'Contact',
       description: 'Heading for contact section',
       group: 'Contact',
+      bindable: true,
     },
     contactEmail: {
       type: 'text',
@@ -36,6 +38,7 @@ export const meta = defineMeta<FooterProps>({
       description: 'Contact email address',
       validation: { required: true },
       group: 'Contact',
+      bindable: true,
     },
     contactLinkedin: {
       type: 'text',
@@ -43,6 +46,7 @@ export const meta = defineMeta<FooterProps>({
       default: '',
       description: 'LinkedIn profile URL',
       group: 'Contact',
+      bindable: true,
     },
     studioHeading: {
       type: 'text',
@@ -50,6 +54,7 @@ export const meta = defineMeta<FooterProps>({
       default: 'Studio',
       description: 'Heading for studio section',
       group: 'Studio',
+      bindable: true,
     },
     studioUrl: {
       type: 'text',
@@ -57,6 +62,7 @@ export const meta = defineMeta<FooterProps>({
       default: '',
       description: 'Studio website URL',
       group: 'Studio',
+      bindable: true,
     },
     studioEmail: {
       type: 'text',
@@ -64,6 +70,7 @@ export const meta = defineMeta<FooterProps>({
       default: '',
       description: 'Studio email address',
       group: 'Studio',
+      bindable: true,
     },
     studioSocials: {
       type: 'custom',
@@ -71,6 +78,7 @@ export const meta = defineMeta<FooterProps>({
       default: [],
       description: 'Studio social media links',
       group: 'Studio',
+      bindable: true,
     },
     copyrightText: {
       type: 'text',
@@ -79,6 +87,7 @@ export const meta = defineMeta<FooterProps>({
       description: 'Copyright notice text',
       validation: { required: true },
       group: 'Legal',
+      bindable: true,
     },
   },
 })

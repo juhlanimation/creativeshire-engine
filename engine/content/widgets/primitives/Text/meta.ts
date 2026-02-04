@@ -21,6 +21,7 @@ export const meta = defineMeta<TextProps>({
       default: '',
       description: 'Text content to display',
       validation: { required: true },
+      bindable: true,
     },
     as: {
       type: 'select',

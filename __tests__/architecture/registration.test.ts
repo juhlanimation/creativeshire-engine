@@ -100,6 +100,25 @@ describe('Registration Validation', () => {
       expect(violations).toHaveLength(0)
     })
 
+    it('sections are NOT registered (they are factories)', async () => {
+      const folders = await getFolders('content/sections/patterns/*')
+      const violations: string[] = []
+
+      for (const folder of folders) {
+        const name = getComponentName(folder)
+        if (widgetRegistry[name]) {
+          violations.push(`Section "${name}" should NOT be in widgetRegistry (sections are factories, not components)`)
+        }
+      }
+
+      if (violations.length > 0) {
+        console.log('Incorrectly registered sections:')
+        violations.forEach((v) => console.log(`  - ${v}`))
+      }
+
+      expect(violations).toHaveLength(0)
+    })
+
     it('no orphaned widget registry entries', async () => {
       // Get all widget folders
       const primitives = await getFolders('content/widgets/primitives/*')

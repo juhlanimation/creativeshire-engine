@@ -21,6 +21,7 @@ export const meta = defineMeta<ButtonProps>({
       default: 'Button',
       description: 'Button text',
       validation: { required: true },
+      bindable: true,
     },
     variant: {
       type: 'select',

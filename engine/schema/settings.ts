@@ -55,6 +55,15 @@ export interface SettingConfig {
   /** Conditional display: "otherSetting === 'value'" */
   condition?: string
 
+  /**
+   * Whether this setting supports data binding expressions.
+   * When true, the CMS shows a "bind to content" option allowing
+   * values like {{ content.hero.title }} or {{ item.name }}.
+   * Content props (src, content, label, href) should be bindable.
+   * Structural props (variant, objectFit, as) typically aren't.
+   */
+  bindable?: boolean
+
   // Range/number specific
   /** Minimum value for range/number */
   min?: number

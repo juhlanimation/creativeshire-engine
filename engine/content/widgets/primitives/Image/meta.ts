@@ -21,6 +21,7 @@ export const meta = defineMeta<ImageProps>({
       default: '',
       description: 'Image URL or asset path',
       validation: { required: true },
+      bindable: true,
     },
     alt: {
       type: 'text',
@@ -28,6 +29,7 @@ export const meta = defineMeta<ImageProps>({
       default: '',
       description: 'Accessibility description of the image',
       validation: { required: true },
+      bindable: true,
     },
     aspectRatio: {
       type: 'select',

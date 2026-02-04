@@ -10,6 +10,7 @@ export {
   ContainerProvider,
   useContainer,
   useIsContained,
+  useBreakpoint,
   type ContainerMode,
   type ContainerConfig,
   type ContainerProviderProps,

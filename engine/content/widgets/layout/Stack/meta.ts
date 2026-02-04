@@ -20,6 +20,7 @@ export const meta = defineMeta<StackProps>({
       label: 'Gap',
       default: 0,
       description: 'Vertical space between items',
+      bindable: true,
     },
     align: {
       type: 'alignment',
@@ -32,6 +33,7 @@ export const meta = defineMeta<StackProps>({
         { value: 'end', label: 'Right' },
         { value: 'stretch', label: 'Stretch' },
       ],
+      bindable: true,
     },
   },
 })

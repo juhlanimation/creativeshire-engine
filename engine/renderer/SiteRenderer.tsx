@@ -11,7 +11,7 @@
  * - pageTransition: exit/entry animations when navigating
  */
 
-import { useMemo, useEffect, type CSSProperties, type ReactNode } from 'react'
+import { useMemo, useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import type { StoreApi } from 'zustand'
 import {
   ExperienceProvider,
@@ -32,6 +32,8 @@ import { ThemeProvider } from './ThemeProvider'
 import { ExperienceChromeRenderer } from './ExperienceChromeRenderer'
 import type { SiteSchema, PageSchema } from '../schema'
 import type { Experience, ExperienceConstraints } from '../experience/experiences/types'
+import { getBreakpointValue, type BreakpointValue } from '../config/breakpoints'
+import { useContainer } from '../interface/ContainerContext'
 
 interface SiteRendererProps {
   site: SiteSchema
@@ -118,6 +120,29 @@ function PageReadySignal(): null {
  * Renders a site with providers and page content.
  */
 export function SiteRenderer({ site, page }: SiteRendererProps) {
+  // Check if we're in contained mode (ContainerProvider handles breakpoint tracking there)
+  const { mode } = useContainer()
+
+  // Track viewport breakpoint for fullpage mode
+  const [breakpoint, setBreakpoint] = useState<BreakpointValue>('desktop')
+
+  useEffect(() => {
+    // Skip if in contained mode - ContainerProvider handles breakpoint tracking
+    if (mode === 'contained') return
+    if (typeof window === 'undefined') return
+
+    const updateBreakpoint = () => {
+      setBreakpoint(getBreakpointValue(window.innerWidth))
+    }
+
+    // Set initial value
+    updateBreakpoint()
+
+    // Listen for window resize
+    window.addEventListener('resize', updateBreakpoint)
+    return () => window.removeEventListener('resize', updateBreakpoint)
+  }, [mode])
+
   // Fade out scroll indicator on scroll (GSAP-based for cross-browser support)
   useScrollIndicatorFade('#hero-scroll')
 
@@ -148,8 +173,12 @@ export function SiteRenderer({ site, page }: SiteRendererProps) {
     ? { ...site.theme?.smoothScroll, enabled: false }  // Disable page-level, keep config for section use
     : site.theme?.smoothScroll
 
+  // In fullpage mode, we set the breakpoint attribute here
+  // In contained mode, ContainerProvider sets it on the container element
+  const breakpointAttr = mode === 'fullpage' ? breakpoint : undefined
+
   return (
-    <div data-site-renderer>
+    <div data-site-renderer data-breakpoint={breakpointAttr}>
     <ThemeProvider theme={site.theme}>
       <ExperienceProvider experience={experience} store={store}>
         <TransitionProvider config={experience.pageTransition}>

@@ -30,6 +30,7 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react'
+import { getBreakpointValue, type BreakpointValue } from '../config/breakpoints'
 
 /**
  * Container mode determines how the engine handles viewport-relative sizing.
@@ -52,6 +53,8 @@ export interface ContainerConfig {
   getViewportHeight: () => number
   /** Get current viewport width (container or window) */
   getViewportWidth: () => number
+  /** Current breakpoint value based on container/viewport width */
+  breakpoint: BreakpointValue
 }
 
 const defaultConfig: ContainerConfig = {
@@ -60,6 +63,7 @@ const defaultConfig: ContainerConfig = {
     typeof window !== 'undefined' ? window.innerHeight : 0,
   getViewportWidth: () =>
     typeof window !== 'undefined' ? window.innerWidth : 0,
+  breakpoint: 'desktop',
 }
 
 const ContainerContext = createContext<ContainerConfig>(defaultConfig)
@@ -155,6 +159,33 @@ export function ContainerProvider({
     }
   }, [mode, containerRef])
 
+  // Track container breakpoint (contained mode)
+  const [breakpoint, setBreakpoint] = useState<BreakpointValue>('desktop')
+
+  useEffect(() => {
+    if (mode !== 'contained' || !containerRef?.current) return
+
+    const container = containerRef.current
+
+    const updateBreakpoint = (width: number) => {
+      const newBreakpoint = getBreakpointValue(width)
+      setBreakpoint(newBreakpoint)
+      container.setAttribute('data-breakpoint', newBreakpoint)
+    }
+
+    const observer = new ResizeObserver(([entry]) => {
+      updateBreakpoint(entry.contentRect.width)
+    })
+
+    observer.observe(container)
+    updateBreakpoint(container.clientWidth)
+
+    return () => {
+      observer.disconnect()
+      container.removeAttribute('data-breakpoint')
+    }
+  }, [mode, containerRef])
+
   // Memoize context value
   // Uses mountedContainer state to ensure portalTarget is available after ref attaches
   const value = useMemo<ContainerConfig>(() => {
@@ -181,8 +212,9 @@ export function ContainerProvider({
       portalTarget: resolvedPortalTarget,
       getViewportHeight,
       getViewportWidth,
+      breakpoint,
     }
-  }, [mode, containerRef, providedPortalTarget, mountedContainer])
+  }, [mode, containerRef, providedPortalTarget, mountedContainer, breakpoint])
 
   return (
     <ContainerContext.Provider value={value}>
@@ -205,4 +237,13 @@ export function useContainer(): ContainerConfig {
 export function useIsContained(): boolean {
   const { mode } = useContainer()
   return mode === 'contained'
+}
+
+/**
+ * Hook to access the current breakpoint value.
+ * Returns 'mobile', 'tablet', or 'desktop' based on container/viewport width.
+ */
+export function useBreakpoint(): BreakpointValue {
+  const { breakpoint } = useContainer()
+  return breakpoint
 }

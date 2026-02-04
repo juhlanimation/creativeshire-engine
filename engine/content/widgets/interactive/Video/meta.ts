@@ -21,18 +21,21 @@ export const meta = defineMeta<VideoProps>({
       default: '',
       description: 'Video file URL (hover/preview)',
       validation: { required: true },
+      bindable: true,
     },
     poster: {
       type: 'image',
       label: 'Poster Image',
       default: '',
       description: 'Shown before video loads or when not hovering',
+      bindable: true,
     },
     alt: {
       type: 'text',
       label: 'Alt Text',
       default: '',
       description: 'Accessibility description for poster',
+      bindable: true,
     },
     hoverPlay: {
       type: 'toggle',
@@ -97,6 +100,7 @@ export const meta = defineMeta<VideoProps>({
       default: '',
       description: 'Full-length video for modal playback. Use with on: { click: "open-video-modal" }',
       group: 'Modal',
+      bindable: true,
     },
   },
 })

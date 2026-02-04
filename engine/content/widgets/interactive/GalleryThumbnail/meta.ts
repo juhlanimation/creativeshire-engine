@@ -20,6 +20,7 @@ export const meta = defineMeta<GalleryThumbnailProps>({
       label: 'Expanded Width',
       default: '32rem',
       description: 'Width when thumbnail is expanded',
+      bindable: true,
     },
     transitionDuration: {
       type: 'number',
@@ -30,6 +31,7 @@ export const meta = defineMeta<GalleryThumbnailProps>({
       max: 2000,
       step: 50,
       advanced: true,
+      bindable: true,
     },
   },
 })

@@ -70,7 +70,7 @@
 }
 
 /* Desktop: match bojuhl.com reference positioning */
-@media (min-width: 1024px) {
+@container site (min-width: 1024px) {
   .chrome-overlay--top-left {
     top: 22px;
     left: 48px;
@@ -92,9 +92,35 @@
   }
 }
 
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="desktop"]) .chrome-overlay--top-left {
+  top: 22px;
+  left: 48px;
+}
+
+:where([data-breakpoint="desktop"]) .chrome-overlay--top-right {
+  top: 22px;
+  right: 48px;
+}
+
+:where([data-breakpoint="desktop"]) .chrome-overlay--bottom-left {
+  bottom: 22px;
+  left: 48px;
+}
+
+:where([data-breakpoint="desktop"]) .chrome-overlay--bottom-right {
+  bottom: 22px;
+  right: 48px;
+}
+
 /* Mobile: hide overlays */
-@media (max-width: 767px) {
+@container site (max-width: 767px) {
   .chrome-overlay {
     display: none;
   }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="mobile"]) .chrome-overlay {
+  display: none;
 }

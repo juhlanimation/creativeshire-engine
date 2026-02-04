@@ -30,6 +30,10 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:arch": "vitest run __tests__/architecture/",
+    "validate": "npx tsx scripts/validate.ts",
+    "validate:verbose": "npx tsx scripts/validate.ts --verbose",
+    "validate:report": "npx tsx scripts/validate.ts --report --verbose",
+    "inventory": "npx tsx scripts/inventory.ts",
     "sync:react-rules": "npx tsx .claude/scripts/sync-react-best-practices.ts"
   },
   "dependencies": {

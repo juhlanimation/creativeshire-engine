@@ -20,18 +20,21 @@ export const meta = defineMeta<ContainerProps>({
       label: 'Max Width',
       default: '1200px',
       description: 'Maximum width (px number or CSS value)',
+      bindable: true,
     },
     padding: {
       type: 'spacing',
       label: 'Horizontal Padding',
       default: '1rem',
       description: 'Left and right padding',
+      bindable: true,
     },
     center: {
       type: 'toggle',
       label: 'Center',
       default: true,
       description: 'Center the container horizontally',
+      bindable: true,
     },
   },
 })

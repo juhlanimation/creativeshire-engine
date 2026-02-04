@@ -39,6 +39,6 @@ export interface OtherProjectsProps {
   heading?: string
   /** Year range label */
   yearRange?: string
-  /** Array of other projects */
-  projects: OtherProject[]
+  /** Array of other projects - supports binding expressions */
+  projects: OtherProject[] | string
 }

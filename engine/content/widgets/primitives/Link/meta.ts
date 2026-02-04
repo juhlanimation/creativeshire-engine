@@ -21,6 +21,7 @@ export const meta = defineMeta<LinkProps>({
       default: '/',
       description: 'Navigation URL (internal paths start with /)',
       validation: { required: true },
+      bindable: true,
     },
     target: {
       type: 'select',

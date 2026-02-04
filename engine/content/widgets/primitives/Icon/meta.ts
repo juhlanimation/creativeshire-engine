@@ -21,6 +21,7 @@ export const meta = defineMeta<IconProps>({
       default: '',
       description: 'Icon name from the icon set',
       validation: { required: true },
+      bindable: true,
     },
     size: {
       type: 'number',
@@ -49,6 +50,7 @@ export const meta = defineMeta<IconProps>({
       default: '',
       description: 'Screen reader label (required if not decorative)',
       condition: 'decorative === false',
+      bindable: true,
     },
   },
 })

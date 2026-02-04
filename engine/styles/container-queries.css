@@ -1,0 +1,36 @@
+/**
+ * Container Query Base Styles
+ *
+ * Establishes container query contexts for responsive components.
+ * Works in both fullpage mode and contained/iframe mode.
+ *
+ * Container names:
+ * - site: The root SiteRenderer container
+ * - engine: Any element marked with data-engine-container
+ *
+ * Usage in component CSS:
+ * @container site (min-width: 768px) {
+ *   .my-component { ... }
+ * }
+ *
+ * Usage with Tailwind v4 (in TSX):
+ * <div className="flex-col @md:flex-row">
+ *
+ * Standard breakpoints (matching engine/config/breakpoints.ts):
+ * - sm: 640px
+ * - md: 768px (tablet)
+ * - lg: 1024px (desktop)
+ * - xl: 1280px
+ */
+
+/* Site-level container for the main renderer */
+[data-site-renderer] {
+  container-type: inline-size;
+  container-name: site;
+}
+
+/* Generic engine container for nested query contexts */
+[data-engine-container] {
+  container-type: inline-size;
+  container-name: engine;
+}

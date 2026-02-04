@@ -9,8 +9,8 @@ import type { ChromeBaseProps, NavLink, SocialLink } from '../../types'
  * Props for the Footer chrome component.
  */
 export interface FooterProps extends ChromeBaseProps {
-  /** Navigation links (e.g., HOME, ABOUT, PROJECTS) */
-  navLinks: NavLink[]
+  /** Navigation links (e.g., HOME, ABOUT, PROJECTS) - supports binding expressions */
+  navLinks: NavLink[] | string
 
   /** Contact section heading */
   contactHeading?: string

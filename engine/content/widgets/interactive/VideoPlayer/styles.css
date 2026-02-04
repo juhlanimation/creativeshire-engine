@@ -243,8 +243,8 @@
   /* Animation handled by data-effect="spin" via experience/effects/emphasis/spin.css */
 }
 
-/* Mobile adjustments */
-@media (max-width: 768px) {
+/* Mobile adjustments - container query with data-breakpoint fallback */
+@container site (max-width: 767px) {
   .video-player__progress-container {
     bottom: 5rem;
     left: 1rem;
@@ -269,6 +269,31 @@
     width: 2rem;
     height: 2rem;
   }
+}
+
+:where([data-breakpoint="mobile"]) .video-player__progress-container {
+  bottom: 5rem;
+  left: 1rem;
+  right: 1rem;
+}
+
+:where([data-breakpoint="mobile"]) .video-player__volume-container {
+  bottom: 1.5rem;
+}
+
+:where([data-breakpoint="mobile"]) .video-player__time {
+  font-size: 0.75rem;
+  min-width: 38px;
+}
+
+:where([data-breakpoint="mobile"]) .video-player__center-play {
+  width: 4rem;
+  height: 4rem;
+}
+
+:where([data-breakpoint="mobile"]) .video-player__play-icon {
+  width: 2rem;
+  height: 2rem;
 }
 
 /* Touch devices - always show controls when paused */

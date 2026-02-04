@@ -21,6 +21,7 @@ export const meta = defineMeta<ProjectCardConfig>({
       default: '',
       description: 'Thumbnail image source',
       validation: { required: true },
+      bindable: true,
     },
     thumbnailAlt: {
       type: 'text',
@@ -28,18 +29,21 @@ export const meta = defineMeta<ProjectCardConfig>({
       default: '',
       description: 'Accessibility description for thumbnail',
       validation: { required: true },
+      bindable: true,
     },
     videoSrc: {
       type: 'video',
       label: 'Hover Video',
       default: '',
       description: 'Video for hover playback (optional)',
+      bindable: true,
     },
     videoUrl: {
       type: 'video',
       label: 'Modal Video',
       default: '',
       description: 'Full-length video URL for modal playback',
+      bindable: true,
     },
     client: {
       type: 'text',
@@ -47,6 +51,7 @@ export const meta = defineMeta<ProjectCardConfig>({
       default: '',
       description: 'Client name',
       validation: { required: true },
+      bindable: true,
     },
     studio: {
       type: 'text',
@@ -54,6 +59,7 @@ export const meta = defineMeta<ProjectCardConfig>({
       default: '',
       description: 'Studio name',
       validation: { required: true },
+      bindable: true,
     },
     title: {
       type: 'text',
@@ -61,6 +67,7 @@ export const meta = defineMeta<ProjectCardConfig>({
       default: '',
       description: 'Project title',
       validation: { required: true },
+      bindable: true,
     },
     description: {
       type: 'textarea',
@@ -68,6 +75,7 @@ export const meta = defineMeta<ProjectCardConfig>({
       default: '',
       description: 'Project description',
       validation: { required: true },
+      bindable: true,
     },
     year: {
       type: 'text',
@@ -75,6 +83,7 @@ export const meta = defineMeta<ProjectCardConfig>({
       default: '',
       description: 'Project year (e.g., 2024)',
       advanced: true,
+      bindable: true,
     },
     role: {
       type: 'text',
@@ -82,12 +91,14 @@ export const meta = defineMeta<ProjectCardConfig>({
       default: '',
       description: 'Role in project (e.g., Director)',
       advanced: true,
+      bindable: true,
     },
     reversed: {
       type: 'toggle',
       label: 'Reverse Layout',
       default: false,
       description: 'Content left, thumbnail right',
+      bindable: true,
     },
   },
 })

@@ -25,6 +25,7 @@ export const meta = defineMeta<ContactPromptProps>({
         pattern: '^[^@]+@[^@]+\\.[^@]+$',
         message: 'Please enter a valid email address',
       },
+      bindable: true,
     },
     promptText: {
       type: 'text',
@@ -32,6 +33,7 @@ export const meta = defineMeta<ContactPromptProps>({
       default: 'How can I help you?',
       description: 'Text shown before hovering (when Show Prompt is enabled)',
       condition: 'showPrompt === true',
+      bindable: true,
     },
     showPrompt: {
       type: 'toggle',

@@ -158,8 +158,8 @@
   }
 }
 
-/* Mobile */
-@media (max-width: 768px) {
+/* Mobile - container query with data-breakpoint fallback */
+@container site (max-width: 767px) {
   .modal__close {
     top: 1rem;
     left: 1rem;
@@ -171,4 +171,16 @@
     width: 1.25rem;
     height: 1.25rem;
   }
+}
+
+:where([data-breakpoint="mobile"]) .modal__close {
+  top: 1rem;
+  left: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+:where([data-breakpoint="mobile"]) .modal__close svg {
+  width: 1.25rem;
+  height: 1.25rem;
 }

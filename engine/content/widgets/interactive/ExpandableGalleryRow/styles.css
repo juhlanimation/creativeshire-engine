@@ -142,8 +142,13 @@
 }
 
 /* Hide on mobile/tablet (< 1024px) - matches section visibility */
-@media (max-width: 1023px) {
+@container site (max-width: 1023px) {
   .expandable-gallery-row {
     display: none;
   }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="mobile"], [data-breakpoint="tablet"]) .expandable-gallery-row {
+  display: none;
 }

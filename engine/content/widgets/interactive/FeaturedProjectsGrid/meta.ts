@@ -21,6 +21,7 @@ export const meta = defineMeta<FeaturedProjectsGridProps>({
       default: [],
       description: 'Array of featured projects or binding expression',
       validation: { required: true },
+      bindable: true,
     },
     startReversed: {
       type: 'toggle',
