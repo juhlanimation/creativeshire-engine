@@ -180,7 +180,7 @@ export function useWheelNavigation(hookOptions: WheelNavigationOptions): void {
       const scrollDirection = scrollingDown ? 'down' : 'up'
 
       // Check if the section (or any element within it) can scroll in this direction
-      if (canSectionScroll(activeSection, scrollDirection)) {
+      if (canSectionScroll(activeSection ?? null, scrollDirection)) {
         // Let natural scroll happen - don't prevent default, don't navigate
         return
       }

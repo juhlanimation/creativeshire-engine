@@ -174,10 +174,10 @@ export function useKeyboardNavigation(hookOptions: KeyboardNavigationOptions): v
       ? containerRef.current
       : document
 
-    eventTarget.addEventListener('keydown', handleKeydown)
+    eventTarget.addEventListener('keydown', handleKeydown as EventListener)
 
     return () => {
-      eventTarget.removeEventListener('keydown', handleKeydown)
+      eventTarget.removeEventListener('keydown', handleKeydown as EventListener)
     }
   }, [isKeyboardEnabled, keyboardInput, config, store, overrideOptions, containerMode, containerRef])
 }

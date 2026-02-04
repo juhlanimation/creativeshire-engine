@@ -169,7 +169,7 @@ describe('EngineStore', () => {
       const result = store.getState().addSection(deeplyNested)
 
       expect(result.valid).toBe(false)
-      expect(result.error?.type).toBe('nesting-depth')
+      expect(result.error && 'type' in result.error ? result.error.type : null).toBe('nesting-depth')
       expect(onConstraintViolation).toHaveBeenCalled()
     })
   })
@@ -220,7 +220,7 @@ describe('EngineStore', () => {
       // 21st section should fail
       const result2 = store.getState().addSection({ id: 'section-21', layout: { type: 'stack' }, widgets: [] })
       expect(result2.valid).toBe(false)
-      expect(result2.error?.type).toBe('section-limit')
+      expect(result2.error && 'type' in result2.error ? result2.error.type : null).toBe('section-limit')
     })
 
     it('removeSection removes existing section', () => {
@@ -242,7 +242,7 @@ describe('EngineStore', () => {
       const result = store.getState().removeSection('non-existent')
 
       expect(result.valid).toBe(false)
-      expect(result.error?.type).toBe('not-found')
+      expect(result.error && 'type' in result.error ? result.error.type : null).toBe('not-found')
     })
 
     it('updateSection modifies existing section', () => {
@@ -276,7 +276,7 @@ describe('EngineStore', () => {
       const result = store.getState().reorderSections(['section-1', 'unknown'])
 
       expect(result.valid).toBe(false)
-      expect(result.error?.type).toBe('not-found')
+      expect(result.error && 'type' in result.error ? result.error.type : null).toBe('not-found')
     })
   })
 
@@ -309,7 +309,7 @@ describe('EngineStore', () => {
       )
 
       expect(result.valid).toBe(false)
-      expect(result.error?.type).toBe('not-found')
+      expect(result.error && 'type' in result.error ? result.error.type : null).toBe('not-found')
     })
   })
 

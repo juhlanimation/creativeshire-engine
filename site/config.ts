@@ -22,9 +22,9 @@ const EXPERIENCE_MODE: 'default' | 'slideshow' | 'infinite-carousel' = 'default'
 export const siteConfig: SiteSchema = {
   id: 'bojuhl',
   theme: bojuhlPreset.theme,
-  experience: EXPERIENCE_MODE === 'slideshow'
+  experience: (EXPERIENCE_MODE as string) === 'slideshow'
     ? { id: 'slideshow' }
-    : EXPERIENCE_MODE === 'infinite-carousel'
+    : (EXPERIENCE_MODE as string) === 'infinite-carousel'
     ? { id: 'infinite-carousel' }
     : bojuhlPreset.experience,
   chrome: {
