@@ -86,8 +86,10 @@ export function SectionLifecycleProvider({
   const shouldMount = isAdjacent || hasBeenMounted
 
   // Once mounted, track it (for potential future optimizations)
+  // Safe: guarded setState that only fires once when shouldMount becomes true
   useEffect(() => {
     if (shouldMount && !hasBeenMounted) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setHasBeenMounted(true)
     }
   }, [shouldMount, hasBeenMounted])

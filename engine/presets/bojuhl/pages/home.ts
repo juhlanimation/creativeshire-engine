@@ -274,6 +274,7 @@ const featuredProjectsSection: SectionSchema = {
           id: 'project-card',
           type: 'Flex',
           className: 'project-card',
+          'data-index': '{{ item.$index }}', // Index for computing reversed state
           props: {
             align: 'start'
           },
@@ -293,8 +294,8 @@ const featuredProjectsSection: SectionSchema = {
                     alt: '{{ item.thumbnailAlt }}',
                     hoverPlay: true,
                     aspectRatio: '16/9',
-                    videoUrl: '{{ item.videoUrl }}',
-                    modalAnimationType: 'wipe-left'
+                    videoUrl: '{{ item.videoUrl }}'
+                    // modalAnimationType computed by Video from --card-reversed CSS variable
                   },
                   on: { click: 'open-video-modal' }
                 },

@@ -22,6 +22,17 @@ export type ComponentCategory =
   | 'overlay'        // Chrome overlays (Modal, Tooltip)
   | 'behaviour'      // Experience behaviours
 
+/**
+ * Section sub-category for organization in platform UI "Add Section" dropdown.
+ */
+export type SectionCategory =
+  | 'hero'       // Landing/intro sections (Hero)
+  | 'about'      // Bio/team sections (About)
+  | 'project'    // Portfolio sections (FeaturedProjects, OtherProjects)
+  | 'contact'    // Forms, CTAs
+  | 'content'    // General content blocks
+  | 'gallery'    // Media showcases
+
 // =============================================================================
 // Component Metadata
 // =============================================================================
@@ -90,5 +101,32 @@ export type MetaProps<M extends ComponentMeta> =
  * Helper for better type inference when defining meta.
  */
 export function defineMeta<T>(meta: ComponentMeta<T>): ComponentMeta<T> {
+  return meta
+}
+
+// =============================================================================
+// Section Metadata
+// =============================================================================
+
+/**
+ * Extended metadata for section patterns.
+ * Adds section-specific categorization and uniqueness constraints.
+ */
+export interface SectionMeta<T = unknown> extends ComponentMeta<T> {
+  /** Always 'section' for section patterns */
+  category: 'section'
+
+  /** Sub-categorization for "Add Section" dropdown grouping */
+  sectionCategory: SectionCategory
+
+  /** Whether only one instance is allowed per page */
+  unique: boolean
+}
+
+/**
+ * Create a typed SectionMeta.
+ * Helper for better type inference when defining section pattern meta.
+ */
+export function defineSectionMeta<T>(meta: SectionMeta<T>): SectionMeta<T> {
   return meta
 }

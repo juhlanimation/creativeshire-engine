@@ -62,6 +62,24 @@ export interface ItemContext {
  */
 const BINDING_REGEX = /^\{\{\s*(.+?)\s*\}\}$/
 
+/**
+ * Extract a display label from an item context.
+ * Priority: title > name > label > $index
+ *
+ * Most content uses 'title' (projects, sections), so it takes precedence.
+ * Falls back through name/label for other entity types.
+ *
+ * @param item - Item context from __repeat iteration
+ * @returns Human-readable label string (never undefined)
+ */
+function extractLabelFromItem(item: ItemContext): string {
+  const label = item.title ?? item.name ?? item.label
+  if (label !== undefined && label !== null) {
+    return String(label)
+  }
+  return String(item.$index)
+}
+
 // =============================================================================
 // Core Functions
 // =============================================================================
@@ -98,6 +116,37 @@ export function isBinding(value: unknown): value is string {
 export function extractBindingPath(expression: string): string | null {
   const match = BINDING_REGEX.exec(expression)
   return match ? match[1] : null
+}
+
+/**
+ * Evaluate a condition binding expression for conditional rendering.
+ * Returns true if the binding resolves to a truthy value.
+ *
+ * Falsy values: null, undefined, '', false, 0, unresolved binding
+ *
+ * @param expression - Binding expression like '{{ item.studio }}'
+ * @param content - Content object to resolve against
+ * @param item - Optional current item for iteration context
+ * @returns true if condition is met (truthy), false otherwise
+ *
+ * @example
+ * ```typescript
+ * evaluateCondition('{{ item.studio }}', content, { studio: 'Netflix', $index: 0 })
+ * // Returns: true
+ *
+ * evaluateCondition('{{ item.studio }}', content, { $index: 0 })
+ * // Returns: false (studio is undefined)
+ * ```
+ */
+export function evaluateCondition(
+  expression: string,
+  content: BindingContext,
+  item?: ItemContext | unknown
+): boolean {
+  const resolved = resolveBinding(expression, content, item)
+  // Unresolved binding (returns original expression) = falsy
+  if (resolved === expression) return false
+  return Boolean(resolved)
 }
 
 /**
@@ -259,6 +308,12 @@ export function expandRepeater(
 
   // No __repeat prop - just resolve bindings and return as single-item array
   if (!repeatExpression) {
+    // Check condition for non-repeated widgets (no item context)
+    if (widget.condition) {
+      if (!evaluateCondition(widget.condition, content)) {
+        return [] // Condition not met - skip widget
+      }
+    }
     return [resolveBindings(widget, content)]
   }
 
@@ -292,11 +347,21 @@ export function expandRepeater(
         ? { ...(item as Record<string, unknown>), $index: index }
         : { $value: item, $index: index }
 
+    // Check condition for repeated widgets (with item context)
+    if (widget.condition) {
+      if (!evaluateCondition(widget.condition, content, itemContext)) {
+        continue // Condition not met - skip this item
+      }
+    }
+
     // Create a copy of the widget without __repeat
     const { __repeat: _, ...widgetWithoutRepeat } = widget
 
     // Resolve all bindings with item context
     const resolvedWidget = resolveBindings(widgetWithoutRepeat, content, itemContext) as WidgetSchema
+
+    // Extract label for platform hierarchy display
+    resolvedWidget.__label = extractLabelFromItem(itemContext)
 
     // Add unique ID suffix if widget has an ID
     if (resolvedWidget.id) {

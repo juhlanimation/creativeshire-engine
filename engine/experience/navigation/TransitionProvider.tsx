@@ -85,6 +85,8 @@ export function TransitionProvider({
     if (typeof window === 'undefined') return
 
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    // Safe: one-time initial value set on mount, with event listener for subsequent updates
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPrefersReducedMotion(mediaQuery.matches)
 
     const handler = (e: MediaQueryListEvent) => {

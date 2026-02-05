@@ -2,14 +2,16 @@
  * About section pattern metadata for platform UI.
  */
 
-import { defineMeta } from '../../../../schema/meta'
+import { defineSectionMeta } from '../../../../schema/meta'
 import type { AboutProps } from './types'
 
-export const meta = defineMeta<AboutProps>({
+export const meta = defineSectionMeta<AboutProps>({
   id: 'About',
   name: 'About Section',
   description: 'Bio section with photo background and logo marquee',
   category: 'section',
+  sectionCategory: 'about',
+  unique: true,
   icon: 'about',
   tags: ['about', 'bio', 'profile', 'marquee'],
   component: false, // Factory function

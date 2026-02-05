@@ -13,5 +13,5 @@ import type { PresetExperienceConfig } from "../types";
  * Uses cinematic-portfolio experience with scroll-driven behaviours.
  */
 export const experienceConfig: PresetExperienceConfig = {
-  id: "stacking",
+  id: "cinematic-portfolio",
 };

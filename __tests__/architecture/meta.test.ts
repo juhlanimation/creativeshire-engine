@@ -125,6 +125,71 @@ describe('ComponentMeta Validation', () => {
 
       expect(missing, `Section patterns missing meta.ts:\n${missing.join('\n')}`).toHaveLength(0)
     })
+
+    it('section patterns use defineSectionMeta', async () => {
+      const metaFiles = await getFiles('content/sections/patterns/*/meta.ts')
+      const violations: string[] = []
+
+      for (const file of metaFiles) {
+        const content = await readFile(file)
+        if (!content.includes('defineSectionMeta')) {
+          violations.push(relativePath(file))
+        }
+      }
+
+      expect(violations, `Sections not using defineSectionMeta:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
+    it('section patterns have sectionCategory field', async () => {
+      const metaFiles = await getFiles('content/sections/patterns/*/meta.ts')
+      const violations: string[] = []
+
+      for (const file of metaFiles) {
+        const content = await readFile(file)
+        if (!content.includes('sectionCategory:')) {
+          violations.push(relativePath(file))
+        }
+      }
+
+      expect(violations, `Sections missing sectionCategory:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
+    it('section patterns have unique field', async () => {
+      const metaFiles = await getFiles('content/sections/patterns/*/meta.ts')
+      const violations: string[] = []
+
+      for (const file of metaFiles) {
+        const content = await readFile(file)
+        if (!content.includes('unique:')) {
+          violations.push(relativePath(file))
+        }
+      }
+
+      expect(violations, `Sections missing unique constraint:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
+    it('sectionCategory is a valid value', async () => {
+      const VALID_SECTION_CATEGORIES = [
+        'hero', 'about', 'project', 'contact', 'content', 'gallery'
+      ]
+
+      const metaFiles = await getFiles('content/sections/patterns/*/meta.ts')
+      const violations: string[] = []
+
+      for (const file of metaFiles) {
+        const content = await readFile(file)
+        const match = content.match(/sectionCategory:\s*['"](\w+)['"]/)
+
+        if (match) {
+          const category = match[1]
+          if (!VALID_SECTION_CATEGORIES.includes(category)) {
+            violations.push(`${relativePath(file)}: Invalid sectionCategory "${category}"`)
+          }
+        }
+      }
+
+      expect(violations).toHaveLength(0)
+    })
   })
 
   describe('Chrome meta.ts files', () => {

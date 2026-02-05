@@ -404,6 +404,13 @@ export interface Experience {
 
   /** Section IDs to hide from rendering */
   hideSections?: string[]
+
+  /**
+   * Bare mode - disables ALL behaviours including schema-level ones.
+   * Used for testing/preview to see raw layout without animations.
+   * When true, SectionRenderer ignores behaviour prop and uses 'none'.
+   */
+  bareMode?: boolean
 }
 
 // Re-export provider types from parent

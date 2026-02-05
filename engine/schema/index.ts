@@ -88,8 +88,8 @@ export type {
 } from './settings'
 
 // Component meta types
-export type { ComponentCategory, ComponentMeta, MetaProps } from './meta'
-export { defineMeta } from './meta'
+export type { ComponentCategory, ComponentMeta, MetaProps, SectionCategory, SectionMeta } from './meta'
+export { defineMeta, defineSectionMeta } from './meta'
 
 // Schema utilities
 export {

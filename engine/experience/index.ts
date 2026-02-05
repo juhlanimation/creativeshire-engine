@@ -13,16 +13,22 @@ export {
   ExperienceProvider,
   useExperience,
   getExperience,
+  getExperienceAsync,
+  preloadExperience,
   getExperienceIds,
   getAllExperiences,
+  getAllExperienceMetas,
   registerExperience,
-  stackingExperience,
+  registerLazyExperience,
+  ensureExperiencesRegistered,
+  simpleExperience,
   cinematicPortfolioExperience,
   slideshowExperience,
   infiniteCarouselExperience,
   PresentationWrapper,
   InfiniteCarouselController,
 } from './experiences'
+export type { ExperienceMeta } from './experiences'
 export type {
   Experience,
   ExperienceContextValue,

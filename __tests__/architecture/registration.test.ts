@@ -21,6 +21,7 @@ import { widgetRegistry } from '../../engine/content/widgets/registry'
 import { chromeRegistry } from '../../engine/content/chrome/registry'
 import { behaviourRegistry } from '../../engine/experience/behaviours/registry'
 import { transitionRegistry } from '../../engine/experience/drivers/gsap/transitions/registry'
+import { sectionRegistry } from '../../engine/content/sections/registry'
 
 describe('Registration Validation', () => {
   describe('Widget Registry', () => {
@@ -100,14 +101,14 @@ describe('Registration Validation', () => {
       expect(violations).toHaveLength(0)
     })
 
-    it('sections are NOT registered (they are factories)', async () => {
+    it('sections are NOT registered in widgetRegistry (they have their own registry)', async () => {
       const folders = await getFolders('content/sections/patterns/*')
       const violations: string[] = []
 
       for (const folder of folders) {
         const name = getComponentName(folder)
         if (widgetRegistry[name]) {
-          violations.push(`Section "${name}" should NOT be in widgetRegistry (sections are factories, not components)`)
+          violations.push(`Section "${name}" should NOT be in widgetRegistry (sections use sectionRegistry)`)
         }
       }
 
@@ -349,6 +350,97 @@ describe('Registration Validation', () => {
 
       if (violations.length > 0) {
         console.log('Mismatched transition IDs:')
+        violations.forEach((v) => console.log(`  - ${v}`))
+      }
+
+      expect(violations).toHaveLength(0)
+    })
+  })
+
+  describe('Section Registry', () => {
+    it('all section pattern folders are registered', async () => {
+      const folders = await getFolders('content/sections/patterns/*')
+      const violations: string[] = []
+
+      for (const folder of folders) {
+        const name = getComponentName(folder)
+        if (!sectionRegistry[name]) {
+          violations.push(`Section "${name}" folder exists but is not registered in sectionRegistry`)
+        }
+      }
+
+      if (violations.length > 0) {
+        console.log('Unregistered sections:')
+        violations.forEach((v) => console.log(`  - ${v}`))
+      }
+
+      expect(violations).toHaveLength(0)
+    })
+
+    it('no orphaned section registry entries', async () => {
+      const folders = await getFolders('content/sections/patterns/*')
+      const allFolderNames = new Set(folders.map(getComponentName))
+      const violations: string[] = []
+
+      for (const name of Object.keys(sectionRegistry)) {
+        if (!allFolderNames.has(name)) {
+          violations.push(`sectionRegistry has "${name}" but no corresponding folder exists`)
+        }
+      }
+
+      if (violations.length > 0) {
+        console.log('Orphaned section registry entries:')
+        violations.forEach((v) => console.log(`  - ${v}`))
+      }
+
+      expect(violations).toHaveLength(0)
+    })
+
+    it('section registry entries have valid meta', async () => {
+      const violations: string[] = []
+
+      for (const [name, entry] of Object.entries(sectionRegistry)) {
+        if (!entry.meta) {
+          violations.push(`sectionRegistry["${name}"] is missing meta`)
+          continue
+        }
+
+        if (entry.meta.id !== name) {
+          violations.push(`sectionRegistry["${name}"].meta.id is "${entry.meta.id}" (should match key)`)
+        }
+
+        if (entry.meta.category !== 'section') {
+          violations.push(`sectionRegistry["${name}"].meta.category is "${entry.meta.category}" (should be "section")`)
+        }
+
+        if (!entry.meta.sectionCategory) {
+          violations.push(`sectionRegistry["${name}"].meta.sectionCategory is missing`)
+        }
+
+        if (typeof entry.meta.unique !== 'boolean') {
+          violations.push(`sectionRegistry["${name}"].meta.unique is not a boolean`)
+        }
+      }
+
+      if (violations.length > 0) {
+        console.log('Invalid section registry entries:')
+        violations.forEach((v) => console.log(`  - ${v}`))
+      }
+
+      expect(violations).toHaveLength(0)
+    })
+
+    it('section registry entries have getFactory functions', async () => {
+      const violations: string[] = []
+
+      for (const [name, entry] of Object.entries(sectionRegistry)) {
+        if (typeof entry.getFactory !== 'function') {
+          violations.push(`sectionRegistry["${name}"].getFactory is not a function`)
+        }
+      }
+
+      if (violations.length > 0) {
+        console.log('Missing getFactory functions:')
         violations.forEach((v) => console.log(`  - ${v}`))
       }
 

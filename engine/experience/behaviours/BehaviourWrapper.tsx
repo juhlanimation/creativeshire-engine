@@ -30,6 +30,8 @@ import { useContainer } from '../../interface/ContainerContext'
 import type { BehaviourState, CSSVariables } from '../../schema/experience'
 import type { Behaviour } from './types'
 
+import type { VisibilityGetter } from '../drivers/ScrollDriver'
+
 /**
  * Props for BehaviourWrapper component.
  */
@@ -40,6 +42,12 @@ export interface BehaviourWrapperProps {
   options?: Record<string, unknown>
   /** Initial state values (e.g., from global store) */
   initialState?: Partial<BehaviourState>
+  /**
+   * Visibility getter for sections tracked by useIntersection.
+   * When provided, ScrollDriver uses this instead of its own IntersectionObserver.
+   * This prevents duplicate observers and flickering.
+   */
+  visibilityGetter?: VisibilityGetter
   /** Child elements to wrap */
   children: ReactNode
   /** Additional className for the wrapper */
@@ -103,6 +111,7 @@ export function BehaviourWrapper({
   behaviourId,
   options,
   initialState,
+  visibilityGetter,
   children,
   className,
   style,
@@ -112,7 +121,6 @@ export function BehaviourWrapper({
 
   // Get container context for contained mode support
   const { mode, containerRef } = useContainer()
-  const container = mode === 'contained' ? containerRef?.current ?? null : null
 
   // Local interaction state
   const [isHovered, setIsHovered] = useState(false)
@@ -143,17 +151,21 @@ export function BehaviourWrapper({
     }
 
     const element = ref.current
+    // Read containerRef inside effect to avoid reading refs during render
+    const container = mode === 'contained' ? containerRef?.current ?? null : null
     const driver = getDriver(container)
 
     // Register element with driver
-    driver.register(id, element, behaviour, options ?? {})
+    // Pass visibilityGetter for sections to use store-based visibility (from useIntersection)
+    // instead of duplicate IntersectionObserver tracking
+    driver.register(id, element, behaviour, options ?? {}, visibilityGetter)
 
     // Cleanup: unregister from driver and release reference
     return () => {
       driver.unregister(id)
       releaseDriver(container)
     }
-  }, [behaviour, usesScrollDriver, id, options, container])
+  }, [behaviour, usesScrollDriver, id, options, mode, containerRef, visibilityGetter])
 
   // Event handlers
   const handleMouseEnter = useCallback(() => setIsHovered(true), [])

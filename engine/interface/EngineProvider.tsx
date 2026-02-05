@@ -8,7 +8,10 @@
 import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react'
 import { useStore, type StoreApi } from 'zustand'
 import { createEngineStore, createSnapshot } from './EngineStore'
-import { ExperienceProvider, getExperience, stackingExperience } from '../experience'
+import { ExperienceProvider, getExperience, simpleExperience, ensureExperiencesRegistered } from '../experience'
+
+// Ensure all experiences are registered before any lookups
+ensureExperiencesRegistered()
 import type {
   EngineInput,
   EngineState,
@@ -70,11 +73,11 @@ export function EngineProvider({ input, children }: EngineProviderProps) {
     const requested = getExperience(experienceId)
     if (requested) return requested
 
-    // Fallback to stacking experience with warning
+    // Fallback to simple experience with warning
     console.warn(
-      `[Creativeshire] Unknown experience "${experienceId}", falling back to "stacking"`
+      `[Creativeshire] Unknown experience "${experienceId}", falling back to "simple"`
     )
-    return stackingExperience
+    return simpleExperience
   }, [experienceId])
 
   const experienceStore = useMemo(() => resolvedExperience.createStore(), [resolvedExperience])

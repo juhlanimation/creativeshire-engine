@@ -2,14 +2,16 @@
  * OtherProjects section pattern metadata for platform UI.
  */
 
-import { defineMeta } from '../../../../schema/meta'
+import { defineSectionMeta } from '../../../../schema/meta'
 import type { OtherProjectsProps } from './types'
 
-export const meta = defineMeta<OtherProjectsProps>({
+export const meta = defineSectionMeta<OtherProjectsProps>({
   id: 'OtherProjects',
   name: 'Other Projects Section',
   description: 'Horizontal thumbnail gallery (hidden on mobile)',
   category: 'section',
+  sectionCategory: 'project',
+  unique: false,
   icon: 'gallery',
   tags: ['portfolio', 'projects', 'gallery', 'horizontal'],
   component: false, // Factory function

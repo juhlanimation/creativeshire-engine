@@ -14,9 +14,9 @@ export type { ProjectCardConfig }
 /**
  * Creates a project card widget schema.
  *
- * Layout:
- * - Normal: [Thumbnail Column] [Content Column]
- * - Reversed: [Content Column] [Thumbnail Column]
+ * Layout controlled by data-reversed attribute:
+ * - data-reversed="false": Thumbnail LEFT, Content RIGHT
+ * - data-reversed="true": Content LEFT, Thumbnail RIGHT (via CSS row-reverse)
  *
  * Thumbnail Column contains:
  * - Video with hoverPlay (16:9 aspect ratio, plays on hover)
@@ -28,11 +28,6 @@ export type { ProjectCardConfig }
  */
 export function createProjectCard(config: ProjectCardConfig): WidgetSchema {
   const cardId = config.id ?? 'project-card'
-
-  // Determine modal animation based on layout
-  // When not reversed (thumbnail on left), content reveals left-to-right (wipe-left)
-  // When reversed (thumbnail on right), content reveals right-to-left (wipe-right)
-  const modalAnimation = config.reversed ? 'wipe-right' : 'wipe-left'
 
   // Thumbnail column with metadata below
   const thumbnailColumn: WidgetSchema = {
@@ -50,8 +45,7 @@ export function createProjectCard(config: ProjectCardConfig): WidgetSchema {
           hoverPlay: true,
           aspectRatio: '16/9',
           videoUrl: config.videoUrl,
-          // Animation: left thumbnail → mask moves left-to-right, right thumbnail → mask moves right-to-left
-          modalAnimationType: modalAnimation,
+          // modalAnimationType computed by Video from --card-reversed CSS variable
         },
         // Wire click to open-video-modal action (only when videoUrl is set)
         ...(config.videoUrl ? { on: { click: 'open-video-modal' } } : {}),
@@ -127,21 +121,15 @@ export function createProjectCard(config: ProjectCardConfig): WidgetSchema {
     ]
   }
 
-  // Order columns based on reversed flag
-  const children = config.reversed
-    ? [contentColumn, thumbnailColumn]
-    : [thumbnailColumn, contentColumn]
-
-  // Build class name
-  const className = [
-    'project-card',
-    config.reversed ? 'project-card--reversed' : ''
-  ].filter(Boolean).join(' ')
+  // DOM order is always [thumbnail, content]
+  // CSS handles visual reversal via flex-direction: row-reverse when data-reversed="true"
+  const children = [thumbnailColumn, contentColumn]
 
   return {
     id: cardId,
     type: 'Flex',
-    className,
+    className: 'project-card',
+    'data-reversed': String(!!config.reversed), // Controls layout via CSS
     props: {
       // direction and gap handled by CSS for responsive behavior
       align: 'start'

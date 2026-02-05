@@ -12,6 +12,39 @@ import type { WidgetSchema } from '../schema/widget'
 import type { ThemeSchema } from '../schema/theme'
 
 /**
+ * Content field type for content contracts.
+ */
+export type ContentFieldType = 'string' | 'number' | 'boolean' | 'string[]' | 'number[]' | 'object' | 'object[]'
+
+/**
+ * Content field definition in a content contract.
+ */
+export interface ContentFieldDefinition {
+  type: ContentFieldType
+  description: string
+  required: boolean
+  example?: unknown
+  /** Shape of items for object[] types */
+  itemShape?: Record<string, ContentFieldDefinition>
+}
+
+/**
+ * Content section definition containing multiple fields.
+ */
+export interface ContentSectionDefinition {
+  type: 'object'
+  description: string
+  required: boolean
+  fields: Record<string, ContentFieldDefinition>
+}
+
+/**
+ * Content contract defining expected content structure for a preset.
+ * Documents all binding paths and their expected types.
+ */
+export type ContentContract = Record<string, ContentSectionDefinition>
+
+/**
  * Experience configuration for a preset.
  */
 export interface PresetExperienceConfig {

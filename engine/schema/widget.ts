@@ -65,6 +65,39 @@ export interface WidgetSchema {
    * ```
    */
   __repeat?: string
+  /**
+   * Condition for conditional rendering.
+   * Binding expression that must resolve to a truthy value for widget to render.
+   * Widget is skipped entirely if condition resolves to falsy (null, undefined, '', false, 0).
+   *
+   * @example
+   * ```typescript
+   * {
+   *   condition: '{{ item.studio }}',
+   *   type: 'Text',
+   *   props: { content: 'Studio: {{ item.studio }}' }
+   * }
+   * ```
+   */
+  condition?: string
+  /**
+   * Display label for expanded __repeat items (set by expandRepeater).
+   * Used by platform hierarchy panel for human-readable widget names.
+   * Priority: title > name > label > $index
+   */
+  __label?: string
+  /**
+   * Item index from __repeat expansion.
+   * Used to compute alternating layouts (data-reversed).
+   * Set via binding: '{{ item.$index }}'
+   */
+  'data-index'?: string | number
+  /**
+   * Reversed layout flag.
+   * Can be set explicitly or computed from data-index by Flex widget.
+   * Controls card layout direction and modal animation.
+   */
+  'data-reversed'?: boolean | string
 }
 
 /**

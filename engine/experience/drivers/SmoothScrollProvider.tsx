@@ -168,8 +168,8 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
       }
     }
 
-    // Reset scroll position
-    container.scrollTop = 0
+    // Reset scroll position on effect setup
+    container.scrollTo({ top: 0, behavior: 'instant' })
     currentScroll = 0
     targetScroll = 0
 
@@ -208,6 +208,8 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
     container.addEventListener('scroll', handleScroll, { passive: true })
     container.addEventListener('click', handleAnchorClick)
 
+    // Safe: one-time signal that setup is complete
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsReady(true)
 
     return () => {
@@ -223,6 +225,8 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
   useLayoutEffect(() => {
     // Skip if contained mode or disabled
     if (isContained || !enabledValue) {
+      // Safe: one-time signal when disabled (no setup needed)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (!isContained) setIsReady(true)
       return
     }
@@ -342,6 +346,8 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
   }, [isContained, enabledValue, smoothValue, smoothMacValue, effectsValue])
 
   // Memoize context value
+  // Note: React compiler can't optimize closures over refs, but code is correct
+  // eslint-disable-next-line
   const contextValue = useMemo<SmoothScrollContextValue>(() => ({
     getSmoother: () => smootherRef.current,
     stop: () => smootherRef.current?.paused(true),

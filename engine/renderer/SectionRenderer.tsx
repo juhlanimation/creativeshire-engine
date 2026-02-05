@@ -11,7 +11,7 @@
  * - Computes CSS variables for interaction-based behaviours
  */
 
-import { useRef } from 'react'
+import { useRef, useMemo, useCallback } from 'react'
 import { useStore } from 'zustand'
 import Section from '../content/sections'
 import { WidgetRenderer } from './WidgetRenderer'
@@ -37,12 +37,17 @@ function capitalize(str: string): string {
 
 /**
  * Resolves behaviour for a section.
- * Priority: explicit schema → experience defaults by section ID → experience section fallback.
+ * Priority: bareMode → explicit schema → experience defaults by section ID → experience section fallback.
  */
 function resolveSectionBehaviour(
   section: SectionSchema,
   experience: Experience
 ): string | null {
+  // Bare mode: ignore ALL behaviours (for testing/preview)
+  if (experience.bareMode) {
+    return 'none'
+  }
+
   // Explicit behaviour in schema takes priority
   if (section.behaviour) {
     return typeof section.behaviour === 'string'
@@ -94,10 +99,17 @@ export function SectionRenderer({ section, index }: SectionRendererProps) {
   // Resolve behaviour from explicit schema or experience defaults
   const behaviourId = resolveSectionBehaviour(section, experience)
 
-  // Extract behaviour options if provided as object
-  const behaviourOptions = typeof section.behaviour === 'object'
+  // Extract behaviour options if provided as object (memoized for stability)
+  const schemaBehaviourOptions = typeof section.behaviour === 'object'
     ? section.behaviour.options
     : undefined
+
+  // Memoize merged options to prevent BehaviourWrapper re-registration on every render
+  // Unstable options reference causes useEffect dependency to trigger repeatedly
+  const behaviourOptions = useMemo(() => ({
+    ...schemaBehaviourOptions,
+    sectionIndex: index
+  }), [schemaBehaviourOptions, index])
 
   // Subscribe to visibility from store
   // useIntersection trigger auto-discovers elements with data-section-id attribute
@@ -105,6 +117,13 @@ export function SectionRenderer({ section, index }: SectionRendererProps) {
     store,
     (state) => state.sectionVisibilities[section.id] ?? 0
   )
+
+  // Create a stable visibility getter for ScrollDriver
+  // This reads directly from store, avoiding duplicate IntersectionObserver tracking
+  // ScrollDriver calls this at 60fps instead of using its own observer
+  const visibilityGetter = useCallback(() => {
+    return store.getState().sectionVisibilities[section.id] ?? 0
+  }, [store, section.id])
 
   const widgets = section.widgets.map((widget, i) => (
     <WidgetRenderer key={widget.id ?? `widget-${i}`} widget={widget} index={i} />
@@ -136,11 +155,14 @@ export function SectionRenderer({ section, index }: SectionRendererProps) {
   // - Computes CSS variables for non-scroll behaviours
 
   // Conditionally wrap with lifecycle provider for navigable experiences
+  // visibilityGetter provides store-based visibility to ScrollDriver,
+  // eliminating duplicate IntersectionObserver tracking (fixes flickering)
   const behaviourContent = (
     <BehaviourWrapper
       behaviourId={behaviourId}
-      options={{ ...behaviourOptions, sectionIndex: index }}
+      options={behaviourOptions}
       initialState={{ sectionVisibility, sectionIndex: index }}
+      visibilityGetter={visibilityGetter}
     >
       {content}
     </BehaviourWrapper>

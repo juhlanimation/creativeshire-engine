@@ -32,12 +32,17 @@ function capitalize(str: string): string {
 
 /**
  * Resolves behaviour for a widget.
- * Priority: explicit schema → experience defaults by widget type.
+ * Priority: bareMode → explicit schema → experience defaults by widget type.
  */
 function resolveWidgetBehaviour(
   widget: WidgetSchema,
   experience: Experience
 ): string | null {
+  // Bare mode: ignore ALL behaviours (for testing/preview)
+  if (experience.bareMode) {
+    return null
+  }
+
   // Explicit behaviour in schema takes priority
   if (widget.behaviour) {
     if (typeof widget.behaviour === 'string') return widget.behaviour
@@ -103,17 +108,13 @@ export function WidgetRenderer({
   // Registry returns stable component references, not new components
   const Component = getWidget(widget.type)
 
-  // Return error fallback for unknown widget types
-  if (!Component) {
-    return <UnknownWidgetFallback type={widget.type} />
-  }
-
   // Resolve behaviour from explicit schema or experience defaults
   const behaviourId = resolveWidgetBehaviour(widget, experience)
   const behaviourOptions = extractBehaviourOptions(widget.behaviour)
 
   // Wire schema.on events to action registry
   // Maps { click: 'action-id' } → { onClick: (payload) => executeAction('action-id', payload) }
+  // NOTE: This hook must be called before any early returns (React rules of hooks)
   const eventHandlers = useMemo(() => {
     if (!widget.on) return {}
     return Object.fromEntries(
@@ -124,12 +125,18 @@ export function WidgetRenderer({
     )
   }, [widget.on])
 
+  // Return error fallback for unknown widget types
+  // NOTE: This check is placed AFTER hooks to satisfy React rules of hooks
+  if (!Component) {
+    return <UnknownWidgetFallback type={widget.type} />
+  }
+
   // Recursively render child widgets for layout containers
   const children = widget.widgets?.map((child, i) => (
     <WidgetRenderer key={child.id ?? i} widget={child} index={i} />
   ))
 
-  // Prepare props - pass style, className, widgets, and event handlers from schema
+  // Prepare props - pass style, className, widgets, data attributes, and event handlers from schema
   const componentProps = {
     ...widget.props,
     ...eventHandlers,
@@ -138,6 +145,9 @@ export function WidgetRenderer({
     ...(widget.className && { className: widget.className }),
     ...(widget.widgets && { widgets: widget.widgets }),
     ...(index !== undefined && { 'data-widget-index': index }),
+    // Pass data attributes for layout control
+    ...(widget['data-index'] !== undefined && { 'data-index': widget['data-index'] }),
+    ...(widget['data-reversed'] !== undefined && { 'data-reversed': widget['data-reversed'] }),
   }
 
   // Render the widget component

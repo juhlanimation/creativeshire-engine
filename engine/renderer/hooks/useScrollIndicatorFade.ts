@@ -18,9 +18,13 @@ if (typeof window !== 'undefined') {
 /**
  * Hook to fade out a scroll indicator element as user scrolls.
  * @param selector - CSS selector for the scroll indicator element (default: '#hero-scroll')
+ * @param enabled - Whether the effect is enabled (default: true). Set to false for bare mode.
  */
-export function useScrollIndicatorFade(selector: string = '#hero-scroll'): void {
+export function useScrollIndicatorFade(selector: string = '#hero-scroll', enabled: boolean = true): void {
   useEffect(() => {
+    // Skip if disabled (e.g., bare mode)
+    if (!enabled) return
+
     // Small delay to ensure DOM is ready
     const timer = setTimeout(() => {
       const el = document.querySelector(selector)
@@ -46,5 +50,5 @@ export function useScrollIndicatorFade(selector: string = '#hero-scroll'): void 
         .filter(t => t.vars.trigger === document.documentElement)
         .forEach(t => t.kill())
     }
-  }, [selector])
+  }, [selector, enabled])
 }

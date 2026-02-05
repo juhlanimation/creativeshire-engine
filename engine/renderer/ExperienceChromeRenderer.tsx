@@ -11,11 +11,16 @@
  */
 
 import { createPortal } from 'react-dom'
-import { useEffect, useState } from 'react'
+import { useSyncExternalStore } from 'react'
 import { getChromeComponent } from '../content/chrome/registry'
 import type { ExperienceChrome } from '../experience/experiences/types'
 import { useContainer } from '../interface/ContainerContext'
 import { useSiteContainer } from './SiteContainerContext'
+
+// SSR-safe mounting detection using useSyncExternalStore
+const subscribeNoop = () => () => {}
+const getClientSnapshot = () => true
+const getServerSnapshot = () => false
 
 interface ExperienceChromeRendererProps {
   /** Chrome items to render */
@@ -37,12 +42,8 @@ export function ExperienceChromeRenderer({
   const { portalTarget } = useContainer()
   const { siteContainer } = useSiteContainer()
 
-  // Track portal mount state for SSR safety
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  // SSR-safe mounting detection (avoids setState in useEffect)
+  const mounted = useSyncExternalStore(subscribeNoop, getClientSnapshot, getServerSnapshot)
 
   if (items.length === 0) return null
 

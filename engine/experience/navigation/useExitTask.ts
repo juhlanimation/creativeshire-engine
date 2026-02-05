@@ -49,8 +49,10 @@ export function useExitTask(
   const context = useTransitionOptional()
   const factoryRef = useRef(taskFactory)
 
-  // Keep factory ref updated
-  factoryRef.current = taskFactory
+  // Keep factory ref updated (in effect to avoid mutating during render)
+  useEffect(() => {
+    factoryRef.current = taskFactory
+  }, [taskFactory])
 
   useEffect(() => {
     // Skip if disabled or no context

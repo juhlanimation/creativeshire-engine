@@ -50,7 +50,11 @@ export function useTransitionComplete({
 }: UseTransitionCompleteOptions): void {
   // Store callback in ref to avoid re-registering listener
   const callbackRef = useRef(onComplete)
-  callbackRef.current = onComplete
+
+  // Update ref in effect to avoid mutating during render
+  useEffect(() => {
+    callbackRef.current = onComplete
+  }, [onComplete])
 
   // Check for reduced motion
   const prefersReducedMotion = useMemo(() => {

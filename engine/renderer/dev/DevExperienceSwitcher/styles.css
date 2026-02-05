@@ -1,0 +1,173 @@
+/**
+ * DevExperienceSwitcher styles.
+ * Development-only overlay for switching experiences.
+ */
+
+.dev-switcher {
+  position: fixed;
+  z-index: 99999;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12px;
+}
+
+/* Position variants */
+.dev-switcher--top-left {
+  top: 16px;
+  left: 16px;
+}
+
+.dev-switcher--top-right {
+  top: 16px;
+  right: 16px;
+}
+
+.dev-switcher--bottom-left {
+  bottom: 16px;
+  left: 16px;
+}
+
+.dev-switcher--bottom-right {
+  bottom: 16px;
+  right: 16px;
+}
+
+/* Trigger button */
+.dev-switcher__trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.dev-switcher__trigger:hover {
+  background: rgba(0, 0, 0, 0.95);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.dev-switcher__icon {
+  font-size: 14px;
+}
+
+.dev-switcher__label {
+  font-weight: 500;
+}
+
+.dev-switcher__badge {
+  padding: 2px 5px;
+  background: #f59e0b;
+  color: #000;
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Dropdown menu */
+.dev-switcher__menu {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 8px;
+  min-width: 220px;
+  background: rgba(0, 0, 0, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+}
+
+.dev-switcher--top-left .dev-switcher__menu,
+.dev-switcher--top-right .dev-switcher__menu {
+  bottom: auto;
+  top: 100%;
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+.dev-switcher--bottom-left .dev-switcher__menu,
+.dev-switcher--top-left .dev-switcher__menu {
+  right: auto;
+  left: 0;
+}
+
+/* Header */
+.dev-switcher__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dev-switcher__reset {
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 3px;
+  color: #fff;
+  font-size: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.dev-switcher__reset:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Options */
+.dev-switcher__option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.dev-switcher__option:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dev-switcher__option--active {
+  background: rgba(59, 130, 246, 0.3);
+}
+
+.dev-switcher__option--active:hover {
+  background: rgba(59, 130, 246, 0.4);
+}
+
+.dev-switcher__option-name {
+  font-weight: 500;
+}
+
+.dev-switcher__option-id {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 10px;
+  font-family: ui-monospace, monospace;
+}
+
+.dev-switcher__option-default {
+  padding: 1px 4px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.7);
+}

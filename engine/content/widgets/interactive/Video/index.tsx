@@ -115,6 +115,18 @@ export default function Video({
   const handleClick = useCallback(() => {
     if (!videoUrl || !onClick || !containerRef.current) return
 
+    // Compute animation type: explicit prop takes priority, otherwise read from CSS variable
+    let animationType = modalAnimationType
+    if (!animationType) {
+      const card = containerRef.current.closest('.project-card')
+      if (card) {
+        const isReversed = getComputedStyle(card).getPropertyValue('--card-reversed').trim() === '1'
+        animationType = isReversed ? 'wipe-right' : 'wipe-left'
+      } else {
+        animationType = 'wipe-left' // Default fallback
+      }
+    }
+
     const rect = containerRef.current.getBoundingClientRect()
     const startTime = getPosition(videoUrl)
 
@@ -123,7 +135,7 @@ export default function Video({
       poster,
       rect,
       startTime: startTime > 0 ? startTime : undefined,
-      animationType: modalAnimationType,
+      animationType,
     })
   }, [videoUrl, poster, onClick, getPosition, modalAnimationType])
 

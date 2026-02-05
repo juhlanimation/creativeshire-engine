@@ -5,6 +5,7 @@
 
 import type { SectionSchema } from './section'
 import type { PageChromeOverrides } from './chrome'
+import type { ExperienceConfig } from './experience'
 
 /**
  * Page-level metadata for SEO and document head.
@@ -64,4 +65,6 @@ export interface PageSchema {
   sections: SectionSchema[]
   /** Chrome overrides for this page */
   chrome?: PageChromeOverrides
+  /** Experience override for this page (defaults to site experience) */
+  experience?: ExperienceConfig
 }

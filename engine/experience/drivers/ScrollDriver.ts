@@ -48,6 +48,12 @@ interface ElementVisibility {
 }
 
 /**
+ * Visibility getter function type.
+ * Used for sections that get visibility from the store instead of local observer.
+ */
+export type VisibilityGetter = () => number
+
+/**
  * ScrollDriver applies CSS variables based on scroll position.
  * Implements the Driver interface with register/unregister/destroy lifecycle.
  */
@@ -55,8 +61,11 @@ export class ScrollDriver implements Driver {
   /** Registered targets - Map for O(1) lookup */
   private targets: Map<string, Target> = new Map()
 
-  /** Per-element visibility from IntersectionObserver */
+  /** Per-element visibility from IntersectionObserver (for non-section elements) */
   private visibility: Map<string, ElementVisibility> = new Map()
+
+  /** Store-based visibility getters (for sections tracked by useIntersection) */
+  private storeVisibilities: Map<string, VisibilityGetter> = new Map()
 
   /** Element ID lookup for IntersectionObserver callback */
   private elementIds: WeakMap<Element, string> = new WeakMap()
@@ -203,8 +212,12 @@ export class ScrollDriver implements Driver {
   private tick = (): void => {
     if (this.isDestroyed) return
 
-    // Only update when scroll or visibility changed (dirty flag)
-    if (this.state.needsUpdate) {
+    // For elements using store-based visibility (sections), we must update every frame
+    // because the store can change without triggering our local IntersectionObserver.
+    // For elements using local observer only, we can skip frames when nothing changed.
+    const hasStoreVisibilities = this.storeVisibilities.size > 0
+
+    if (this.state.needsUpdate || hasStoreVisibilities) {
       this.state.needsUpdate = false
       this.update()
     }
@@ -222,15 +235,18 @@ export class ScrollDriver implements Driver {
 
     // Batch write: update all targets
     this.targets.forEach(({ element, behaviour, options }, id) => {
-      // Get per-element visibility from IntersectionObserver
-      const elementVisibility = this.visibility.get(id)?.visibility ?? 0
+      // Get visibility - prefer store-based getter (for sections), fallback to local observer
+      const storeGetter = this.storeVisibilities.get(id)
+      const elementVisibility = storeGetter?.()
+        ?? this.visibility.get(id)?.visibility
+        ?? 0
 
       // Build state object for behaviour
       const behaviourState: BehaviourState = {
         scrollProgress,
         scrollVelocity,
         sectionProgress: scrollProgress, // Default to global progress
-        sectionVisibility: elementVisibility, // Per-element visibility from observer
+        sectionVisibility: elementVisibility,
         sectionIndex: 0,
         totalSections: 1,
         isActive: true,
@@ -250,13 +266,21 @@ export class ScrollDriver implements Driver {
   /**
    * Register an element with the driver.
    * Adds target to internal Map for animation updates.
-   * Starts observing element for visibility tracking.
+   *
+   * @param id - Unique identifier for this element
+   * @param element - DOM element to apply CSS variables to
+   * @param behaviour - Behaviour definition with compute function
+   * @param options - Options passed to behaviour.compute()
+   * @param visibilityGetter - Optional getter for store-based visibility (sections).
+   *   If provided, local IntersectionObserver is skipped for this element.
+   *   This prevents duplicate observers when useIntersection already tracks the element.
    */
   register(
     id: string,
     element: HTMLElement,
     behaviour: Behaviour,
-    options: Record<string, unknown> = {}
+    options: Record<string, unknown> = {},
+    visibilityGetter?: VisibilityGetter
   ): void {
     if (this.isDestroyed) {
       console.warn('ScrollDriver: Cannot register after destroy()')
@@ -265,12 +289,19 @@ export class ScrollDriver implements Driver {
 
     this.targets.set(id, { element, behaviour, options })
 
-    // Track element ID for IntersectionObserver callback
-    this.elementIds.set(element, id)
+    // Use store-based visibility getter if provided (for sections)
+    // This avoids duplicate IntersectionObserver tracking
+    if (visibilityGetter) {
+      this.storeVisibilities.set(id, visibilityGetter)
+    } else {
+      // Only use local IntersectionObserver for non-section elements
+      this.elementIds.set(element, id)
+      this.visibility.set(id, { visibility: 0 })
+      this.observer?.observe(element)
+    }
 
-    // Initialize visibility and start observing
-    this.visibility.set(id, { visibility: 0 })
-    this.observer?.observe(element)
+    // Get initial visibility - from getter or default to 0
+    const initialVisibility = visibilityGetter?.() ?? 0
 
     // Apply initial CSS variables synchronously to prevent flash
     // Without this, elements flash visible for 1 frame before RAF applies vars
@@ -278,7 +309,7 @@ export class ScrollDriver implements Driver {
       scrollProgress: this.state.scrollProgress,
       scrollVelocity: 0,
       sectionProgress: 0,
-      sectionVisibility: 0, // Not visible yet
+      sectionVisibility: initialVisibility,
       sectionIndex: 0,
       totalSections: 1,
       isActive: true,
@@ -300,13 +331,16 @@ export class ScrollDriver implements Driver {
   unregister(id: string): void {
     const target = this.targets.get(id)
     if (target) {
-      // Stop observing the element
-      this.observer?.unobserve(target.element)
-      this.elementIds.delete(target.element)
+      // Stop observing the element (only if using local observer)
+      if (!this.storeVisibilities.has(id)) {
+        this.observer?.unobserve(target.element)
+        this.elementIds.delete(target.element)
+      }
     }
 
     this.targets.delete(id)
     this.visibility.delete(id)
+    this.storeVisibilities.delete(id)
   }
 
   /**
@@ -343,6 +377,7 @@ export class ScrollDriver implements Driver {
     // Clear all targets and visibility tracking
     this.targets.clear()
     this.visibility.clear()
+    this.storeVisibilities.clear()
   }
 
   /**

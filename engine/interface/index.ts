@@ -22,6 +22,15 @@ export { createEngineStore, createSnapshot } from './EngineStore'
 // Validators
 export * from './validation'
 
+// Section discovery API
+export {
+  getAvailableSections,
+  getSectionsGroupedByCategory,
+  canAddSection,
+  createSectionFromPattern,
+  type SectionAvailability,
+} from './discovery'
+
 // Types
 export type {
   EngineInput,

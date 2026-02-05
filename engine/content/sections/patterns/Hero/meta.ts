@@ -2,14 +2,16 @@
  * Hero section pattern metadata for platform UI.
  */
 
-import { defineMeta } from '../../../../schema/meta'
+import { defineSectionMeta } from '../../../../schema/meta'
 import type { HeroProps } from './types'
 
-export const meta = defineMeta<HeroProps>({
+export const meta = defineSectionMeta<HeroProps>({
   id: 'Hero',
   name: 'Hero Section',
   description: 'Full viewport hero with video background and role titles',
   category: 'section',
+  sectionCategory: 'hero',
+  unique: true,
   icon: 'hero',
   tags: ['hero', 'landing', 'video', 'fullscreen'],
   component: false, // Factory function

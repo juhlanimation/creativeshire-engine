@@ -5,7 +5,7 @@
  * Content Layer (L1) - no scroll listeners or viewport units.
  */
 
-import React, { memo, forwardRef, type CSSProperties } from 'react'
+import React, { memo, forwardRef, useRef, useImperativeHandle, type CSSProperties } from 'react'
 import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
 import type { FlexProps } from './types'
 import './styles.css'
@@ -72,22 +72,49 @@ const Flex = memo(forwardRef<HTMLDivElement, FlexProps>(function Flex(
     'data-behaviour': dataBehaviour,
     'data-effect': dataEffect,
     'data-marquee-track': dataMarqueeTrack,
+    'data-index': dataIndex,
+    'data-reversed': dataReversedProp,
     widgets
   },
-  ref
+  forwardedRef
 ) {
+  // Internal ref for computing data-reversed
+  const internalRef = useRef<HTMLDivElement>(null)
+
+  // Merge forwarded ref with internal ref
+  useImperativeHandle(forwardedRef, () => internalRef.current!, [])
+
+  // Compute data-reversed: explicit prop takes priority, otherwise compute from data-index
+  // Odd indices (1, 3, 5...) are reversed for alternating layout
+  const computedReversed = (() => {
+    // Explicit prop takes priority
+    if (dataReversedProp !== undefined) {
+      return dataReversedProp === true || dataReversedProp === 'true'
+    }
+    // Compute from data-index if available
+    if (dataIndex !== undefined) {
+      const index = typeof dataIndex === 'number' ? dataIndex : parseInt(dataIndex, 10)
+      if (!isNaN(index)) {
+        return index % 2 === 1
+      }
+    }
+    return undefined
+  })()
+
   // Only pass direction if explicitly provided - allows CSS to control responsive direction
   const computedStyle = flexToStyle({ direction, align, justify, wrap, gap, style })
 
   return (
     <div
-      ref={ref}
+      ref={internalRef}
       id={id}
       className={className ? `flex-widget ${className}` : 'flex-widget'}
       style={computedStyle}
       data-behaviour={dataBehaviour}
       data-effect={dataEffect}
       data-marquee-track={dataMarqueeTrack ? '' : undefined}
+      data-index={dataIndex !== undefined ? String(dataIndex) : undefined}
+      data-reversed={computedReversed !== undefined ? String(computedReversed) : undefined}
     >
       {widgets?.map((widget, index) => (
         <WidgetRenderer key={widget.id ?? index} widget={widget} />

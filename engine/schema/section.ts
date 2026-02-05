@@ -36,6 +36,8 @@ export interface LayoutConfig {
 export interface SectionSchema {
   /** Unique identifier for anchor linking */
   id: string
+  /** Pattern that created this section (e.g., 'Hero', 'About') for tracking uniqueness */
+  patternId?: string
   /** Layout configuration */
   layout: LayoutConfig
   /** Inline styles */

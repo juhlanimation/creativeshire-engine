@@ -32,6 +32,10 @@ export interface FlexProps {
   'data-effect'?: string
   /** Data attribute for marquee track */
   'data-marquee-track'?: boolean
+  /** Data attribute for item index (from __repeat binding) */
+  'data-index'?: string | number
+  /** Data attribute for reversed layout (explicit or computed from data-index) */
+  'data-reversed'?: boolean | string
   /** Child widgets - schema-driven rendering */
   widgets?: WidgetSchema[]
 }

@@ -2,14 +2,16 @@
  * FeaturedProjects section pattern metadata for platform UI.
  */
 
-import { defineMeta } from '../../../../schema/meta'
+import { defineSectionMeta } from '../../../../schema/meta'
 import type { FeaturedProjectsProps } from './types'
 
-export const meta = defineMeta<FeaturedProjectsProps>({
+export const meta = defineSectionMeta<FeaturedProjectsProps>({
   id: 'FeaturedProjects',
   name: 'Featured Projects Section',
   description: 'Featured projects grid with alternating layout ProjectCards',
   category: 'section',
+  sectionCategory: 'project',
+  unique: false,
   icon: 'projects',
   tags: ['portfolio', 'projects', 'grid', 'featured'],
   component: false, // Factory function

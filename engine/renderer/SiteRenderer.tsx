@@ -18,10 +18,13 @@ import {
   SmoothScrollProvider,
   TriggerInitializer,
   getExperience,
-  stackingExperience,
+  getExperienceAsync,
+  simpleExperience,
+  ensureExperiencesRegistered,
   PresentationWrapper,
   InfiniteCarouselController,
 } from '../experience'
+
 import { BehaviourWrapper } from '../experience/behaviours'
 import { TransitionProvider, useTransitionOptional, NavigationInitializer } from '../experience/navigation'
 import type { NavigableExperienceState } from '../experience/experiences/types'
@@ -35,6 +38,15 @@ import type { SiteSchema, PageSchema } from '../schema'
 import type { Experience, ExperienceConstraints } from '../experience/experiences/types'
 import { getBreakpointValue, type BreakpointValue } from '../config/breakpoints'
 import { useContainer } from '../interface/ContainerContext'
+
+// Dev-only experience switcher (tree-shaken in production)
+import {
+  DevExperienceSwitcher,
+  getExperienceOverride,
+} from './dev/DevExperienceSwitcher'
+
+// Ensure all experiences are registered before any lookups
+ensureExperiencesRegistered()
 
 interface SiteRendererProps {
   site: SiteSchema
@@ -144,22 +156,69 @@ export function SiteRenderer({ site, page }: SiteRendererProps) {
     return () => window.removeEventListener('resize', updateBreakpoint)
   }, [mode])
 
-  // Fade out scroll indicator on scroll (GSAP-based for cross-browser support)
-  useScrollIndicatorFade('#hero-scroll')
+  // Dev-mode experience override (from URL query param)
+  const [devOverride, setDevOverride] = useState<string | null>(null)
 
-  // Resolve experience from site config with fallback
-  const experienceId = site.experience?.id ?? 'stacking'
-  let experience = getExperience(experienceId)
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'development') return
 
-  if (!experience) {
-    console.warn(
-      `[Creativeshire] Unknown experience "${experienceId}", falling back to "stacking"`
-    )
-    experience = stackingExperience
-  }
+    // Read initial override from URL
+    setDevOverride(getExperienceOverride())
 
-  // Create store for this render
-  const store = experience.createStore()
+    // Listen for override changes from DevExperienceSwitcher
+    const handleOverrideChange = (e: CustomEvent<string | null>) => {
+      setDevOverride(e.detail)
+    }
+
+    window.addEventListener('experienceOverrideChange', handleOverrideChange as EventListener)
+    return () => {
+      window.removeEventListener('experienceOverrideChange', handleOverrideChange as EventListener)
+    }
+  }, [])
+
+  // Resolve experience: dev override > page config > site config > fallback
+  const schemaExperienceId = page.experience?.id ?? site.experience?.id ?? 'simple'
+  const experienceId = (process.env.NODE_ENV === 'development' && devOverride)
+    ? devOverride
+    : schemaExperienceId
+
+  // Try sync lookup first (for already-loaded experiences)
+  const syncExperience = getExperience(experienceId)
+
+  // Track async-loaded experience
+  const [asyncExperience, setAsyncExperience] = useState<Experience | null>(null)
+
+  useEffect(() => {
+    // If sync lookup worked, no need for async
+    if (syncExperience) return
+
+    // Load async and cache
+    let cancelled = false
+    getExperienceAsync(experienceId).then((exp: Experience | undefined) => {
+      if (cancelled) return
+      if (!exp) {
+        console.warn(
+          `[Creativeshire] Unknown experience "${experienceId}", falling back to "simple"`
+        )
+        setAsyncExperience(simpleExperience)
+      } else {
+        setAsyncExperience(exp)
+      }
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [experienceId, syncExperience])
+
+  // Use sync experience if available, then async, then fallback to simple
+  const experience = syncExperience ?? asyncExperience ?? simpleExperience
+
+  // Fade out scroll indicator on scroll (disabled in bare mode)
+  useScrollIndicatorFade('#hero-scroll', !experience.bareMode)
+
+  // Create store for this render (memoized to avoid recreating on every render)
+  const store = useMemo(() => experience.createStore(), [experience])
 
   // Filter experience chrome by position
   const beforeChrome = experience.experienceChrome?.filter(c => c.position === 'before') ?? []
@@ -169,8 +228,9 @@ export function SiteRenderer({ site, page }: SiteRendererProps) {
   // Smooth scrolling: ScrollSmoother needs page-level scroll to work
   // - Stacking/parallax: Use ScrollSmoother (page scrolls)
   // - Slideshow: Disable ScrollSmoother (body locked), use section-level smoothing
+  // - Bare mode: Disable for raw layout testing
   const isSlideshow = experience.presentation?.model === 'slideshow'
-  const smoothScrollConfig = isSlideshow
+  const smoothScrollConfig = (isSlideshow || experience.bareMode)
     ? { ...site.theme?.smoothScroll, enabled: false }  // Disable page-level, keep config for section use
     : site.theme?.smoothScroll
 
@@ -259,6 +319,11 @@ export function SiteRenderer({ site, page }: SiteRendererProps) {
 
               {/* Signal page ready for entry transitions */}
               <PageReadySignal />
+
+              {/* Dev-mode experience switcher (only in development) */}
+              {process.env.NODE_ENV === 'development' && (
+                <DevExperienceSwitcher currentExperienceId={schemaExperienceId} />
+              )}
             </SmoothScrollProvider>
           </TriggerInitializer>
         </TransitionProvider>

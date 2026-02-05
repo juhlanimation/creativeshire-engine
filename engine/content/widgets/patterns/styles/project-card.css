@@ -2,8 +2,9 @@
  * ProjectCard factory composite styles.
  * Styles for the widget tree produced by createProjectCard().
  *
- * Note: Factory composites return WidgetSchema (no CSS in factory folder).
- * Styles live here in composite/styles/ and are imported via globals.css.
+ * Reversed state: Single source of truth via data-reversed attribute.
+ * - Set explicitly: data-reversed="true"
+ * - Computed from index: Flex widget computes from data-index
  *
  * Reference: bojuhl.com project-card.tsx
  * - Thumbnail: w-full md:w-[55vw] shrink-0 min-w-0
@@ -16,82 +17,117 @@
 
 /* ===========================================
    BASE LAYOUT
-   Reference: flex flex-col md:flex-row gap-4 md:gap-2
    =========================================== */
 
 .project-card {
   width: 100%;
-  /* Margin-y for spacing: when stacked, margin-bottom + margin-top = gap between cards */
-  margin: 4rem 0; /* Mobile: 4rem top/bottom, so gap = 8rem */
+  margin: 4rem 0;
+  --card-reversed: 0; /* CSS variable for Video widget to read */
 }
 
 @container site (min-width: 768px) {
   .project-card {
-    margin: 8rem 0; /* Desktop: 8rem top/bottom, so gap = 16rem */
+    margin: 8rem 0;
   }
 }
 
-/* Fallback for browsers without container query support */
 :where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card {
   margin: 8rem 0;
 }
 
-/* Mobile: Stack vertically with 16px gap */
+/* Mobile: Stack vertically */
 .project-card.flex-widget {
   flex-direction: column;
-  gap: 16px; /* gap-4 */
+  gap: 16px;
 }
 
-/* Mobile: Force thumbnail first for ALL cards (including reversed)
-   Reference shows all cards with thumbnail on top at mobile */
-.project-card--reversed .project-card__thumbnail-column {
-  order: -1;
-}
-
-/* Tablet+ (768px): Horizontal layout with 8px gap */
+/* Tablet+: Horizontal layout */
 @container site (min-width: 768px) {
   .project-card.flex-widget {
     flex-direction: row;
-    gap: 8px; /* gap-2 */
-    justify-content: flex-start; /* Left-aligned: items at left edge */
-  }
-
-  /* Reset order on desktop - DOM order controls layout */
-  .project-card--reversed .project-card__thumbnail-column {
-    order: unset;
-  }
-
-  /* Reversed: items aligned to RIGHT edge
-     Source order is already swapped in composite [content, thumbnail]
-     So we use row (not row-reverse) + justify-end to push to right */
-  .project-card--reversed.flex-widget {
-    flex-direction: row;
-    justify-content: flex-end; /* Right-aligned: items at right edge */
+    gap: 8px;
+    justify-content: flex-start;
   }
 }
 
-/* Fallback for browsers without container query support */
 :where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card.flex-widget {
   flex-direction: row;
   gap: 8px;
   justify-content: flex-start;
 }
 
-:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card--reversed .project-card__thumbnail-column {
+/* ===========================================
+   REVERSED LAYOUT (data-reversed="true")
+   Single source of truth for reversed state
+   =========================================== */
+
+/* Mobile: Force thumbnail first for reversed cards */
+.project-card[data-reversed="true"] .project-card__thumbnail-column {
+  order: -1;
+}
+
+/* Tablet+: Reversed layout */
+@container site (min-width: 768px) {
+  .project-card[data-reversed="true"] {
+    --card-reversed: 1;
+  }
+
+  .project-card[data-reversed="true"].flex-widget {
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+  }
+
+  .project-card[data-reversed="true"] .project-card__thumbnail-column {
+    order: unset;
+  }
+
+  .project-card[data-reversed="true"] .project-card__content {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .project-card[data-reversed="true"] .project-card__meta.flex-widget {
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  .project-card[data-reversed="true"] .project-card__description {
+    text-align-last: right;
+  }
+}
+
+/* Fallbacks for browsers without container query support */
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card[data-reversed="true"] {
+  --card-reversed: 1;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card[data-reversed="true"].flex-widget {
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card[data-reversed="true"] .project-card__thumbnail-column {
   order: unset;
 }
 
-:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card--reversed.flex-widget {
-  flex-direction: row;
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card[data-reversed="true"] .project-card__content {
+  align-items: flex-end;
+  text-align: right;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card[data-reversed="true"] .project-card__meta.flex-widget {
   justify-content: flex-end;
+  text-align: right;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card[data-reversed="true"] .project-card__description {
+  text-align-last: right;
 }
 
 /* ===========================================
    THUMBNAIL COLUMN
-   Reference: w-full md:w-[55vw] shrink-0 min-w-0
    =========================================== */
 
-/* Reference: flex flex-col w-full md:w-[55vw] shrink-0 min-w-0 */
 .project-card__thumbnail-column {
   display: flex;
   flex-direction: column;
@@ -107,7 +143,6 @@
   }
 }
 
-/* Fallback for browsers without container query support */
 :where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card__thumbnail-column {
   width: var(--card-width, 55vw);
   flex-shrink: 0;
@@ -116,179 +151,79 @@
 
 /* ===========================================
    METADATA (below thumbnail)
-   Reference: text-[10px] opacity-60 gap-x-8 gap-y-1 mt-2
    =========================================== */
 
 .project-card__meta {
-  margin-top: 8px; /* mt-2 */
+  margin-top: 8px;
 }
 
 .project-card__meta.flex-widget {
-  gap: 32px; /* gap-x-8 */
+  gap: 32px;
   flex-wrap: wrap;
-  row-gap: 4px; /* gap-y-1 */
+  row-gap: 4px;
   justify-content: flex-start;
   text-align: left;
 }
 
-/* Reversed: md:justify-end md:text-right */
-@container site (min-width: 768px) {
-  .project-card--reversed .project-card__meta.flex-widget {
-    justify-content: flex-end;
-    text-align: right;
-  }
-}
-
-/* Fallback for browsers without container query support */
-:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card--reversed .project-card__meta.flex-widget {
-  justify-content: flex-end;
-  text-align: right;
-}
-
 .project-card__meta-item {
   font-family: var(--font-paragraph, system-ui, -apple-system, sans-serif);
-  font-size: 10px; /* text-[10px] */
-  font-weight: 500; /* font-medium */
-  color: rgba(0, 0, 0, 0.6); /* opacity-60 on black */
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.6);
 }
 
 /* ===========================================
    CONTENT COLUMN
-   Reference: max-w-[280px] items-start / md:items-end
    =========================================== */
 
 .project-card__content {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 280px; /* max-w-[280px] */
+  max-width: 280px;
   align-items: flex-start;
   text-align: left;
 }
 
-/* Reversed: md:items-end, text right-aligned */
-@container site (min-width: 768px) {
-  .project-card--reversed .project-card__content {
-    align-items: flex-end;
-    text-align: right;
-  }
-}
-
-/* Fallback for browsers without container query support */
-:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card--reversed .project-card__content {
-  align-items: flex-end;
-  text-align: right;
-}
-
 /* ===========================================
    TYPOGRAPHY
-   All text-[10px] per reference
    =========================================== */
 
-/* Title: text-[10px] font-bold uppercase mb-3 */
-/* Note: Reference loads Inter 300/500/900 - font-weight:700 falls back to 900 (black) */
 .project-card .project-card__title {
   font-family: var(--font-title, system-ui, -apple-system, sans-serif);
   font-size: 10px;
-  font-weight: 900; /* black - matches reference rendering */
+  font-weight: 900;
   text-transform: uppercase;
   color: #000;
-  margin: 0 0 12px; /* mb-3 */
+  margin: 0 0 12px;
   width: 100%;
 }
 
-/* Description: text-[10px] leading-relaxed opacity-80 text-justify [text-align-last:left] */
 .project-card .project-card__description {
   font-family: var(--font-paragraph, system-ui, -apple-system, sans-serif);
   font-size: 10px;
-  font-weight: 400; /* normal weight - matches reference computed style */
-  line-height: 1.625; /* leading-relaxed */
-  color: rgba(0, 0, 0, 0.8); /* opacity-80 */
-  margin: 0 0 16px; /* mb-4 - space before year */
+  font-weight: 400;
+  line-height: 1.625;
+  color: rgba(0, 0, 0, 0.8);
+  margin: 0 0 16px;
   width: 100%;
   text-align: justify;
   text-align-last: left;
   white-space: pre-line;
 }
 
-/* Reversed description: md:[text-align-last:right] */
-@container site (min-width: 768px) {
-  .project-card--reversed .project-card__description {
-    text-align-last: right;
-  }
-}
-
-/* Fallback for browsers without container query support */
-:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card--reversed .project-card__description {
-  text-align-last: right;
-}
-
-/* Year */
 .project-card .project-card__year {
   font-family: var(--font-paragraph, system-ui, -apple-system, sans-serif);
   font-size: 10px;
-  font-weight: 500; /* medium - matches metadata styling */
-  color: rgba(0, 0, 0, 0.6);
-  margin: 0; /* No gap - role follows immediately */
-}
-
-/* Role */
-.project-card__role {
-  font-family: var(--font-paragraph, system-ui, -apple-system, sans-serif);
-  font-size: 10px;
-  font-weight: 500; /* medium - matches metadata styling */
+  font-weight: 500;
   color: rgba(0, 0, 0, 0.6);
   margin: 0;
 }
 
-/* ===========================================
-   NTH-CHILD ALTERNATING LAYOUT
-   For binding expressions where reversed prop can't be set per-item.
-   Uses :nth-child to alternate: odd=left, even=right
-   =========================================== */
-
-/* Even cards (2nd, 4th, 6th...) get reversed layout on tablet+ */
-@container site (min-width: 768px) {
-  /* Reversed layout via flex-direction: row-reverse */
-  .featured-projects__content > .project-card:nth-child(even).flex-widget {
-    flex-direction: row-reverse;
-    justify-content: flex-start; /* Items flow from right edge */
-  }
-
-  /* Reversed: metadata aligned right */
-  .featured-projects__content > .project-card:nth-child(even) .project-card__meta.flex-widget {
-    justify-content: flex-end;
-    text-align: right;
-  }
-
-  /* Reversed: content aligned right */
-  .featured-projects__content > .project-card:nth-child(even) .project-card__content {
-    align-items: flex-end;
-    text-align: right;
-  }
-
-  /* Reversed: description text-align-last right */
-  .featured-projects__content > .project-card:nth-child(even) .project-card__description {
-    text-align-last: right;
-  }
-}
-
-/* Fallback for browsers without container query support */
-:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .featured-projects__content > .project-card:nth-child(even).flex-widget {
-  flex-direction: row-reverse;
-  justify-content: flex-start;
-}
-
-:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .featured-projects__content > .project-card:nth-child(even) .project-card__meta.flex-widget {
-  justify-content: flex-end;
-  text-align: right;
-}
-
-:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .featured-projects__content > .project-card:nth-child(even) .project-card__content {
-  align-items: flex-end;
-  text-align: right;
-}
-
-:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .featured-projects__content > .project-card:nth-child(even) .project-card__description {
-  text-align-last: right;
+.project-card__role {
+  font-family: var(--font-paragraph, system-ui, -apple-system, sans-serif);
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.6);
+  margin: 0;
 }

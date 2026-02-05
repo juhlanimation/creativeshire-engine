@@ -13,9 +13,10 @@
  * - Offset: x+24, y+8 from cursor
  */
 
-import { useEffect, useState, useCallback, memo } from 'react'
+import { useEffect, useState, useCallback, memo, useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
 import { useStore } from 'zustand'
+import { useShallow } from 'zustand/shallow'
 import { useExperience } from '../../../../experience'
 import { useContainer } from '../../../../interface/ContainerContext'
 import { useSiteContainer } from '../../../../renderer/SiteContainerContext'
@@ -27,6 +28,16 @@ import './styles.css'
  * Reads cursor position from experience store (set by useCursorPosition trigger).
  * Uses event delegation to detect hover on links matching targetSelector.
  */
+// Subscription for client-side mounting detection (SSR-safe)
+const subscribeNoop = () => () => {}
+const getClientSnapshot = () => true
+const getServerSnapshot = () => false
+
+// Detect touch device (only on client)
+const getIsTouchDevice = () =>
+  typeof window !== 'undefined' &&
+  ('ontouchstart' in window || navigator.maxTouchPoints > 0)
+
 const CursorLabel = memo(function CursorLabel({
   label = 'ENTER',
   targetSelector = '.text-widget a',
@@ -34,25 +45,24 @@ const CursorLabel = memo(function CursorLabel({
   offsetY = 8
 }: CursorLabelProps) {
   const [isVisible, setIsVisible] = useState(false)
-  const [mounted, setMounted] = useState(false)
 
-  // Check for touch device
-  const [isTouchDevice, setIsTouchDevice] = useState(false)
+  // SSR-safe mounting detection using useSyncExternalStore
+  const mounted = useSyncExternalStore(subscribeNoop, getClientSnapshot, getServerSnapshot)
+
+  // Touch device detection (stable after mount)
+  const isTouchDevice = mounted && getIsTouchDevice()
 
   // Get container context for portal target and event scoping
   const { mode, containerRef, portalTarget } = useContainer()
   const { siteContainer } = useSiteContainer()
 
   // Read cursor position from experience store (set by useCursorPosition trigger)
+  // Single subscription with shallow comparison to avoid double re-renders
   const { store } = useExperience()
-  const cursorX = useStore(store, (state) => state.cursorX)
-  const cursorY = useStore(store, (state) => state.cursorY)
-
-  useEffect(() => {
-    setMounted(true)
-    // Detect touch device
-    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0)
-  }, [])
+  const { cursorX, cursorY } = useStore(
+    store,
+    useShallow((state) => ({ cursorX: state.cursorX, cursorY: state.cursorY }))
+  )
 
   // Handle hover state via event delegation
   // Use closest() to match target OR any ancestor (for nested elements like img inside container)

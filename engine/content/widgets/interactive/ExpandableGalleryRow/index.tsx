@@ -228,27 +228,10 @@ const ExpandableGalleryRow = memo(function ExpandableGalleryRow({
   className,
   onClick,
 }: ExpandableGalleryRowProps) {
-  // Prefer widgets (children via __repeat) over projects prop
-  // Extract project data from widget props for internal state management
-  const resolvedProjects: GalleryProject[] = (() => {
-    // Pattern 1: Children via __repeat (preferred)
-    if (widgets && widgets.length > 0) {
-      return widgets.map((widget, index) => extractProjectFromWidget(widget, index))
-    }
-    // Pattern 2: Legacy projects prop
-    if (typeof projects === 'string') {
-      return [] // Binding expression - platform will resolve
-    }
-    if (Array.isArray(projects)) {
-      return projects
-    }
-    return []
-  })()
-
-  // Empty state
-  if (resolvedProjects.length === 0) {
-    return null
-  }
+  // ============================================
+  // ALL HOOKS MUST BE CALLED FIRST (before any early returns)
+  // React requires hooks to be called in the same order every render
+  // ============================================
 
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [lockedId, setLockedId] = useState<string | null>(null)
@@ -258,9 +241,6 @@ const ExpandableGalleryRow = memo(function ExpandableGalleryRow({
   // Track current hover state (ref doesn't cause re-renders)
   // This lets us know what's hovered when modal closes
   const hoveredIdRef = useRef<string | null>(null)
-
-  // Compute actual expanded ID - prioritize locked (clicked) over hover
-  const activeExpandedId = lockedId ?? expandedId
 
   const handleMouseEnter = useCallback((id: string) => {
     hoveredIdRef.current = id
@@ -302,6 +282,35 @@ const ExpandableGalleryRow = memo(function ExpandableGalleryRow({
       },
     })
   }, [onClick, modalAnimationType])
+
+  // ============================================
+  // END OF HOOKS - Now safe to do early returns
+  // ============================================
+
+  // Prefer widgets (children via __repeat) over projects prop
+  // Extract project data from widget props for internal state management
+  const resolvedProjects: GalleryProject[] = (() => {
+    // Pattern 1: Children via __repeat (preferred)
+    if (widgets && widgets.length > 0) {
+      return widgets.map((widget, index) => extractProjectFromWidget(widget, index))
+    }
+    // Pattern 2: Legacy projects prop
+    if (typeof projects === 'string') {
+      return [] // Binding expression - platform will resolve
+    }
+    if (Array.isArray(projects)) {
+      return projects
+    }
+    return []
+  })()
+
+  // Empty state - safe to return early now (all hooks called above)
+  if (resolvedProjects.length === 0) {
+    return null
+  }
+
+  // Compute actual expanded ID - prioritize locked (clicked) over hover
+  const activeExpandedId = lockedId ?? expandedId
 
   const containerClasses = [
     'expandable-gallery-row',

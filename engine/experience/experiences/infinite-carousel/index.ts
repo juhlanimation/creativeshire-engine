@@ -4,8 +4,8 @@
  */
 
 import { createStore } from 'zustand'
-import type { Experience, InfiniteCarouselState } from './types'
-import { registerExperience } from './registry'
+import type { Experience, InfiniteCarouselState } from '../types'
+import { registerExperience } from '../registry'
 
 export const infiniteCarouselExperience: Experience = {
   id: 'infinite-carousel',

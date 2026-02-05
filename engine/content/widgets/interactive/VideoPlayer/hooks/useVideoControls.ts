@@ -70,7 +70,9 @@ export function useVideoControls(
     video.addEventListener('playing', handlePlaying)
     video.addEventListener('canplay', handleCanPlay)
 
-    // Initialize state
+    // Initialize state from video element on mount
+    // Safe: one-time initialization with event listeners for subsequent updates
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDuration(video.duration || 0)
     setVolumeState(video.volume)
     setIsMuted(video.muted)

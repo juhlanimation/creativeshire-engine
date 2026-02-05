@@ -4,8 +4,8 @@
  */
 
 import { createStore } from 'zustand'
-import type { Experience, NavigableExperienceState } from './types'
-import { registerExperience } from './registry'
+import type { Experience, NavigableExperienceState } from '../types'
+import { registerExperience } from '../registry'
 
 export const slideshowExperience: Experience = {
   id: 'slideshow',
