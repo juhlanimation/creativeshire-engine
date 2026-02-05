@@ -36,10 +36,15 @@ import { meta as GalleryThumbnailMeta } from './interactive/GalleryThumbnail/met
 import { meta as HeroRolesMeta } from './interactive/HeroRoles/meta'
 import { meta as FeaturedProjectsGridMeta } from './interactive/FeaturedProjectsGrid/meta'
 import { meta as LogoMarqueeMeta } from './interactive/LogoMarquee/meta'
+import { meta as VideoCompareMeta } from './interactive/VideoCompare/meta'
+import { meta as ProjectSelectorMeta } from './interactive/ProjectSelector/meta'
+import { meta as TabbedContentMeta } from './interactive/TabbedContent/meta'
+import { meta as ShotIndicatorMeta } from './interactive/ShotIndicator/meta'
 
 // Patterns (factory functions)
 import { meta as LogoLinkMeta } from './patterns/LogoLink/meta'
 import { meta as ProjectCardMeta } from './patterns/ProjectCard/meta'
+import { meta as ContactBarMeta } from './patterns/ContactBar/meta'
 
 /**
  * Registry mapping widget type strings to their metadata.
@@ -67,9 +72,14 @@ export const widgetMetaRegistry = {
   HeroRoles: HeroRolesMeta,
   FeaturedProjectsGrid: FeaturedProjectsGridMeta,
   LogoMarquee: LogoMarqueeMeta,
+  VideoCompare: VideoCompareMeta,
+  ProjectSelector: ProjectSelectorMeta,
+  TabbedContent: TabbedContentMeta,
+  ShotIndicator: ShotIndicatorMeta,
   // Patterns
   LogoLink: LogoLinkMeta,
   ProjectCard: ProjectCardMeta,
+  ContactBar: ContactBarMeta,
 } as const
 
 /**

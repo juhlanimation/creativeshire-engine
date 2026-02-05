@@ -7,9 +7,11 @@
 import { createStore } from 'zustand'
 import type { Experience, ExperienceState } from '../types'
 import { registerExperience } from '../registry'
+import { meta } from './meta'
 
 export const cinematicPortfolioExperience: Experience = {
   id: 'cinematic-portfolio',
+  settings: meta.settings,
   name: 'Cinematic Portfolio',
   description:
     'Scroll-driven portfolio with color-shifting hero, fade-in sections, and hover interactions.',

@@ -28,3 +28,7 @@ export type { ProjectCardConfig } from './ProjectCard/types'
 // LogoLink - logo with hover effects and navigation
 export { createLogoLink } from './LogoLink'
 export type { LogoLinkConfig } from './LogoLink/types'
+
+// ContactBar - footer bar with email contact and social links
+export { createContactBar } from './ContactBar'
+export type { ContactBarConfig } from './ContactBar/types'

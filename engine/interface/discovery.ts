@@ -40,7 +40,7 @@ export interface SectionAvailability {
 
 /**
  * Get all available sections with their availability status.
- * Unique sections show canAdd: false if they already exist on the page.
+ * Unique sections show canAdd: false if any unique section of the same category exists.
  *
  * @param existingSections - Current sections on the page
  * @returns Array of section availability information
@@ -48,25 +48,31 @@ export interface SectionAvailability {
 export function getAvailableSections(
   existingSections: SectionSchema[]
 ): SectionAvailability[] {
-  // Build set of existing pattern IDs for fast lookup
-  const existingPatternIds = new Set(
-    existingSections
-      .map((section) => section.patternId)
-      .filter((id): id is string => id !== undefined)
-  )
+  // Build set of categories that have unique sections already
+  const existingUniqueCategories = new Set<SectionCategory>()
+
+  for (const section of existingSections) {
+    if (section.patternId) {
+      const entry = sectionRegistry[section.patternId]
+      if (entry?.meta.unique) {
+        existingUniqueCategories.add(entry.meta.sectionCategory)
+      }
+    }
+  }
 
   // Map all registered sections to availability info
   return getAllSectionMetas().map((meta): SectionAvailability => {
-    const isUniqueAndExists = meta.unique && existingPatternIds.has(meta.id)
+    // Unique sections blocked if ANY unique section of same category exists
+    const categoryBlocked = meta.unique && existingUniqueCategories.has(meta.sectionCategory)
 
     return {
       id: meta.id,
       name: meta.name,
       description: meta.description,
       category: meta.sectionCategory,
-      canAdd: !isUniqueAndExists,
-      reason: isUniqueAndExists
-        ? `Only one ${meta.name} allowed per page`
+      canAdd: !categoryBlocked,
+      reason: categoryBlocked
+        ? `Only one ${meta.sectionCategory} section allowed per page`
         : undefined,
       settings: meta.settings,
       icon: meta.icon,
@@ -108,6 +114,7 @@ export function getSectionsGroupedByCategory(
 /**
  * Check if a section pattern can be added to a page.
  * Returns validation result with reason if not allowed.
+ * Unique sections are blocked per category, not per pattern.
  *
  * @param patternId - Pattern ID to check (e.g., 'Hero')
  * @param existingSections - Current sections on the page
@@ -130,15 +137,18 @@ export function canAddSection(
     return { valid: true }
   }
 
-  // Check if unique section already exists
-  const exists = existingSections.some(
-    (section) => section.patternId === patternId
-  )
+  // Check if any unique section of the same category exists
+  const categoryExists = existingSections.some((section) => {
+    if (!section.patternId) return false
+    const existingEntry = sectionRegistry[section.patternId]
+    return existingEntry?.meta.unique &&
+           existingEntry.meta.sectionCategory === meta.sectionCategory
+  })
 
-  if (exists) {
+  if (categoryExists) {
     return {
       valid: false,
-      reason: `Only one ${meta.name} allowed per page`,
+      reason: `Only one ${meta.sectionCategory} section allowed per page`,
     }
   }
 

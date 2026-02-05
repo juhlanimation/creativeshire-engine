@@ -126,6 +126,8 @@ export interface RegionSchema {
   behaviour?: BehaviourConfig
   /** Additional behaviour options */
   behaviourOptions?: Record<string, SerializableValue>
+  /** Page slugs where this region should be hidden */
+  disabledPages?: string[]
 }
 
 /**
@@ -146,6 +148,8 @@ export interface OverlaySchema {
   position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
   /** Behaviour configuration for animation */
   behaviour?: BehaviourConfig
+  /** Page slugs where this overlay should be hidden */
+  disabledPages?: string[]
 }
 
 /**

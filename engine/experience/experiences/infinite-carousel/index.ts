@@ -6,9 +6,11 @@
 import { createStore } from 'zustand'
 import type { Experience, InfiniteCarouselState } from '../types'
 import { registerExperience } from '../registry'
+import { meta } from './meta'
 
 export const infiniteCarouselExperience: Experience = {
   id: 'infinite-carousel',
+  settings: meta.settings,
   name: 'Infinite Carousel',
   description: 'Vertical infinite scroll with momentum physics and snap-to-section.',
   icon: 'scroll',

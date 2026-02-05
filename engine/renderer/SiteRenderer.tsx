@@ -306,6 +306,7 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
                   pageChrome={page.chrome}
                   position="header"
                   hideChrome={experience.hideChrome}
+                  currentPageSlug={page.slug}
                 />
 
                 {/* Experience chrome (before page) */}
@@ -353,6 +354,7 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
                   pageChrome={page.chrome}
                   position="footer"
                   hideChrome={experience.hideChrome}
+                  currentPageSlug={page.slug}
                 />
 
                 {/* Overlay chrome - uses portals to site container to escape transform context
@@ -362,6 +364,7 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
                   pageChrome={page.chrome}
                   position="overlays"
                   hideChrome={experience.hideChrome}
+                  currentPageSlug={page.slug}
                 />
 
                 {/* Experience chrome (overlays) */}

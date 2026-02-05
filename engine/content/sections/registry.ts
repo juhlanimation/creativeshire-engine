@@ -14,6 +14,12 @@ import { meta as HeroMeta } from './patterns/Hero/meta'
 import { meta as AboutMeta } from './patterns/About/meta'
 import { meta as FeaturedProjectsMeta } from './patterns/FeaturedProjects/meta'
 import { meta as OtherProjectsMeta } from './patterns/OtherProjects/meta'
+import { meta as ProjectVideoGridMeta } from './patterns/ProjectVideoGrid/meta'
+import { meta as ProjectExpandMeta } from './patterns/ProjectExpand/meta'
+import { meta as ProjectShowcaseMeta } from './patterns/ProjectShowcase/meta'
+import { meta as ProjectGalleryMeta } from './patterns/ProjectGallery/meta'
+import { meta as ProjectCompareMeta } from './patterns/ProjectCompare/meta'
+import { meta as ProjectTabsMeta } from './patterns/ProjectTabs/meta'
 
 // =============================================================================
 // Types
@@ -54,6 +60,30 @@ export const sectionRegistry: Record<string, SectionPatternEntry> = {
   OtherProjects: {
     meta: OtherProjectsMeta as SectionMeta,
     getFactory: async () => (await import('./patterns/OtherProjects')).createOtherProjectsSection,
+  },
+  ProjectVideoGrid: {
+    meta: ProjectVideoGridMeta as SectionMeta,
+    getFactory: async () => (await import('./patterns/ProjectVideoGrid')).createProjectVideoGridSection,
+  },
+  ProjectExpand: {
+    meta: ProjectExpandMeta as SectionMeta,
+    getFactory: async () => (await import('./patterns/ProjectExpand')).createProjectExpandSection,
+  },
+  ProjectShowcase: {
+    meta: ProjectShowcaseMeta as SectionMeta,
+    getFactory: async () => (await import('./patterns/ProjectShowcase')).createProjectShowcaseSection,
+  },
+  ProjectGallery: {
+    meta: ProjectGalleryMeta as SectionMeta,
+    getFactory: async () => (await import('./patterns/ProjectGallery')).createProjectGallerySection,
+  },
+  ProjectCompare: {
+    meta: ProjectCompareMeta as SectionMeta,
+    getFactory: async () => (await import('./patterns/ProjectCompare')).createProjectCompareSection,
+  },
+  ProjectTabs: {
+    meta: ProjectTabsMeta as SectionMeta,
+    getFactory: async () => (await import('./patterns/ProjectTabs')).createProjectTabsSection,
   },
 }
 
@@ -105,9 +135,21 @@ export { createHeroSection } from './patterns/Hero'
 export { createAboutSection } from './patterns/About'
 export { createFeaturedProjectsSection } from './patterns/FeaturedProjects'
 export { createOtherProjectsSection } from './patterns/OtherProjects'
+export { createProjectVideoGridSection } from './patterns/ProjectVideoGrid'
+export { createProjectExpandSection } from './patterns/ProjectExpand'
+export { createProjectShowcaseSection } from './patterns/ProjectShowcase'
+export { createProjectGallerySection } from './patterns/ProjectGallery'
+export { createProjectCompareSection } from './patterns/ProjectCompare'
+export { createProjectTabsSection } from './patterns/ProjectTabs'
 
 // Re-export types for convenience
 export type { HeroProps } from './patterns/Hero/types'
 export type { AboutProps } from './patterns/About/types'
 export type { FeaturedProjectsProps } from './patterns/FeaturedProjects/types'
 export type { OtherProjectsProps } from './patterns/OtherProjects/types'
+export type { ProjectVideoGridProps } from './patterns/ProjectVideoGrid/types'
+export type { ProjectExpandProps } from './patterns/ProjectExpand/types'
+export type { ProjectShowcaseProps } from './patterns/ProjectShowcase/types'
+export type { ProjectGalleryProps } from './patterns/ProjectGallery/types'
+export type { ProjectCompareProps } from './patterns/ProjectCompare/types'
+export type { ProjectTabsProps } from './patterns/ProjectTabs/types'

@@ -39,6 +39,10 @@ import HeroRoles from './interactive/HeroRoles'
 import FeaturedProjectsGrid from './interactive/FeaturedProjectsGrid'
 import LogoMarquee from './interactive/LogoMarquee'
 import TransitionLink from './interactive/TransitionLink'
+import VideoCompare from './interactive/VideoCompare'
+import ProjectSelector from './interactive/ProjectSelector'
+import TabbedContent from './interactive/TabbedContent'
+import ShotIndicator from './interactive/ShotIndicator'
 
 // Chrome overlays (used by experience chrome)
 import SlideIndicators from '../chrome/overlays/SlideIndicators'
@@ -73,6 +77,10 @@ export const widgetRegistry: Record<string, WidgetComponent> = {
   FeaturedProjectsGrid,
   LogoMarquee,
   TransitionLink,
+  VideoCompare,
+  ProjectSelector,
+  TabbedContent,
+  ShotIndicator,
   // Chrome overlays
   SlideIndicators,
 }

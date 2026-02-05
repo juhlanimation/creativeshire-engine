@@ -39,6 +39,8 @@ export interface ChromeRendererProps {
   position: 'header' | 'footer' | 'overlays'
   /** Chrome IDs to hide (from experience.hideChrome) */
   hideChrome?: string[]
+  /** Current page slug for disabledPages filtering */
+  currentPageSlug?: string
 }
 
 /**
@@ -112,11 +114,13 @@ const POSITION_CLASSES: Record<string, string> = {
 function OverlaysRenderer({
   overlays,
   hideChrome,
+  currentPageSlug,
   portalTarget,
   siteContainer,
 }: {
   overlays: ChromeSchema['overlays'] | undefined
   hideChrome: string[] | undefined
+  currentPageSlug: string | undefined
   portalTarget: HTMLElement | null
   siteContainer: HTMLElement | null
 }): React.ReactNode {
@@ -141,6 +145,9 @@ function OverlaysRenderer({
     if (hideChrome?.includes(key)) return
 
     const typedOverlay = overlay as OverlaySchema
+
+    // Skip if overlay is disabled for current page
+    if (currentPageSlug && typedOverlay.disabledPages?.includes(currentPageSlug)) return
 
     // Component-based: component handles its own positioning (may use portal internally)
     if (typedOverlay.component) {
@@ -184,7 +191,7 @@ function OverlaysRenderer({
 /**
  * Renders chrome for the specified position.
  */
-export function ChromeRenderer({ siteChrome, pageChrome, position, hideChrome }: ChromeRendererProps): React.ReactNode {
+export function ChromeRenderer({ siteChrome, pageChrome, position, hideChrome, currentPageSlug }: ChromeRendererProps): React.ReactNode {
   const { portalTarget } = useContainer()
   const { siteContainer } = useSiteContainer()
 
@@ -194,6 +201,7 @@ export function ChromeRenderer({ siteChrome, pageChrome, position, hideChrome }:
       <OverlaysRenderer
         overlays={siteChrome?.overlays}
         hideChrome={hideChrome}
+        currentPageSlug={currentPageSlug}
         portalTarget={portalTarget ?? null}
         siteContainer={siteContainer}
       />
@@ -215,7 +223,12 @@ export function ChromeRenderer({ siteChrome, pageChrome, position, hideChrome }:
     if (pageOverride && pageOverride !== 'inherit') return pageOverride
 
     // Use site chrome
-    return siteChrome.regions[regionName]
+    const region = siteChrome.regions[regionName]
+
+    // Check if region is disabled for current page
+    if (currentPageSlug && region?.disabledPages?.includes(currentPageSlug)) return undefined
+
+    return region
   }
 
   switch (position) {

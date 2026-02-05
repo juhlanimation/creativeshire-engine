@@ -39,6 +39,9 @@ const COLLECTION_WIDGETS: Record<string, string> = {
   ExpandableGalleryRow: 'projects',
   FeaturedProjectsGrid: 'projects',
   HeroRoles: 'roles',
+  ShotIndicator: 'shots',
+  TabbedContent: 'tabs',
+  ProjectSelector: 'projects',
 }
 
 /**

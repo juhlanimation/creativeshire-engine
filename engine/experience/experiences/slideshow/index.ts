@@ -6,9 +6,11 @@
 import { createStore } from 'zustand'
 import type { Experience, NavigableExperienceState } from '../types'
 import { registerExperience } from '../registry'
+import { meta } from './meta'
 
 export const slideshowExperience: Experience = {
   id: 'slideshow',
+  settings: meta.settings,
   name: 'Slideshow',
   description: 'Full-screen slides with navigation. Sections become slides.',
   icon: 'presentation',

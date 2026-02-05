@@ -7,9 +7,11 @@
 import { createStore } from 'zustand'
 import type { Experience, ExperienceState } from '../types'
 import { registerExperience } from '../registry'
+import { meta } from './meta'
 
 export const simpleTransitionsExperience: Experience = {
   id: 'simple-transitions',
+  settings: meta.settings,
   name: 'Simple + Transitions',
   description: 'Simple layout with page fade transitions. For testing multi-page navigation.',
   icon: 'transition',

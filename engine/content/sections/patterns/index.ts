@@ -14,3 +14,21 @@ export type { FeaturedProjectsProps, FeaturedProject } from './FeaturedProjects/
 
 export { createOtherProjectsSection } from './OtherProjects'
 export type { OtherProjectsProps, OtherProject } from './OtherProjects/types'
+
+export { createProjectVideoGridSection } from './ProjectVideoGrid'
+export type { ProjectVideoGridProps, VideoGridItem } from './ProjectVideoGrid/types'
+
+export { createProjectExpandSection } from './ProjectExpand'
+export type { ProjectExpandProps, ExpandableVideoItem } from './ProjectExpand/types'
+
+export { createProjectShowcaseSection } from './ProjectShowcase'
+export type { ProjectShowcaseProps } from './ProjectShowcase/types'
+
+export { createProjectGallerySection } from './ProjectGallery'
+export type { ProjectGalleryProps, GalleryProject } from './ProjectGallery/types'
+
+export { createProjectCompareSection } from './ProjectCompare'
+export type { ProjectCompareProps } from './ProjectCompare/types'
+
+export { createProjectTabsSection } from './ProjectTabs'
+export type { ProjectTabsProps, ProjectTab, TabVideo } from './ProjectTabs/types'
