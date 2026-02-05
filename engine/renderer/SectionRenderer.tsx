@@ -18,6 +18,7 @@ import { WidgetRenderer } from './WidgetRenderer'
 import { BehaviourWrapper } from '../experience/behaviours'
 import { SectionLifecycleProvider } from '../experience/lifecycle'
 import { useExperience, useSmoothScrollContainer } from '../experience'
+import { capitalize } from './utils'
 import type { SectionSchema } from '../schema'
 import type { Experience } from '../experience'
 import type { NavigableExperienceState } from '../experience/experiences/types'
@@ -25,14 +26,6 @@ import type { NavigableExperienceState } from '../experience/experiences/types'
 interface SectionRendererProps {
   section: SectionSchema
   index: number
-}
-
-/**
- * Capitalize first letter of a string.
- * Used to match section IDs to pattern names (e.g., 'about' → 'About').
- */
-function capitalize(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 /**

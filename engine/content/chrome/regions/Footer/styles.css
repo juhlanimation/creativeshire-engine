@@ -34,6 +34,7 @@
 .footer-chrome__left {
   display: flex;
   flex-direction: column;
+  width: auto; /* Override stack-widget's width: 100% */
 }
 
 /* Navigation - stacked links */
@@ -41,6 +42,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: auto; /* Override stack-widget's width: 100% */
 }
 
 /* Right group - contains contact + studio */
@@ -48,6 +50,7 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
+  width: auto; /* Override flex-widget's potential width issues */
 }
 
 /* Section styling (contact, studio) */
@@ -55,6 +58,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: auto; /* Override stack-widget's width: 100% */
 }
 
 /* Section headings */

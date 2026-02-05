@@ -7,16 +7,9 @@
 
 import React, { memo, forwardRef, type CSSProperties } from 'react'
 import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
+import { toCssValue } from '../utils'
 import type { BoxProps } from './types'
 import './styles.css'
-
-/**
- * Converts number or string to CSS value.
- */
-function toCssValue(value: number | string | undefined): string | undefined {
-  if (value === undefined) return undefined
-  return typeof value === 'number' ? `${value}px` : value
-}
 
 /**
  * Maps box props to CSS properties.

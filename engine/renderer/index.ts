@@ -18,5 +18,8 @@ export {
   resolveBindings,
   expandRepeater,
   processWidgets,
+  // Platform introspection
+  isRepeaterTemplate,
+  getRepeaterInfo,
 } from './bindings'
-export type { BindingContext, ItemContext } from './bindings'
+export type { BindingContext, ItemContext, RepeaterInfo } from './bindings'

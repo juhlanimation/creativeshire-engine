@@ -51,7 +51,7 @@ export type {
 export type { PageSchema, PageHeadSchema } from './page'
 
 // Site types
-export type { SiteSchema, PageReference, FullSchema } from './site'
+export type { SiteSchema, SiteMetadata, PageReference, FullSchema } from './site'
 
 // Theme types
 export type {

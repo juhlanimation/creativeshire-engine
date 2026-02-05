@@ -11,6 +11,9 @@ export const slideshowExperience: Experience = {
   id: 'slideshow',
   name: 'Slideshow',
   description: 'Full-screen slides with navigation. Sections become slides.',
+  icon: 'presentation',
+  tags: ['slides', 'fullscreen', 'navigation', 'presentation'],
+  category: 'presentation',
 
   provides: [
     'activeSection', 'previousSection', 'totalSections',

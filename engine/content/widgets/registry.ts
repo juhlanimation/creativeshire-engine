@@ -38,11 +38,12 @@ import GalleryThumbnail from './interactive/GalleryThumbnail'
 import HeroRoles from './interactive/HeroRoles'
 import FeaturedProjectsGrid from './interactive/FeaturedProjectsGrid'
 import LogoMarquee from './interactive/LogoMarquee'
+import TransitionLink from './interactive/TransitionLink'
 
 // Chrome overlays (used by experience chrome)
 import SlideIndicators from '../chrome/overlays/SlideIndicators'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Widget props vary by type
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Widget props vary by type, registry lookup is untyped
 type WidgetComponent = ComponentType<any>
 
 /**
@@ -71,6 +72,7 @@ export const widgetRegistry: Record<string, WidgetComponent> = {
   HeroRoles,
   FeaturedProjectsGrid,
   LogoMarquee,
+  TransitionLink,
   // Chrome overlays
   SlideIndicators,
 }

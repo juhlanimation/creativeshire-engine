@@ -6,6 +6,8 @@
  * - / → slug: undefined → home
  * - /about → slug: ['about'] → about
  * - /projects/featured → slug: ['projects', 'featured'] → projects/featured
+ *
+ * Dev mode: supports ?_preset=id to switch presets for testing
  */
 
 import { notFound } from 'next/navigation'
@@ -14,9 +16,12 @@ import { Suspense } from 'react'
 import { SiteRenderer } from '../../engine/renderer'
 import { siteConfig } from '@/site/config'
 import { getAllPages, getPageBySlug } from '@/site/pages'
+import { getPreset, DEV_PRESET_PARAM } from '../../engine/presets'
+import type { SiteSchema, PageSchema } from '../../engine/schema'
 
 type PageProps = {
   params: Promise<{ slug?: string[] }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 /**
@@ -25,6 +30,46 @@ type PageProps = {
 function slugToPath(slug?: string[]): string {
   if (!slug || slug.length === 0) return '/'
   return `/${slug.join('/')}`
+}
+
+/**
+ * Get site config and page lookup function based on preset override.
+ * In dev mode with ?_preset=id, loads from the specified preset.
+ * Otherwise uses the default site config.
+ */
+function getSiteConfigForPreset(presetId: string | undefined): {
+  config: SiteSchema
+  getPage: (slug: string) => PageSchema | undefined
+  presetId: string
+} {
+  // Check for preset override in dev mode
+  if (process.env.NODE_ENV === 'development' && presetId) {
+    const preset = getPreset(presetId)
+    if (preset) {
+      // Build a SiteSchema from the preset
+      const presetConfig: SiteSchema = {
+        id: presetId,
+        theme: preset.theme,
+        experience: preset.experience,
+        chrome: preset.chrome,
+        pages: Object.values(preset.pages).map(p => ({ id: p.id, slug: p.slug })),
+      }
+
+      // Page lookup from preset
+      const getPage = (slug: string): PageSchema | undefined => {
+        return Object.values(preset.pages).find(p => p.slug === slug)
+      }
+
+      return { config: presetConfig, getPage, presetId }
+    }
+  }
+
+  // Default: use site config
+  return {
+    config: siteConfig,
+    getPage: getPageBySlug,
+    presetId: 'bojuhl', // Default preset ID
+  }
 }
 
 /**
@@ -86,16 +131,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 /**
  * Page content component.
  */
-async function PageContent({ params }: PageProps) {
+async function PageContent({ params, searchParams }: PageProps) {
   const { slug } = await params
+  const resolvedSearchParams = await searchParams
   const path = slugToPath(slug)
-  const page = getPageBySlug(path)
+
+  // Get preset override from query param (dev mode only)
+  const presetOverride = resolvedSearchParams[DEV_PRESET_PARAM] as string | undefined
+
+  // Get site config based on preset (default or override)
+  const { config, getPage, presetId } = getSiteConfigForPreset(presetOverride)
+  const page = getPage(path)
 
   if (!page) {
     notFound()
   }
 
-  return <SiteRenderer site={siteConfig} page={page} />
+  return <SiteRenderer site={config} page={page} presetId={presetId} />
 }
 
 /**

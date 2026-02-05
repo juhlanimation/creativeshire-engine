@@ -11,6 +11,9 @@ export const infiniteCarouselExperience: Experience = {
   id: 'infinite-carousel',
   name: 'Infinite Carousel',
   description: 'Vertical infinite scroll with momentum physics and snap-to-section.',
+  icon: 'scroll',
+  tags: ['carousel', 'infinite', 'momentum', 'physics', 'scroll'],
+  category: 'physics',
 
   provides: [
     'scrollProgress', 'velocity', 'activeSection', 'previousSection',

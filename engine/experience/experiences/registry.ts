@@ -7,15 +7,43 @@
  */
 
 import type { Experience } from './types'
+import type { SettingsConfig } from '../../schema/settings'
+
+/**
+ * Experience category for organization in CMS.
+ */
+export type ExperienceCategory = 'presentation' | 'scroll-driven' | 'physics' | 'simple'
 
 /**
  * Lightweight metadata for listing without loading full experience.
  * Used for CMS UI, experience selection, etc.
  */
-export interface ExperienceMeta {
+export interface ExperienceMeta<T = unknown> {
+  /** Unique experience identifier */
   id: string
+  /** Human-readable name */
   name: string
+  /** Short description for CMS display */
   description: string
+  /** Icon identifier for CMS UI */
+  icon?: string
+  /** Searchable tags */
+  tags?: string[]
+  /** Category for grouping in CMS */
+  category?: ExperienceCategory
+  /** Configurable settings for this experience */
+  settings?: SettingsConfig<T>
+  /** Preview image URL */
+  preview?: string
+  /** Documentation URL */
+  docs?: string
+}
+
+/**
+ * Helper function for defining type-safe experience metadata.
+ */
+export function defineExperienceMeta<T>(meta: ExperienceMeta<T>): ExperienceMeta<T> {
+  return meta
 }
 
 /** Registry entry - either loaded experience or lazy loader */
@@ -98,6 +126,11 @@ export function getAllExperienceMetas(): ExperienceMeta[] {
           id: entry.experience.id,
           name: entry.experience.name,
           description: entry.experience.description,
+          // Include extended meta fields if defined on Experience
+          ...(entry.experience.icon && { icon: entry.experience.icon }),
+          ...(entry.experience.tags && { tags: entry.experience.tags }),
+          ...(entry.experience.category && { category: entry.experience.category }),
+          ...(entry.experience.settings && { settings: entry.experience.settings }),
         }
       : entry.meta
   )

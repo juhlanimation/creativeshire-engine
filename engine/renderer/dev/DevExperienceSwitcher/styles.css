@@ -31,6 +31,11 @@
   right: 16px;
 }
 
+/* Inline variant - no fixed positioning, for use in flex container */
+.dev-switcher--inline {
+  position: relative;
+}
+
 /* Trigger button */
 .dev-switcher__trigger {
   display: flex;
@@ -95,6 +100,12 @@
 .dev-switcher--top-left .dev-switcher__menu {
   right: auto;
   left: 0;
+}
+
+/* Inline menu positioning - opens upward, aligned right */
+.dev-switcher--inline .dev-switcher__menu {
+  right: 0;
+  left: auto;
 }
 
 /* Header */

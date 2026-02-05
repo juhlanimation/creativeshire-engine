@@ -363,9 +363,17 @@ export function expandRepeater(
     // Extract label for platform hierarchy display
     resolvedWidget.__label = extractLabelFromItem(itemContext)
 
-    // Add unique ID suffix if widget has an ID
+    // Determine stable item key for identity
+    const keyField = widget.__key ?? 'id'
+    const rawKey = itemContext[keyField]
+    // Only use the key if it's a string or number, otherwise fallback to index
+    const itemKey: string | number =
+      typeof rawKey === 'string' || typeof rawKey === 'number' ? rawKey : index
+    resolvedWidget.__itemKey = itemKey
+
+    // Add unique ID suffix using stable key (or index as fallback)
     if (resolvedWidget.id) {
-      resolvedWidget.id = `${resolvedWidget.id}-${index}`
+      resolvedWidget.id = `${resolvedWidget.id}-${itemKey}`
     }
 
     expandedWidgets.push(resolvedWidget)
@@ -417,4 +425,102 @@ export function processWidgets(
   }
 
   return result
+}
+
+// =============================================================================
+// Platform Introspection Utilities
+// =============================================================================
+
+/**
+ * Repeater metadata for platform hierarchy display.
+ */
+export interface RepeaterInfo {
+  /** The binding path to the data array (e.g., 'content.projects.featured') */
+  dataPath: string
+  /** Number of items in the array */
+  itemCount: number
+  /** Field used for item identity (defaults to 'id') */
+  keyField: string
+  /** Items with their keys and display labels */
+  items: Array<{ key: string | number; label: string }>
+}
+
+/**
+ * Check if a widget is a repeater template (has __repeat).
+ * Platform uses this to show "Items (N)" in hierarchy instead of expanding.
+ *
+ * @param widget - Widget to check
+ * @returns true if widget has __repeat directive
+ *
+ * @example
+ * ```typescript
+ * if (isRepeaterTemplate(widget)) {
+ *   // Show as "Projects (5 items) [+]" in hierarchy
+ *   const info = getRepeaterInfo(widget, content)
+ * } else {
+ *   // Render as normal widget node
+ * }
+ * ```
+ */
+export function isRepeaterTemplate(widget: WidgetSchema): boolean {
+  return !!widget.__repeat
+}
+
+/**
+ * Get repeater metadata without expanding.
+ * Platform uses this for hierarchy display and data operations.
+ *
+ * @param widget - Widget with __repeat directive
+ * @param content - Content object containing the data array
+ * @returns Repeater metadata or null if not a repeater or data not found
+ *
+ * @example
+ * ```typescript
+ * const info = getRepeaterInfo(widget, content)
+ * if (info) {
+ *   console.log(`${info.itemCount} items at ${info.dataPath}`)
+ *   info.items.forEach(({ key, label }) => {
+ *     console.log(`  - ${label} (key: ${key})`)
+ *   })
+ * }
+ * ```
+ */
+export function getRepeaterInfo(
+  widget: WidgetSchema,
+  content: BindingContext
+): RepeaterInfo | null {
+  if (!widget.__repeat) return null
+
+  const arrayPath = extractBindingPath(widget.__repeat)
+  if (!arrayPath) return null
+
+  const context: Record<string, unknown> = { content }
+  const items = getValueAtPath(context, arrayPath)
+
+  if (!Array.isArray(items)) return null
+
+  const keyField = widget.__key ?? 'id'
+
+  return {
+    dataPath: arrayPath,
+    itemCount: items.length,
+    keyField,
+    items: items.map((item, index) => {
+      // Create item context same as expandRepeater does
+      const itemContext: ItemContext =
+        typeof item === 'object' && item !== null
+          ? { ...(item as Record<string, unknown>), $index: index }
+          : { $value: item, $index: index }
+
+      // Only use the key if it's a string or number, otherwise fallback to index
+      const rawKey = itemContext[keyField]
+      const key: string | number =
+        typeof rawKey === 'string' || typeof rawKey === 'number' ? rawKey : index
+
+      return {
+        key,
+        label: extractLabelFromItem(itemContext),
+      }
+    }),
+  }
 }

@@ -87,6 +87,30 @@ export interface WidgetSchema {
    */
   __label?: string
   /**
+   * Key field for stable item identity in __repeat.
+   * Defaults to 'id'. Used for:
+   * - Stable widget IDs: `{widgetId}-{item[keyField]}`
+   * - React keys for efficient reconciliation
+   * - Platform references that survive reorder
+   *
+   * @example
+   * ```typescript
+   * {
+   *   __repeat: '{{ content.projects }}',
+   *   __key: 'id',  // Uses item.id for identity
+   *   type: 'ProjectCard',
+   *   props: { title: '{{ item.title }}' }
+   * }
+   * ```
+   */
+  __key?: string
+  /**
+   * Item key from __repeat expansion (set by expandRepeater).
+   * Stable identifier from source data, survives reorder.
+   * Platform uses this to reference items in data store.
+   */
+  __itemKey?: string | number
+  /**
    * Item index from __repeat expansion.
    * Used to compute alternating layouts (data-reversed).
    * Set via binding: '{{ item.$index }}'

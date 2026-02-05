@@ -7,6 +7,7 @@
 
 import React, { memo, forwardRef, useRef, useImperativeHandle, type CSSProperties } from 'react'
 import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
+import { ALIGN_MAP, JUSTIFY_MAP, toCssGap } from '../utils'
 import type { FlexProps } from './types'
 import './styles.css'
 
@@ -24,24 +25,11 @@ function flexToStyle(props: FlexProps): CSSProperties {
   }
 
   if (props.align) {
-    const alignMap: Record<string, string> = {
-      start: 'flex-start',
-      center: 'center',
-      end: 'flex-end',
-      stretch: 'stretch',
-    }
-    styles.alignItems = alignMap[props.align]
+    styles.alignItems = ALIGN_MAP[props.align]
   }
 
   if (props.justify) {
-    const justifyMap: Record<string, string> = {
-      start: 'flex-start',
-      center: 'center',
-      end: 'flex-end',
-      between: 'space-between',
-      around: 'space-around',
-    }
-    styles.justifyContent = justifyMap[props.justify]
+    styles.justifyContent = JUSTIFY_MAP[props.justify]
   }
 
   if (props.wrap) {
@@ -49,7 +37,7 @@ function flexToStyle(props: FlexProps): CSSProperties {
   }
 
   if (props.gap !== undefined) {
-    styles.gap = typeof props.gap === 'number' ? `${props.gap}px` : props.gap
+    styles.gap = toCssGap(props.gap)
   }
 
   return styles

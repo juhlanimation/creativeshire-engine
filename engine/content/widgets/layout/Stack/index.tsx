@@ -9,6 +9,7 @@
 
 import React, { memo, forwardRef, type CSSProperties } from 'react'
 import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
+import { ALIGN_MAP, toCssGap } from '../utils'
 import type { StackProps } from './types'
 import './styles.css'
 
@@ -23,17 +24,11 @@ function stackToStyle(props: StackProps): CSSProperties {
   }
 
   if (props.align) {
-    const alignMap: Record<string, string> = {
-      start: 'flex-start',
-      center: 'center',
-      end: 'flex-end',
-      stretch: 'stretch',
-    }
-    styles.alignItems = alignMap[props.align]
+    styles.alignItems = ALIGN_MAP[props.align]
   }
 
   if (props.gap !== undefined) {
-    styles.gap = typeof props.gap === 'number' ? `${props.gap}px` : props.gap
+    styles.gap = toCssGap(props.gap)
   }
 
   return styles

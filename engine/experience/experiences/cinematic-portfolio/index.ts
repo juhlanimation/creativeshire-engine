@@ -13,6 +13,9 @@ export const cinematicPortfolioExperience: Experience = {
   name: 'Cinematic Portfolio',
   description:
     'Scroll-driven portfolio with color-shifting hero, fade-in sections, and hover interactions.',
+  icon: 'film',
+  tags: ['portfolio', 'cinematic', 'scroll-driven', 'hover', 'parallax'],
+  category: 'scroll-driven',
 
   provides: ['scrollProgress', 'sectionVisibilities', 'cursorX', 'cursorY'],
   createStore: () =>

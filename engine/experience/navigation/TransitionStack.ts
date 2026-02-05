@@ -10,12 +10,14 @@ import type { TransitionTask } from '../experiences/types'
 /**
  * Execute a single transition task.
  * Returns a promise that resolves when the task completes.
+ * For promise tasks, calls the factory function to create the promise.
  */
 function executeTask(task: TransitionTask): Promise<void> {
   if (task.type === 'duration') {
     return new Promise((resolve) => setTimeout(resolve, task.duration))
   }
-  return task.promise
+  // Call factory to create the promise - animation starts NOW
+  return task.factory()
 }
 
 /**
@@ -43,17 +45,17 @@ export async function executeStack(
 /**
  * Create a transition task from various inputs.
  * Normalizes different task formats into TransitionTask.
+ *
+ * @param input - Duration in ms, a factory function, or a promise
  */
 export function createTask(
-  input: number | Promise<void> | (() => Promise<void>)
+  input: number | (() => Promise<void>)
 ): TransitionTask {
   if (typeof input === 'number') {
     return { type: 'duration', duration: input }
   }
-  if (typeof input === 'function') {
-    return { type: 'promise', promise: input() }
-  }
-  return { type: 'promise', promise: input }
+  // Store the factory function - will be called on execute
+  return { type: 'promise', factory: input }
 }
 
 /**

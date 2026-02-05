@@ -22,6 +22,7 @@ export {
   registerLazyExperience,
   ensureExperiencesRegistered,
   simpleExperience,
+  simpleTransitionsExperience,
   cinematicPortfolioExperience,
   slideshowExperience,
   infiniteCarouselExperience,

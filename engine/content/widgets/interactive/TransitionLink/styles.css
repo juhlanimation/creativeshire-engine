@@ -1,0 +1,10 @@
+/**
+ * TransitionLink styles.
+ * Minimal styling - inherits from context.
+ */
+
+.transition-link {
+  /* Inherit text styles from parent */
+  color: inherit;
+  text-decoration: inherit;
+}

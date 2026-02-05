@@ -12,6 +12,7 @@
  */
 
 import { useMemo, useEffect, useState, useRef, type CSSProperties, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import type { StoreApi } from 'zustand'
 import {
   ExperienceProvider,
@@ -20,18 +21,24 @@ import {
   getExperience,
   getExperienceAsync,
   simpleExperience,
+  simpleTransitionsExperience, // Force eager load for page transitions
   ensureExperiencesRegistered,
   PresentationWrapper,
   InfiniteCarouselController,
 } from '../experience'
 
 import { BehaviourWrapper } from '../experience/behaviours'
-import { TransitionProvider, useTransitionOptional, NavigationInitializer } from '../experience/navigation'
+import {
+  TransitionProvider,
+  NavigationInitializer,
+  PageTransitionWrapper,
+  PageTransitionProvider,
+} from '../experience/navigation'
 import type { NavigableExperienceState } from '../experience/experiences/types'
 import { useScrollIndicatorFade } from './hooks'
 import { PageRenderer } from './PageRenderer'
 import { ChromeRenderer } from './ChromeRenderer'
-import { SiteContainerProvider, SiteContainerRegistrar } from './SiteContainerContext'
+import { SiteContainerProvider, SiteContainerRegistrar, useSiteContainer } from './SiteContainerContext'
 import { ThemeProvider } from './ThemeProvider'
 import { ExperienceChromeRenderer } from './ExperienceChromeRenderer'
 import type { SiteSchema, PageSchema } from '../schema'
@@ -39,18 +46,27 @@ import type { Experience, ExperienceConstraints } from '../experience/experience
 import { getBreakpointValue, type BreakpointValue } from '../config/breakpoints'
 import { useContainer } from '../interface/ContainerContext'
 
-// Dev-only experience switcher (tree-shaken in production)
+// Dev-only switchers (tree-shaken in production)
 import {
   DevExperienceSwitcher,
   getExperienceOverride,
 } from './dev/DevExperienceSwitcher'
+import { DevPresetSwitcher } from './dev/DevPresetSwitcher'
+import { ensurePresetsRegistered } from '../presets'
 
-// Ensure all experiences are registered before any lookups
+// Ensure all experiences and presets are registered before any lookups
 ensureExperiencesRegistered()
+ensurePresetsRegistered()
+
+// Force eager registration of transition-enabled experiences (prevents lazy load fallback)
+// The import above ensures the module loads, this reference prevents tree-shaking
+void simpleTransitionsExperience
 
 interface SiteRendererProps {
   site: SiteSchema
   page: PageSchema
+  /** Current preset ID (for dev mode preset switcher) */
+  presetId?: string
 }
 
 /**
@@ -110,29 +126,55 @@ function PageWrapperRenderer({
   )
 }
 
+
 /**
- * Signals to TransitionProvider that the page has mounted.
- * This triggers entry animations after navigation.
+ * Dev tools container - only renders in dev mode AND not in iframe.
+ * When in an iframe (platform preview), dev tools are hidden.
+ * Renders experience and preset switchers side by side at bottom-right.
  */
-function PageReadySignal(): null {
-  const transitionContext = useTransitionOptional()
+function DevToolsContainer({
+  schemaExperienceId,
+  presetId,
+}: {
+  schemaExperienceId: string
+  presetId: string
+}): ReactNode {
+  const [shouldShow, setShouldShow] = useState(false)
+  const { siteContainer } = useSiteContainer()
 
   useEffect(() => {
-    // Small delay to ensure paint completed
-    const timeoutId = setTimeout(() => {
-      transitionContext?.signalPageReady()
-    }, 50)
+    // Only show in development mode AND when not in an iframe
+    if (process.env.NODE_ENV !== 'development') return
 
-    return () => clearTimeout(timeoutId)
-  }, [transitionContext])
+    // Check if we're in an iframe (platform preview)
+    const inIframe = typeof window !== 'undefined' && window.self !== window.top
+    setShouldShow(!inIframe)
+  }, [])
 
-  return null
+  if (!shouldShow || !siteContainer) return null
+
+  return createPortal(
+    <div style={{
+      position: 'fixed',
+      bottom: 16,
+      right: 16,
+      zIndex: 99999,
+      display: 'flex',
+      gap: 8,
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      fontSize: 12,
+    }}>
+      <DevPresetSwitcher currentPresetId={presetId} position="inline" />
+      <DevExperienceSwitcher currentExperienceId={schemaExperienceId} position="inline" />
+    </div>,
+    siteContainer
+  )
 }
 
 /**
  * Renders a site with providers and page content.
  */
-export function SiteRenderer({ site, page }: SiteRendererProps) {
+export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
   // Check if we're in contained mode (ContainerProvider handles breakpoint tracking there)
   const { mode } = useContainer()
 
@@ -253,77 +295,86 @@ export function SiteRenderer({ site, page }: SiteRendererProps) {
           <TriggerInitializer>
             {/* Smooth scroll wrapper for main content (disabled for slideshow) */}
             <SmoothScrollProvider config={smoothScrollConfig}>
-              {/* Header chrome */}
-              <ChromeRenderer
-                siteChrome={site.chrome}
-                pageChrome={page.chrome}
-                position="header"
-                hideChrome={experience.hideChrome}
-              />
-
-              {/* Experience chrome (before page) */}
-              {beforeChrome.length > 0 && (
-                <ExperienceChromeRenderer items={beforeChrome} />
-              )}
-
-              {/* Navigation input handlers for navigable experiences */}
-              {experience.navigation && experience.presentation?.model !== 'infinite-carousel' && (
-                <NavigationInitializer
-                  store={store as StoreApi<NavigableExperienceState>}
-                  config={experience.navigation}
-                  totalSections={page.sections?.length ?? 0}
-                />
-              )}
-
-              {/* Infinite carousel controller - handles MomentumDriver and section transforms */}
-              {experience.presentation?.model === 'infinite-carousel' && (
-                <InfiniteCarouselController />
-              )}
-
-              {/* Page content - wrapped by presentation and experience pageWrapper */}
-              <PresentationWrapper
-                config={experience.presentation}
-                store={store}
+              {/* PageTransitionProvider wraps ALL content so TransitionLink in chrome can access it */}
+              <PageTransitionProvider
+                enabled={!!experience.pageTransition}
+                duration={experience.pageTransition?.defaultExitDuration ?? 600}
               >
-                <PageWrapperRenderer experience={experience}>
-                  <PageRenderer page={page} />
-                </PageWrapperRenderer>
-              </PresentationWrapper>
+                {/* Header chrome */}
+                <ChromeRenderer
+                  siteChrome={site.chrome}
+                  pageChrome={page.chrome}
+                  position="header"
+                  hideChrome={experience.hideChrome}
+                />
 
-              {/* Experience chrome (after page) */}
-              {afterChrome.length > 0 && (
-                <ExperienceChromeRenderer items={afterChrome} />
-              )}
+                {/* Experience chrome (before page) */}
+                {beforeChrome.length > 0 && (
+                  <ExperienceChromeRenderer items={beforeChrome} />
+                )}
 
-              {/* Footer chrome */}
-              <ChromeRenderer
-                siteChrome={site.chrome}
-                pageChrome={page.chrome}
-                position="footer"
-                hideChrome={experience.hideChrome}
-              />
+                {/* Navigation input handlers for navigable experiences */}
+                {experience.navigation && experience.presentation?.model !== 'infinite-carousel' && (
+                  <NavigationInitializer
+                    store={store as StoreApi<NavigableExperienceState>}
+                    config={experience.navigation}
+                    totalSections={page.sections?.length ?? 0}
+                  />
+                )}
 
-              {/* Overlay chrome - uses portals to site container to escape transform context
-                  while maintaining container query support and iframe compatibility. */}
-              <ChromeRenderer
-                siteChrome={site.chrome}
-                pageChrome={page.chrome}
-                position="overlays"
-                hideChrome={experience.hideChrome}
-              />
+                {/* Infinite carousel controller - handles MomentumDriver and section transforms */}
+                {experience.presentation?.model === 'infinite-carousel' && (
+                  <InfiniteCarouselController />
+                )}
 
-              {/* Experience chrome (overlays) */}
-              {overlayChrome.length > 0 && (
-                <ExperienceChromeRenderer items={overlayChrome} isOverlay />
-              )}
+                {/* Page content - wrapped by transition wrapper, presentation, and experience pageWrapper */}
+                <PageTransitionWrapper
+                  enabled={!!experience.pageTransition}
+                  duration={experience.pageTransition?.defaultExitDuration ?? 600}
+                >
+                  <PresentationWrapper
+                    config={experience.presentation}
+                    store={store}
+                  >
+                    <PageWrapperRenderer experience={experience}>
+                      <PageRenderer page={page} />
+                    </PageWrapperRenderer>
+                  </PresentationWrapper>
+                </PageTransitionWrapper>
 
-              {/* Signal page ready for entry transitions */}
-              <PageReadySignal />
+                {/* Experience chrome (after page) */}
+                {afterChrome.length > 0 && (
+                  <ExperienceChromeRenderer items={afterChrome} />
+                )}
 
-              {/* Dev-mode experience switcher (only in development) */}
-              {process.env.NODE_ENV === 'development' && (
-                <DevExperienceSwitcher currentExperienceId={schemaExperienceId} />
-              )}
+                {/* Footer chrome */}
+                <ChromeRenderer
+                  siteChrome={site.chrome}
+                  pageChrome={page.chrome}
+                  position="footer"
+                  hideChrome={experience.hideChrome}
+                />
+
+                {/* Overlay chrome - uses portals to site container to escape transform context
+                    while maintaining container query support and iframe compatibility. */}
+                <ChromeRenderer
+                  siteChrome={site.chrome}
+                  pageChrome={page.chrome}
+                  position="overlays"
+                  hideChrome={experience.hideChrome}
+                />
+
+                {/* Experience chrome (overlays) */}
+                {overlayChrome.length > 0 && (
+                  <ExperienceChromeRenderer items={overlayChrome} isOverlay />
+                )}
+
+                {/* Dev-mode switchers (only in development AND not in iframe) */}
+                <DevToolsContainer
+                  schemaExperienceId={schemaExperienceId}
+                  presetId={presetId ?? site.id}
+                />
+              </PageTransitionProvider>
             </SmoothScrollProvider>
           </TriggerInitializer>
         </TransitionProvider>

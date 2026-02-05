@@ -14,9 +14,19 @@
  */
 
 import type { SitePreset } from '../types'
+import { registerPreset, type PresetMeta } from '../registry'
 import { experienceConfig } from './site'
 import { footerConfig, floatingContactConfig } from './chrome'
 import { homePageTemplate } from './pages'
+
+/**
+ * Bojuhl preset metadata for UI display.
+ */
+export const bojuhlMeta: PresetMeta = {
+  id: 'bojuhl',
+  name: 'Bojuhl Portfolio',
+  description: 'Cinematic portfolio with hero video, about section, and project grid.',
+}
 
 /**
  * Bojuhl preset - complete portfolio site configuration.
@@ -63,3 +73,6 @@ export const bojuhlPreset: SitePreset = {
     home: homePageTemplate,
   },
 }
+
+// Auto-register on module load
+registerPreset(bojuhlMeta, bojuhlPreset)

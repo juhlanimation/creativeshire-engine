@@ -6,6 +6,8 @@
 
 import type { StoreApi } from 'zustand'
 import type { SerializableValue } from '../../schema/types'
+import type { SettingsConfig } from '../../schema/settings'
+import type { ExperienceCategory } from './registry'
 
 // =============================================================================
 // Experience State Types
@@ -305,10 +307,13 @@ export interface NavigationConfig {
 /**
  * A transition task - anything that takes time.
  * Used in exit/entry stacks for page transitions.
+ *
+ * Tasks use factory functions for lazy execution - the animation
+ * only starts when execute() is called, not when registered.
  */
 export type TransitionTask =
   | { type: 'duration'; duration: number }
-  | { type: 'promise'; promise: Promise<void> }
+  | { type: 'promise'; factory: () => Promise<void> }
 
 /**
  * Page transition configuration.
@@ -364,6 +369,17 @@ export interface Experience {
   name: string
   /** Description of what the experience does */
   description: string
+
+  // Meta fields (for CMS UI)
+
+  /** Icon identifier for CMS UI */
+  icon?: string
+  /** Searchable tags */
+  tags?: string[]
+  /** Category for grouping in CMS */
+  category?: ExperienceCategory
+  /** Configurable settings for this experience */
+  settings?: SettingsConfig<unknown>
 
   // State provider
 

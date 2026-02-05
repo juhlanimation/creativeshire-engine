@@ -47,8 +47,8 @@ function setExperienceOverride(id: string | null): void {
 interface DevExperienceSwitcherProps {
   /** Current experience ID (from schema) */
   currentExperienceId: string
-  /** Position on screen */
-  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
+  /** Position on screen (or 'inline' when used in a flex container) */
+  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'inline'
 }
 
 export function DevExperienceSwitcher({
@@ -93,7 +93,12 @@ function DevExperienceSwitcherInner({
   const activeId = override ?? currentExperienceId
   const activeMeta = experiences.find((e) => e.id === activeId)
 
-  if (!mounted || !siteContainer) {
+  if (!mounted) {
+    return null
+  }
+
+  // For non-inline positions, require siteContainer for portal
+  if (position !== 'inline' && !siteContainer) {
     return null
   }
 
@@ -102,9 +107,10 @@ function DevExperienceSwitcherInner({
     'top-right': 'dev-switcher--top-right',
     'bottom-left': 'dev-switcher--bottom-left',
     'bottom-right': 'dev-switcher--bottom-right',
+    'inline': 'dev-switcher--inline',
   }
 
-  return createPortal(
+  const content = (
     <div className={`dev-switcher ${positionClasses[position ?? 'bottom-right']}`}>
       <button
         className="dev-switcher__trigger"
@@ -146,9 +152,15 @@ function DevExperienceSwitcherInner({
           ))}
         </div>
       )}
-    </div>,
-    siteContainer
+    </div>
   )
+
+  // Inline mode renders directly, others use portal
+  if (position === 'inline') {
+    return content
+  }
+
+  return createPortal(content, siteContainer!)
 }
 
 export default DevExperienceSwitcher

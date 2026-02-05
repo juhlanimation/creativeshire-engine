@@ -1,0 +1,80 @@
+/**
+ * Page Transition Styles
+ *
+ * Uses a black overlay for fade-to-black transitions:
+ * - Exit: Black overlay fades in (opacity 0 → 1), covering content
+ * - Entry: Black overlay fades out (opacity 1 → 0), revealing content
+ *
+ * Classes are added/removed dynamically by the timeline system.
+ *
+ * The html[data-page-transitions] rule ensures the background is black
+ * before React hydrates, preventing white flash on initial load.
+ * This works inside iframes (platform preview) because each iframe has its own document.
+ */
+
+/* Set html/body background black when page transitions are enabled (prevents initial white flash)
+ * Uses :has() to detect [data-page-transition] element - works with SSR since CSS loads before hydration
+ * This works inside iframes because each iframe has its own document */
+html:has([data-page-transition]),
+html:has([data-page-transition]) body {
+  background: black;
+}
+
+/* Base wrapper - position relative for overlay positioning */
+.page-transition {
+  --page-transition-duration: 600ms;
+  --page-transition-easing: cubic-bezier(0.25, 0.1, 0.25, 1); /* Smooth ease-out */
+  position: relative;
+}
+
+/* Black overlay - covers content during transitions */
+.page-transition__overlay {
+  position: fixed;
+  inset: 0;
+  background: black;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+}
+
+/* When enabled, overlay starts visible (black) - entry animation will fade it out */
+.page-transition--enabled .page-transition__overlay {
+  opacity: 1;
+}
+
+/* Entry animation - fade overlay OUT to reveal content (ease-out: fast start, slow end) */
+.page-transition--entering .page-transition__overlay {
+  animation: overlay-fade-out var(--page-transition-duration) cubic-bezier(0.0, 0.0, 0.2, 1) forwards;
+}
+
+/* Exit animation - fade overlay IN to cover content (ease-in: slow start, fast end) */
+.page-transition--exiting .page-transition__overlay {
+  animation: overlay-fade-in var(--page-transition-duration) cubic-bezier(0.4, 0.0, 1, 1) forwards;
+}
+
+/* Overlay fade in (exit: hide content) */
+@keyframes overlay-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Overlay fade out (entry: reveal content) */
+@keyframes overlay-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .page-transition__overlay {
+    display: none;
+  }
+}

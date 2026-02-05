@@ -32,6 +32,38 @@ function hasModifierKey(e: MouseEvent): boolean {
 }
 
 /**
+ * Dev query params to preserve during navigation.
+ */
+const DEV_PARAMS = ['_preset', '_experience']
+
+/**
+ * Get href with preserved dev query params from current URL.
+ * Only active in development mode.
+ */
+function getHrefWithDevParams(href: string): string {
+  if (process.env.NODE_ENV !== 'development') return href
+  if (typeof window === 'undefined') return href
+
+  const currentParams = new URLSearchParams(window.location.search)
+  const devParams = DEV_PARAMS.filter((p) => currentParams.has(p))
+
+  if (devParams.length === 0) return href
+
+  // Parse the href to handle existing query params
+  const [path, existingQuery] = href.split('?')
+  const newParams = new URLSearchParams(existingQuery || '')
+
+  // Add dev params
+  devParams.forEach((p) => {
+    const value = currentParams.get(p)
+    if (value) newParams.set(p, value)
+  })
+
+  const queryString = newParams.toString()
+  return queryString ? `${path}?${queryString}` : path
+}
+
+/**
  * Link component renders a navigation link.
  * Supports CSS variable animation via var() fallbacks in styles.css.
  *
@@ -75,7 +107,7 @@ const Link = memo(forwardRef<HTMLAnchorElement, LinkProps>(function Link(
     target !== '_blank'
 
   /**
-   * Handle click - intercept for transition if applicable.
+   * Handle click - intercept for transition or dev param preservation.
    */
   const handleClick = useCallback(
     (e: MouseEvent<HTMLAnchorElement>) => {
@@ -89,12 +121,22 @@ const Link = memo(forwardRef<HTMLAnchorElement, LinkProps>(function Link(
       // Standard behavior for external/new tab
       if (isExternal || target === '_blank') return
 
+      // Get href with dev params preserved (only affects dev mode)
+      const navHref = getHrefWithDevParams(href)
+
       // If transitions enabled, intercept and run transition
       if (shouldTransition && transitionContext) {
         e.preventDefault()
         transitionContext.startTransition(href, () => {
-          router.push(href)
+          router.push(navHref)
         })
+        return
+      }
+
+      // In dev mode, intercept to preserve query params even without transitions
+      if (navHref !== href) {
+        e.preventDefault()
+        router.push(navHref)
       }
     },
     [onClick, href, target, isExternal, shouldTransition, transitionContext, router]
@@ -111,6 +153,8 @@ const Link = memo(forwardRef<HTMLAnchorElement, LinkProps>(function Link(
 
   // Use Next.js Link for internal navigation
   if (isInternalLink(href)) {
+    // Note: We don't modify the href attribute here to avoid hydration mismatch.
+    // Dev query params (_preset, _experience) are added in handleClick instead.
     return (
       <NextLink
         ref={ref}

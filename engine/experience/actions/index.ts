@@ -16,8 +16,27 @@
  * - Graceful degradation (action not registered = noop)
  */
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Action payloads vary by action type
-type ActionHandler = (payload: any) => void
+/**
+ * Known action payloads for type safety.
+ * Extend this as new action types are added.
+ */
+export interface VideoModalPayload {
+  videoUrl: string
+  poster?: string
+  sourceRect?: DOMRect
+}
+
+/**
+ * Union of known action payloads.
+ * Falls back to Record<string, unknown> for extensibility.
+ */
+export type ActionPayload = VideoModalPayload | Record<string, unknown>
+
+/**
+ * Action handler function type.
+ * Generic allows specific payload types for known actions.
+ */
+type ActionHandler<T = ActionPayload> = (payload: T) => void
 
 const actionRegistry = new Map<string, ActionHandler>()
 

@@ -27,9 +27,23 @@ export {
 
 export { useExitTask, type UseExitTaskOptions } from './useExitTask'
 export { useEntryTask, type UseEntryTaskOptions } from './useEntryTask'
+export { PageTransitionWrapper, type PageTransitionWrapperProps } from './PageTransitionWrapper'
+export {
+  PageTransitionProvider,
+  usePageTransition,
+  usePageTransitionRequired,
+  type PageTransitionContextValue,
+  type PageTransitionProviderProps,
+} from './PageTransitionContext'
 
 // Internal utilities (for advanced use)
 export { TransitionStack, executeStack, createTask } from './TransitionStack'
+export { EffectTimeline, type Track } from './EffectTimeline'
+export {
+  animateElement,
+  prefersReducedMotion,
+  type AnimateElementOptions,
+} from './animateElement'
 
 // Section navigation hooks
 export { useWheelNavigation, type WheelNavigationOptions } from './useWheelNavigation'

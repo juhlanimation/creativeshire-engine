@@ -8,6 +8,54 @@ import type { ExperienceConfig } from './experience'
 import type { PageSchema } from './page'
 import type { ThemeSchema } from './theme'
 
+// =============================================================================
+// Site Metadata
+// =============================================================================
+
+/**
+ * Site-level metadata for SEO, branding, and technical configuration.
+ * Asset fields are URLs (platform handles upload to storage).
+ */
+export interface SiteMetadata {
+  // SEO
+  /** Default page title (used when page doesn't specify one) */
+  title?: string
+  /** Default meta description */
+  description?: string
+  /** Language code (e.g., "en", "da") */
+  language?: string
+
+  // Identity
+  /** Site/brand name */
+  name?: string
+  /** Short tagline */
+  tagline?: string
+
+  // Assets (URLs to storage)
+  /** URL to favicon */
+  favicon?: string
+  /** URL to logo */
+  logo?: string
+  /** URL to dark variant logo */
+  logoDark?: string
+  /** URL to default Open Graph image */
+  ogImage?: string
+
+  // Technical
+  /** Canonical domain (e.g., "bojuhl.com") */
+  canonicalDomain?: string
+  /** Search engine indexing directive */
+  robots?: 'index' | 'noindex'
+
+  // Social
+  /** Twitter/X handle (e.g., "@bojuhl") */
+  twitterHandle?: string
+}
+
+// =============================================================================
+// Page Reference
+// =============================================================================
+
 /**
  * Reference to a page with its identifier and slug.
  * Used in site configuration to list available pages.
@@ -36,6 +84,8 @@ export interface SiteSchema {
    */
   schemaVersion?: string
 
+  /** Site metadata (SEO, branding, assets) */
+  metadata?: SiteMetadata
   /** Theme configuration (scrollbar, colors, fonts) */
   theme?: ThemeSchema
   /** Experience configuration (modes, behaviours) */

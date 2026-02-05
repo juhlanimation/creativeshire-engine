@@ -20,15 +20,8 @@ import { BehaviourWrapper } from '../experience/behaviours'
 import { useExperience, type Experience } from '../experience'
 import { executeAction } from '../experience/actions'
 import { ErrorBoundary } from './ErrorBoundary'
+import { capitalize } from './utils'
 import type { WidgetRendererProps } from './types'
-
-/**
- * Capitalize first letter of a string.
- * Used to convert event names to React handler format: click → onClick
- */
-function capitalize(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1)
-}
 
 /**
  * Resolves behaviour for a widget.

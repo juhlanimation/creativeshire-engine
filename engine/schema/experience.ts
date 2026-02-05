@@ -58,4 +58,6 @@ export type BehaviourConfig =
 export interface ExperienceConfig {
   /** Experience ID (e.g., 'stacking', 'cinematic-portfolio') */
   id: string
+  /** Experience-specific settings from CMS */
+  settings?: Record<string, unknown>
 }

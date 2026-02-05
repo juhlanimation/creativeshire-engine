@@ -11,6 +11,9 @@ export const simpleExperience: Experience = {
   id: 'simple',
   name: 'Simple',
   description: 'No animations. Sections stack vertically. For testing layout.',
+  icon: 'layout',
+  tags: ['simple', 'static', 'testing'],
+  category: 'simple',
 
   provides: [],
   createStore: () =>

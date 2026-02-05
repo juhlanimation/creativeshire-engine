@@ -33,86 +33,92 @@ const DEFAULTS = {
 }
 
 /**
- * Injects theme as CSS variables on document root or container.
- * In contained mode, scopes variables to the container element.
- * Typography vars are set on body/container where font vars are available.
+ * Injects theme CSS variables on appropriate elements.
+ *
+ * Variable placement:
+ * - Scrollbar: document.documentElement (fullpage) or container (contained)
+ *   because CSS targets html::-webkit-scrollbar which can't inherit from children
+ * - Typography/transitions: siteContainer or container element
  */
 export function ThemeProvider({ theme, children }: ThemeProviderProps): React.ReactNode {
   const { mode, containerRef } = useContainer()
   const { siteContainer } = useSiteContainer()
 
   useEffect(() => {
-    // Use container in contained mode, otherwise site container
-    // Never use document.body - breaks iframe support
-    const root = mode === 'contained' && containerRef?.current
-      ? containerRef.current
-      : siteContainer ?? document.documentElement
-    const body = mode === 'contained' && containerRef?.current
+    // Container for scoped variables (typography, transitions)
+    const container = mode === 'contained' && containerRef?.current
       ? containerRef.current
       : siteContainer
 
-    // Scrollbar variables (on root for global scroll)
+    // Scrollbar root: In contained mode, use container. In fullpage mode,
+    // use document.documentElement because CSS targets html::-webkit-scrollbar
+    // which can't inherit variables from child elements.
+    const scrollbarRoot = mode === 'contained' && containerRef?.current
+      ? containerRef.current
+      : document.documentElement
+
+    // Scrollbar variables (on scrollbarRoot for the scrolling element)
     const scrollbar = theme?.scrollbar
-    root.style.setProperty(
+    scrollbarRoot.style.setProperty(
       '--scrollbar-width',
       `${scrollbar?.width ?? DEFAULTS.scrollbar.width}px`
     )
-    root.style.setProperty(
+    scrollbarRoot.style.setProperty(
       '--scrollbar-thumb',
       scrollbar?.thumb ?? DEFAULTS.scrollbar.thumb
     )
-    root.style.setProperty(
+    scrollbarRoot.style.setProperty(
       '--scrollbar-track',
       scrollbar?.track ?? DEFAULTS.scrollbar.track
     )
-    root.style.setProperty(
+    scrollbarRoot.style.setProperty(
       '--scrollbar-thumb-dark',
       scrollbar?.thumbDark ?? DEFAULTS.scrollbar.thumbDark
     )
-    root.style.setProperty(
+    scrollbarRoot.style.setProperty(
       '--scrollbar-track-dark',
       scrollbar?.trackDark ?? DEFAULTS.scrollbar.trackDark
     )
 
-    // Typography variables (on body/container where font vars are defined)
+    // Typography variables (on container where font vars are defined)
     const typography = theme?.typography
-    if (body) {
-      body.style.setProperty(
+    if (container) {
+      container.style.setProperty(
         '--font-title',
         typography?.title ?? DEFAULTS.typography.title
       )
-      body.style.setProperty(
+      container.style.setProperty(
         '--font-paragraph',
         typography?.paragraph ?? DEFAULTS.typography.paragraph
       )
       if (typography?.ui) {
-        body.style.setProperty('--font-ui', typography.ui)
+        container.style.setProperty('--font-ui', typography.ui)
       }
     }
 
-    // Section transition variables
+    // Section transition variables (on container)
     const sectionTransition = theme?.sectionTransition
-    if (sectionTransition?.fadeDuration) {
-      root.style.setProperty('--section-fade-duration', sectionTransition.fadeDuration)
+    if (container && sectionTransition?.fadeDuration) {
+      container.style.setProperty('--section-fade-duration', sectionTransition.fadeDuration)
     }
-    if (sectionTransition?.fadeEasing) {
-      root.style.setProperty('--section-fade-easing', sectionTransition.fadeEasing)
+    if (container && sectionTransition?.fadeEasing) {
+      container.style.setProperty('--section-fade-easing', sectionTransition.fadeEasing)
     }
 
     // Cleanup on unmount
     return () => {
-      root.style.removeProperty('--scrollbar-width')
-      root.style.removeProperty('--scrollbar-thumb')
-      root.style.removeProperty('--scrollbar-track')
-      root.style.removeProperty('--scrollbar-thumb-dark')
-      root.style.removeProperty('--scrollbar-track-dark')
-      if (body) {
-        body.style.removeProperty('--font-title')
-        body.style.removeProperty('--font-paragraph')
-        body.style.removeProperty('--font-ui')
+      scrollbarRoot.style.removeProperty('--scrollbar-width')
+      scrollbarRoot.style.removeProperty('--scrollbar-thumb')
+      scrollbarRoot.style.removeProperty('--scrollbar-track')
+      scrollbarRoot.style.removeProperty('--scrollbar-thumb-dark')
+      scrollbarRoot.style.removeProperty('--scrollbar-track-dark')
+      if (container) {
+        container.style.removeProperty('--font-title')
+        container.style.removeProperty('--font-paragraph')
+        container.style.removeProperty('--font-ui')
+        container.style.removeProperty('--section-fade-duration')
+        container.style.removeProperty('--section-fade-easing')
       }
-      root.style.removeProperty('--section-fade-duration')
-      root.style.removeProperty('--section-fade-easing')
     }
   }, [theme, mode, containerRef, siteContainer])
 

@@ -9,16 +9,9 @@
 
 import React, { memo, forwardRef, type CSSProperties } from 'react'
 import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
+import { toCssValue } from '../utils'
 import type { ContainerProps } from './types'
 import './styles.css'
-
-/**
- * Converts value to CSS.
- */
-function toCssValue(value: number | string | undefined): string | undefined {
-  if (value === undefined) return undefined
-  return typeof value === 'number' ? `${value}px` : value
-}
 
 /**
  * Maps container props to CSS properties.

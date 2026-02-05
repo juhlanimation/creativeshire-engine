@@ -4,7 +4,12 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { expandRepeater, processWidgets } from '../../engine/renderer/bindings'
+import {
+  expandRepeater,
+  processWidgets,
+  isRepeaterTemplate,
+  getRepeaterInfo,
+} from '../../engine/renderer/bindings'
 import type { WidgetSchema } from '../../engine/schema'
 
 // =============================================================================
@@ -200,5 +205,301 @@ describe('processWidgets with __label', () => {
     expect(processed[0].__label).toBe('Hero')
     expect(processed[1].__label).toBe('About')
     expect(processed[2].__label).toBe('Contact')
+  })
+})
+
+// =============================================================================
+// Key-Based Identity Tests
+// =============================================================================
+
+describe('expandRepeater key-based identity', () => {
+  describe('__key field', () => {
+    it('uses id field by default for widget ID suffix', () => {
+      const widget: WidgetSchema = {
+        id: 'project-card',
+        __repeat: '{{ content.projects }}',
+        type: 'Card',
+      }
+
+      const content = {
+        projects: [
+          { id: 'abc123', title: 'Project A' },
+          { id: 'def456', title: 'Project B' },
+        ],
+      }
+
+      const expanded = expandRepeater(widget, content)
+      expect(expanded[0].id).toBe('project-card-abc123')
+      expect(expanded[1].id).toBe('project-card-def456')
+    })
+
+    it('uses custom __key field when specified', () => {
+      const widget: WidgetSchema = {
+        id: 'item',
+        __repeat: '{{ content.items }}',
+        __key: 'slug',
+        type: 'Card',
+      }
+
+      const content = {
+        items: [
+          { slug: 'hello-world', title: 'Hello World' },
+          { slug: 'goodbye-world', title: 'Goodbye World' },
+        ],
+      }
+
+      const expanded = expandRepeater(widget, content)
+      expect(expanded[0].id).toBe('item-hello-world')
+      expect(expanded[1].id).toBe('item-goodbye-world')
+    })
+
+    it('falls back to index when key field not present on item', () => {
+      const widget: WidgetSchema = {
+        id: 'card',
+        __repeat: '{{ content.items }}',
+        __key: 'id', // Explicitly looking for id
+        type: 'Card',
+      }
+
+      const content = {
+        items: [
+          { title: 'No ID here' },
+          { title: 'Also no ID' },
+        ],
+      }
+
+      const expanded = expandRepeater(widget, content)
+      expect(expanded[0].id).toBe('card-0')
+      expect(expanded[1].id).toBe('card-1')
+    })
+  })
+
+  describe('__itemKey property', () => {
+    it('sets __itemKey on expanded widgets using id by default', () => {
+      const widget: WidgetSchema = {
+        __repeat: '{{ content.projects }}',
+        type: 'Card',
+      }
+
+      const content = {
+        projects: [
+          { id: 'proj-1', title: 'Project 1' },
+          { id: 'proj-2', title: 'Project 2' },
+        ],
+      }
+
+      const expanded = expandRepeater(widget, content)
+      expect(expanded[0].__itemKey).toBe('proj-1')
+      expect(expanded[1].__itemKey).toBe('proj-2')
+    })
+
+    it('sets __itemKey using custom __key field', () => {
+      const widget: WidgetSchema = {
+        __repeat: '{{ content.items }}',
+        __key: 'uuid',
+        type: 'Card',
+      }
+
+      const content = {
+        items: [
+          { uuid: 'a1b2c3', name: 'Item A' },
+          { uuid: 'd4e5f6', name: 'Item B' },
+        ],
+      }
+
+      const expanded = expandRepeater(widget, content)
+      expect(expanded[0].__itemKey).toBe('a1b2c3')
+      expect(expanded[1].__itemKey).toBe('d4e5f6')
+    })
+
+    it('sets __itemKey to index when key field missing', () => {
+      const widget: WidgetSchema = {
+        __repeat: '{{ content.items }}',
+        type: 'Card',
+      }
+
+      const content = {
+        items: [{ title: 'A' }, { title: 'B' }],
+      }
+
+      const expanded = expandRepeater(widget, content)
+      expect(expanded[0].__itemKey).toBe(0)
+      expect(expanded[1].__itemKey).toBe(1)
+    })
+  })
+
+  describe('reorder stability', () => {
+    it('maintains key-based IDs after data reorder', () => {
+      const widget: WidgetSchema = {
+        id: 'card',
+        __repeat: '{{ content.items }}',
+        type: 'Card',
+      }
+
+      // Original order
+      const originalContent = {
+        items: [
+          { id: 'first', title: 'First' },
+          { id: 'second', title: 'Second' },
+          { id: 'third', title: 'Third' },
+        ],
+      }
+
+      // Reordered
+      const reorderedContent = {
+        items: [
+          { id: 'third', title: 'Third' },
+          { id: 'first', title: 'First' },
+          { id: 'second', title: 'Second' },
+        ],
+      }
+
+      const original = expandRepeater(widget, originalContent)
+      const reordered = expandRepeater(widget, reorderedContent)
+
+      // Same IDs, different positions
+      expect(original[0].id).toBe('card-first')
+      expect(original[2].id).toBe('card-third')
+
+      expect(reordered[0].id).toBe('card-third')
+      expect(reordered[1].id).toBe('card-first')
+    })
+  })
+})
+
+// =============================================================================
+// Platform Introspection Tests
+// =============================================================================
+
+describe('isRepeaterTemplate', () => {
+  it('returns true for widgets with __repeat', () => {
+    const widget: WidgetSchema = {
+      __repeat: '{{ content.items }}',
+      type: 'Card',
+    }
+    expect(isRepeaterTemplate(widget)).toBe(true)
+  })
+
+  it('returns false for widgets without __repeat', () => {
+    const widget: WidgetSchema = {
+      type: 'Text',
+      props: { content: 'Hello' },
+    }
+    expect(isRepeaterTemplate(widget)).toBe(false)
+  })
+
+  it('returns false for empty __repeat', () => {
+    const widget: WidgetSchema = {
+      __repeat: '',
+      type: 'Card',
+    }
+    expect(isRepeaterTemplate(widget)).toBe(false)
+  })
+})
+
+describe('getRepeaterInfo', () => {
+  it('returns null for non-repeater widgets', () => {
+    const widget: WidgetSchema = { type: 'Text' }
+    const content = { items: [] }
+    expect(getRepeaterInfo(widget, content)).toBeNull()
+  })
+
+  it('returns null when data path does not resolve to array', () => {
+    const widget: WidgetSchema = {
+      __repeat: '{{ content.notAnArray }}',
+      type: 'Card',
+    }
+    const content = { notAnArray: 'string value' }
+    expect(getRepeaterInfo(widget, content)).toBeNull()
+  })
+
+  it('returns correct metadata for valid repeater', () => {
+    const widget: WidgetSchema = {
+      __repeat: '{{ content.projects }}',
+      type: 'Card',
+    }
+
+    const content = {
+      projects: [
+        { id: 'p1', title: 'Project One' },
+        { id: 'p2', title: 'Project Two' },
+        { id: 'p3', title: 'Project Three' },
+      ],
+    }
+
+    const info = getRepeaterInfo(widget, content)
+
+    expect(info).not.toBeNull()
+    expect(info!.dataPath).toBe('content.projects')
+    expect(info!.itemCount).toBe(3)
+    expect(info!.keyField).toBe('id')
+    expect(info!.items).toEqual([
+      { key: 'p1', label: 'Project One' },
+      { key: 'p2', label: 'Project Two' },
+      { key: 'p3', label: 'Project Three' },
+    ])
+  })
+
+  it('uses custom __key field', () => {
+    const widget: WidgetSchema = {
+      __repeat: '{{ content.items }}',
+      __key: 'slug',
+      type: 'Card',
+    }
+
+    const content = {
+      items: [
+        { slug: 'hello', title: 'Hello' },
+        { slug: 'world', title: 'World' },
+      ],
+    }
+
+    const info = getRepeaterInfo(widget, content)
+
+    expect(info!.keyField).toBe('slug')
+    expect(info!.items[0].key).toBe('hello')
+    expect(info!.items[1].key).toBe('world')
+  })
+
+  it('falls back to index for items without key field', () => {
+    const widget: WidgetSchema = {
+      __repeat: '{{ content.items }}',
+      type: 'Card',
+    }
+
+    const content = {
+      items: [
+        { title: 'No ID A' },
+        { title: 'No ID B' },
+      ],
+    }
+
+    const info = getRepeaterInfo(widget, content)
+
+    expect(info!.items[0].key).toBe(0)
+    expect(info!.items[1].key).toBe(1)
+  })
+
+  it('handles nested data paths', () => {
+    const widget: WidgetSchema = {
+      __repeat: '{{ content.pages.home.featured }}',
+      type: 'Card',
+    }
+
+    const content = {
+      pages: {
+        home: {
+          featured: [
+            { id: 'f1', title: 'Featured 1' },
+            { id: 'f2', title: 'Featured 2' },
+          ],
+        },
+      },
+    }
+
+    const info = getRepeaterInfo(widget, content)
+
+    expect(info!.dataPath).toBe('content.pages.home.featured')
+    expect(info!.itemCount).toBe(2)
   })
 })
