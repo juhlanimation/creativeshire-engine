@@ -1,262 +1,285 @@
 /**
  * Bojuhl Preset Content Contract
  *
- * Declares what content structure the bojuhl preset expects.
- * Platform adapters must transform source data to match this contract.
+ * Declares ALL CMS fields the bojuhl preset reads.
+ * Each sourceField.path matches a {{ content.xxx }} binding expression in the
+ * preset templates exactly — no preprocessor needed.
  *
- * Binding paths used in preset map to this structure:
- * - {{ content.hero.introText }} → contract.hero.fields.introText
- * - {{ content.projects.featured }} → contract.projects.fields.featured
+ * Platform uses this to:
+ * 1. Seed the database with default values when a site is created
+ * 2. Build CMS editor forms grouped by section
+ * 3. Validate that required fields are populated
  */
 
 import type { ContentContract } from '../types'
 
-/**
- * Content contract for the Bojuhl preset.
- * Documents all binding paths and their expected types.
- */
 export const bojuhlContentContract: ContentContract = {
-  head: {
-    type: 'object',
-    description: 'Page metadata for SEO',
-    required: true,
-    fields: {
-      title: {
-        type: 'string',
-        description: 'Page title for browser tab and SEO',
-        required: true,
-        example: 'Bo Juhl | Executive Producer & Editor',
-      },
-      description: {
-        type: 'string',
-        description: 'Meta description for SEO',
-        required: true,
-        example: 'Award-winning executive producer and editor based in Los Angeles.',
-      },
-    },
-  },
+  sections: [
+    { id: 'intro', label: 'Intro', description: 'Intro sequence configuration' },
+    { id: 'head', label: 'Head', description: 'Page title and meta description' },
+    { id: 'hero', label: 'Hero', description: 'Hero section with video and role titles' },
+    { id: 'about', label: 'About', description: 'Biography, photo, and client logos' },
+    { id: 'projects', label: 'Projects', description: 'Featured and other projects' },
+    { id: 'footer', label: 'Footer', description: 'Navigation, contact, and studio info' },
+    { id: 'contact', label: 'Contact', description: 'Contact prompt overlay' },
+  ],
 
-  hero: {
-    type: 'object',
-    description: 'Hero section with video background and role titles',
-    required: true,
-    fields: {
-      introText: {
-        type: 'string',
-        description: 'Opening text displayed above roles',
-        required: true,
-        example: "I'm Bo Juhl",
-      },
-      roles: {
-        type: 'string[]',
-        description: 'Role titles displayed as large animated text',
-        required: true,
-        example: ['EXECUTIVE PRODUCER', 'EDITOR'],
-      },
-      videoSrc: {
-        type: 'string',
-        description: 'Background video URL for hero section',
-        required: true,
-        example: '/videos/hero-reel.mp4',
-      },
-      scrollIndicatorText: {
-        type: 'string',
-        description: 'Text shown in scroll indicator',
-        required: false,
-        example: 'SCROLL',
-      },
+  sourceFields: [
+    // ── Intro ──────────────────────────────────────────────────────────
+    {
+      path: 'intro.maskText',
+      type: 'text',
+      label: 'Intro Mask Text',
+      section: 'intro',
+      required: true,
+      default: 'BO JUHL',
     },
-  },
 
-  about: {
-    type: 'object',
-    description: 'About section with bio and client logos',
-    required: true,
-    fields: {
-      bioParagraphs: {
-        type: 'string',
-        description: 'Biography text (can include newlines for paragraphs)',
-        required: true,
-        example: 'With over 15 years of experience...',
-      },
-      signature: {
-        type: 'string',
-        description: 'Signature text at end of bio',
-        required: false,
-        example: '- Bo',
-      },
-      photoSrc: {
-        type: 'string',
-        description: 'Profile photo URL',
-        required: true,
-        example: '/images/profile.jpg',
-      },
-      photoAlt: {
-        type: 'string',
-        description: 'Alt text for profile photo',
-        required: true,
-        example: 'Bo Juhl profile photo',
-      },
-      clientLogos: {
-        type: 'object[]',
-        description: 'Client logos for marquee display',
-        required: false,
-        itemShape: {
-          src: { type: 'string', description: 'Logo image URL', required: true },
-          alt: { type: 'string', description: 'Logo alt text', required: true },
-          name: { type: 'string', description: 'Client name', required: false },
-          height: { type: 'number', description: 'Logo height in pixels', required: false },
-        },
-      },
+    // ── Head ───────────────────────────────────────────────────────────
+    {
+      path: 'head.title',
+      type: 'text',
+      label: 'Page Title',
+      section: 'head',
+      required: true,
+      default: 'Bo Juhl | Executive Producer & Editor',
     },
-  },
+    {
+      path: 'head.description',
+      type: 'textarea',
+      label: 'Meta Description',
+      section: 'head',
+      required: true,
+      default: 'Executive Producer leading animated films and campaigns for Riot Games, Netflix, Supercell, Amazon, and LEGO.',
+    },
 
-  projects: {
-    type: 'object',
-    description: 'Projects section with featured grid and other projects gallery',
-    required: true,
-    fields: {
-      featured: {
-        type: 'object[]',
-        description: 'Featured projects shown in large card grid',
-        required: true,
-        itemShape: {
-          id: { type: 'string', description: 'Unique project ID', required: true },
-          title: { type: 'string', description: 'Project title', required: true },
-          description: { type: 'string', description: 'Project description', required: true },
-          role: { type: 'string', description: 'Role on project', required: true },
-          year: { type: 'string', description: 'Year completed', required: true },
-          client: { type: 'string', description: 'Client name', required: false },
-          studio: { type: 'string', description: 'Studio name', required: false },
-          thumbnailSrc: { type: 'string', description: 'Thumbnail image URL', required: true },
-          thumbnailAlt: { type: 'string', description: 'Thumbnail alt text', required: false },
-          videoSrc: { type: 'string', description: 'Preview video URL', required: false },
-          videoUrl: { type: 'string', description: 'Full video URL for modal', required: false },
-        },
-      },
-      other: {
-        type: 'object[]',
-        description: 'Other projects shown in expandable gallery',
-        required: false,
-        itemShape: {
-          id: { type: 'string', description: 'Unique project ID', required: true },
-          title: { type: 'string', description: 'Project title', required: true },
-          role: { type: 'string', description: 'Role on project', required: true },
-          year: { type: 'string', description: 'Year completed', required: true },
-          client: { type: 'string', description: 'Client name', required: false },
-          studio: { type: 'string', description: 'Studio name', required: false },
-          thumbnailSrc: { type: 'string', description: 'Thumbnail image URL', required: true },
-          thumbnailAlt: { type: 'string', description: 'Thumbnail alt text', required: false },
-          videoSrc: { type: 'string', description: 'Preview video URL', required: false },
-          videoUrl: { type: 'string', description: 'Full video URL for modal', required: false },
-        },
-      },
-      otherHeading: {
-        type: 'string',
-        description: 'Heading for other projects section',
-        required: false,
-        example: 'OTHER SELECTED PROJECTS',
-      },
-      yearRange: {
-        type: 'string',
-        description: 'Year range display string',
-        required: false,
-        example: '2019 - 2024',
-      },
+    // ── Hero ───────────────────────────────────────────────────────────
+    {
+      path: 'hero.introText',
+      type: 'text',
+      label: 'Hero Intro Text',
+      section: 'hero',
+      required: true,
+      default: "I'm Bo Juhl",
     },
-  },
+    {
+      path: 'hero.roles',
+      type: 'string-list',
+      label: 'Role Titles',
+      section: 'hero',
+      required: true,
+      default: ['EXECUTIVE PRODUCER', 'PRODUCER', 'EDITOR'],
+    },
+    {
+      path: 'hero.videoSrc',
+      type: 'text',
+      label: 'Hero Video URL',
+      section: 'hero',
+      required: true,
+      default: '/videos/frontpage/frontpage.webm',
+    },
+    {
+      path: 'hero.scrollIndicatorText',
+      type: 'text',
+      label: 'Scroll Indicator Text',
+      section: 'hero',
+      default: '(SCROLL)',
+    },
 
-  footer: {
-    type: 'object',
-    description: 'Footer section with contact and studio info',
-    required: true,
-    fields: {
-      navLinks: {
-        type: 'object[]',
-        description: 'Navigation links in footer',
-        required: false,
-        itemShape: {
-          label: { type: 'string', description: 'Link text', required: true },
-          href: { type: 'string', description: 'Link URL', required: true },
-        },
-      },
-      contactHeading: {
-        type: 'string',
-        description: 'Contact section heading',
-        required: false,
-        example: 'Contact',
-      },
-      email: {
-        type: 'string',
-        description: 'Contact email address',
-        required: true,
-        example: '<email>',
-      },
-      linkedinUrl: {
-        type: 'string',
-        description: 'LinkedIn profile URL',
-        required: false,
-        example: 'https://linkedin.com/in/bojuhl',
-      },
-      studioHeading: {
-        type: 'string',
-        description: 'Studio section heading',
-        required: false,
-        example: 'Studio',
-      },
-      studioUrl: {
-        type: 'string',
-        description: 'Studio website URL',
-        required: false,
-        example: 'https://studio.com',
-      },
-      studioUrlLabel: {
-        type: 'string',
-        description: 'Display text for studio URL',
-        required: false,
-        example: 'studio.com',
-      },
-      studioEmail: {
-        type: 'string',
-        description: 'Studio contact email',
-        required: false,
-        example: '<email>',
-      },
-      studioSocials: {
-        type: 'object[]',
-        description: 'Studio social media links',
-        required: false,
-        itemShape: {
-          platform: { type: 'string', description: 'Platform name', required: true },
-          url: { type: 'string', description: 'Profile URL', required: true },
-        },
-      },
-      copyright: {
-        type: 'string',
-        description: 'Copyright text',
-        required: false,
-        example: '© 2024 Bo Juhl',
-      },
+    // ── About ──────────────────────────────────────────────────────────
+    {
+      path: 'about.bioParagraphs',
+      type: 'textarea',
+      label: 'Biography',
+      section: 'about',
+      required: true,
+      placeholder: 'Full biography text (HTML allowed, paragraphs separated by blank lines)',
     },
-  },
+    {
+      path: 'about.signature',
+      type: 'text',
+      label: 'Signature Name',
+      section: 'about',
+      default: 'Bo Juhl',
+    },
+    {
+      path: 'about.photoSrc',
+      type: 'image',
+      label: 'Profile Photo',
+      section: 'about',
+      required: true,
+    },
+    {
+      path: 'about.photoAlt',
+      type: 'text',
+      label: 'Profile Photo Alt Text',
+      section: 'about',
+      required: true,
+      placeholder: 'Descriptive alt text for profile photo',
+    },
+    {
+      path: 'about.clientLogos',
+      type: 'collection',
+      label: 'Client Logos',
+      section: 'about',
+      itemFields: [
+        { path: 'src', type: 'image', label: 'Logo Image', section: 'about', required: true },
+        { path: 'alt', type: 'text', label: 'Logo Alt Text', section: 'about', required: true },
+        { path: 'name', type: 'text', label: 'Client Name', section: 'about' },
+        { path: 'height', type: 'number', label: 'Display Height (px)', section: 'about' },
+      ],
+    },
 
-  contact: {
-    type: 'object',
-    description: 'Floating contact prompt content',
-    required: true,
-    fields: {
-      promptText: {
-        type: 'string',
-        description: 'Call-to-action text',
-        required: true,
-        example: "Have an exciting project?\nLet's work together.",
-      },
-      email: {
-        type: 'string',
-        description: 'Email for copy-to-clipboard',
-        required: true,
-        example: '<email>',
-      },
+    // ── Projects ───────────────────────────────────────────────────────
+    {
+      path: 'projects.featured',
+      type: 'collection',
+      label: 'Featured Projects',
+      section: 'projects',
+      required: true,
+      itemFields: [
+        { path: 'id', type: 'text', label: 'Project ID', section: 'projects', required: true },
+        { path: 'title', type: 'text', label: 'Title', section: 'projects', required: true },
+        { path: 'description', type: 'textarea', label: 'Description', section: 'projects' },
+        { path: 'role', type: 'text', label: 'Role', section: 'projects', required: true },
+        { path: 'year', type: 'text', label: 'Year', section: 'projects', required: true },
+        { path: 'client', type: 'text', label: 'Client', section: 'projects' },
+        { path: 'studio', type: 'text', label: 'Studio', section: 'projects' },
+        { path: 'thumbnailSrc', type: 'image', label: 'Thumbnail', section: 'projects', required: true },
+        { path: 'thumbnailAlt', type: 'text', label: 'Thumbnail Alt Text', section: 'projects' },
+        { path: 'videoSrc', type: 'text', label: 'Hover Preview Video URL', section: 'projects' },
+        { path: 'videoUrl', type: 'text', label: 'Full Video URL', section: 'projects' },
+      ],
     },
-  },
+    {
+      path: 'projects.other',
+      type: 'collection',
+      label: 'Other Projects',
+      section: 'projects',
+      itemFields: [
+        { path: 'id', type: 'text', label: 'Project ID', section: 'projects', required: true },
+        { path: 'title', type: 'text', label: 'Title', section: 'projects', required: true },
+        { path: 'description', type: 'textarea', label: 'Description', section: 'projects' },
+        { path: 'role', type: 'text', label: 'Role', section: 'projects', required: true },
+        { path: 'year', type: 'text', label: 'Year', section: 'projects', required: true },
+        { path: 'client', type: 'text', label: 'Client', section: 'projects' },
+        { path: 'studio', type: 'text', label: 'Studio', section: 'projects' },
+        { path: 'thumbnailSrc', type: 'image', label: 'Thumbnail', section: 'projects', required: true },
+        { path: 'thumbnailAlt', type: 'text', label: 'Thumbnail Alt Text', section: 'projects' },
+        { path: 'videoSrc', type: 'text', label: 'Hover Preview Video URL', section: 'projects' },
+        { path: 'videoUrl', type: 'text', label: 'Full Video URL', section: 'projects' },
+      ],
+    },
+    {
+      path: 'projects.otherHeading',
+      type: 'text',
+      label: 'Other Projects Heading',
+      section: 'projects',
+      default: 'OTHER SELECTED PROJECTS',
+    },
+    {
+      path: 'projects.yearRange',
+      type: 'text',
+      label: 'Year Range',
+      section: 'projects',
+      default: '2018-2024',
+    },
+
+    // ── Footer ─────────────────────────────────────────────────────────
+    {
+      path: 'footer.navLinks',
+      type: 'collection',
+      label: 'Footer Navigation Links',
+      section: 'footer',
+      itemFields: [
+        { path: 'label', type: 'text', label: 'Label', section: 'footer', required: true },
+        { path: 'href', type: 'text', label: 'Link Target', section: 'footer', required: true },
+      ],
+    },
+    {
+      path: 'footer.contactHeading',
+      type: 'text',
+      label: 'Contact Heading',
+      section: 'footer',
+      default: 'GET IN TOUCH',
+    },
+    {
+      path: 'footer.email',
+      type: 'text',
+      label: 'Contact Email',
+      section: 'footer',
+      required: true,
+      placeholder: 'hello@example.com',
+    },
+    {
+      path: 'footer.linkedinUrl',
+      type: 'text',
+      label: 'LinkedIn URL',
+      section: 'footer',
+      placeholder: 'https://linkedin.com/in/yourname',
+    },
+    {
+      path: 'footer.studioHeading',
+      type: 'text',
+      label: 'Studio Heading',
+      section: 'footer',
+      default: 'FIND MY STUDIO',
+    },
+    {
+      path: 'footer.studioUrl',
+      type: 'text',
+      label: 'Studio Website URL',
+      section: 'footer',
+      placeholder: 'https://yourstudio.com',
+    },
+    {
+      path: 'footer.studioUrlLabel',
+      type: 'text',
+      label: 'Studio URL Display Label',
+      section: 'footer',
+      placeholder: 'yourstudio.com',
+    },
+    {
+      path: 'footer.studioEmail',
+      type: 'text',
+      label: 'Studio Email',
+      section: 'footer',
+      placeholder: 'hello@yourstudio.com',
+    },
+    {
+      path: 'footer.studioSocials',
+      type: 'collection',
+      label: 'Studio Social Links',
+      section: 'footer',
+      itemFields: [
+        { path: 'platform', type: 'text', label: 'Platform', section: 'footer', required: true },
+        { path: 'url', type: 'text', label: 'URL', section: 'footer', required: true },
+      ],
+    },
+    {
+      path: 'footer.copyright',
+      type: 'text',
+      label: 'Copyright Text',
+      section: 'footer',
+      placeholder: 'Copyright \u00a9 Your Name / All rights reserved',
+    },
+
+    // ── Contact ────────────────────────────────────────────────────────
+    {
+      path: 'contact.promptText',
+      type: 'text',
+      label: 'Contact Prompt Text',
+      section: 'contact',
+      required: true,
+      default: 'How can I help you?',
+    },
+    {
+      path: 'contact.email',
+      type: 'text',
+      label: 'Contact Email',
+      section: 'contact',
+      required: true,
+      placeholder: 'hello@example.com',
+    },
+  ],
 }

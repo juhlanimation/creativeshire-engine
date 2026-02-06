@@ -20,9 +20,10 @@
 
 import type { SitePreset } from '../types'
 import { registerPreset, type PresetMeta } from '../registry'
-import { experienceConfig, pageTransitionConfig } from './site'
+import { transitionConfig } from './site'
 import { headerConfig } from './chrome'
 import { homePageTemplate, aboutPageTemplate } from './pages'
+import { testMultipageContentContract } from './content-contract'
 
 /**
  * Test multipage preset metadata for UI display.
@@ -45,7 +46,7 @@ export const testMultipagePreset: SitePreset = {
       track: '#f0f0f0',
     },
   },
-  experience: experienceConfig,
+  transition: transitionConfig,
   chrome: {
     regions: {
       header: headerConfig,
@@ -58,11 +59,10 @@ export const testMultipagePreset: SitePreset = {
   },
 }
 
-// Re-export page transition config for custom wiring
-export { pageTransitionConfig }
-
 // Re-export content contract for platform use
 export { testMultipageContentContract } from './content-contract'
 
 // Auto-register on module load
-registerPreset(testMultipageMeta, testMultipagePreset)
+registerPreset(testMultipageMeta, testMultipagePreset, {
+  contentContract: testMultipageContentContract,
+})

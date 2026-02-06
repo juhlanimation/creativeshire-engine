@@ -15,9 +15,10 @@
 
 import type { SitePreset } from '../types'
 import { registerPreset, type PresetMeta } from '../registry'
-import { experienceConfig } from './site'
-import { footerConfig, floatingContactConfig } from './chrome'
+import { experienceConfig, introConfig } from './site'
+import { footerConfig, floatingContactConfig, cursorLabelWatchConfig, cursorLabelEnterConfig } from './chrome'
 import { homePageTemplate } from './pages'
+import { bojuhlContentContract } from './content-contract'
 
 /**
  * Bojuhl preset metadata for UI display.
@@ -33,6 +34,7 @@ export const bojuhlMeta: PresetMeta = {
  * Includes hero, about, featured projects, and other projects sections.
  */
 export const bojuhlPreset: SitePreset = {
+  intro: introConfig,
   theme: {
     scrollbar: {
       width: 6,
@@ -66,6 +68,8 @@ export const bojuhlPreset: SitePreset = {
     },
     overlays: {
       floatingContact: floatingContactConfig,
+      cursorLabelWatch: cursorLabelWatchConfig,
+      cursorLabelEnter: cursorLabelEnterConfig,
       modal: { component: 'ModalRoot' },
     },
   },
@@ -75,4 +79,12 @@ export const bojuhlPreset: SitePreset = {
 }
 
 // Auto-register on module load
-registerPreset(bojuhlMeta, bojuhlPreset)
+registerPreset(bojuhlMeta, bojuhlPreset, {
+  contentContract: bojuhlContentContract,
+})
+
+// Content contract export
+export { bojuhlContentContract } from './content-contract'
+
+// Export sample content for dev preview
+export { bojuhlSampleContent } from './sample-content'

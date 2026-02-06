@@ -50,6 +50,7 @@ export const bojuhlHeroStyles: HeroTextStyles = {
  */
 const heroSection: SectionSchema = {
   id: 'hero',
+  label: 'Hero',
   layout: {
     type: 'stack',
     direction: 'column',
@@ -125,6 +126,7 @@ const heroSection: SectionSchema = {
  */
 const aboutSection: SectionSchema = {
   id: 'about',
+  label: 'About',
   layout: {
     type: 'stack',
     direction: 'column',
@@ -227,17 +229,37 @@ const aboutSection: SectionSchema = {
       widgets: [
         {
           __repeat: '{{ content.about.clientLogos }}',
-          id: 'logo',
-          type: 'Image',
-          props: {
-            src: '{{ item.src }}',
-            alt: '{{ item.alt }}'
-          },
+          id: 'logo-box',
+          type: 'Box',
+          props: {},
           style: {
-            width: 120,
-            marginRight: 96,
-            opacity: 0.7
-          }
+            width: '120px',
+            height: '72px',
+            marginRight: '96px',
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          },
+          widgets: [
+            {
+              id: 'logo-img',
+              type: 'Image',
+              props: {
+                src: '{{ item.src }}',
+                alt: '{{ item.alt }}',
+                decorative: true,
+                objectFit: 'contain'
+              },
+              style: {
+                width: 'auto',
+                height: '{{ item.height }}px',
+                maxWidth: '120px',
+                filter: 'brightness(0) invert(1)',
+                opacity: 0.5
+              }
+            }
+          ]
         }
       ]
     }
@@ -250,6 +272,7 @@ const aboutSection: SectionSchema = {
  */
 const featuredProjectsSection: SectionSchema = {
   id: 'projects',
+  label: 'Featured Projects',
   layout: {
     type: 'stack',
     direction: 'column',
@@ -359,6 +382,7 @@ const featuredProjectsSection: SectionSchema = {
  */
 const otherProjectsSection: SectionSchema = {
   id: 'other-projects',
+  label: 'Other Projects',
   layout: {
     type: 'stack',
     direction: 'column',

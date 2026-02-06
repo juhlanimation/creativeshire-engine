@@ -10,39 +10,73 @@
 import type { PageSchema } from '../schema/page'
 import type { WidgetSchema } from '../schema/widget'
 import type { ThemeSchema } from '../schema/theme'
+import type { IntroConfig } from '../intro/types'
+import type { TransitionConfig } from '../schema/transition'
 
 /**
- * Content field type for content contracts.
+ * Data type of a source field in the platform CMS.
  */
-export type ContentFieldType = 'string' | 'number' | 'boolean' | 'string[]' | 'number[]' | 'object' | 'object[]'
+export type ContentSourceFieldType =
+  | 'text'
+  | 'textarea'
+  | 'number'
+  | 'toggle'
+  | 'image'
+  | 'string-list'
+  | 'collection'
 
 /**
- * Content field definition in a content contract.
+ * A single CMS source field that a preset reads.
+ * `path` matches the binding expression path exactly (e.g. 'hero.videoSrc' → {{ content.hero.videoSrc }}).
  */
-export interface ContentFieldDefinition {
-  type: ContentFieldType
-  description: string
-  required: boolean
-  example?: unknown
-  /** Shape of items for object[] types */
-  itemShape?: Record<string, ContentFieldDefinition>
+export interface ContentSourceField {
+  /** Dot-notation path matching the binding expression (e.g. 'hero.videoSrc') */
+  path: string
+  /** Data type the CMS should present */
+  type: ContentSourceFieldType
+  /** Human-readable label for CMS UI */
+  label: string
+  /** Section this field belongs to (references ContentSection.id) */
+  section: string
+  /** Whether the field is required */
+  required?: boolean
+  /** Default value for seeding new sites from this preset */
+  default?: unknown
+  /** Placeholder hint for CMS UI */
+  placeholder?: string
+  /** Separator for string-list fields (e.g. ' & ') */
+  separator?: string
+  /** Item field definitions for collection fields */
+  itemFields?: ContentSourceField[]
 }
 
 /**
- * Content section definition containing multiple fields.
+ * A logical grouping of source fields in the CMS editor.
  */
-export interface ContentSectionDefinition {
-  type: 'object'
-  description: string
-  required: boolean
-  fields: Record<string, ContentFieldDefinition>
+export interface ContentSection {
+  /** Unique section identifier */
+  id: string
+  /** Human-readable label for CMS UI */
+  label: string
+  /** Optional description for the section */
+  description?: string
 }
 
 /**
- * Content contract defining expected content structure for a preset.
- * Documents all binding paths and their expected types.
+ * Content contract declaring which CMS fields a preset reads.
+ * Platform auto-generates field definitions from this.
  */
-export type ContentContract = Record<string, ContentSectionDefinition>
+export interface ContentContract {
+  /** CMS source fields the preset reads */
+  sourceFields: ContentSourceField[]
+  /** Logical groupings for the CMS editor */
+  sections: ContentSection[]
+}
+
+/**
+ * Maps platform CMS data to the shape a preset's bindings expect.
+ */
+export type ContentPreprocessor = (content: Record<string, unknown>) => Record<string, unknown>
 
 /**
  * Experience configuration for a preset.
@@ -105,8 +139,12 @@ export interface PresetChromeConfig {
 export interface SitePreset {
   /** Theme configuration (scrollbar, smooth scroll, colors) */
   theme?: ThemeSchema
+  /** Intro sequence configuration (runs before experience) */
+  intro?: IntroConfig
   /** Experience configuration (references an Experience by ID) */
-  experience: PresetExperienceConfig
+  experience?: PresetExperienceConfig
+  /** Page transition configuration */
+  transition?: TransitionConfig
   /** Chrome regions and overlays */
   chrome: PresetChromeConfig
   /** Page templates keyed by page ID */

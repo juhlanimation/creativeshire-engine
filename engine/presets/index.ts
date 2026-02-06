@@ -7,8 +7,9 @@
  */
 
 // Preset exports (auto-register on import)
-export { bojuhlPreset, bojuhlMeta } from './bojuhl'
-export { testMultipagePreset, testMultipageMeta, testMultipageContentContract, pageTransitionConfig } from './test-multipage'
+export { bojuhlPreset, bojuhlMeta, bojuhlContentContract } from './bojuhl'
+export { bishoyGendiPreset, bishoyGendiMeta, bishoyGendiContentContract } from './bishoy-gendi'
+export { testMultipagePreset, testMultipageMeta, testMultipageContentContract } from './test-multipage'
 
 /**
  * Ensures all presets are registered.
@@ -30,9 +31,20 @@ export {
   getAllPresets,
   getPresetOverride,
   setPresetOverride,
+  getPresetContentContract,
+  getPresetContentPreprocessor,
   DEV_PRESET_PARAM,
   type PresetMeta,
 } from './registry'
 
 // Types
-export type { SitePreset, PresetExperienceConfig, PresetChromeConfig } from './types'
+export type {
+  SitePreset,
+  PresetExperienceConfig,
+  PresetChromeConfig,
+  ContentContract,
+  ContentSourceField,
+  ContentSourceFieldType,
+  ContentSection,
+  ContentPreprocessor,
+} from './types'

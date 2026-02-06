@@ -87,12 +87,20 @@ export const footerConfig: PresetRegionConfig = {
                 {
                   id: 'footer-nav',
                   type: 'Stack',
-                  props: {
-                    gap: 8,
-                    navLinks: '{{ content.footer.navLinks }}',
-                  },
+                  props: { gap: 8 },
                   className: 'footer-chrome__nav',
-                  widgets: [],
+                  widgets: [
+                    {
+                      __repeat: '{{ content.footer.navLinks }}',
+                      id: 'nav-link',
+                      type: 'Link',
+                      props: {
+                        href: '{{ item.href }}',
+                        children: '{{ item.label }}',
+                      },
+                      className: 'footer-chrome__nav-link',
+                    },
+                  ],
                 },
               ],
             },
@@ -149,12 +157,21 @@ export const footerConfig: PresetRegionConfig = {
                   {
                     id: 'footer-studio-socials',
                     type: 'Stack',
-                    props: {
-                      gap: 8,
-                      socialLinks: '{{ content.footer.studioSocials }}',
-                    },
+                    props: { gap: 8 },
                     className: 'footer-chrome__socials',
-                    widgets: [],
+                    widgets: [
+                      {
+                        __repeat: '{{ content.footer.studioSocials }}',
+                        id: 'studio-social',
+                        type: 'Link',
+                        props: {
+                          href: '{{ item.url }}',
+                          children: '{{ item.platform }}',
+                          target: '_blank',
+                        },
+                        className: 'footer-chrome__social-link',
+                      },
+                    ],
                   },
                 ]),
               ],

@@ -10,8 +10,8 @@ import type { OtherProject } from '../../engine/content/sections/patterns/OtherP
  * Featured projects - shown with full cards and descriptions.
  * Using 2 projects with video sets as requested.
  */
-// Public test video for development (Big Buck Bunny - Blender Foundation, CC)
-const TEST_VIDEO_URL = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
+// Public test video for development (~1.5MB, loads fast for canPlay)
+const TEST_VIDEO_URL = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
 
 export const featuredProjects: FeaturedProject[] = [
   {
@@ -61,7 +61,7 @@ export const otherProjects: OtherProject[] = [
     thumbnailSrc: '/images/other-projects/genshin-impact-thumbnail.webp',
     thumbnailAlt: 'Genshin Impact thumbnail',
     videoSrc: '/videos/other-projects/genshin-impact-hover.webm',
-    videoUrl: '/videos/other-projects/genshin-impact-full.webm',
+    videoUrl: TEST_VIDEO_URL,
     title: 'SCENERY AND SENTIMENT',
     year: '2023',
     role: 'Executive Producer',
@@ -73,7 +73,7 @@ export const otherProjects: OtherProject[] = [
     thumbnailSrc: '/images/other-projects/its-on-thumbnail.webp',
     thumbnailAlt: "It's On thumbnail",
     videoSrc: '/videos/other-projects/its-on-hover.webm',
-    videoUrl: '/videos/other-projects/its-on-full.webm',
+    videoUrl: TEST_VIDEO_URL,
     title: "IT'S ON!",
     year: '2018',
     role: 'Executive Producer, Editor',
@@ -85,7 +85,7 @@ export const otherProjects: OtherProject[] = [
     thumbnailSrc: '/images/other-projects/marvel-thumbnail.webp',
     thumbnailAlt: 'Marvel Midnight Sun thumbnail',
     videoSrc: '/videos/other-projects/marvel-hover.webm',
-    videoUrl: '/videos/other-projects/marvel-full.webm',
+    videoUrl: TEST_VIDEO_URL,
     title: 'MARVEL MIDNIGHT SUN',
     year: '2022',
     role: 'Executive Producer',
@@ -97,7 +97,7 @@ export const otherProjects: OtherProject[] = [
     thumbnailSrc: '/images/other-projects/ninjago-thumbnail.webp',
     thumbnailAlt: 'Ninjago Legacy thumbnail',
     videoSrc: '/videos/other-projects/ninjago-hover.webm',
-    videoUrl: '/videos/other-projects/ninjago-full.webm',
+    videoUrl: TEST_VIDEO_URL,
     title: 'NINJAGO LEGACY',
     year: '2021',
     role: 'Executive Producer',
@@ -109,7 +109,7 @@ export const otherProjects: OtherProject[] = [
     thumbnailSrc: '/images/other-projects/the-goblin-queen-thumbnail.webp',
     thumbnailAlt: 'The Goblin Queen thumbnail',
     videoSrc: '/videos/other-projects/the-goblin-queen-hover.webm',
-    videoUrl: '/videos/other-projects/the-goblin-queen-full.webm',
+    videoUrl: TEST_VIDEO_URL,
     title: 'THE GOBLIN QUEEN',
     year: '2024',
     role: 'Executive Producer',

@@ -13,6 +13,7 @@ import type { PageSchema, SectionSchema } from '../../../schema'
  */
 const heroSection: SectionSchema = {
   id: 'hero',
+  label: 'Hero',
   layout: {
     type: 'stack',
     direction: 'column',
@@ -62,6 +63,7 @@ const heroSection: SectionSchema = {
  */
 const featureSection: SectionSchema = {
   id: 'features',
+  label: 'Features',
   layout: {
     type: 'stack',
     direction: 'column',

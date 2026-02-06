@@ -11,7 +11,7 @@
  * 3. App reads getPresetOverride() to determine which preset to use
  */
 
-import type { SitePreset } from './types'
+import type { SitePreset, ContentContract, ContentPreprocessor } from './types'
 
 // =============================================================================
 // Types
@@ -32,11 +32,13 @@ export interface PresetMeta {
 }
 
 /**
- * Registry entry - full preset + metadata
+ * Registry entry - full preset + metadata + optional content contract
  */
 interface RegistryEntry {
   meta: PresetMeta
   preset: SitePreset
+  contentContract?: ContentContract
+  preprocessor?: ContentPreprocessor
 }
 
 // =============================================================================
@@ -47,17 +49,23 @@ interface RegistryEntry {
 const registry = new Map<string, RegistryEntry>()
 
 /**
- * Register a preset with metadata.
+ * Register a preset with metadata and optional content contract.
  * Called by preset modules on import.
  */
 export function registerPreset(
   meta: PresetMeta,
-  preset: SitePreset
+  preset: SitePreset,
+  options?: { contentContract?: ContentContract; preprocessor?: ContentPreprocessor }
 ): void {
   if (registry.has(meta.id)) {
     console.warn(`Preset "${meta.id}" is already registered. Overwriting.`)
   }
-  registry.set(meta.id, { meta, preset })
+  registry.set(meta.id, {
+    meta,
+    preset,
+    contentContract: options?.contentContract,
+    preprocessor: options?.preprocessor,
+  })
 }
 
 /**
@@ -93,6 +101,24 @@ export function getPresetIds(): string[] {
  */
 export function getAllPresets(): Array<{ meta: PresetMeta; preset: SitePreset }> {
   return Array.from(registry.values())
+}
+
+// =============================================================================
+// Content Contract Accessors
+// =============================================================================
+
+/**
+ * Get the content contract for a preset by ID.
+ */
+export function getPresetContentContract(id: string): ContentContract | undefined {
+  return registry.get(id)?.contentContract
+}
+
+/**
+ * Get the content preprocessor for a preset by ID.
+ */
+export function getPresetContentPreprocessor(id: string): ContentPreprocessor | undefined {
+  return registry.get(id)?.preprocessor
 }
 
 // =============================================================================

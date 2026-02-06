@@ -1,0 +1,711 @@
+/**
+ * Bishoy Gendi preset home page template.
+ * Defines section schemas with binding expressions.
+ *
+ * 8 sections in infinite-carousel layout:
+ * 1. Showreel - Fullscreen video
+ * 2. Bio - Card overlay on video
+ * 3. Azuki Elementals - ProjectGallery
+ * 4. Boy Mole Fox Horse - ProjectShowcase with ShotIndicator
+ * 5. THE 21 - ProjectCompare (before/after)
+ * 6. Clash Royale - ProjectVideoGrid
+ * 7. Riot Games - ProjectExpand
+ * 8. Projects I Like - ProjectTabs
+ *
+ * Content values use binding expressions ({{ content.xxx }}) that
+ * are resolved at runtime by the platform before rendering.
+ */
+
+import type { PageSchema, SectionSchema } from '../../../schema'
+
+// =============================================================================
+// Section 1: Showreel - Fullscreen video hero
+// =============================================================================
+
+const showreelSection: SectionSchema = {
+  id: 'showreel',
+  label: 'Showreel',
+  layout: {
+    type: 'stack',
+    direction: 'column',
+  },
+  style: {
+    height: '100dvh',
+    transform: 'none',
+  },
+  className: 'section-showreel',
+  widgets: [
+    {
+      id: 'showreel-video',
+      type: 'Video',
+      props: {
+        src: '{{ content.showreel.videoSrc }}',
+        poster: '{{ content.showreel.videoPoster }}',
+        autoplay: true,
+        loop: true,
+        muted: true,
+        background: true,
+      },
+      style: {
+        position: 'fixed',
+        inset: 0,
+        zIndex: -1,
+        objectFit: 'cover',
+        width: '100%',
+        height: '100dvh',
+      },
+    },
+  ],
+}
+
+// =============================================================================
+// Section 2: Bio - Card overlay on video background
+// =============================================================================
+
+const bioSection: SectionSchema = {
+  id: 'bio',
+  label: 'Bio',
+  layout: {
+    type: 'flex',
+    direction: 'column',
+    align: 'center',
+    justify: 'center',
+  },
+  style: {
+    height: '100dvh',
+  },
+  className: 'section-bio',
+  widgets: [
+    // Card overlay — glassmorphic over fixed showreel video
+    {
+      id: 'bio-card',
+      type: 'Box',
+      className: 'bio-card',
+      style: {
+        background: 'rgba(0,0,0,0.3)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        border: '1px solid rgba(255,255,255,0.2)',
+        borderRadius: '1rem',
+        padding: '3rem',
+        maxWidth: 650,
+        color: '#fff',
+      },
+      widgets: [
+        {
+          id: 'bio-name',
+          type: 'Text',
+          props: { content: '{{ content.bio.name }}', as: 'h1' },
+          style: { color: '#fff' },
+          className: 'bio-card__name',
+        },
+        {
+          id: 'bio-title',
+          type: 'Text',
+          props: { content: '{{ content.bio.title }}', as: 'h2' },
+          style: { color: 'rgba(255,255,255,0.8)' },
+          className: 'bio-card__title',
+        },
+        {
+          id: 'bio-location',
+          type: 'Text',
+          props: { content: '{{ content.bio.location }}', as: 'p' },
+          style: { color: 'rgba(255,255,255,0.6)' },
+          className: 'bio-card__location',
+        },
+        {
+          id: 'bio-text',
+          type: 'Text',
+          props: { content: '{{ content.bio.bio }}', as: 'p', html: true },
+          style: { color: 'rgba(255,255,255,0.85)' },
+          className: 'bio-card__bio',
+        },
+        // Contact info
+        {
+          id: 'bio-contact',
+          type: 'Flex',
+          props: { direction: 'column', gap: '0.5rem' },
+          className: 'bio-card__contact',
+          widgets: [
+            {
+              type: 'Link',
+              props: { href: 'mailto:{{ content.contact.email }}' },
+              style: { color: 'rgba(255,255,255,0.9)' },
+              widgets: [{ type: 'Text', props: { content: '{{ content.contact.email }}' } }],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+
+// =============================================================================
+// Section 3: Azuki Elementals - ProjectGallery style
+// =============================================================================
+
+const azukiElementalsSection: SectionSchema = {
+  id: 'azuki-elementals',
+  label: 'Azuki Elementals',
+  layout: {
+    type: 'flex',
+    direction: 'column',
+    justify: 'between',
+  },
+  style: {
+    backgroundColor: '{{ content.azukiElementals.backgroundColor }}',
+    minHeight: '100dvh',
+    padding: '2rem',
+  },
+  className: 'section-project-gallery',
+  widgets: [
+    // Header with logo
+    {
+      id: 'azuki-header',
+      type: 'Flex',
+      props: { direction: 'row', align: 'center' },
+      className: 'project-gallery__header',
+      widgets: [
+        {
+          id: 'azuki-logo',
+          type: 'Image',
+          props: {
+            src: '{{ content.azukiElementals.logo.src }}',
+            alt: '{{ content.azukiElementals.logo.alt }}',
+            decorative: false,
+          },
+          style: {
+            width: '{{ content.azukiElementals.logo.width }}',
+          },
+        },
+      ],
+    },
+    // Main video area
+    {
+      id: 'azuki-main-video',
+      type: 'Video',
+      props: {
+        src: '{{ content.azukiElementals.mainVideo.src }}',
+        poster: '{{ content.azukiElementals.mainVideo.poster }}',
+        autoplay: true,
+        loop: true,
+        muted: true,
+        aspectRatio: '16/9',
+      },
+      className: 'project-gallery__video',
+    },
+    // Project selector thumbnails - uses __repeat for hierarchy visibility
+    {
+      id: 'azuki-selector',
+      type: 'ProjectSelector',
+      props: {
+        activeIndex: 0,
+        orientation: 'horizontal',
+        showInfo: true,
+      },
+      className: 'project-gallery__selector',
+      widgets: [
+        {
+          __repeat: '{{ content.azukiElementals.projects }}',
+          id: 'project-item',
+          type: 'GalleryThumbnail',
+          props: {
+            thumbnailSrc: '{{ item.thumbnail }}',
+            thumbnailAlt: '{{ item.title }}',
+            videoSrc: '{{ item.video }}',
+            title: '{{ item.title }}',
+            year: '{{ item.year }}',
+            studio: '{{ item.studio }}',
+          },
+        },
+      ],
+    },
+    // ContactBar
+    {
+      id: 'azuki-contact',
+      type: 'ContactPrompt',
+      props: {
+        email: '{{ content.contact.email }}',
+        showPrompt: false,
+      },
+      className: 'contact-bar',
+    },
+  ],
+}
+
+// =============================================================================
+// Section 4: Boy Mole Fox Horse - ProjectShowcase with ShotIndicator
+// =============================================================================
+
+const boyMoleFoxHorseSection: SectionSchema = {
+  id: 'boy-mole-fox-horse',
+  label: 'Boy Mole Fox Horse',
+  layout: {
+    type: 'flex',
+    direction: 'column',
+    justify: 'between',
+  },
+  style: {
+    backgroundColor: '{{ content.boyMoleFoxHorse.backgroundColor }}',
+    minHeight: '100dvh',
+    padding: '2rem',
+  },
+  className: 'section-project-showcase',
+  widgets: [
+    // Header with logo and info
+    {
+      id: 'bmfh-header',
+      type: 'Flex',
+      props: { direction: 'row', align: 'center', justify: 'between' },
+      className: 'project-showcase__header',
+      widgets: [
+        {
+          id: 'bmfh-logo',
+          type: 'Image',
+          props: {
+            src: '{{ content.boyMoleFoxHorse.logo.src }}',
+            alt: '{{ content.boyMoleFoxHorse.logo.alt }}',
+            decorative: false,
+          },
+          style: { width: '{{ content.boyMoleFoxHorse.logo.width }}' },
+        },
+        {
+          id: 'bmfh-info',
+          type: 'Flex',
+          props: { direction: 'column', align: 'end', gap: '0.25rem' },
+          widgets: [
+            {
+              type: 'Text',
+              props: { content: '{{ content.boyMoleFoxHorse.studio }}', as: 'span' },
+              className: 'project-showcase__studio',
+            },
+            {
+              type: 'Text',
+              props: { content: '{{ content.boyMoleFoxHorse.role }}', as: 'span' },
+              className: 'project-showcase__role',
+            },
+          ],
+        },
+      ],
+    },
+    // Video container with shot indicator
+    {
+      id: 'bmfh-video-container',
+      type: 'Box',
+      className: 'project-showcase__video-container',
+      widgets: [
+        {
+          id: 'bmfh-video',
+          type: 'Video',
+          props: {
+            src: '{{ content.boyMoleFoxHorse.videoSrc }}',
+            poster: '{{ content.boyMoleFoxHorse.videoPoster }}',
+            autoplay: true,
+            loop: true,
+            muted: true,
+            aspectRatio: '16/9',
+          },
+          className: 'project-showcase__video',
+        },
+        // Shot indicator - uses __repeat for hierarchy visibility
+        {
+          id: 'bmfh-shots',
+          type: 'ShotIndicator',
+          props: {
+            position: 'top-right',
+          },
+          widgets: [
+            {
+              __repeat: '{{ content.boyMoleFoxHorse.shots }}',
+              id: 'shot-marker',
+              type: 'Button',
+              props: {
+                label: '{{ item.frame }}',
+                'data-video-src': '{{ item.videoSrc }}',
+              },
+              className: 'shot-indicator__marker',
+            },
+          ],
+        },
+      ],
+    },
+    // ContactBar
+    {
+      id: 'bmfh-contact',
+      type: 'ContactPrompt',
+      props: {
+        email: '{{ content.contact.email }}',
+        showPrompt: false,
+      },
+      className: 'contact-bar contact-bar--dark',
+    },
+  ],
+}
+
+// =============================================================================
+// Section 5: THE 21 - ProjectCompare (before/after wipe)
+// =============================================================================
+
+const the21Section: SectionSchema = {
+  id: 'the21-seq1',
+  label: 'THE 21',
+  layout: {
+    type: 'flex',
+    direction: 'column',
+    justify: 'between',
+  },
+  style: {
+    backgroundColor: '{{ content.the21.backgroundColor }}',
+    minHeight: '100dvh',
+    padding: '2rem',
+  },
+  className: 'section-project-compare',
+  widgets: [
+    // Header with logo
+    {
+      id: 'the21-header',
+      type: 'Flex',
+      props: { direction: 'row', align: 'center' },
+      className: 'project-compare__header',
+      widgets: [
+        {
+          id: 'the21-logo',
+          type: 'Image',
+          props: {
+            src: '{{ content.the21.logo.src }}',
+            alt: '{{ content.the21.logo.alt }}',
+            decorative: false,
+          },
+          style: { width: '{{ content.the21.logo.width }}' },
+        },
+      ],
+    },
+    // VideoCompare widget
+    {
+      id: 'the21-compare',
+      type: 'VideoCompare',
+      props: {
+        beforeSrc: '{{ content.the21.beforeVideo }}',
+        afterSrc: '{{ content.the21.afterVideo }}',
+        beforeLabel: '{{ content.the21.beforeLabel }}',
+        afterLabel: '{{ content.the21.afterLabel }}',
+        aspectRatio: '16/9',
+        initialPosition: 50,
+      },
+      className: 'project-compare__video',
+    },
+    // Description
+    {
+      id: 'the21-description',
+      type: 'Text',
+      props: {
+        content: '{{ content.the21.description }}',
+        as: 'p',
+        html: true,
+      },
+      className: 'project-compare__description',
+    },
+    // ContactBar
+    {
+      id: 'the21-contact',
+      type: 'ContactPrompt',
+      props: {
+        email: '{{ content.contact.email }}',
+        showPrompt: false,
+      },
+      className: 'contact-bar contact-bar--dark',
+    },
+  ],
+}
+
+// =============================================================================
+// Section 6: Clash Royale - ProjectVideoGrid (2x2 mixed aspect)
+// =============================================================================
+
+const clashRoyaleSection: SectionSchema = {
+  id: 'clash-royale',
+  label: 'Clash Royale',
+  layout: {
+    type: 'flex',
+    direction: 'column',
+    justify: 'between',
+  },
+  style: {
+    backgroundColor: '{{ content.clashRoyale.backgroundColor }}',
+    minHeight: '100dvh',
+    padding: '2rem',
+  },
+  className: 'section-project-video-grid',
+  widgets: [
+    // Header with logo
+    {
+      id: 'clash-header',
+      type: 'Flex',
+      props: { direction: 'row', align: 'center' },
+      className: 'project-video-grid__header',
+      widgets: [
+        {
+          id: 'clash-logo',
+          type: 'Image',
+          props: {
+            src: '{{ content.clashRoyale.logo.src }}',
+            alt: '{{ content.clashRoyale.logo.alt }}',
+            decorative: false,
+          },
+          style: { width: '{{ content.clashRoyale.logo.width }}' },
+        },
+      ],
+    },
+    // Video grid (2 columns with __repeat)
+    {
+      id: 'clash-grid',
+      type: 'Grid',
+      props: { columns: 2, gap: '0.5rem' },
+      className: 'project-video-grid__grid',
+      widgets: [
+        // Left column
+        {
+          id: 'clash-left-col',
+          type: 'Flex',
+          props: { direction: 'column', gap: '0.5rem' },
+          className: 'project-video-grid__column project-video-grid__column--left',
+          widgets: [
+            {
+              __repeat: '{{ content.clashRoyale.videos }}',
+              condition: "{{ item.column === 'left' }}",
+              id: 'clash-left-video',
+              type: 'Video',
+              props: {
+                src: '{{ item.src }}',
+                hoverPlay: true,
+                aspectRatio: '{{ item.aspectRatio }}',
+                alt: '{{ item.title }}',
+              },
+              className: 'project-video-grid__video',
+            },
+          ],
+        },
+        // Right column
+        {
+          id: 'clash-right-col',
+          type: 'Flex',
+          props: { direction: 'column', gap: '0.5rem' },
+          className: 'project-video-grid__column project-video-grid__column--right',
+          widgets: [
+            {
+              __repeat: '{{ content.clashRoyale.videos }}',
+              condition: "{{ item.column === 'right' }}",
+              id: 'clash-right-video',
+              type: 'Video',
+              props: {
+                src: '{{ item.src }}',
+                hoverPlay: true,
+                aspectRatio: '{{ item.aspectRatio }}',
+                alt: '{{ item.title }}',
+              },
+              className: 'project-video-grid__video',
+            },
+          ],
+        },
+      ],
+    },
+    // ContactBar
+    {
+      id: 'clash-contact',
+      type: 'ContactPrompt',
+      props: {
+        email: '{{ content.contact.email }}',
+        showPrompt: false,
+      },
+      className: 'contact-bar',
+    },
+  ],
+}
+
+// =============================================================================
+// Section 7: Riot Games - ProjectExpand (expandable gallery)
+// =============================================================================
+
+const riotGamesSection: SectionSchema = {
+  id: 'riot-games',
+  label: 'Riot Games',
+  layout: {
+    type: 'flex',
+    direction: 'column',
+    justify: 'between',
+  },
+  style: {
+    backgroundColor: '{{ content.riotGames.backgroundColor }}',
+    minHeight: '100dvh',
+    padding: '2rem',
+  },
+  className: 'section-project-expand',
+  widgets: [
+    // Header with logo
+    {
+      id: 'riot-header',
+      type: 'Flex',
+      props: { direction: 'row', align: 'center' },
+      className: 'project-expand__header',
+      widgets: [
+        {
+          id: 'riot-logo',
+          type: 'Image',
+          props: {
+            src: '{{ content.riotGames.logo.src }}',
+            alt: '{{ content.riotGames.logo.alt }}',
+            decorative: false,
+          },
+          style: { width: '{{ content.riotGames.logo.width }}' },
+        },
+      ],
+    },
+    // Expandable gallery row
+    {
+      id: 'riot-gallery',
+      type: 'ExpandableGalleryRow',
+      props: {
+        height: '24rem',
+        gap: '4px',
+        expandedWidth: '32rem',
+        transitionDuration: 400,
+        cursorLabel: 'PLAY',
+      },
+      className: 'project-expand__gallery',
+      widgets: [
+        {
+          __repeat: '{{ content.riotGames.videos }}',
+          id: 'riot-thumbnail',
+          type: 'GalleryThumbnail',
+          props: {
+            thumbnailSrc: '{{ item.thumbnailSrc }}',
+            thumbnailAlt: '{{ item.thumbnailAlt }}',
+            videoSrc: '{{ item.videoSrc }}',
+            title: '{{ item.title }}',
+          },
+        },
+      ],
+    },
+    // ContactBar
+    {
+      id: 'riot-contact',
+      type: 'ContactPrompt',
+      props: {
+        email: '{{ content.contact.email }}',
+        showPrompt: false,
+      },
+      className: 'contact-bar',
+    },
+  ],
+}
+
+// =============================================================================
+// Section 8: Projects I Like - ProjectTabs (tabbed collection)
+// =============================================================================
+
+const projectsILikeSection: SectionSchema = {
+  id: 'projects-i-like',
+  label: 'Projects I Like',
+  layout: {
+    type: 'flex',
+    direction: 'column',
+    justify: 'between',
+  },
+  style: {
+    backgroundColor: '{{ content.projectsILike.backgroundColor }}',
+    minHeight: '100dvh',
+    padding: '2rem',
+  },
+  className: 'section-project-tabs',
+  widgets: [
+    // Tabbed content - uses __repeat for hierarchy visibility
+    {
+      id: 'pil-tabs',
+      type: 'TabbedContent',
+      props: {
+        defaultTab: '{{ content.projectsILike.defaultTab }}',
+        position: 'top',
+        align: 'center',
+      },
+      className: 'project-tabs__container',
+      widgets: [
+        {
+          __repeat: '{{ content.projectsILike.tabs }}',
+          id: 'tab-panel',
+          type: 'Box',
+          props: {
+            'data-tab-id': '{{ item.id }}',
+            'data-tab-label': '{{ item.label }}',
+          },
+          className: 'tabbed-content__panel',
+          widgets: [
+            {
+              __repeat: '{{ item.videos }}',
+              id: 'tab-video',
+              type: 'Video',
+              props: {
+                src: '{{ item.src }}',
+                alt: '{{ item.title }}',
+                hoverPlay: true,
+              },
+            },
+          ],
+        },
+      ],
+    },
+    // Optional external link (e.g. Instagram)
+    {
+      id: 'pil-external',
+      type: 'Link',
+      props: {
+        href: '{{ content.projectsILike.externalLink.url }}',
+        target: '_blank',
+        rel: 'noopener noreferrer',
+      },
+      className: 'project-tabs__external-link',
+      widgets: [
+        {
+          type: 'Text',
+          props: { content: '{{ content.projectsILike.externalLink.label }}' },
+        },
+      ],
+    },
+    // ContactBar
+    {
+      id: 'pil-contact',
+      type: 'ContactPrompt',
+      props: {
+        email: '{{ content.contact.email }}',
+        showPrompt: false,
+      },
+      className: 'contact-bar',
+    },
+  ],
+}
+
+// =============================================================================
+// Page Template
+// =============================================================================
+
+/**
+ * Home page template with binding expressions.
+ * Platform resolves bindings before rendering.
+ */
+export const homePageTemplate: PageSchema = {
+  id: 'home',
+  slug: '/',
+  head: {
+    title: '{{ content.head.title }}',
+    description: '{{ content.head.description }}',
+  },
+  sections: [
+    showreelSection,
+    bioSection,
+    azukiElementalsSection,
+    boyMoleFoxHorseSection,
+    the21Section,
+    clashRoyaleSection,
+    riotGamesSection,
+    projectsILikeSection,
+  ],
+}

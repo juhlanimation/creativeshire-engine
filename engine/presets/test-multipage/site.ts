@@ -1,25 +1,14 @@
 /**
  * Test multipage preset site-level configuration.
- * Experience configuration with page transitions enabled.
+ * Transition configuration for page navigation.
  */
 
-import type { PresetExperienceConfig } from '../types'
-
-/**
- * Experience configuration for test-multipage preset.
- * Uses simple-transitions experience for page fade transitions.
- */
-export const experienceConfig: PresetExperienceConfig = {
-  id: 'simple-transitions',
-}
+import type { TransitionConfig } from '../../schema/transition'
 
 /**
- * Page transition configuration.
- * Applied via experience.pageTransition when rendered.
+ * Transition configuration for test-multipage preset.
+ * Uses fade transition for page navigations.
  */
-export const pageTransitionConfig = {
-  defaultExitDuration: 300,
-  defaultEntryDuration: 300,
-  timeout: 2000,
-  respectReducedMotion: true,
+export const transitionConfig: TransitionConfig = {
+  id: 'fade',
 }

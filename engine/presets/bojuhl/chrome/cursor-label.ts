@@ -1,24 +1,33 @@
 /**
- * Bojuhl preset global cursor label configuration.
- * Site-wide "WATCH" cursor label for video thumbnails.
+ * Bojuhl preset cursor label configurations.
+ * "WATCH" label for video thumbnails, "ENTER" label for links.
  *
- * Targets any element with [data-cursor-label-target] attribute.
- * Used by Video widgets and ExpandableGalleryRow.
+ * Component-based: CursorLabel is a chrome component that handles
+ * its own positioning (follows cursor over target elements).
  */
 
 import type { PresetOverlayConfig } from '../../types'
 
 /**
- * Global cursor label overlay configuration.
- * Positioned relative to cursor, follows mouse movement.
+ * Cursor label for video thumbnails in featured projects.
+ * Targets Video widgets in hover-play mode.
  */
-export const cursorLabelConfig: PresetOverlayConfig = {
-  widget: {
-    id: 'global-cursor-label',
-    type: 'CursorLabel',
-    props: {
-      label: 'WATCH',
-      targetSelector: '[data-cursor-label-target]',
-    },
+export const cursorLabelWatchConfig: PresetOverlayConfig = {
+  component: 'CursorLabel',
+  props: {
+    label: 'WATCH',
+    targetSelector: '.video-widget--hover-play',
+  },
+}
+
+/**
+ * Cursor label for links in text content.
+ * Targets anchor elements inside text widgets.
+ */
+export const cursorLabelEnterConfig: PresetOverlayConfig = {
+  component: 'CursorLabel',
+  props: {
+    label: 'ENTER',
+    targetSelector: '.text-widget a',
   },
 }
