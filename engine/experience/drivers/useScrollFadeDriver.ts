@@ -93,6 +93,8 @@ export function useScrollFadeDriver(
         sectionIndex: 0,
         totalSections: 1,
         isActive: true,
+        isHovered: false,
+        isPressed: false,
         prefersReducedMotion,
       }
       const vars = behaviour.compute(state, {})

@@ -360,7 +360,6 @@ export interface ExperienceActions {
  * - constraints: enforce structural rules
  * - presentation: control visual arrangement
  * - navigation: control user navigation inputs
- * - pageTransition: control page exit/entry animations
  */
 export interface Experience {
   /** Unique identifier for the experience */
@@ -410,8 +409,6 @@ export interface Experience {
   presentation?: PresentationConfig
   /** Navigation model - how users move between sections */
   navigation?: NavigationConfig
-  /** Page transition config - exit/entry animations between pages */
-  pageTransition?: PageTransitionConfig
   /** Programmatic actions for external control */
   actions?: ExperienceActions
 

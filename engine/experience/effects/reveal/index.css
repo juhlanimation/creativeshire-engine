@@ -1,0 +1,8 @@
+/**
+ * Reveal Effects Barrel
+ *
+ * Progressive reveal animations (clip-path, mask-based).
+ * Named by MECHANISM, not trigger.
+ */
+
+@import './clip-path.css';

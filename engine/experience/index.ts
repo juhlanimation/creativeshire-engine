@@ -5,7 +5,6 @@
  * - Presentation model (stacking, slideshow, parallax, horizontal)
  * - Navigation (wheel, keyboard, swipe)
  * - Behaviours and effects
- * - Page transitions
  */
 
 // Experiences (context, registry, definitions)
@@ -22,7 +21,6 @@ export {
   registerLazyExperience,
   ensureExperiencesRegistered,
   simpleExperience,
-  simpleTransitionsExperience,
   cinematicPortfolioExperience,
   slideshowExperience,
   infiniteCarouselExperience,
@@ -110,6 +108,19 @@ export type {
   SectionLifecycleContextValue,
   SectionLifecycleProviderProps,
 } from './lifecycle'
+
+// Page transitions (registry, definitions)
+export {
+  getPageTransition,
+  getPageTransitionAsync,
+  getAllPageTransitionMetas,
+  getPageTransitionIds,
+  registerPageTransition,
+  registerLazyPageTransition,
+  ensurePageTransitionsRegistered,
+  fadePageTransition,
+} from './transitions'
+export type { PageTransition, PageTransitionMeta, PageTransitionCategory } from './transitions'
 
 // State types
 export type {

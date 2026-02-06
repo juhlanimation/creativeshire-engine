@@ -95,14 +95,6 @@ export const slideshowExperience: Experience = {
     },
   },
 
-  // Page transition config
-  pageTransition: {
-    defaultExitDuration: 300,
-    defaultEntryDuration: 400,
-    timeout: 2000,
-    respectReducedMotion: true,
-  },
-
   // No pageWrapper needed - scroll-snap + ScrollSmoother handles everything
   // pageWrapper: undefined
 

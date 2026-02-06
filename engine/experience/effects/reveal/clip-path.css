@@ -1,0 +1,108 @@
+/**
+ * Clip-Path Reveal Effects
+ *
+ * Progressive clip-path animations driven by CSS variables.
+ * Named by MECHANISM (clip-path reveal), not by trigger or widget.
+ *
+ * Variants:
+ * - clip-reveal: General clip-path reveal (any direction)
+ * - clip-reveal-left: Reveal from left to right
+ * - clip-reveal-right: Reveal from right to left
+ * - clip-reveal-top: Reveal from top to bottom
+ * - clip-reveal-bottom: Reveal from bottom to top
+ */
+
+/* =============================================================================
+ * CLIP REVEAL (Generic)
+ * Clip-path reveal animation with progress-based inset.
+ *
+ * Usage:
+ *   <div data-effect="clip-reveal" style="--clip-progress: 0.5">
+ *     Content that reveals
+ *   </div>
+ *
+ * CSS Variables consumed:
+ * - --clip-progress: Progress of reveal (0 = hidden, 1 = fully visible)
+ * - --clip-duration: Transition duration (default: 600ms)
+ * - --clip-easing: Timing function (default: cubic-bezier)
+ * ============================================================================= */
+
+/* Base clip reveal - uses progress to calculate inset */
+[data-effect~="clip-reveal"] {
+  clip-path: inset(0 calc((1 - var(--clip-progress, 1)) * 100%) 0 0);
+  transition: clip-path var(--clip-duration, 600ms) var(--clip-easing, cubic-bezier(0.4, 0, 0.2, 1));
+  will-change: clip-path;
+}
+
+/* =============================================================================
+ * DIRECTIONAL VARIANTS
+ * Specific reveal directions using --clip-progress (0-1)
+ * ============================================================================= */
+
+/* Reveal from left to right (content emerges from left edge) */
+[data-effect~="clip-reveal-left"] {
+  clip-path: inset(0 calc((1 - var(--clip-progress, 1)) * 100%) 0 0);
+  transition: clip-path var(--clip-duration, 600ms) var(--clip-easing, cubic-bezier(0.4, 0, 0.2, 1));
+  will-change: clip-path;
+}
+
+/* Reveal from right to left (content emerges from right edge) */
+[data-effect~="clip-reveal-right"] {
+  clip-path: inset(0 0 0 calc((1 - var(--clip-progress, 1)) * 100%));
+  transition: clip-path var(--clip-duration, 600ms) var(--clip-easing, cubic-bezier(0.4, 0, 0.2, 1));
+  will-change: clip-path;
+}
+
+/* Reveal from top to bottom (content emerges from top edge) */
+[data-effect~="clip-reveal-top"] {
+  clip-path: inset(0 0 calc((1 - var(--clip-progress, 1)) * 100%) 0);
+  transition: clip-path var(--clip-duration, 600ms) var(--clip-easing, cubic-bezier(0.4, 0, 0.2, 1));
+  will-change: clip-path;
+}
+
+/* Reveal from bottom to top (content emerges from bottom edge) */
+[data-effect~="clip-reveal-bottom"] {
+  clip-path: inset(calc((1 - var(--clip-progress, 1)) * 100%) 0 0 0);
+  transition: clip-path var(--clip-duration, 600ms) var(--clip-easing, cubic-bezier(0.4, 0, 0.2, 1));
+  will-change: clip-path;
+}
+
+/* =============================================================================
+ * LOGO REVEAL VARIANT
+ * Special case for logos/text that clip from right-to-left as user scrolls
+ * Uses scroll progress directly.
+ *
+ * Usage:
+ *   <div data-effect="logo-reveal" style="--scroll-progress: 0.5">
+ *     <img src="logo.svg" />
+ *   </div>
+ *
+ * CSS Variables consumed:
+ * - --scroll-progress: Scroll-driven progress (0 = beginning, 1 = end)
+ * - --logo-reveal-start: When to start revealing (default: 0)
+ * - --logo-reveal-end: When to fully reveal (default: 0.2)
+ * ============================================================================= */
+
+[data-effect~="logo-reveal"] {
+  --reveal-range: calc(var(--logo-reveal-end, 0.2) - var(--logo-reveal-start, 0));
+  --reveal-normalized: clamp(0, (var(--scroll-progress, 0) - var(--logo-reveal-start, 0)) / var(--reveal-range), 1);
+  clip-path: inset(0 0 0 calc((1 - var(--reveal-normalized)) * 100%));
+  transition: clip-path var(--clip-duration, 400ms) var(--clip-easing, ease-out);
+  will-change: clip-path;
+}
+
+/* =============================================================================
+ * REDUCED MOTION
+ * Instant transitions for users who prefer reduced motion.
+ * ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-effect~="clip-reveal"],
+  [data-effect~="clip-reveal-left"],
+  [data-effect~="clip-reveal-right"],
+  [data-effect~="clip-reveal-top"],
+  [data-effect~="clip-reveal-bottom"],
+  [data-effect~="logo-reveal"] {
+    transition: none;
+  }
+}

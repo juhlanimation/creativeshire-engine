@@ -6,7 +6,6 @@
  * - Navigation configuration (wheel, keyboard, swipe)
  * - Behaviour defaults for sections/widgets
  * - Chrome (indicators, navigation UI)
- * - Page transitions
  *
  * Experiences are registered lazily - metadata loads immediately,
  * full experience code loads on first use.
@@ -30,22 +29,18 @@ export {
 
 // Experience metadata (lightweight, always loaded)
 import { meta as simpleMeta } from './simple/meta'
-import { meta as simpleTransitionsMeta } from './simple-transitions/meta'
 import { meta as cinematicPortfolioMeta } from './cinematic-portfolio/meta'
 import { meta as slideshowMeta } from './slideshow/meta'
 import { meta as infiniteCarouselMeta } from './infinite-carousel/meta'
 
 // Re-export metas for direct access
-export { simpleMeta, simpleTransitionsMeta, cinematicPortfolioMeta, slideshowMeta, infiniteCarouselMeta }
+export { simpleMeta, cinematicPortfolioMeta, slideshowMeta, infiniteCarouselMeta }
 
 // Lazy registration with dynamic imports
 import { registerLazyExperience } from './registry'
 
 registerLazyExperience(simpleMeta, () =>
   import('./simple').then((m) => m.simpleExperience)
-)
-registerLazyExperience(simpleTransitionsMeta, () =>
-  import('./simple-transitions').then((m) => m.simpleTransitionsExperience)
 )
 registerLazyExperience(cinematicPortfolioMeta, () =>
   import('./cinematic-portfolio').then((m) => m.cinematicPortfolioExperience)
@@ -60,7 +55,6 @@ registerLazyExperience(infiniteCarouselMeta, () =>
 // Direct exports for backward compatibility (eagerly imports the experience)
 // Use getExperienceAsync() for lazy loading in new code
 export { simpleExperience } from './simple'
-export { simpleTransitionsExperience } from './simple-transitions'
 export { cinematicPortfolioExperience } from './cinematic-portfolio'
 export { slideshowExperience } from './slideshow'
 export { infiniteCarouselExperience } from './infinite-carousel'

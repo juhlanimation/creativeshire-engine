@@ -250,6 +250,8 @@ export class ScrollDriver implements Driver {
         sectionIndex: 0,
         totalSections: 1,
         isActive: true,
+        isHovered: false,
+        isPressed: false,
         prefersReducedMotion: this.prefersReducedMotion, // Use cached value
       }
 
@@ -313,6 +315,8 @@ export class ScrollDriver implements Driver {
       sectionIndex: 0,
       totalSections: 1,
       isActive: true,
+      isHovered: false,
+      isPressed: false,
       prefersReducedMotion: this.prefersReducedMotion,
     }
     const vars = behaviour.compute(initialState, options)

@@ -27,6 +27,7 @@ import {
 import { resolveBehaviour } from './resolve'
 import { getDriver, releaseDriver } from '../drivers/getDriver'
 import { useContainer } from '../../interface/ContainerContext'
+import { useIntro } from '../../intro'
 import type { BehaviourState, CSSVariables } from '../../schema/experience'
 import type { Behaviour } from './types'
 
@@ -58,6 +59,7 @@ export interface BehaviourWrapperProps {
 
 /**
  * Default state values for behaviours.
+ * Note: intro state fields are optional and added only when IntroProvider is active.
  */
 const DEFAULT_STATE: BehaviourState = {
   scrollProgress: 0,
@@ -121,6 +123,9 @@ export function BehaviourWrapper({
 
   // Get container context for contained mode support
   const { mode, containerRef } = useContainer()
+
+  // Get intro context (may be null if no intro)
+  const introContext = useIntro()
 
   // Local interaction state
   const [isHovered, setIsHovered] = useState(false)
@@ -193,6 +198,12 @@ export function BehaviourWrapper({
       isHovered,
       isPressed,
       prefersReducedMotion,
+      // Merge intro state if present
+      ...(introContext && {
+        introPhase: introContext.store.getState().phase,
+        introProgress: introContext.store.getState().revealProgress,
+        isIntroLocked: introContext.store.getState().isScrollLocked,
+      }),
     }
 
     // Compute CSS variables
@@ -206,7 +217,7 @@ export function BehaviourWrapper({
     })
 
     return { ...style, ...varsStyle }
-  }, [behaviour, usesScrollDriver, isHovered, isPressed, prefersReducedMotion, initialState, options, style])
+  }, [behaviour, usesScrollDriver, isHovered, isPressed, prefersReducedMotion, initialState, options, style, introContext])
 
   // No behaviour - just render children
   if (!behaviour) {
