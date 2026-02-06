@@ -53,6 +53,12 @@ export type { PageSchema, PageHeadSchema } from './page'
 // Site types
 export type { SiteSchema, SiteMetadata, PageReference, FullSchema } from './site'
 
+// Intro types
+export type { IntroConfig } from '../intro/types'
+
+// Transition types
+export type { TransitionConfig, PageTransitionOverride, PageTransitionRoute } from './transition'
+
 // Theme types
 export type {
   ThemeSchema,

@@ -29,6 +29,25 @@ export interface BehaviourState {
   totalSections: number
   /** Section currently active */
   isActive: boolean
+
+  // Hover/press state (local interaction)
+  /** Whether element is hovered */
+  isHovered: boolean
+  /** Whether element is pressed */
+  isPressed: boolean
+
+  // User preferences
+  /** User prefers reduced motion */
+  prefersReducedMotion: boolean
+
+  // Intro state (optional - present when IntroProvider is active)
+  /** Intro phase: 'locked' | 'revealing' | 'ready' */
+  introPhase?: 'locked' | 'revealing' | 'ready'
+  /** Intro reveal progress 0-1 */
+  introProgress?: number
+  /** Whether intro is locking scroll */
+  isIntroLocked?: boolean
+
   /** Mode-specific state (extensible) */
   [key: string]: unknown
 }

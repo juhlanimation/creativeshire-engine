@@ -20,11 +20,13 @@
  */
 
 import { createPortal } from 'react-dom'
+import { useSyncExternalStore } from 'react'
 import type { ChromeSchema, PageChromeOverrides, RegionSchema, OverlaySchema } from '../schema'
 import { getChromeComponent } from '../content/chrome/registry'
 import { WidgetRenderer } from './WidgetRenderer'
 import { useContainer } from '../interface/ContainerContext'
 import { useSiteContainer } from './SiteContainerContext'
+import { useIntro } from '../intro'
 import './chrome.css'
 
 /**
@@ -117,12 +119,14 @@ function OverlaysRenderer({
   currentPageSlug,
   portalTarget,
   siteContainer,
+  introHidesChrome,
 }: {
   overlays: ChromeSchema['overlays'] | undefined
   hideChrome: string[] | undefined
   currentPageSlug: string | undefined
   portalTarget: HTMLElement | null
   siteContainer: HTMLElement | null
+  introHidesChrome: boolean
 }): React.ReactNode {
   // No overlays configured
   if (!overlays) {
@@ -145,6 +149,9 @@ function OverlaysRenderer({
     if (hideChrome?.includes(key)) return
 
     const typedOverlay = overlay as OverlaySchema
+
+    // During intro, hide all overlays (IntroOverlay is now rendered by IntroProvider)
+    if (introHidesChrome) return
 
     // Skip if overlay is disabled for current page
     if (currentPageSlug && typedOverlay.disabledPages?.includes(currentPageSlug)) return
@@ -195,6 +202,26 @@ export function ChromeRenderer({ siteChrome, pageChrome, position, hideChrome, c
   const { portalTarget } = useContainer()
   const { siteContainer } = useSiteContainer()
 
+  // Get intro context for chrome visibility
+  const intro = useIntro()
+
+  // Subscribe reactively to chromeVisible so re-renders happen when intro
+  // calls setChromeVisible(true). A one-shot .getState() read won't trigger updates.
+  const subscribeNoop = () => () => {}
+  const chromeVisible = useSyncExternalStore(
+    intro?.store.subscribe ?? subscribeNoop,
+    () => intro?.store.getState().chromeVisible ?? true,
+    () => true,
+  )
+
+  // Check if intro is hiding chrome
+  const introHidesChrome = !!(intro?.pattern?.hideChrome && !chromeVisible)
+
+  // For header/footer, hide if intro is hiding chrome
+  if (introHidesChrome && (position === 'header' || position === 'footer')) {
+    return null
+  }
+
   // Render overlays (ModalRoot, CursorLabel, etc.)
   if (position === 'overlays') {
     return (
@@ -204,6 +231,7 @@ export function ChromeRenderer({ siteChrome, pageChrome, position, hideChrome, c
         currentPageSlug={currentPageSlug}
         portalTarget={portalTarget ?? null}
         siteContainer={siteContainer}
+        introHidesChrome={introHidesChrome}
       />
     )
   }

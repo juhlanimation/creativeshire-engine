@@ -122,6 +122,11 @@ export interface WidgetSchema {
    * Controls card layout direction and modal animation.
    */
   'data-reversed'?: boolean | string
+  /**
+   * Effect identifier.
+   * Used to apply CSS effects via [data-effect="value"] selectors.
+   */
+  'data-effect'?: string
 }
 
 /**

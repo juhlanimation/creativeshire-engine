@@ -8,10 +8,11 @@
  * - pageWrapper: wraps page content in a behaviour (e.g., slide container)
  * - experienceChrome: experience-owned UI (navigation, indicators)
  * - constraints: structural rules (fullViewportSections, etc.)
- * - pageTransition: exit/entry animations when navigating
+ *
+ * Page transitions resolved from schema (site.transition / page.transition).
  */
 
-import { useMemo, useEffect, useState, useRef, type CSSProperties, type ReactNode } from 'react'
+import { useMemo, useEffect, useLayoutEffect, useSyncExternalStore, useState, useRef, type CSSProperties, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import type { StoreApi } from 'zustand'
 import {
@@ -21,7 +22,6 @@ import {
   getExperience,
   getExperienceAsync,
   simpleExperience,
-  simpleTransitionsExperience, // Force eager load for page transitions
   ensureExperiencesRegistered,
   PresentationWrapper,
   InfiniteCarouselController,
@@ -34,7 +34,9 @@ import {
   PageTransitionWrapper,
   PageTransitionProvider,
 } from '../experience/navigation'
-import type { NavigableExperienceState } from '../experience/experiences/types'
+import type { NavigableExperienceState, PageTransitionConfig } from '../experience/experiences/types'
+import { getPageTransition, ensurePageTransitionsRegistered } from '../experience/transitions'
+import type { TransitionConfig } from '../schema/transition'
 import { useScrollIndicatorFade } from './hooks'
 import { PageRenderer } from './PageRenderer'
 import { ChromeRenderer } from './ChromeRenderer'
@@ -54,13 +56,21 @@ import {
 import { DevPresetSwitcher } from './dev/DevPresetSwitcher'
 import { ensurePresetsRegistered } from '../presets'
 
-// Ensure all experiences and presets are registered before any lookups
+// Intro system
+import {
+  IntroProvider,
+  useIntro,
+  getIntroPattern,
+  ensureIntroPatternsRegistered,
+} from '../intro'
+import { getChromeComponent, ensureChromeRegistered } from '../content/chrome/registry'
+
+// Ensure all experiences, presets, intro patterns, transitions, and chrome are registered before any lookups
 ensureExperiencesRegistered()
 ensurePresetsRegistered()
-
-// Force eager registration of transition-enabled experiences (prevents lazy load fallback)
-// The import above ensures the module loads, this reference prevents tree-shaking
-void simpleTransitionsExperience
+ensureIntroPatternsRegistered()
+ensurePageTransitionsRegistered()
+ensureChromeRegistered()
 
 interface SiteRendererProps {
   site: SiteSchema
@@ -127,6 +137,51 @@ function PageWrapperRenderer({
 }
 
 
+// SSR-safe subscription
+const subscribeNoop = () => () => {}
+
+/**
+ * IntroScrollLock - blocks scroll input during intro.
+ *
+ * Registers on `window` in capture phase — the highest point in the event
+ * propagation chain. stopImmediatePropagation() kills the event before
+ * ScrollSmoother's normalizeScroll (also on window) can process it.
+ *
+ * body.style.overflow is set by IntroProvider as a CSS-level backstop,
+ * but ScrollSmoother bypasses it via JS-level event interception.
+ */
+function IntroScrollLock(): ReactNode {
+  const intro = useIntro()
+
+  const isScrollLocked = useSyncExternalStore(
+    intro?.store.subscribe ?? subscribeNoop,
+    () => intro?.store.getState().isScrollLocked ?? false,
+    () => false,
+  )
+
+  // useLayoutEffect so listeners register before SmoothScrollProvider's normalizeScroll.
+  // As a child component, our layout effect fires first in React's commit phase.
+  useLayoutEffect(() => {
+    if (!isScrollLocked) return
+
+    const prevent = (e: Event) => {
+      e.preventDefault()
+      e.stopImmediatePropagation()
+    }
+
+    // window is the top of capture chain — fires before any element listeners
+    window.addEventListener('wheel', prevent, { passive: false, capture: true })
+    window.addEventListener('touchmove', prevent, { passive: false, capture: true })
+
+    return () => {
+      window.removeEventListener('wheel', prevent, { capture: true })
+      window.removeEventListener('touchmove', prevent, { capture: true })
+    }
+  }, [isScrollLocked])
+
+  return null
+}
+
 /**
  * Dev tools container - only renders in dev mode AND not in iframe.
  * When in an iframe (platform preview), dev tools are hidden.
@@ -169,6 +224,24 @@ function DevToolsContainer({
     </div>,
     siteContainer
   )
+}
+
+/**
+ * Resolve which transition config to use.
+ * Resolution order: page default → site default → none.
+ */
+function resolveTransitionConfig(
+  site: SiteSchema,
+  page: PageSchema
+): TransitionConfig | undefined {
+  const pageTransition = page.transition
+  if (pageTransition === 'disabled') return undefined
+
+  // 1. Check page default (leaving this page)
+  if (pageTransition?.default) return pageTransition.default
+
+  // 2. Site default
+  return site.transition
 }
 
 /**
@@ -256,6 +329,32 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
   // Use sync experience if available, then async, then fallback to simple
   const experience = syncExperience ?? asyncExperience ?? simpleExperience
 
+  // Resolve intro: page override > site config > none
+  const introConfig =
+    page.intro === 'disabled' ? null : (page.intro ?? site.intro)
+
+  const introPattern = introConfig ? getIntroPattern(introConfig.pattern) : null
+
+  // Resolve intro overlay component from chrome registry
+  const introOverlayComponent = introConfig?.overlay
+    ? getChromeComponent(introConfig.overlay.component) ?? null
+    : null
+
+  // Resolve page transition from registry
+  const resolvedTransitionConfig = resolveTransitionConfig(site, page)
+  const transitionDef = resolvedTransitionConfig
+    ? getPageTransition(resolvedTransitionConfig.id)
+    : undefined
+
+  const pageTransitionConfig = transitionDef ? {
+    defaultExitDuration: (resolvedTransitionConfig!.settings?.exitDuration as number)
+      ?? transitionDef.defaults.exitDuration,
+    defaultEntryDuration: (resolvedTransitionConfig!.settings?.entryDuration as number)
+      ?? transitionDef.defaults.entryDuration,
+    timeout: transitionDef.defaults.timeout,
+    respectReducedMotion: transitionDef.respectReducedMotion ?? true,
+  } satisfies PageTransitionConfig : undefined
+
   // Fade out scroll indicator on scroll (disabled in bare mode)
   useScrollIndicatorFade('#hero-scroll', !experience.bareMode)
 
@@ -290,15 +389,23 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
       {/* Register site container for portal targets */}
       <SiteContainerRegistrar containerRef={siteContainerRef} />
     <ThemeProvider theme={site.theme}>
-      <ExperienceProvider experience={experience} store={store}>
-        <TransitionProvider config={experience.pageTransition}>
-          <TriggerInitializer>
+      <IntroProvider
+        pattern={introPattern ?? null}
+        settings={introConfig?.settings}
+        overlayComponent={introOverlayComponent}
+        overlayProps={introConfig?.overlay?.props}
+      >
+        <ExperienceProvider experience={experience} store={store}>
+          <TransitionProvider config={pageTransitionConfig}>
+            <TriggerInitializer>
             {/* Smooth scroll wrapper for main content (disabled for slideshow) */}
             <SmoothScrollProvider config={smoothScrollConfig}>
+              {/* Pause ScrollSmoother when intro locks scroll */}
+              <IntroScrollLock />
               {/* PageTransitionProvider wraps ALL content so TransitionLink in chrome can access it */}
               <PageTransitionProvider
-                enabled={!!experience.pageTransition}
-                duration={experience.pageTransition?.defaultExitDuration ?? 600}
+                enabled={!!pageTransitionConfig}
+                duration={pageTransitionConfig?.defaultExitDuration ?? 600}
               >
                 {/* Header chrome */}
                 <ChromeRenderer
@@ -330,8 +437,8 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
 
                 {/* Page content - wrapped by transition wrapper, presentation, and experience pageWrapper */}
                 <PageTransitionWrapper
-                  enabled={!!experience.pageTransition}
-                  duration={experience.pageTransition?.defaultExitDuration ?? 600}
+                  enabled={!!pageTransitionConfig}
+                  duration={pageTransitionConfig?.defaultExitDuration ?? 600}
                 >
                   <PresentationWrapper
                     config={experience.presentation}
@@ -379,9 +486,10 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
                 />
               </PageTransitionProvider>
             </SmoothScrollProvider>
-          </TriggerInitializer>
-        </TransitionProvider>
-      </ExperienceProvider>
+            </TriggerInitializer>
+          </TransitionProvider>
+        </ExperienceProvider>
+      </IntroProvider>
     </ThemeProvider>
     </div>
     </SiteContainerProvider>

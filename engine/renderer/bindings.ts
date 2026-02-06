@@ -63,6 +63,15 @@ export interface ItemContext {
 const BINDING_REGEX = /^\{\{\s*(.+?)\s*\}\}$/
 
 /**
+ * Regex to match embedded binding expressions within template strings.
+ * Unlike BINDING_REGEX, this is unanchored and global — matches multiple
+ * `{{ path }}` occurrences within a larger string.
+ *
+ * @example 'Client {{ item.client }}' → replaces {{ item.client }} with resolved value
+ */
+const TEMPLATE_REGEX = /\{\{\s*(.+?)\s*\}\}/g
+
+/**
  * Extract a display label from an item context.
  * Priority: title > name > label > $index
  *
@@ -78,6 +87,38 @@ function extractLabelFromItem(item: ItemContext): string {
     return String(label)
   }
   return String(item.$index)
+}
+
+/**
+ * Resolve embedded {{ }} expressions within a template string.
+ * If the string contains no template expressions, returns it unchanged.
+ *
+ * @example
+ * resolveTemplateString('Client {{ item.client }}', content, item)
+ * // → 'Client AZUKI'
+ */
+function resolveTemplateString(
+  expression: string,
+  content: BindingContext,
+  item?: ItemContext | unknown
+): string {
+  // Quick check: does it contain any {{ }} at all?
+  if (!expression.includes('{{')) return expression
+
+  const context: Record<string, unknown> = { content, item }
+
+  return expression.replace(TEMPLATE_REGEX, (match, pathStr: string) => {
+    const trimmed = pathStr.trim()
+
+    // Handle {{ item }} for wrapped primitives
+    if (trimmed === 'item' && item !== null && typeof item === 'object') {
+      const itemObj = item as Record<string, unknown>
+      if ('$value' in itemObj) return String(itemObj.$value)
+    }
+
+    const value = getValueAtPath(context, trimmed)
+    return value !== undefined ? String(value) : match
+  })
 }
 
 // =============================================================================
@@ -180,8 +221,8 @@ export function resolveBinding(
   const path = extractBindingPath(expression)
 
   if (!path) {
-    // Not a binding expression, return as-is
-    return expression
+    // Not a pure binding — check for embedded template expressions
+    return resolveTemplateString(expression, content, item)
   }
 
   // Build the context object for resolution

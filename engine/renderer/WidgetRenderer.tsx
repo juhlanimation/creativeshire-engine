@@ -125,9 +125,12 @@ export function WidgetRenderer({
   }
 
   // Recursively render child widgets for layout containers
-  const children = widget.widgets?.map((child, i) => (
-    <WidgetRenderer key={child.id ?? i} widget={child} index={i} />
-  ))
+  const hasChildWidgets = widget.widgets && widget.widgets.length > 0
+  const children = hasChildWidgets
+    ? widget.widgets!.map((child, i) => (
+        <WidgetRenderer key={child.id ?? i} widget={child} index={i} />
+      ))
+    : undefined
 
   // Prepare props - pass style, className, widgets, data attributes, and event handlers from schema
   const componentProps = {
@@ -144,10 +147,16 @@ export function WidgetRenderer({
   }
 
   // Render the widget component
+  // IMPORTANT: Only pass JSX children when there are actual child widgets.
+  // Passing {undefined} as JSX children overrides props.children (e.g., Link's text)
+  // because JSX compiles to { ...props, children: undefined }.
   const rendered = (
     <ErrorBoundary widgetType={widget.type}>
       {/* eslint-disable-next-line react-hooks/static-components -- Component from registry is stable */}
-      <Component {...componentProps}>{children}</Component>
+      {children
+        ? <Component {...componentProps}>{children}</Component>
+        : <Component {...componentProps} />
+      }
     </ErrorBoundary>
   )
 

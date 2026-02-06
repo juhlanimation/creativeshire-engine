@@ -6,6 +6,8 @@
 import type { SectionSchema } from './section'
 import type { PageChromeOverrides } from './chrome'
 import type { ExperienceConfig } from './experience'
+import type { IntroConfig } from '../intro/types'
+import type { PageTransitionOverride } from './transition'
 
 /**
  * Page-level metadata for SEO and document head.
@@ -65,6 +67,10 @@ export interface PageSchema {
   sections: SectionSchema[]
   /** Chrome overrides for this page */
   chrome?: PageChromeOverrides
+  /** Intro override for this page ('disabled' to skip site intro) */
+  intro?: IntroConfig | 'disabled'
   /** Experience override for this page (defaults to site experience) */
   experience?: ExperienceConfig
+  /** Transition override for this page ('disabled' to skip transitions) */
+  transition?: PageTransitionOverride | 'disabled'
 }
