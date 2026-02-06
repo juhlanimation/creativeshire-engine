@@ -1,0 +1,61 @@
+/**
+ * Intro layer barrel export.
+ * Intro sequences run before Experience takes over.
+ */
+
+// Types
+export type {
+  IntroPhase,
+  IntroState,
+  IntroConfig,
+  IntroPatternMeta,
+  IntroPattern,
+  IntroTriggerConfig,
+  IntroActions,
+  SequenceStepConfig,
+  IntroCategory,
+} from './types'
+
+// Provider and context
+export { IntroProvider } from './IntroProvider'
+export type { IntroProviderProps } from './IntroProvider'
+export { IntroTriggerInitializer } from './IntroTriggerInitializer'
+export type { IntroTriggerInitializerProps } from './IntroTriggerInitializer'
+export { IntroContext, useIntro, useIntroRequired } from './IntroContext'
+export type { IntroContextValue, IntroStore } from './IntroContext'
+
+// Registry
+export {
+  registerIntroPattern,
+  registerLazyIntroPattern,
+  getIntroPattern,
+  getIntroPatternAsync,
+  preloadIntroPattern,
+  getIntroPatternIds,
+  getAllIntroPatterns,
+  defineIntroPatternMeta,
+  getAllIntroPatternMetas,
+} from './registry'
+
+// Patterns
+export {
+  videoGatePattern,
+  timedPattern,
+  scrollRevealPattern,
+  sequenceTimedPattern,
+  ensureIntroPatternsRegistered,
+} from './patterns'
+
+// Triggers
+export {
+  useVideoTime,
+  useTimer,
+  useSequence,
+  usePhaseController,
+} from './triggers'
+export type {
+  UseVideoTimeOptions,
+  UseTimerOptions,
+  UseSequenceOptions,
+  UsePhaseControllerOptions,
+} from './triggers'
