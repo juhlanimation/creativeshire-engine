@@ -31,6 +31,13 @@ Read the relevant spec before implementing any component.
 | Section Pattern | [specs/components/content/section-pattern.spec.md](specs/components/content/section-pattern.spec.md) |
 | Chrome | [specs/components/content/chrome.spec.md](specs/components/content/chrome.spec.md) |
 
+### Intro Layer
+
+| Component | Spec |
+|-----------|------|
+| Intro Layer | [specs/layers/intro.spec.md](specs/layers/intro.spec.md) |
+| Intro Components | [specs/components/intro/intro.spec.md](specs/components/intro/intro.spec.md) |
+
 ### Experience Layer
 
 | Component | Spec |
@@ -80,6 +87,7 @@ Read the relevant spec before implementing any component.
 |--------------|------|
 | Understand core rules | [specs/core/philosophy.spec.md](specs/core/philosophy.spec.md) |
 | Build a widget | [specs/components/content/widget.spec.md](specs/components/content/widget.spec.md) |
+| Build an intro pattern | [specs/components/intro/intro.spec.md](specs/components/intro/intro.spec.md) |
 | Build animation | [specs/components/experience/behaviour.spec.md](specs/components/experience/behaviour.spec.md) |
 | Define animation CSS | [specs/components/experience/effect.spec.md](specs/components/experience/effect.spec.md) |
 | Create a preset | [specs/components/preset/preset.spec.md](specs/components/preset/preset.spec.md) |

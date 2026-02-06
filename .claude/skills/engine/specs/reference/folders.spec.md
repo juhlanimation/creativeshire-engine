@@ -79,6 +79,22 @@
 │   │   │
 │   │   └── registry.ts                  # Auto-discovery
 │   │
+│   ├── intro/                           # INTRO SEQUENCES (L2 SUB-LAYER)
+│   │   ├── types.ts                     # IntroPhase, IntroState, IntroConfig, IntroPattern
+│   │   ├── IntroProvider.tsx            # Provider, store, scroll locking
+│   │   ├── IntroContext.ts              # React context, useIntro()
+│   │   ├── IntroTriggerInitializer.tsx  # Wires triggers based on pattern
+│   │   ├── registry.ts                  # Pattern registry
+│   │   ├── index.ts                     # Barrel export
+│   │   ├── patterns/                    # INTRO PATTERN DEFINITIONS
+│   │   │   ├── index.ts                 # Registers all, exports
+│   │   │   └── {name}/                  # video-gate, timed, scroll-reveal
+│   │   │       ├── index.ts             # IntroPattern definition
+│   │   │       └── meta.ts             # SettingsConfig for CMS
+│   │   └── triggers/                    # INTRO TRIGGER HOOKS
+│   │       ├── index.ts                 # Barrel export
+│   │       └── use{Name}.ts            # useVideoTime, useTimer, usePhaseController
+│   │
 │   ├── experience/                      # LAYER 2: HOW THE PAGE FEELS
 │   │   │
 │   │   ├── experiences/                 # USER-SELECTABLE EXPERIENCES
@@ -99,6 +115,12 @@
 │   │   │   ├── types.ts, registry.ts    # Behaviour interface, collection
 │   │   │   ├── resolve.ts               # Resolution logic
 │   │   │   ├── BehaviourWrapper.tsx     # Generic wrapper
+│   │   │   ├── intro/                   # Intro-phase behaviours
+│   │   │   │   ├── index.ts            # Auto-registers all
+│   │   │   │   ├── content-reveal.ts   # --intro-opacity, --intro-y
+│   │   │   │   ├── text-reveal.ts      # --intro-text-opacity, --intro-text-y
+│   │   │   │   ├── chrome-reveal.ts    # --chrome-opacity, --chrome-y
+│   │   │   │   └── scroll-indicator.ts # --scroll-indicator-opacity
 │   │   │   └── {name}/                  # scroll-stack, depth-layer, etc.
 │   │   │       ├── index.ts
 │   │   │       └── types.ts
@@ -222,6 +244,8 @@ Every component folder has a `meta.ts` file that provides platform UI hints:
 | Add a section pattern | `engine/content/sections/patterns/{Name}/` |
 | Add chrome region | `engine/content/chrome/regions/{Name}.tsx` |
 | Add chrome overlay | `engine/content/chrome/overlays/{Name}.tsx` |
+| Add intro pattern | `engine/intro/patterns/{name}/` |
+| Add intro trigger | `engine/intro/triggers/use{Name}.ts` |
 | Add experience definition | `engine/experience/experiences/{name}.ts` |
 | Add animation mode | `engine/experience/modes/{name}/` |
 | Add behaviour | `engine/experience/behaviours/{name}/` |
@@ -311,6 +335,7 @@ Every component folder has a `meta.ts` file that provides platform UI hints:
 
 - [Platform Context](../core/platform.spec.md) - Creativeshire platform relationship
 - [Content Layer](../layers/content.spec.md) - Widgets, sections, chrome, features
+- [Intro Layer](../layers/intro.spec.md) - Intro sequences, patterns, triggers
 - [Experience Layer](../layers/experience.spec.md) - Experiences, modes, behaviours, drivers
 - [Interface Layer](../layers/interface.spec.md) - Platform ↔ Engine contract
 - [Preset Layer](../layers/preset.spec.md) - Full site configurations

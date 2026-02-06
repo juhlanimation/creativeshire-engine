@@ -38,6 +38,7 @@
 | [schema.spec.md](layers/schema.spec.md) | TypeScript types that define the entire system |
 | [content.spec.md](layers/content.spec.md) | Widgets, sections, chrome, features (L1 - static content) |
 | [experience.spec.md](layers/experience.spec.md) | Experiences, behaviours, drivers, triggers, modes (L2 - animation/interaction) |
+| [intro.spec.md](layers/intro.spec.md) | Intro sequences, patterns, triggers, phase lifecycle (L2 sub-layer) |
 | [interface.spec.md](layers/interface.spec.md) | Platform ↔ Engine contract for live updates and events |
 | [renderer.spec.md](layers/renderer.spec.md) | How schema gets converted to React components |
 | [preset.spec.md](layers/preset.spec.md) | Bundled configurations for entire sites |
@@ -53,6 +54,12 @@
 | [section.spec.md](components/content/section.spec.md) | Scrollable groups of widgets |
 | [section-pattern.spec.md](components/content/section-pattern.spec.md) | Factory functions that create section patterns |
 | [chrome.spec.md](components/content/chrome.spec.md) | Persistent UI (navigation, overlays) |
+
+### components/intro/ — Intro Layer Contracts
+
+| File | Describes |
+|------|-----------|
+| [intro.spec.md](components/intro/intro.spec.md) | IntroPattern, IntroProvider, triggers, registry, context |
 
 ### components/experience/ — Experience Layer Contracts
 
@@ -167,6 +174,7 @@
 | Build a widget | [widget.spec.md](components/content/widget.spec.md) |
 | Build a collection widget | [collections.spec.md](patterns/collections.spec.md) |
 | Build a layout widget | [layout-widget.spec.md](components/content/layout-widget.spec.md) |
+| Build an intro pattern | [intro.spec.md](components/intro/intro.spec.md) |
 | Build animation | [behaviour.spec.md](components/experience/behaviour.spec.md) |
 | Define animation CSS | [effect.spec.md](components/experience/effect.spec.md) |
 | Build chrome behaviour | [chrome-behaviour.spec.md](components/experience/chrome-behaviour.spec.md) |

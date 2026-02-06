@@ -89,12 +89,37 @@ async function loadWidgetRegistry(): Promise<Set<string>> {
 }
 
 /**
- * Load chrome registry by parsing the registry file
+ * Load chrome registry by parsing the registry file.
+ * Supports Map-based registry with registerChromeComponent() calls.
  */
 async function loadChromeRegistry(): Promise<Set<string>> {
   const enginePath = getEnginePath()
   const registryPath = path.join(enginePath, 'content', 'chrome', 'registry.ts')
-  return parseRegistryFile(registryPath)
+  return parseChromeRegistryFile(registryPath)
+}
+
+/**
+ * Parse chrome registry file to extract registered component names.
+ * Matches registerChromeComponent('Name', ...) calls.
+ */
+async function parseChromeRegistryFile(registryPath: string): Promise<Set<string>> {
+  const registered = new Set<string>()
+
+  try {
+    const content = await readFile(registryPath)
+
+    // Match registerChromeComponent('Name', ...) or registerChromeComponent("Name", ...)
+    const pattern = /registerChromeComponent\(\s*['"](\w+)['"]/g
+    let match
+
+    while ((match = pattern.exec(content)) !== null) {
+      registered.add(match[1])
+    }
+  } catch (error) {
+    console.warn(`Failed to parse chrome registry file ${registryPath}:`, error)
+  }
+
+  return registered
 }
 
 /**

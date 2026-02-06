@@ -19,6 +19,10 @@
 | **Extension Principle** | Check → Extend → Create: reuse existing before inventing new | [extension.spec.md](./extension.spec.md) |
 | **Extrinsic** | Size imposed by context (viewport height, scroll position) | [philosophy.spec.md](./philosophy.spec.md) |
 | **Frame Pattern** | L2 wrapper imposes constraints; L1 content fills or sizes intrinsically | [philosophy.spec.md](./philosophy.spec.md) |
+| **Intro** | Optional pre-experience sequence with scroll locking and phased reveals | [intro.spec.md](../layers/intro.spec.md) |
+| **Intro Pattern** | Configuration defining triggers, reveal timing, and chrome visibility for an intro | [intro.spec.md](../components/intro/intro.spec.md) |
+| **Intro Phase** | Lifecycle state: locked (scroll blocked), revealing (animating), ready (complete) | [intro.spec.md](../layers/intro.spec.md) |
+| **Intro Trigger** | Hook that monitors conditions (video time, timer) and fires reveal | [intro.spec.md](../components/intro/intro.spec.md) |
 | **Intrinsic** | Size determined by content (text flow, image dimensions) | [philosophy.spec.md](./philosophy.spec.md) |
 | **L1** | Shorthand for Content Layer | [content.spec.md](../layers/content.spec.md) |
 | **L2** | Shorthand for Experience Layer | [experience.spec.md](../layers/experience.spec.md) |
@@ -47,6 +51,7 @@
 | **Widget vs Section** | Widget holds content or arranges children. Section groups widgets semantically. |
 | **Chrome vs Region** | Chrome is the category. Region is a chrome position (header, footer). |
 | **Intrinsic vs Extrinsic** | Intrinsic sizing comes from content. Extrinsic sizing comes from context. |
+| **Intro vs Experience** | Intro is a finite pre-reveal sequence that wraps Experience. Experience is the ongoing interaction model. |
 | **L1 vs L2** | L1 owns content structure. L2 owns animation and interaction. |
 | **Behaviour vs Effect** | Behaviour computes CSS variable VALUES. Effect defines CSS that USES those variables (transitions, transforms). |
 | **Content Widget vs Layout Widget** | Content widget is a leaf node. Layout widget contains children. |

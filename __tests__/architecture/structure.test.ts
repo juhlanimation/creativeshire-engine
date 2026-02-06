@@ -275,7 +275,7 @@ describe('Component Structure Validation', () => {
   })
 
   describe('Behaviour structure', () => {
-    const BEHAVIOUR_TRIGGERS = ['scroll', 'hover', 'visibility', 'animation', 'interaction']
+    const BEHAVIOUR_TRIGGERS = ['scroll', 'hover', 'visibility', 'animation', 'interaction', 'video', 'intro']
 
     it('behaviour folders match expected triggers', async () => {
       const allFiles = await getFiles('experience/behaviours/**/*.ts')
@@ -329,7 +329,7 @@ describe('Component Structure Validation', () => {
   })
 
   describe('Effect structure', () => {
-    const EFFECT_MECHANISMS = ['transform', 'mask', 'emphasis', 'page']
+    const EFFECT_MECHANISMS = ['transform', 'mask', 'emphasis', 'page', 'reveal']
 
     /**
      * Per effect.spec.md: Effects are pure CSS. The main barrel is index.css.
@@ -592,6 +592,63 @@ describe('Component Structure Validation', () => {
       }
 
       expect(violations, `Invalid trigger file names:\\n${violations.join('\\n')}`).toHaveLength(0)
+    })
+  })
+
+  describe('Page transition structure', () => {
+    it('transitions folder has index.ts', async () => {
+      const indexFiles = await getFiles('experience/transitions/index.ts')
+      expect(indexFiles.length, 'Missing experience/transitions/index.ts').toBeGreaterThan(0)
+    })
+
+    it('transitions folder has registry.ts', async () => {
+      const registryFiles = await getFiles('experience/transitions/registry.ts')
+      expect(registryFiles.length, 'Missing experience/transitions/registry.ts').toBeGreaterThan(0)
+    })
+
+    it('transitions folder has types.ts', async () => {
+      const typeFiles = await getFiles('experience/transitions/types.ts')
+      expect(typeFiles.length, 'Missing experience/transitions/types.ts').toBeGreaterThan(0)
+    })
+
+    it('each page transition has meta.ts', async () => {
+      const folders = await getFolders('experience/transitions/*')
+      // Filter out non-transition folders (only folders with index.ts + meta.ts are transitions)
+      const transitionFolders = []
+      for (const folder of folders) {
+        const metaPath = path.join(folder, 'meta.ts')
+        if (await fileExists(metaPath)) {
+          transitionFolders.push(folder)
+        }
+      }
+
+      const missing: string[] = []
+      for (const folder of transitionFolders) {
+        const indexPath = path.join(folder, 'index.ts')
+        if (!(await fileExists(indexPath))) {
+          missing.push(`${relativePath(folder)}/index.ts`)
+        }
+      }
+
+      expect(missing, `Page transition folders missing index.ts:\n${missing.join('\n')}`).toHaveLength(0)
+    })
+
+    it('page transition folders are kebab-case', async () => {
+      const folders = await getFolders('experience/transitions/*')
+      const violations: string[] = []
+
+      for (const folder of folders) {
+        const name = path.basename(folder)
+        // Skip non-transition folders (no meta.ts)
+        const metaPath = path.join(folder, 'meta.ts')
+        if (!(await fileExists(metaPath))) continue
+
+        if (!/^[a-z][a-z0-9-]*$/.test(name)) {
+          violations.push(`${relativePath(folder)}: "${name}" is not kebab-case`)
+        }
+      }
+
+      expect(violations, `Non-kebab-case transition folders:\n${violations.join('\n')}`).toHaveLength(0)
     })
   })
 

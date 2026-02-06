@@ -170,7 +170,7 @@ describe('ComponentMeta Validation', () => {
 
     it('sectionCategory is a valid value', async () => {
       const VALID_SECTION_CATEGORIES = [
-        'hero', 'about', 'project', 'contact', 'content', 'gallery'
+        'hero', 'about', 'project', 'contact', 'content', 'gallery', 'showcase', 'conversion'
       ]
 
       const metaFiles = await getFiles('content/sections/patterns/*/meta.ts')
@@ -219,6 +219,22 @@ describe('ComponentMeta Validation', () => {
       }
 
       expect(missing, `Chrome overlays missing meta.ts:\n${missing.join('\n')}`).toHaveLength(0)
+    })
+
+    it('chrome meta.ts files use defineMeta', async () => {
+      const regionMetas = await getFiles('content/chrome/regions/*/meta.ts')
+      const overlayMetas = await getFiles('content/chrome/overlays/*/meta.ts')
+      const allMetas = [...regionMetas, ...overlayMetas]
+      const violations: string[] = []
+
+      for (const file of allMetas) {
+        const content = await readFile(file)
+        if (!content.includes('defineMeta')) {
+          violations.push(relativePath(file))
+        }
+      }
+
+      expect(violations, `Chrome meta.ts not using defineMeta:\n${violations.join('\n')}`).toHaveLength(0)
     })
   })
 

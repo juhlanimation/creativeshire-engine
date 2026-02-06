@@ -13,8 +13,14 @@ import { describe, it, expect } from 'vitest'
 import { getFiles, readFile, relativePath } from './helpers'
 
 describe('Preset Binding Expressions', () => {
-  // Get all preset TypeScript files
-  const getPresetFiles = () => getFiles('presets/**/*.ts')
+  // Get all preset TypeScript files (excluding sample-content and content-contract which are metadata)
+  const getPresetFiles = async () => {
+    const files = await getFiles('presets/**/*.ts')
+    return files.filter(f =>
+      !f.includes('sample-content') &&
+      !f.includes('content-contract')
+    )
+  }
 
   it('presets must not contain hardcoded email addresses', async () => {
     const files = await getPresetFiles()
@@ -144,5 +150,31 @@ describe('Preset Binding Expressions', () => {
       violations,
       `Content props without binding expressions:\n${violations.join('\n')}`
     ).toHaveLength(0)
+  })
+
+  it('all sections in presets must have a label', async () => {
+    const files = await getPresetFiles()
+    const violations: string[] = []
+
+    for (const file of files) {
+      // Only check page files that define sections
+      if (!file.includes('/pages/') && !file.includes('\\pages\\')) continue
+      const content = await readFile(file)
+
+      // Find section definitions (objects with id: and layout:)
+      const sectionBlocks = content.match(/\{\s*id:\s*['"`][^'"`]+['"`][^}]*layout:/gs)
+      if (!sectionBlocks) continue
+
+      for (const block of sectionBlocks) {
+        if (!block.includes('label:')) {
+          const idMatch = block.match(/id:\s*['"`]([^'"`]+)['"`]/)
+          if (idMatch) {
+            violations.push(`${relativePath(file)}: section '${idMatch[1]}' missing label`)
+          }
+        }
+      }
+    }
+
+    expect(violations, `Sections without labels:\n${violations.join('\n')}`).toHaveLength(0)
   })
 })

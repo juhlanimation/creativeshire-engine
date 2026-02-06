@@ -162,7 +162,10 @@ describe('Behaviour Validation', () => {
         const imports = extractImports(content)
 
         for (const imp of imports) {
-          if (imp.includes('content/') || imp.includes('/content')) {
+          // Check for imports from content folder (not local files like ./content-reveal)
+          // Match: ../content/, ../../content/, /content/, content/
+          // Don't match: ./content-reveal (local relative import)
+          if ((imp.includes('content/') || imp.match(/\/content['"]/)) && !imp.startsWith('./')) {
             violations.push(`${relativePath(file)}: imports "${imp}"`)
           }
         }

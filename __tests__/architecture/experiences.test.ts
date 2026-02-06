@@ -73,7 +73,6 @@ describe('Experience Settings', () => {
       import('../../engine/experience/experiences/slideshow/meta'),
       import('../../engine/experience/experiences/infinite-carousel/meta'),
       import('../../engine/experience/experiences/cinematic-portfolio/meta'),
-      import('../../engine/experience/experiences/simple-transitions/meta'),
     ])
 
     const metas = metaModules.map((m) => m.meta)

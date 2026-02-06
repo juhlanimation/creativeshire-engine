@@ -18,7 +18,7 @@ import {
 
 // Import registries
 import { widgetRegistry } from '../../engine/content/widgets/registry'
-import { chromeRegistry } from '../../engine/content/chrome/registry'
+import { getChromeComponent, getAllChromeMetas, getChromeComponentIds } from '../../engine/content/chrome/registry'
 import { behaviourRegistry } from '../../engine/experience/behaviours/registry'
 import { transitionRegistry } from '../../engine/experience/drivers/gsap/transitions/registry'
 import { sectionRegistry } from '../../engine/content/sections/registry'
@@ -193,7 +193,7 @@ describe('Registration Validation', () => {
 
       for (const folder of folders) {
         const name = getComponentName(folder)
-        if (!chromeRegistry[name]) {
+        if (!getChromeComponent(name)) {
           violations.push(`Region "${name}" folder exists but is not registered in chromeRegistry`)
         }
       }
@@ -213,7 +213,7 @@ describe('Registration Validation', () => {
       for (const folder of folders) {
         const name = getComponentName(folder)
         // Check both the folder name and common variations (e.g., Modal vs ModalRoot)
-        const isRegistered = chromeRegistry[name] || chromeRegistry[`${name}Root`]
+        const isRegistered = getChromeComponent(name) || getChromeComponent(`${name}Root`)
         if (!isRegistered) {
           violations.push(`Overlay "${name}" folder exists but is not registered in chromeRegistry (checked: ${name}, ${name}Root)`)
         }
@@ -225,6 +225,38 @@ describe('Registration Validation', () => {
       }
 
       expect(violations).toHaveLength(0)
+    })
+
+    it('all chrome components are registered with meta', () => {
+      const ids = getChromeComponentIds()
+      const metas = getAllChromeMetas()
+      const violations: string[] = []
+
+      // Every registered component must have meta
+      expect(metas.length).toBe(ids.length)
+
+      for (const meta of metas) {
+        if (!meta.id) violations.push(`Chrome meta missing id`)
+        if (!meta.name) violations.push(`Chrome meta "${meta.id}" missing name`)
+        if (!meta.description) violations.push(`Chrome meta "${meta.id}" missing description`)
+        if (!meta.category) violations.push(`Chrome meta "${meta.id}" missing category`)
+      }
+
+      expect(violations, `Chrome meta validation failures:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
+    it('chrome meta category is region or overlay', () => {
+      const VALID_CHROME_CATEGORIES = ['region', 'overlay']
+      const metas = getAllChromeMetas()
+      const violations: string[] = []
+
+      for (const meta of metas) {
+        if (!VALID_CHROME_CATEGORIES.includes(meta.category)) {
+          violations.push(`Chrome "${meta.id}": category "${meta.category}" (expected: ${VALID_CHROME_CATEGORIES.join(', ')})`)
+        }
+      }
+
+      expect(violations, `Invalid chrome meta categories:\n${violations.join('\n')}`).toHaveLength(0)
     })
   })
 
