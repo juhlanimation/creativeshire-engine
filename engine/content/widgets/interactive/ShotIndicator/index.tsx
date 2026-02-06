@@ -1,12 +1,32 @@
 'use client'
 
-import React, { memo, forwardRef, useCallback } from 'react'
+import React, { memo, forwardRef, useCallback, useMemo } from 'react'
 import type { ShotIndicatorProps } from './types'
+import type { WidgetSchema } from '../../../../schema'
 import './styles.css'
+
+/**
+ * Extract shot numbers from widget children.
+ * Children should be Button widgets with frame number in label or data-frame prop.
+ */
+function extractShotsFromWidgets(widgets: WidgetSchema[]): number[] {
+  return widgets.map((widget) => {
+    const props = widget.props ?? {}
+    // Try label first (used as frame number), then data-frame, then parse from id
+    const frame = props.label ?? props['data-frame'] ?? props.frame
+    if (typeof frame === 'number') return frame
+    if (typeof frame === 'string') {
+      const parsed = parseInt(frame, 10)
+      if (!isNaN(parsed)) return parsed
+    }
+    return 0
+  }).filter(shot => shot > 0)
+}
 
 const ShotIndicator = memo(forwardRef<HTMLDivElement, ShotIndicatorProps>(function ShotIndicator(
   {
-    shots,
+    shots: shotsProp,
+    widgets,
     activeShot,
     onSelect,
     prefix = 'sh',
@@ -16,9 +36,22 @@ const ShotIndicator = memo(forwardRef<HTMLDivElement, ShotIndicatorProps>(functi
   },
   ref
 ) {
+  // Prefer widgets (children via __repeat) over shots prop
+  const shots = useMemo(() => {
+    if (widgets && widgets.length > 0) {
+      return extractShotsFromWidgets(widgets)
+    }
+    return shotsProp ?? []
+  }, [widgets, shotsProp])
+
   const handleClick = useCallback((shot: number) => {
     onSelect?.(shot)
   }, [onSelect])
+
+  // Empty state
+  if (shots.length === 0) {
+    return null
+  }
 
   const classNames = ['shot-indicator', `shot-indicator--${position}`, className].filter(Boolean).join(' ')
 

@@ -27,6 +27,7 @@
 }
 
 /* Video element - absolute inset-0, object-contain */
+/* Starts invisible, fades in when ready (matches bojuhl.com sequence) */
 .video-player__video {
   position: absolute;
   inset: 0;
@@ -34,6 +35,12 @@
   height: 100%;
   object-fit: contain;
   cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.video-player__video--ready {
+  opacity: 1;
 }
 
 /* Center overlay - click area when paused */

@@ -1,8 +1,13 @@
 /**
  * ProjectSelector widget props.
  * Thumbnail strip for selecting active project in showcases.
+ *
+ * Supports two patterns:
+ * 1. Children via __repeat (preferred): Receives widgets array, visible in hierarchy
+ * 2. Legacy projects prop: Receives projects array directly (hidden in hierarchy)
  */
 
+import type { WidgetSchema } from '../../../../schema'
 import type { WidgetBaseProps } from '../../types'
 
 export interface ProjectSelectorItem {
@@ -23,8 +28,10 @@ export interface ProjectSelectorItem {
 }
 
 export interface ProjectSelectorProps extends WidgetBaseProps {
-  /** Array of project items */
-  projects: ProjectSelectorItem[]
+  /** Array of project items (legacy, prefer widgets) */
+  projects?: ProjectSelectorItem[]
+  /** Children widgets from __repeat (preferred) */
+  widgets?: WidgetSchema[]
   /** Currently active index (controlled) */
   activeIndex?: number
   /** Callback when selection changes */

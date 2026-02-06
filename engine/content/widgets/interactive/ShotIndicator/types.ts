@@ -1,13 +1,20 @@
 /**
  * ShotIndicator widget props.
  * Video shot/frame number navigation.
+ *
+ * Supports two patterns:
+ * 1. Children via __repeat (preferred): Receives widgets array, visible in hierarchy
+ * 2. Legacy shots prop: Receives shots array directly (hidden in hierarchy)
  */
 
+import type { WidgetSchema } from '../../../../schema'
 import type { WidgetBaseProps } from '../../types'
 
 export interface ShotIndicatorProps extends WidgetBaseProps {
-  /** Array of shot numbers to display */
-  shots: number[]
+  /** Array of shot numbers to display (legacy, prefer widgets) */
+  shots?: number[]
+  /** Children widgets from __repeat (preferred) */
+  widgets?: WidgetSchema[]
   /** Currently active shot (controlled) */
   activeShot?: number
   /** Callback when shot is selected */

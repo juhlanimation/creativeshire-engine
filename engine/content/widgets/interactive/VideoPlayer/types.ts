@@ -16,6 +16,8 @@ export interface VideoPlayerControls {
   play: () => void
   /** Get current playback time */
   getCurrentTime: () => number
+  /** Hide play button and controls overlay (for programmatic pause without UI flash) */
+  suppressUI: () => void
 }
 
 /**

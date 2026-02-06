@@ -26,7 +26,6 @@
  */
 
 import { useRef, useState, useCallback, useEffect, memo } from 'react'
-import { gsap } from 'gsap'
 import { useVideoControls, useAutoSavePosition } from './hooks'
 import type { VideoPlayerProps, VideoPlayerControls } from './types'
 import './styles.css'
@@ -103,6 +102,9 @@ const VideoPlayer = memo(function VideoPlayer({
   const progressRef = useRef<HTMLDivElement>(null)
   const [showControls, setShowControls] = useState(true)
   const [videoReady, setVideoReady] = useState(false)
+  // Suppress overlay when under external control (modal play/pause).
+  // Cleared on first user interaction (mouse move or click).
+  const [overlaySuppressed, setOverlaySuppressed] = useState(!autoPlay && !!onInit)
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Video controls hook (handles state, NOT autoplay)
@@ -120,8 +122,6 @@ const VideoPlayer = memo(function VideoPlayer({
       if (video) {
         video.pause()
         video.currentTime = 0
-        video.src = '' // Clear src to stop any buffered audio
-        video.load() // Reset the video element completely
       }
 
       // Clear controls timeout
@@ -147,7 +147,12 @@ const VideoPlayer = memo(function VideoPlayer({
     // Autoplay if enabled
     if (autoPlay) {
       video.play().catch(() => {
-        // Autoplay blocked - silent fail, user can click play
+        // Unmuted autoplay blocked by browser policy — fall back to muted.
+        // useVideoControls syncs via volumechange event, so UI stays consistent.
+        video.muted = true
+        video.play().catch(() => {
+          // Muted autoplay also blocked — user must click play
+        })
       })
     }
 
@@ -156,13 +161,7 @@ const VideoPlayer = memo(function VideoPlayer({
       pause: () => video.pause(),
       play: () => video.play(),
       getCurrentTime: () => video.currentTime,
-    })
-
-    // Fade video in from opacity 0 (matches bojuhl.com sequence)
-    gsap.to(video, {
-      opacity: 1,
-      duration: 0.3,
-      ease: 'power2.inOut',
+      suppressUI: () => setOverlaySuppressed(true),
     })
   }, [videoReady, autoPlay, startTime, onInit])
 
@@ -190,6 +189,7 @@ const VideoPlayer = memo(function VideoPlayer({
 
   // Auto-hide controls on mouse idle
   const handleMouseMove = useCallback(() => {
+    setOverlaySuppressed(false)
     setShowControls(true)
 
     if (controlsTimeoutRef.current) {
@@ -203,7 +203,13 @@ const VideoPlayer = memo(function VideoPlayer({
     }
   }, [controls.isPlaying])
 
-  const controlsVisible = showControls || !controls.isPlaying
+  // User click on video: clear suppression so UI appears normally
+  const handleUserToggle = useCallback(() => {
+    setOverlaySuppressed(false)
+    controls.togglePlay()
+  }, [controls])
+
+  const controlsVisible = !overlaySuppressed && (showControls || !controls.isPlaying)
 
   const containerClasses = [
     'video-player',
@@ -218,27 +224,26 @@ const VideoPlayer = memo(function VideoPlayer({
       onMouseLeave={() => setShowControls(true)}
     >
       {/* Video element - absolute inset-0, object-contain */}
-      {/* Starts opacity 0, fades in when ready (matches bojuhl.com) */}
+      {/* Starts opacity 0 via CSS, fades in via --ready class when canPlay fires */}
       <video
         ref={videoRef}
-        className="video-player__video"
+        className={`video-player__video${videoReady ? ' video-player__video--ready' : ''}`}
         src={src}
         poster={poster}
         playsInline
         preload="auto"
-        style={{ opacity: 0 }}
-        onClick={controls.togglePlay}
+        onClick={handleUserToggle}
         onTimeUpdate={handleTimeUpdate}
         onEnded={handleEnded}
         onCanPlay={handleCanPlay}
       />
 
-      {/* Center play button - shown when paused */}
+      {/* Center play button - shown when paused (hidden during programmatic control) */}
       {/* Matches bojuhl: w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm */}
-      {!controls.isPlaying && (
+      {!controls.isPlaying && !overlaySuppressed && (
         <div
           className="video-player__center-overlay"
-          onClick={controls.togglePlay}
+          onClick={handleUserToggle}
         >
           <div className="video-player__center-play" data-effect="button-hover">
             <PlayIcon />

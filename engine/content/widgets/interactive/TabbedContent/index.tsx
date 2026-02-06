@@ -4,6 +4,10 @@
  * TabbedContent interactive widget.
  * Tab interface with switchable content panels.
  *
+ * Supports two patterns:
+ * 1. Children via __repeat (preferred): Receives widgets array, visible in hierarchy
+ * 2. Legacy tabs prop: Receives tabs array directly (hidden in hierarchy)
+ *
  * Features:
  * - Tab bar with clickable tab buttons
  * - Content panel that switches based on active tab
@@ -12,14 +16,31 @@
  * - Controlled and uncontrolled modes
  */
 
-import React, { memo, forwardRef, useState, useCallback, useId } from 'react'
-import type { TabbedContentProps } from './types'
+import React, { memo, forwardRef, useState, useCallback, useId, useMemo } from 'react'
+import type { TabbedContentProps, TabItem } from './types'
+import type { WidgetSchema } from '../../../../schema'
 import WidgetRenderer from '../../../../renderer/WidgetRenderer'
 import './styles.css'
 
+/**
+ * Extract tab items from widget children.
+ * Children should be Box widgets with data-tab-id, data-tab-label, and widgets array.
+ */
+function extractTabsFromWidgets(widgets: WidgetSchema[]): TabItem[] {
+  return widgets.map((widget, index) => {
+    const props = widget.props ?? {}
+    return {
+      id: (props['data-tab-id'] as string) ?? widget.id ?? `tab-${index}`,
+      label: (props['data-tab-label'] as string) ?? `Tab ${index + 1}`,
+      content: widget.widgets ?? [],
+    }
+  })
+}
+
 const TabbedContent = memo(forwardRef<HTMLDivElement, TabbedContentProps>(function TabbedContent(
   {
-    tabs,
+    tabs: tabsProp,
+    widgets,
     defaultTab,
     activeTab: controlledActiveTab,
     onChange,
@@ -30,10 +51,23 @@ const TabbedContent = memo(forwardRef<HTMLDivElement, TabbedContentProps>(functi
   },
   ref
 ) {
+  // Prefer widgets (children via __repeat) over tabs prop
+  const tabs = useMemo(() => {
+    if (widgets && widgets.length > 0) {
+      return extractTabsFromWidgets(widgets)
+    }
+    return tabsProp ?? []
+  }, [widgets, tabsProp])
+
   const baseId = useId()
   const [internalActiveTab, setInternalActiveTab] = useState(
     defaultTab ?? tabs[0]?.id ?? ''
   )
+
+  // Empty state
+  if (tabs.length === 0) {
+    return null
+  }
 
   // Support both controlled and uncontrolled modes
   const activeTab = controlledActiveTab ?? internalActiveTab

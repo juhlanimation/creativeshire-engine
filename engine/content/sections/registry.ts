@@ -20,6 +20,8 @@ import { meta as ProjectShowcaseMeta } from './patterns/ProjectShowcase/meta'
 import { meta as ProjectGalleryMeta } from './patterns/ProjectGallery/meta'
 import { meta as ProjectCompareMeta } from './patterns/ProjectCompare/meta'
 import { meta as ProjectTabsMeta } from './patterns/ProjectTabs/meta'
+import { meta as MemberGalleryMeta } from './patterns/MemberGallery/meta'
+import { meta as PricingMeta } from './patterns/Pricing/meta'
 
 // =============================================================================
 // Types
@@ -85,6 +87,14 @@ export const sectionRegistry: Record<string, SectionPatternEntry> = {
     meta: ProjectTabsMeta as SectionMeta,
     getFactory: async () => (await import('./patterns/ProjectTabs')).createProjectTabsSection,
   },
+  MemberGallery: {
+    meta: MemberGalleryMeta as SectionMeta,
+    getFactory: async () => (await import('./patterns/MemberGallery')).createMemberGallerySection,
+  },
+  Pricing: {
+    meta: PricingMeta as SectionMeta,
+    getFactory: async () => (await import('./patterns/Pricing')).createPricingSection,
+  },
 }
 
 // =============================================================================
@@ -141,6 +151,8 @@ export { createProjectShowcaseSection } from './patterns/ProjectShowcase'
 export { createProjectGallerySection } from './patterns/ProjectGallery'
 export { createProjectCompareSection } from './patterns/ProjectCompare'
 export { createProjectTabsSection } from './patterns/ProjectTabs'
+export { createMemberGallerySection } from './patterns/MemberGallery'
+export { createPricingSection } from './patterns/Pricing'
 
 // Re-export types for convenience
 export type { HeroProps } from './patterns/Hero/types'
@@ -153,3 +165,5 @@ export type { ProjectShowcaseProps } from './patterns/ProjectShowcase/types'
 export type { ProjectGalleryProps } from './patterns/ProjectGallery/types'
 export type { ProjectCompareProps } from './patterns/ProjectCompare/types'
 export type { ProjectTabsProps } from './patterns/ProjectTabs/types'
+export type { MemberGalleryProps, MemberItem } from './patterns/MemberGallery/types'
+export type { PricingProps, PricingPlan, PricingFeature } from './patterns/Pricing/types'

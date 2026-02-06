@@ -1,6 +1,10 @@
 /**
  * TabbedContent widget props.
  * Tab interface with switchable content panels.
+ *
+ * Supports two patterns:
+ * 1. Children via __repeat (preferred): Receives widgets array, visible in hierarchy
+ * 2. Legacy tabs prop: Receives tabs array directly (hidden in hierarchy)
  */
 
 import type { WidgetSchema } from '../../../../schema'
@@ -16,8 +20,10 @@ export interface TabItem {
 }
 
 export interface TabbedContentProps extends WidgetBaseProps {
-  /** Array of tab items */
-  tabs: TabItem[]
+  /** Array of tab items (legacy, prefer widgets) */
+  tabs?: TabItem[]
+  /** Children widgets from __repeat (preferred) */
+  widgets?: WidgetSchema[]
   /** Default active tab ID */
   defaultTab?: string
   /** Controlled active tab ID */

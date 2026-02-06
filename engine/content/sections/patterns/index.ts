@@ -32,3 +32,9 @@ export type { ProjectCompareProps } from './ProjectCompare/types'
 
 export { createProjectTabsSection } from './ProjectTabs'
 export type { ProjectTabsProps, ProjectTab, TabVideo } from './ProjectTabs/types'
+
+export { createMemberGallerySection } from './MemberGallery'
+export type { MemberGalleryProps, MemberItem, MemberGalleryTextStyles } from './MemberGallery/types'
+
+export { createPricingSection } from './Pricing'
+export type { PricingProps, PricingPlan, PricingFeature, PricingIcons, PricingTextStyles } from './Pricing/types'

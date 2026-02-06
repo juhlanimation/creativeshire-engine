@@ -43,6 +43,7 @@ import VideoCompare from './interactive/VideoCompare'
 import ProjectSelector from './interactive/ProjectSelector'
 import TabbedContent from './interactive/TabbedContent'
 import ShotIndicator from './interactive/ShotIndicator'
+import TextMask from './interactive/TextMask'
 
 // Chrome overlays (used by experience chrome)
 import SlideIndicators from '../chrome/overlays/SlideIndicators'
@@ -81,6 +82,7 @@ export const widgetRegistry: Record<string, WidgetComponent> = {
   ProjectSelector,
   TabbedContent,
   ShotIndicator,
+  TextMask,
   // Chrome overlays
   SlideIndicators,
 }

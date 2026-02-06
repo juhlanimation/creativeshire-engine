@@ -13,6 +13,8 @@ export interface LogoItem {
 }
 
 export interface LogoMarqueeProps extends WidgetBaseProps {
+  /** Widget ID for CSS targeting */
+  id?: string
   /**
    * Child widgets (via __repeat). Preferred pattern - visible in hierarchy.
    * Each child is typically an Image widget with src/alt/href.

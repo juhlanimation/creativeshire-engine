@@ -1,12 +1,33 @@
 'use client'
 
-import React, { memo, forwardRef, useState, useCallback } from 'react'
+import React, { memo, forwardRef, useState, useCallback, useMemo } from 'react'
 import type { ProjectSelectorProps, ProjectSelectorItem } from './types'
+import type { WidgetSchema } from '../../../../schema'
 import './styles.css'
+
+/**
+ * Extract project items from widget children.
+ * Children should be GalleryThumbnail widgets with props containing project data.
+ */
+function extractProjectsFromWidgets(widgets: WidgetSchema[]): ProjectSelectorItem[] {
+  return widgets.map((widget, index) => {
+    const props = widget.props ?? {}
+    return {
+      id: widget.id ?? `project-${index}`,
+      thumbnail: (props.thumbnailSrc as string) ?? (props.thumbnail as string) ?? '',
+      alt: (props.thumbnailAlt as string) ?? (props.alt as string),
+      title: (props.title as string) ?? '',
+      year: props.year as string | undefined,
+      studio: props.studio as string | undefined,
+      url: (props.videoSrc as string) ?? (props.url as string),
+    }
+  })
+}
 
 const ProjectSelector = memo(forwardRef<HTMLDivElement, ProjectSelectorProps>(function ProjectSelector(
   {
-    projects,
+    projects: projectsProp,
+    widgets,
     activeIndex = 0,
     onSelect,
     onActiveClick,
@@ -17,7 +38,20 @@ const ProjectSelector = memo(forwardRef<HTMLDivElement, ProjectSelectorProps>(fu
   },
   ref
 ) {
+  // Prefer widgets (children via __repeat) over projects prop
+  const projects = useMemo(() => {
+    if (widgets && widgets.length > 0) {
+      return extractProjectsFromWidgets(widgets)
+    }
+    return projectsProp ?? []
+  }, [widgets, projectsProp])
+
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+
+  // Empty state
+  if (projects.length === 0) {
+    return null
+  }
 
   const handleClick = useCallback((index: number, project: ProjectSelectorItem) => {
     if (index === activeIndex && project.url && onActiveClick) {

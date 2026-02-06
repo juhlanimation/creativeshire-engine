@@ -59,6 +59,7 @@ function LogoImage({
 }
 
 export default function LogoMarquee({
+  id,
   logos,
   widgets,
   duration = 30,
@@ -82,6 +83,7 @@ export default function LogoMarquee({
 
   return (
     <div
+      id={id}
       className={className ? `logo-marquee ${className}` : 'logo-marquee'}
       style={style}
     >
