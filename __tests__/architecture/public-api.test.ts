@@ -10,7 +10,8 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { readFile } from './helpers'
+import { readFile, getFiles } from './helpers'
+import fg from 'fast-glob'
 import path from 'path'
 import fs from 'fs/promises'
 
@@ -61,6 +62,22 @@ import {
   getAllBehaviourMetas as getAllBehaviourMetasDirect,
 } from '../../engine/experience/behaviours'
 
+// Intro barrel
+import {
+  getIntroPatternIds,
+  getAllIntroPatternMetas,
+  getIntroPattern,
+} from '../../engine/intro'
+
+// Validation barrel
+import { validateSite } from '../../engine/validation'
+
+// Migrations barrel
+import { needsMigration, getMigrationsForSite } from '../../engine/migrations'
+
+// Config barrel
+import { BREAKPOINTS } from '../../engine/config'
+
 describe('Public API Validation', () => {
   describe('package.json subpath exports', () => {
     it('every barrel has a subpath export in package.json', async () => {
@@ -74,7 +91,11 @@ describe('Public API Validation', () => {
         './schema',
         './experience',
         './experience/behaviours',
+        './intro',
         './interface',
+        './validation',
+        './config',
+        './migrations',
         './content/widgets',
         './content/sections',
         './content/chrome',
@@ -105,6 +126,38 @@ describe('Public API Validation', () => {
       }
 
       expect(violations, `Broken subpath exports:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
+    it('every top-level engine barrel has a subpath export', async () => {
+      const pkgJson = JSON.parse(await fs.readFile(path.join(ROOT, 'package.json'), 'utf-8'))
+      const exports = pkgJson.exports as Record<string, string>
+      const exportTargets = new Set(Object.values(exports))
+
+      // Find all top-level barrels: engine/*/index.ts
+      const barrels = await fg('*/index.ts', {
+        cwd: ENGINE,
+        absolute: false,
+        ignore: ['**/node_modules/**'],
+      })
+
+      // Internal-only modules that don't need subpath exports
+      const INTERNAL_ONLY = ['styles']
+
+      const missing: string[] = []
+      for (const barrel of barrels) {
+        const folderName = barrel.split('/')[0]
+        if (INTERNAL_ONLY.includes(folderName)) continue
+
+        const target = `./engine/${barrel}`
+        if (!exportTargets.has(target)) {
+          missing.push(`./${folderName} → ${target}`)
+        }
+      }
+
+      expect(
+        missing,
+        `Top-level barrels missing from package.json exports:\n${missing.join('\n')}\nAdd these to package.json "exports" field.`
+      ).toHaveLength(0)
     })
   })
 
@@ -285,6 +338,60 @@ describe('Public API Validation', () => {
         expect(meta.id, 'Transition meta missing id').toBeTruthy()
         expect(meta.name, `Transition "${meta.id}" missing name`).toBeTruthy()
       }
+    })
+  })
+
+  describe('Intro registry accessible via barrel', () => {
+    it('getIntroPatternIds returns IDs', () => {
+      const ids = getIntroPatternIds()
+      expect(ids.length, 'getIntroPatternIds() should return entries').toBeGreaterThan(0)
+    })
+
+    it('getAllIntroPatternMetas returns metadata', () => {
+      const metas = getAllIntroPatternMetas()
+      expect(metas.length, 'getAllIntroPatternMetas() should return entries').toBeGreaterThan(0)
+
+      for (const meta of metas) {
+        expect(meta.id, 'Intro pattern meta missing id').toBeTruthy()
+        expect(meta.name, `Intro pattern "${meta.id}" missing name`).toBeTruthy()
+      }
+    })
+
+    it('getIntroPattern returns entries for all registered IDs', () => {
+      const ids = getIntroPatternIds()
+      const violations: string[] = []
+
+      for (const id of ids) {
+        const pattern = getIntroPattern(id)
+        if (!pattern) {
+          violations.push(`getIntroPattern("${id}") returned undefined`)
+        }
+      }
+
+      expect(violations, `Missing intro patterns:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+  })
+
+  describe('Validation accessible via barrel', () => {
+    it('validateSite is a function', () => {
+      expect(typeof validateSite).toBe('function')
+    })
+  })
+
+  describe('Migrations accessible via barrel', () => {
+    it('needsMigration is a function', () => {
+      expect(typeof needsMigration).toBe('function')
+    })
+
+    it('getMigrationsForSite is a function', () => {
+      expect(typeof getMigrationsForSite).toBe('function')
+    })
+  })
+
+  describe('Config accessible via barrel', () => {
+    it('BREAKPOINTS is defined', () => {
+      expect(BREAKPOINTS).toBeDefined()
+      expect(typeof BREAKPOINTS).toBe('object')
     })
   })
 
