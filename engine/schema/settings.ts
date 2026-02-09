@@ -216,6 +216,25 @@ export type SettingType = SettingConfig['type']
 export type SettingValue = string | number | boolean | string[] | null
 
 // =============================================================================
+// Settings Group
+// =============================================================================
+
+/**
+ * Group definition for organizing settings in platform UI.
+ * Groups visually cluster related settings under a common heading.
+ */
+export interface SettingsGroup {
+  /** Unique identifier matching `group` strings in settings */
+  id: string
+  /** Human-readable display label */
+  label: string
+  /** Icon name for platform UI */
+  icon?: string
+  /** Optional description shown as group tooltip */
+  description?: string
+}
+
+// =============================================================================
 // Settings Map
 // =============================================================================
 

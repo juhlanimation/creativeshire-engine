@@ -92,6 +92,7 @@ export type {
   SettingChoice,
   SettingValidation,
   SettingsConfig,
+  SettingsGroup,
 } from './settings'
 
 // Component meta types
@@ -99,8 +100,12 @@ export type { ComponentCategory, ComponentMeta, MetaProps, SectionCategory, Sect
 export { defineMeta, defineSectionMeta } from './meta'
 
 // Structural schema metas
-export { themeMeta } from './theme-meta'
-export { pageMeta } from './page-meta'
+export { themeMeta, getThemeSettings, getThemeGroups } from './theme-meta'
+export { pageMeta, getPageSettings, getPageGroups } from './page-meta'
+export { siteMetadataMeta, getSiteMetadataSettings, getSiteMetadataGroups } from './site-meta'
+export { sectionMeta, getSectionSettings, getSectionGroups } from './section-meta'
+export { regionMeta, getRegionSettings, getRegionGroups } from './region-meta'
+export { overlayMeta, getOverlaySettings, getOverlayGroups } from './overlay-meta'
 
 // Schema utilities
 export {

@@ -4,6 +4,7 @@
  */
 
 import { defineMeta } from './meta'
+import type { SettingsGroup } from './settings'
 
 export const themeMeta = defineMeta<Record<string, unknown>>({
   id: 'Theme',
@@ -91,6 +92,18 @@ export const themeMeta = defineMeta<Record<string, unknown>>({
     },
 
     // ── Typography ─────────────────────────────────────────────────────────
+    'typography.provider': {
+      type: 'select',
+      label: 'Font Provider',
+      default: 'google',
+      description: 'CDN provider for loading web fonts',
+      choices: [
+        { value: 'google', label: 'Google Fonts' },
+        { value: 'bunny', label: 'Bunny Fonts' },
+        { value: 'fontshare', label: 'Fontshare' },
+      ],
+      group: 'Typography',
+    },
     'typography.title': {
       type: 'custom',
       label: 'Title Font',
@@ -133,3 +146,18 @@ export const themeMeta = defineMeta<Record<string, unknown>>({
     },
   },
 })
+
+/** Returns settings config for ThemeSchema fields. */
+export function getThemeSettings() {
+  return themeMeta.settings!
+}
+
+/** Returns group definitions for theme settings. */
+export function getThemeGroups(): SettingsGroup[] {
+  return [
+    { id: 'Scrollbar', label: 'Scrollbar', icon: 'scroll' },
+    { id: 'Smooth Scroll', label: 'Smooth Scroll', icon: 'mouse' },
+    { id: 'Typography', label: 'Typography', icon: 'type' },
+    { id: 'Section Transitions', label: 'Section Transitions', icon: 'transition' },
+  ]
+}

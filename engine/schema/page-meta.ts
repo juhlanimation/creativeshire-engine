@@ -4,6 +4,7 @@
  */
 
 import { defineMeta } from './meta'
+import type { SettingsGroup } from './settings'
 
 export const pageMeta = defineMeta<Record<string, unknown>>({
   id: 'Page',
@@ -122,6 +123,28 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       description: 'Browser theme color for mobile address bar',
       group: 'Browser',
     },
+    'head.viewport': {
+      type: 'text',
+      label: 'Viewport',
+      default: 'width=device-width, initial-scale=1',
+      description: 'Viewport meta tag value',
+      advanced: true,
+      group: 'Browser',
+    },
+    'head.icons.icon': {
+      type: 'image',
+      label: 'Favicon',
+      default: '',
+      description: 'Page-level favicon override',
+      group: 'Browser',
+    },
+    'head.icons.apple': {
+      type: 'image',
+      label: 'Apple Touch Icon',
+      default: '',
+      description: 'Apple touch icon for iOS home screen',
+      group: 'Browser',
+    },
 
     // ── Chrome Overrides ───────────────────────────────────────────────────
     'chrome.regions.header': {
@@ -148,3 +171,21 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
     },
   },
 })
+
+/** Returns settings config for PageSchema fields. */
+export function getPageSettings() {
+  return pageMeta.settings!
+}
+
+/** Returns group definitions for page settings. */
+export function getPageGroups(): SettingsGroup[] {
+  return [
+    { id: 'Route', label: 'Route', icon: 'link' },
+    { id: 'SEO', label: 'SEO', icon: 'search' },
+    { id: 'Open Graph', label: 'Open Graph', icon: 'share' },
+    { id: 'Twitter', label: 'Twitter', icon: 'twitter' },
+    { id: 'Robots', label: 'Robots', icon: 'bot' },
+    { id: 'Browser', label: 'Browser', icon: 'globe' },
+    { id: 'Chrome Overrides', label: 'Chrome Overrides', icon: 'layout' },
+  ]
+}
