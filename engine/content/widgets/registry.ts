@@ -44,6 +44,7 @@ import ProjectSelector from './interactive/ProjectSelector'
 import TabbedContent from './interactive/TabbedContent'
 import ShotIndicator from './interactive/ShotIndicator'
 import TextMask from './interactive/TextMask'
+import EmailReveal from './interactive/EmailReveal'
 
 // Chrome overlays (used by experience chrome)
 import SlideIndicators from '../chrome/overlays/SlideIndicators'
@@ -83,6 +84,7 @@ export const widgetRegistry: Record<string, WidgetComponent> = {
   TabbedContent,
   ShotIndicator,
   TextMask,
+  EmailReveal,
   // Chrome overlays
   SlideIndicators,
 }

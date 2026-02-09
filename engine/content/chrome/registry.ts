@@ -124,6 +124,8 @@ import NavTimeline from './overlays/NavTimeline'
 import { meta as navTimelineMeta } from './overlays/NavTimeline/meta'
 import IntroOverlay from './overlays/IntroOverlay'
 import { meta as introOverlayMeta } from './overlays/IntroOverlay/meta'
+import FixedCard from './overlays/FixedCard'
+import { meta as fixedCardMeta } from './overlays/FixedCard/meta'
 
 registerChromeComponent('Footer', Footer, footerMeta)
 registerChromeComponent('Header', Header, headerMeta)
@@ -132,3 +134,4 @@ registerChromeComponent('ModalRoot', ModalRoot, modalMeta)
 registerChromeComponent('SlideIndicators', SlideIndicators, slideIndicatorsMeta)
 registerChromeComponent('NavTimeline', NavTimeline, navTimelineMeta)
 registerChromeComponent('IntroOverlay', IntroOverlay, introOverlayMeta)
+registerChromeComponent('FixedCard', FixedCard, fixedCardMeta)

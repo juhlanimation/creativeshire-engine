@@ -179,6 +179,7 @@ export function SectionRenderer({ section, index }: SectionRendererProps) {
       data-section-index={index}
       data-active={isActive}
       data-slideshow={isSlideshow}
+      data-section-pinned={section.pinned || undefined}
       style={wrapperStyle}
       className={wrapperClassName}
     >

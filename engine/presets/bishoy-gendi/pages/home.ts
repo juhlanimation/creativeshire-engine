@@ -3,8 +3,8 @@
  * Defines section schemas with binding expressions.
  *
  * 8 sections in infinite-carousel layout:
- * 1. Showreel - Fullscreen video
- * 2. Bio - Card overlay on video
+ * 1. Showreel - Fullscreen video (pinned)
+ * 2. About - Transparent scroll anchor (FixedCard overlay)
  * 3. Azuki Elementals - ProjectGallery
  * 4. Boy Mole Fox Horse - ProjectShowcase with ShotIndicator
  * 5. THE 21 - ProjectCompare (before/after)
@@ -33,6 +33,7 @@ const showreelSection: SectionSchema = {
     height: '100dvh',
   },
   className: 'section-showreel',
+  pinned: true,
   widgets: [
     {
       id: 'showreel-video',
@@ -58,12 +59,12 @@ const showreelSection: SectionSchema = {
 }
 
 // =============================================================================
-// Section 2: Bio - Card overlay on video background
+// Section 2: About - Transparent scroll anchor (card rendered by FixedCard overlay)
 // =============================================================================
 
-const bioSection: SectionSchema = {
-  id: 'bio',
-  label: 'Bio',
+const aboutSection: SectionSchema = {
+  id: 'about',
+  label: 'About',
   layout: {
     type: 'flex',
     direction: 'column',
@@ -72,71 +73,10 @@ const bioSection: SectionSchema = {
   },
   style: {
     height: '100dvh',
+    background: 'transparent',
   },
-  className: 'section-bio',
-  widgets: [
-    // Card overlay — glassmorphic over fixed showreel video
-    {
-      id: 'bio-card',
-      type: 'Box',
-      className: 'bio-card',
-      style: {
-        background: 'rgba(0,0,0,0.3)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        border: '1px solid rgba(255,255,255,0.2)',
-        borderRadius: '1rem',
-        padding: '3rem',
-        maxWidth: 650,
-        color: '#fff',
-      },
-      widgets: [
-        {
-          id: 'bio-name',
-          type: 'Text',
-          props: { content: '{{ content.bio.name }}', as: 'h1' },
-          style: { color: '#fff' },
-          className: 'bio-card__name',
-        },
-        {
-          id: 'bio-title',
-          type: 'Text',
-          props: { content: '{{ content.bio.title }}', as: 'h2' },
-          style: { color: 'rgba(255,255,255,0.8)' },
-          className: 'bio-card__title',
-        },
-        {
-          id: 'bio-location',
-          type: 'Text',
-          props: { content: '{{ content.bio.location }}', as: 'p' },
-          style: { color: 'rgba(255,255,255,0.6)' },
-          className: 'bio-card__location',
-        },
-        {
-          id: 'bio-text',
-          type: 'Text',
-          props: { content: '{{ content.bio.bio }}', as: 'p', html: true },
-          style: { color: 'rgba(255,255,255,0.85)' },
-          className: 'bio-card__bio',
-        },
-        // Contact info
-        {
-          id: 'bio-contact',
-          type: 'Flex',
-          props: { direction: 'column', gap: '0.5rem' },
-          className: 'bio-card__contact',
-          widgets: [
-            {
-              type: 'Link',
-              props: { href: 'mailto:{{ content.contact.email }}' },
-              style: { color: 'rgba(255,255,255,0.9)' },
-              widgets: [{ type: 'Text', props: { content: '{{ content.contact.email }}' } }],
-            },
-          ],
-        },
-      ],
-    },
-  ],
+  className: 'section-about section-about--transparent',
+  widgets: [],
 }
 
 // =============================================================================
@@ -699,7 +639,7 @@ export const homePageTemplate: PageSchema = {
   },
   sections: [
     showreelSection,
-    bioSection,
+    aboutSection,
     azukiElementalsSection,
     boyMoleFoxHorseSection,
     the21Section,

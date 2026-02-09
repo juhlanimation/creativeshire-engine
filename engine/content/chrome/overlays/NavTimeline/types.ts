@@ -29,6 +29,8 @@ export interface NavTimelineProps {
   alignment?: 'left' | 'right'
   /** Whether to show the top arrow (hide on first section before scroll) */
   showTopArrow?: boolean
+  /** Whether to show the bottom arrow */
+  showBottomArrow?: boolean
   /** Callback when reveal animation completes */
   onAnimationComplete?: () => void
 }

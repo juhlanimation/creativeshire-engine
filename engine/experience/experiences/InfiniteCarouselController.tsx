@@ -43,7 +43,8 @@ function calculateSectionTransforms(
   scrollProgress: number,
   totalSections: number,
   sectionElements: HTMLElement[],
-  sectionHeights: SectionHeightInfo[]
+  sectionHeights: SectionHeightInfo[],
+  pinnedSections: number[] = [],
 ): void {
   if (totalSections === 0) return
 
@@ -87,8 +88,29 @@ function calculateSectionTransforms(
     let translateY: number
     let clipPath = 'none'
 
-    if (offset >= -1 && offset <= 0) {
-      // Current/outgoing section
+    // Check if this section is pinned
+    const isPinned = pinnedSections.includes(index)
+
+    // A pinned section stays visible as long as its successor is active or outgoing.
+    // Showreel (index 0, pinned) → About (index 1, transparent):
+    //   When about is current (offset for showreel = -1): pinned, visible
+    //   When about is outgoing (offset for showreel = -2): still pinned, visible
+    const nextSectionIndex = (index + 1) % totalSections
+    const nextSectionOffset = nextSectionIndex - scrollProgress
+    const isPinnedAndActive = isPinned && (
+      // Pinned section itself is current/outgoing
+      (offset >= -1 && offset <= 0) ||
+      // Successor section is current or outgoing (pinned section is 2 behind)
+      (nextSectionOffset >= -1 && nextSectionOffset <= 0)
+    )
+
+    if (isPinnedAndActive) {
+      // Pinned section: stays at translateY(0), no clip, lower z-index
+      // The next section slides over it
+      translateY = 0
+      clipPath = 'none'
+    } else if (offset >= -1 && offset <= 0) {
+      // Current/outgoing section (not pinned)
       // Unified logic: everything before last 100vh = translate only, last 100vh = clip
       const absOffset = Math.abs(offset)
 
@@ -117,15 +139,25 @@ function calculateSectionTransforms(
       // Incoming section
       // Only translate when the CURRENT section is in clip phase
       // During internal scroll phase of tall current section, incoming stays at 50vh
+
+      // Check if the current outgoing section follows a pinned section.
+      // When it does (e.g., about follows pinned showreel), the outgoing section is
+      // transparent so the incoming section must start fully offscreen (100vh) to avoid
+      // peeking through the transparent section above the pinned background.
+      const outgoingFollowsPinned = pinnedSections.some(
+        pi => (pi + 1) % totalSections === currentIndex
+      )
+      const startVh = outgoingFollowsPinned ? 100 : 50
+
       if (isInternalScrollPhase) {
-        // Current section is doing internal scroll - next section waits at 50vh
-        translateY = 50
+        // Current section is doing internal scroll - next section waits offscreen
+        translateY = startVh
       } else {
-        // Clip phase: translate from 50vh to 0vh based on clipProgress
-        translateY = (1 - clipProgress) * 50
+        // Clip phase: translate from startVh to 0vh based on clipProgress
+        translateY = (1 - clipProgress) * startVh
       }
     } else {
-      // Far sections: parked at 50vh
+      // Far sections: parked offscreen
       translateY = 50
     }
 
@@ -136,8 +168,12 @@ function calculateSectionTransforms(
     // - Current/outgoing (offset 0 to -1): highest, they clip to reveal what's below
     // - Incoming (offset 0 to 1): below outgoing, being revealed
     // - Far sections: lowest priority
+    // - Pinned sections: below incoming so the next section slides over them
     let zIndex: number
-    if (offset >= -1 && offset <= 0) {
+    if (isPinnedAndActive) {
+      // Pinned section: below everything so it shows as background
+      zIndex = 5
+    } else if (offset >= -1 && offset <= 0) {
       // Current and outgoing: highest priority (on top, clipping away)
       zIndex = 20
     } else if (offset > 0 && offset <= 1) {
@@ -151,8 +187,9 @@ function calculateSectionTransforms(
 
     // Visibility optimization - only show sections in active transition window
     // Current/outgoing (offset -1 to 0) and incoming (offset 0 to 1) should be visible
+    // Pinned sections stay visible as long as their successor is active
     // Sections beyond this range are hidden to prevent wrapped sections from showing
-    const isVisible = offset >= -1 && offset <= 1
+    const isVisible = isPinnedAndActive || (offset >= -1 && offset <= 1)
     el.style.visibility = isVisible ? 'visible' : 'hidden'
   })
 }
@@ -170,6 +207,7 @@ export function InfiniteCarouselController(): null {
   const scrollProgress = useStore(carouselStore, (s) => s.scrollProgress)
   const totalSections = useStore(carouselStore, (s) => s.totalSections)
   const phase = useStore(carouselStore, (s) => s.phase)
+  const pinnedSections = useStore(carouselStore, (s) => s.pinnedSections)
 
   // Initialize driver and find sections
   useEffect(() => {
@@ -196,10 +234,16 @@ export function InfiniteCarouselController(): null {
       el => el.getAttribute('data-section-id') || ''
     )
 
-    // Update total sections count and IDs immediately
+    // Detect pinned sections from data attributes
+    const pinnedSections = sections
+      .map((el, i) => el.hasAttribute('data-section-pinned') ? i : -1)
+      .filter(i => i !== -1)
+
+    // Update total sections count, IDs, and pinned sections immediately
     carouselStore.setState({
       totalSections: sections.length,
       sectionIds,
+      pinnedSections,
     })
 
     // Create MomentumDriver
@@ -269,7 +313,7 @@ export function InfiniteCarouselController(): null {
   useEffect(() => {
     if (phase !== 'ready' || sectionsRef.current.length === 0) return
 
-    calculateSectionTransforms(scrollProgress, totalSections, sectionsRef.current, sectionHeightsRef.current)
+    calculateSectionTransforms(scrollProgress, totalSections, sectionsRef.current, sectionHeightsRef.current, pinnedSections)
 
     // Calculate clipProgress for NavTimeline
     // This is 0 during internal scroll phase, 0-1 during clip phase
@@ -291,7 +335,7 @@ export function InfiniteCarouselController(): null {
     }
 
     carouselStore.setState({ clipProgress })
-  }, [scrollProgress, totalSections, phase, carouselStore])
+  }, [scrollProgress, totalSections, phase, carouselStore, pinnedSections])
 
   return null
 }

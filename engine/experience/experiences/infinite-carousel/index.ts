@@ -20,6 +20,7 @@ export const infiniteCarouselExperience: Experience = {
     'scrollProgress', 'velocity', 'activeSection', 'previousSection',
     'totalSections', 'isSnapping', 'snapTarget', 'phase', 'hasLooped',
     'isTransitioning', 'transitionProgress', 'transitionDirection', 'clipProgress',
+    'pinnedSections',
   ],
 
   createStore: () =>
@@ -49,6 +50,7 @@ export const infiniteCarouselExperience: Experience = {
       hasLooped: false,
       sectionIds: [],
       clipProgress: 0,
+      pinnedSections: [],
     })),
 
   triggers: [],  // MomentumDriver handles all input

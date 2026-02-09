@@ -41,3 +41,7 @@ export type { FeaturedProjectsGridProps, FeaturedProject } from './FeaturedProje
 // LogoMarquee - horizontal marquee of client logos (supports binding expressions)
 export { default as LogoMarquee } from './LogoMarquee'
 export type { LogoMarqueeProps, LogoItem } from './LogoMarquee/types'
+
+// EmailReveal - hover-triggered email fold-out with copy-to-clipboard
+export { default as EmailReveal } from './EmailReveal'
+export type { EmailRevealProps } from './EmailReveal/types'

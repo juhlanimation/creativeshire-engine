@@ -24,6 +24,8 @@ export const bishoyGendiSampleContent = {
 
   contact: {
     email: 'bishoygendi@yahoo.co.uk',
+    instagram: 'https://instagram.com/bishoygendi',
+    linkedin: 'https://linkedin.com/in/bishoygendi',
   },
 
   showreel: {
@@ -31,7 +33,8 @@ export const bishoyGendiSampleContent = {
     videoPoster: '',
   },
 
-  bio: {
+  about: {
+    label: 'HEY, I AM',
     videoSrc: `${VIDEO_BASE}/sample-showreel.webm`,
     name: 'Bishoy Gendi',
     title: 'Senior Character Animator',

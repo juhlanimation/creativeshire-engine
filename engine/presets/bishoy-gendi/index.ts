@@ -16,6 +16,7 @@
  * ```
  */
 
+import './styles.css'
 import type { SitePreset } from '../types'
 import { registerPreset, type PresetMeta } from '../registry'
 import { experienceConfig, introConfig } from './site'
@@ -37,7 +38,7 @@ export const bishoyGendiMeta: PresetMeta = {
  *
  * Sections:
  * 1. Showreel - Fullscreen video
- * 2. Bio - Card overlay
+ * 2. About - Card overlay
  * 3. Azuki Elementals - ProjectGallery
  * 4. Boy Mole Fox Horse - ProjectShowcase
  * 5. THE 21 - ProjectCompare

@@ -83,6 +83,8 @@ export interface InfiniteCarouselState extends NavigableExperienceState {
    * NavTimeline uses this for pointer animation instead of raw scrollProgress.
    */
   clipProgress: number
+  /** Indices of sections marked as pinned (stay visible behind next section) */
+  pinnedSections: number[]
 }
 
 /**

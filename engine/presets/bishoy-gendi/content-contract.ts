@@ -18,7 +18,7 @@ export const bishoyGendiContentContract: ContentContract = {
     { id: 'head', label: 'Head', description: 'Page metadata for SEO' },
     { id: 'contact', label: 'Contact', description: 'Global contact info used across sections' },
     { id: 'showreel', label: 'Showreel', description: 'Fullscreen video showreel' },
-    { id: 'bio', label: 'Bio', description: 'Bio card overlay on video' },
+    { id: 'about', label: 'About', description: 'About card overlay on video' },
     { id: 'azukiElementals', label: 'Azuki Elementals', description: 'ProjectGallery section' },
     { id: 'boyMoleFoxHorse', label: 'Boy Mole Fox Horse', description: 'ProjectShowcase with shot indicator' },
     { id: 'the21', label: 'THE 21', description: 'ProjectCompare with before/after wipe' },
@@ -37,17 +37,20 @@ export const bishoyGendiContentContract: ContentContract = {
 
     // ── Contact ────────────────────────────────────────────────────────────
     { path: 'contact.email', type: 'text', label: 'Email', section: 'contact', required: true, placeholder: 'hello@example.com' },
+    { path: 'contact.instagram', type: 'text', label: 'Instagram URL', section: 'contact', placeholder: 'https://instagram.com/username' },
+    { path: 'contact.linkedin', type: 'text', label: 'LinkedIn URL', section: 'contact', placeholder: 'https://linkedin.com/in/username' },
 
     // ── Showreel ───────────────────────────────────────────────────────────
     { path: 'showreel.videoSrc', type: 'text', label: 'Showreel Video URL', section: 'showreel', required: true },
     { path: 'showreel.videoPoster', type: 'image', label: 'Showreel Poster', section: 'showreel' },
 
-    // ── Bio ────────────────────────────────────────────────────────────────
-    { path: 'bio.videoSrc', type: 'text', label: 'Background Video URL', section: 'bio' },
-    { path: 'bio.name', type: 'text', label: 'Full Name', section: 'bio', required: true, default: 'Bishoy Gendi' },
-    { path: 'bio.title', type: 'text', label: 'Professional Title', section: 'bio', required: true, default: 'Senior Character Animator' },
-    { path: 'bio.location', type: 'text', label: 'Location', section: 'bio', default: 'London, UK' },
-    { path: 'bio.bio', type: 'textarea', label: 'Biography (HTML)', section: 'bio', required: true, default: 'With 16 years of experience in the animation industry, I have had the privilege of working on a diverse range of projects—from feature films and television series to commercials and video games.' },
+    // ── About ─────────────────────────────────────────────────────────────
+    { path: 'about.label', type: 'text', label: 'About Label', section: 'about', default: 'HEY, I AM' },
+    { path: 'about.videoSrc', type: 'text', label: 'Background Video URL', section: 'about' },
+    { path: 'about.name', type: 'text', label: 'Full Name', section: 'about', required: true, default: 'Bishoy Gendi' },
+    { path: 'about.title', type: 'text', label: 'Professional Title', section: 'about', required: true, default: 'Senior Character Animator' },
+    { path: 'about.location', type: 'text', label: 'Location', section: 'about', default: 'London, UK' },
+    { path: 'about.bio', type: 'textarea', label: 'Biography (HTML)', section: 'about', required: true, default: 'With 16 years of experience in the animation industry, I have had the privilege of working on a diverse range of projects—from feature films and television series to commercials and video games.' },
 
     // ── Azuki Elementals ───────────────────────────────────────────────────
     { path: 'azukiElementals.backgroundColor', type: 'text', label: 'Background Color', section: 'azukiElementals', default: '#C03540' },

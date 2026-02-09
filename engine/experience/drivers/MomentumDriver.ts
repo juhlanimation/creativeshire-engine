@@ -436,10 +436,17 @@ export class MomentumDriver {
       // Handle infinite wrapping on target
       if (this.config.infinite && this.totalSections > 0) {
         const total = this.totalSections
+        const { hasLooped } = this.store.getState()
 
-        // Check if we've looped
+        // Check if we've looped (scrolled past the last section)
         if (this.state.targetProgress >= total) {
           this.store.setState({ hasLooped: true })
+        }
+
+        // Before first loop, clamp to [0, total) — prevent backward wrapping
+        if (!hasLooped && this.state.targetProgress < 0) {
+          this.state.targetProgress = 0
+          this.state.velocity = 0
         }
 
         // Wrap target progress

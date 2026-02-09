@@ -52,4 +52,6 @@ export interface SectionSchema {
   behaviourOptions?: Record<string, SerializableValue>
   /** Widgets contained in this section */
   widgets: WidgetSchema[]
+  /** Whether this section stays visible (pinned) while the next section scrolls over it */
+  pinned?: boolean
 }

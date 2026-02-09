@@ -95,10 +95,11 @@ export function NavTimeline({
   currentColor = '#ffffff',
   nextColor = '#ffffff',
   alignment = 'left',
-  showTopArrow = true,
+  showTopArrow,
+  showBottomArrow,
   onAnimationComplete,
 }: NavTimelineProps) {
-  const { store } = useExperience()
+  const { experience, store } = useExperience()
 
   // Cast to infinite carousel store for scrollProgress access
   const carouselStore = store as unknown as StoreApi<InfiniteCarouselState>
@@ -125,6 +126,15 @@ export function NavTimeline({
   // Use clipProgress for pointer animation (not raw progressInSection)
   // This ensures NavTimeline doesn't animate during internal scroll of tall sections
   const progressInSection = clipProgress
+
+  // Derive arrow visibility from scrollability
+  const loops = experience.navigation?.behavior?.loop ?? false
+  const canScrollUp = loops ? (hasLooped || currentIndex > 0) : currentIndex > 0
+  const canScrollDown = loops ? true : currentIndex < totalSections - 1
+
+  // Props override derived values when explicitly provided
+  const effectiveShowTop = showTopArrow ?? canScrollUp
+  const effectiveShowBottom = showBottomArrow ?? canScrollDown
 
   // Derive labels from section IDs (props can override)
   // First section shows "scroll to explore" until user loops
@@ -281,7 +291,7 @@ export function NavTimeline({
       })
 
       // Phase 2: Arrows animate out from ends
-      if (showArrows && showTopArrow) {
+      if (showArrows && effectiveShowTop) {
         tl.to(
           topArrowRef.current,
           {
@@ -294,7 +304,7 @@ export function NavTimeline({
         )
       }
 
-      if (showArrows) {
+      if (showArrows && effectiveShowBottom) {
         tl.to(
           bottomArrowRef.current,
           {
@@ -303,7 +313,7 @@ export function NavTimeline({
             duration: 0.4,
             ease: 'back.out(1.7)',
           },
-          showTopArrow ? '-=0.3' : '-=0.1'
+          effectiveShowTop ? '-=0.3' : '-=0.1'
         )
       }
 
@@ -380,12 +390,25 @@ export function NavTimeline({
     if (!hasRevealedRef.current) return
 
     gsap.to(topArrowRef.current, {
-      scale: showTopArrow ? 1 : 0,
-      opacity: showTopArrow ? 1 : 0,
+      scale: effectiveShowTop ? 1 : 0,
+      opacity: effectiveShowTop ? 1 : 0,
       duration: 0.6,
       ease: 'power2.out',
     })
-  }, [showTopArrow, show, showArrows])
+  }, [effectiveShowTop, show, showArrows])
+
+  // Handle bottom arrow visibility changes (only after reveal completes)
+  useEffect(() => {
+    if (!show || !bottomArrowRef.current || !showArrows) return
+    if (!hasRevealedRef.current) return
+
+    gsap.to(bottomArrowRef.current, {
+      scale: effectiveShowBottom ? 1 : 0,
+      opacity: effectiveShowBottom ? 1 : 0,
+      duration: 0.6,
+      ease: 'power2.out',
+    })
+  }, [effectiveShowBottom, show, showArrows])
 
   // Progress-driven animation for pointer and labels
   useEffect(() => {

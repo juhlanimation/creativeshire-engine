@@ -25,7 +25,7 @@ export const experienceConfig: PresetExperienceConfig = {
  * 1. mask-hold: SVG text mask visible on black (0-1.5s)
  * 2. background-fade: Background carousel fades in through text (1.5-4s)
  * 3. mask-fade: Text mask overlay fades out (4-6s)
- * 4. chrome-appear: Bio card + NavTimeline + scroll unlock (6-8.5s)
+ * 4. chrome-appear: About card + NavTimeline + scroll unlock (6-8.5s)
  * After 8.5s: Intro complete.
  */
 export const introConfig: IntroConfig = {
