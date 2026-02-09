@@ -98,6 +98,10 @@ export type {
 export type { ComponentCategory, ComponentMeta, MetaProps, SectionCategory, SectionMeta } from './meta'
 export { defineMeta, defineSectionMeta } from './meta'
 
+// Structural schema metas
+export { themeMeta } from './theme-meta'
+export { pageMeta } from './page-meta'
+
 // Schema utilities
 export {
   getValueAtPath,

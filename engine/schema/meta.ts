@@ -21,6 +21,8 @@ export type ComponentCategory =
   | 'region'         // Chrome regions (Header, Footer)
   | 'overlay'        // Chrome overlays (Modal, Tooltip)
   | 'behaviour'      // Experience behaviours
+  | 'theme'          // Site-wide theme configuration
+  | 'page'           // Page-level configuration
 
 /**
  * Section sub-category for organization in platform UI "Add Section" dropdown.
