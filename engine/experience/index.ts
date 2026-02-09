@@ -128,6 +128,27 @@ export {
 } from './transitions'
 export type { PageTransition, PageTransitionMeta, PageTransitionCategory, TransitionConfigMeta } from './transitions'
 
+// Behaviours (registry, types, resolution)
+export {
+  behaviourRegistry,
+  registerBehaviour,
+  unregisterBehaviour,
+  getBehaviour,
+  getBehaviourIds,
+  getAllBehaviourMetas,
+  getBehavioursByCategory,
+  defineBehaviourMeta,
+  resolveBehaviour,
+  resolveBehavioursWithDependencies,
+  BehaviourWrapper,
+} from './behaviours'
+export type {
+  Behaviour,
+  BehaviourMeta,
+  BehaviourCategory,
+  BehaviourWrapperProps,
+} from './behaviours'
+
 // State types
 export type {
   ExperienceState,

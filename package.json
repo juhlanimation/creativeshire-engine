@@ -9,6 +9,7 @@
     "./renderer": "./engine/renderer/index.ts",
     "./schema": "./engine/schema/index.ts",
     "./experience": "./engine/experience/index.ts",
+    "./experience/behaviours": "./engine/experience/behaviours/index.ts",
     "./presets": "./engine/presets/index.ts",
     "./presets/*": "./engine/presets/*/index.ts",
     "./interface": "./engine/interface/index.ts",
