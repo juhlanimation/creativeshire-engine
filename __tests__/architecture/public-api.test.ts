@@ -128,35 +128,76 @@ describe('Public API Validation', () => {
       expect(violations, `Broken subpath exports:\n${violations.join('\n')}`).toHaveLength(0)
     })
 
-    it('every top-level engine barrel has a subpath export', async () => {
+    it('every engine barrel (depth 1 and 2) has a subpath export or is re-exported by parent', async () => {
       const pkgJson = JSON.parse(await fs.readFile(path.join(ROOT, 'package.json'), 'utf-8'))
       const exports = pkgJson.exports as Record<string, string>
-      const exportTargets = new Set(Object.values(exports))
+      const exportSubpaths = new Set(Object.keys(exports))
 
-      // Find all top-level barrels: engine/*/index.ts
-      const barrels = await fg('*/index.ts', {
-        cwd: ENGINE,
-        absolute: false,
-        ignore: ['**/node_modules/**'],
-      })
+      // Find all barrels at depth 1 (engine/*/index.ts) and depth 2 (engine/*/*/index.ts)
+      const depth1 = await fg('*/index.ts', { cwd: ENGINE, absolute: false, ignore: ['**/node_modules/**'] })
+      const depth2 = await fg('*/*/index.ts', { cwd: ENGINE, absolute: false, ignore: ['**/node_modules/**'] })
+      const allBarrels = [...depth1, ...depth2]
 
-      // Internal-only modules that don't need subpath exports
-      const INTERNAL_ONLY = ['styles']
+      // Barrels that are internal implementation details, re-exported by a parent barrel.
+      // Each entry maps to the parent subpath that re-exports its contents.
+      const RE_EXPORTED_BY_PARENT: Record<string, string> = {
+        // experience sub-barrels → re-exported by ./experience
+        'experience/actions': './experience',
+        'experience/drivers': './experience',
+        'experience/experiences': './experience',
+        'experience/lifecycle': './experience',
+        'experience/navigation': './experience',
+        'experience/transitions': './experience',
+        'experience/triggers': './experience',
+        // intro sub-barrels → re-exported by ./intro
+        'intro/intros': './intro',
+        'intro/patterns': './intro',
+        'intro/triggers': './intro',
+        // content sub-barrels → re-exported by parent content barrel
+        'content/chrome/overlays': './content/chrome',
+        'content/widgets/interactive': './content/widgets',
+        'content/widgets/layout': './content/widgets',
+        'content/widgets/primitives': './content/widgets',
+        'content/widgets/patterns': './content/widgets',
+        'content/sections/patterns': './content/sections',
+        // interface sub-barrels
+        'interface/validation': './interface',
+        // renderer sub-barrels
+        'renderer/hooks': './renderer',
+        // driver sub-barrels
+        'experience/drivers/gsap': './experience',
+        'experience/drivers/gsap/transitions': './experience',
+        'experience/transitions/configs': './experience',
+      }
 
       const missing: string[] = []
-      for (const barrel of barrels) {
-        const folderName = barrel.split('/')[0]
-        if (INTERNAL_ONLY.includes(folderName)) continue
+      for (const barrel of allBarrels) {
+        const subpath = './' + barrel.replace('/index.ts', '')
 
-        const target = `./engine/${barrel}`
-        if (!exportTargets.has(target)) {
-          missing.push(`./${folderName} → ${target}`)
+        // Check if it has its own export
+        if (exportSubpaths.has(subpath)) continue
+
+        // Check if it's wildcard-covered (e.g., ./presets/*)
+        const wildcardMatch = [...exportSubpaths].some((sp) => {
+          if (!sp.includes('*')) return false
+          const prefix = sp.replace('/*', '/')
+          return subpath.startsWith(prefix)
+        })
+        if (wildcardMatch) continue
+
+        // Check if it's re-exported by parent
+        const folderPath = barrel.replace('/index.ts', '')
+        if (RE_EXPORTED_BY_PARENT[folderPath]) {
+          const parentSubpath = RE_EXPORTED_BY_PARENT[folderPath]
+          if (exportSubpaths.has(parentSubpath)) continue
         }
+
+        missing.push(`${subpath} → ./engine/${barrel}`)
       }
 
       expect(
         missing,
-        `Top-level barrels missing from package.json exports:\n${missing.join('\n')}\nAdd these to package.json "exports" field.`
+        `Engine barrels missing from package.json exports (add subpath or document as re-exported):\n${missing.join('\n')}`
       ).toHaveLength(0)
     })
   })
