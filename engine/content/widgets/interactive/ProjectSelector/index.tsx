@@ -48,11 +48,6 @@ const ProjectSelector = memo(forwardRef<HTMLDivElement, ProjectSelectorProps>(fu
 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
-  // Empty state
-  if (projects.length === 0) {
-    return null
-  }
-
   const handleClick = useCallback((index: number, project: ProjectSelectorItem) => {
     if (index === activeIndex && project.url && onActiveClick) {
       onActiveClick(project)
@@ -78,6 +73,11 @@ const ProjectSelector = memo(forwardRef<HTMLDivElement, ProjectSelectorProps>(fu
       onActiveClick(projects[activeIndex])
     }
   }, [orientation, activeIndex, projects, onSelect, onActiveClick])
+
+  // Empty state
+  if (projects.length === 0) {
+    return null
+  }
 
   const classNames = [
     'project-selector',
@@ -111,6 +111,7 @@ const ProjectSelector = memo(forwardRef<HTMLDivElement, ProjectSelectorProps>(fu
           >
             {/* Thumbnail */}
             <div className="project-selector__thumbnail">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={project.thumbnail}
                 alt={project.alt ?? project.title}

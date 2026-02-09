@@ -3,7 +3,7 @@
  * Validate before applying changes to state.
  */
 
-import type { ValidationResult, ConstraintViolation, EngineConstraints } from '../types'
+import type { ValidationResult, EngineConstraints } from '../types'
 import type { WidgetSchema } from '../../schema'
 import { getWidget } from '../../content/widgets/registry'
 

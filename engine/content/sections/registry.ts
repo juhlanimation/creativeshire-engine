@@ -35,7 +35,8 @@ export interface SectionPatternEntry<T = unknown> {
   /** Section metadata */
   meta: SectionMeta<T>
   /** Get factory function (lazy-loaded to avoid renderer dependencies) */
-  getFactory: () => Promise<(props: T) => SectionSchema>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getFactory: () => Promise<(props: any) => SectionSchema>
 }
 
 // =============================================================================

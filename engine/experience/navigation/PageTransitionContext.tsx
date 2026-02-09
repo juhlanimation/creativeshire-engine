@@ -9,7 +9,7 @@
  * Flow:
  * 1. PageTransitionWrapper registers its exit track on mount
  * 2. User clicks TransitionLink
- * 3. TransitionLink calls exitTimeline.play()
+ * 3. TransitionLink calls getExitTimeline().play()
  * 4. All registered tracks execute in parallel
  * 5. Promise.all waits for ALL tracks to complete
  * 6. TransitionLink navigates to new page
@@ -31,8 +31,8 @@ import { EffectTimeline } from './EffectTimeline'
 // =============================================================================
 
 export interface PageTransitionContextValue {
-  /** The exit timeline - tracks added here play before navigation */
-  exitTimeline: EffectTimeline
+  /** Get the exit timeline - tracks added here play before navigation */
+  getExitTimeline: () => EffectTimeline
 
   /** Signal that a transition is starting (updates isTransitioning) */
   startTransition: () => void
@@ -78,7 +78,7 @@ export function PageTransitionProvider({
 
   const value = useMemo<PageTransitionContextValue>(
     () => ({
-      exitTimeline: exitTimelineRef.current,
+      getExitTimeline: () => exitTimelineRef.current,
       startTransition: () => setIsTransitioning(true),
       endTransition: () => setIsTransitioning(false),
       isTransitioning,

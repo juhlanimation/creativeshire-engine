@@ -296,7 +296,6 @@ async function generateInventory(): Promise<CategoryInfo[]> {
 
   // Widgets - Patterns
   const patterns = await getFolders('content/widgets/patterns/*')
-  const patternStyles = await getFiles('content/widgets/patterns/styles/*.css')
   categories.push({
     category: 'Widgets: Patterns',
     description: 'Factory functions returning WidgetSchema',

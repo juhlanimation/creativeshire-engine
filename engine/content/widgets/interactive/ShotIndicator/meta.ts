@@ -35,7 +35,7 @@ export const meta = defineMeta<ShotIndicatorProps>({
       type: 'select',
       label: 'Position',
       default: 'top-right',
-      options: [
+      choices: [
         { value: 'top-left', label: 'Top Left' },
         { value: 'top-right', label: 'Top Right' },
         { value: 'bottom-left', label: 'Bottom Left' },

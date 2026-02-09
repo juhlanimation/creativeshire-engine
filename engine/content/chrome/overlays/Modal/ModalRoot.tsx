@@ -47,7 +47,7 @@ export default function ModalRoot() {
     // Action: open-video-modal
     // Triggered by Video widget when clicked with videoUrl
     registerAction('open-video-modal', (payload: unknown) => {
-      const { videoUrl, poster, rect, startTime, animationType, onComplete } = payload as OpenVideoModalPayload
+      const { videoUrl, rect, startTime, animationType, onComplete } = payload as OpenVideoModalPayload
 
       if (!videoUrl) {
         console.warn('open-video-modal: videoUrl is required')
@@ -60,7 +60,7 @@ export default function ModalRoot() {
       // Capture video controls for play on open complete, pause on close.
       // Both flags needed: onInit (canPlay) and onOpenComplete (animation end)
       // can fire in either order depending on network speed vs animation duration.
-      let videoControls: { play: () => void; pause: () => void } | null = null
+      let videoControls: { play: () => void; pause: () => void; suppressUI: () => void } | null = null
       let animationComplete = false
 
       // Determine animation type:

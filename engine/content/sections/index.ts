@@ -23,6 +23,7 @@ export {
   getUniqueSections,
   getRepeatableSections,
 } from './registry'
+export type { SectionPatternEntry } from './registry'
 
 // Base meta
 export { sectionBaseMeta } from './base-meta'

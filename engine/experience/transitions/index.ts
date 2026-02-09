@@ -19,6 +19,10 @@ export {
   registerTransitionConfig,
   getRegisteredTransitionConfig,
   getAllRegisteredTransitionMetas,
+  getTransitionOverride,
+  setTransitionOverride,
+  DEV_TRANSITION_PARAM,
+  findTransitionConfigIdBySchemaConfig,
 } from './registry'
 export type { TransitionConfigMeta } from './registry'
 
@@ -31,14 +35,7 @@ import { meta as fadeMeta } from './fade/meta'
 // Re-export metas for direct access
 export { fadeMeta }
 
-// Lazy registration with dynamic imports
-import { registerLazyPageTransition } from './registry'
-
-registerLazyPageTransition(fadeMeta, () =>
-  import('./fade').then((m) => m.fadePageTransition)
-)
-
-// Direct export for eager loading when needed
+// Eager export — triggers registerPageTransition() in fade/index.ts
 export { fadePageTransition } from './fade'
 
 // Compiled transition configs

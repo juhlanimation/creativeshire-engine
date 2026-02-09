@@ -36,6 +36,7 @@ const Image = memo(forwardRef<HTMLImageElement, ImageProps>(function Image(
   }), [style, aspectRatio, objectFit, objectPosition])
 
   return (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       ref={ref}
       id={id}

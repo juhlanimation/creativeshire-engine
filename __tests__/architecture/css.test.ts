@@ -13,7 +13,6 @@ import {
   getFiles,
   readFile,
   relativePath,
-  hasViewportUnits,
   hasCalcWithVar,
 } from './helpers'
 

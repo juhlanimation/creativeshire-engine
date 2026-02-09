@@ -20,6 +20,56 @@ const meta: IntroMeta = {
   description: 'Full-screen text mask that reveals content through letter cutouts, then fades away',
   icon: '🎬',
   category: 'sequence',
+  settings: {
+    text: {
+      type: 'text',
+      label: 'Mask Text',
+      default: 'HELLO',
+      description: 'Text displayed as the mask cutout',
+      bindable: true,
+    },
+    maskColor: {
+      type: 'color',
+      label: 'Mask Color',
+      default: '#000000',
+      description: 'Background color of the mask overlay',
+    },
+    fontFamily: {
+      type: 'select',
+      label: 'Text Type',
+      default: 'title',
+      description: 'Font family for the mask text',
+      choices: [
+        { value: 'title', label: 'Title Font' },
+        { value: 'paragraph', label: 'Paragraph Font' },
+        { value: 'system', label: 'System Font' },
+      ],
+    },
+    holdDuration: {
+      type: 'number',
+      label: 'Hold Duration',
+      default: 1500,
+      description: 'How long the text mask holds before fading (ms)',
+    },
+    fadeDuration: {
+      type: 'number',
+      label: 'Background Fade Duration',
+      default: 2500,
+      description: 'Duration of background fade revealing content (ms)',
+    },
+    maskFadeDuration: {
+      type: 'number',
+      label: 'Mask Fade Duration',
+      default: 2000,
+      description: 'Duration of mask overlay fade out (ms)',
+    },
+    chromeAppearDuration: {
+      type: 'number',
+      label: 'Chrome Appear Duration',
+      default: 2500,
+      description: 'Duration of header/footer appearance (ms)',
+    },
+  },
 }
 
 const config: IntroConfig = {
@@ -35,7 +85,15 @@ const config: IntroConfig = {
   },
   overlay: {
     component: 'IntroOverlay',
-    props: { text: 'HELLO' },
+    props: {
+      text: 'HELLO',
+      maskColor: 'black',
+      fontSize: '25vw',
+      fontWeight: 900,
+      letterSpacing: '-0.02em',
+      bgFadeStep: 1,
+      overlayFadeStep: 2,
+    },
   },
 }
 

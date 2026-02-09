@@ -17,7 +17,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { TransitionStack, createTask } from './TransitionStack'
+import { TransitionStack } from './TransitionStack'
 import type { TransitionTask, PageTransitionConfig } from '../experiences/types'
 
 // =============================================================================

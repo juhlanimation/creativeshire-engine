@@ -18,7 +18,7 @@
  * - Classes are added/removed dynamically (not persistent)
  */
 
-import { useCallback, type MouseEvent } from 'react'
+import { useCallback, useRef, type MouseEvent } from 'react'
 import NextLink from 'next/link'
 import { useRouter } from 'next/navigation'
 import { usePageTransition } from '../../../../experience/navigation/PageTransitionContext'
@@ -43,7 +43,7 @@ function getDevParams(): string {
   const params = new URLSearchParams(window.location.search)
   const devParams = new URLSearchParams()
 
-  const DEV_PARAM_KEYS = ['_preset', '_experience']
+  const DEV_PARAM_KEYS = ['_preset', '_experience', '_intro', '_transition']
   DEV_PARAM_KEYS.forEach((key) => {
     const value = params.get(key)
     if (value) devParams.set(key, value)
@@ -88,6 +88,11 @@ export function TransitionLink({
   const router = useRouter()
   const transitionContext = usePageTransition()
 
+  // Version counter — incremented on each click so stale async
+  // continuations (from a previous click's await) can detect they're
+  // outdated and bail before calling router.push a second time.
+  const versionRef = useRef(0)
+
   const handleClick = useCallback(
     async (e: MouseEvent<HTMLAnchorElement>) => {
       // Allow modifier keys to work normally (open in new tab)
@@ -96,6 +101,18 @@ export function TransitionLink({
       // Skip transition if disabled or user prefers reduced motion
       if (skipTransition || prefersReducedMotion()) {
         return // Let default navigation happen
+      }
+
+      // Skip transition for same-page navigation — no reason to fade
+      // to black and back when we're already on the target page.
+      // preventDefault so NextLink doesn't navigate either (would lose dev params).
+      if (typeof window !== 'undefined') {
+        const strip = (p: string) => p.length > 1 && p.endsWith('/') ? p.slice(0, -1) : p
+        const hrefPath = strip(href.split('?')[0].split('#')[0])
+        if (strip(window.location.pathname) === hrefPath) {
+          e.preventDefault()
+          return
+        }
       }
 
       // Prevent default navigation
@@ -109,7 +126,19 @@ export function TransitionLink({
         return
       }
 
-      const { exitTimeline, startTransition, endTransition } = transitionContext
+      const { getExitTimeline, startTransition, endTransition } = transitionContext
+      const exitTimeline = getExitTimeline()
+
+      // If an exit animation is already in-flight (user clicked rapidly),
+      // skip exit and navigate immediately — the new page's entry will
+      // handle the reveal.
+      if (exitTimeline.playing) {
+        router.push(targetHref)
+        return
+      }
+
+      // Stamp this click so we can detect stale continuations after await
+      const version = ++versionRef.current
 
       // Signal transition is starting
       startTransition()
@@ -121,6 +150,11 @@ export function TransitionLink({
         // No tracks registered, use duration as fallback
         await new Promise((resolve) => setTimeout(resolve, duration))
       }
+
+      // A newer click happened while we were waiting — abort this
+      // continuation to avoid a stale router.push overwriting the
+      // user's latest navigation.
+      if (versionRef.current !== version) return
 
       // Navigate to new page
       router.push(targetHref)

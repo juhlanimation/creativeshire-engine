@@ -21,6 +21,7 @@ const TextMask = memo(forwardRef<HTMLDivElement, TextMaskProps>(function TextMas
     fontWeight = 900,
     fontFamily = 'var(--font-title), system-ui, sans-serif',
     maskColor = 'black',
+    letterSpacing,
     maxWidth = 2400,
     className,
     'data-behaviour': dataBehaviour,
@@ -95,6 +96,7 @@ const TextMask = memo(forwardRef<HTMLDivElement, TextMaskProps>(function TextMas
                   fontSize,
                   fontWeight,
                   fontFamily,
+                  letterSpacing,
                 }}
               >
                 {text}

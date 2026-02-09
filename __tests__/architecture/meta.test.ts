@@ -16,6 +16,118 @@ import path from 'path'
 
 const ENGINE = path.join(process.cwd(), 'engine')
 
+/**
+ * Extract top-level setting entries from a settings block and validate
+ * that each has type, label, and default fields.
+ *
+ * Returns violations as strings in the format: "context → settings.key: missing field"
+ */
+function validateSettings(content: string, context: string): string[] {
+  const violations: string[] = []
+
+  // Find the settings: { ... } block by matching braces from 'settings:'
+  const settingsStart = content.indexOf('settings:')
+  if (settingsStart === -1) return violations
+
+  // Find the opening brace of settings
+  const braceStart = content.indexOf('{', settingsStart)
+  if (braceStart === -1) return violations
+
+  // Extract the full settings block by tracking brace depth
+  let depth = 1
+  let i = braceStart + 1
+  while (i < content.length && depth > 0) {
+    if (content[i] === '{') depth++
+    if (content[i] === '}') depth--
+    // Skip string literals to avoid false brace matches
+    if (content[i] === "'" || content[i] === '"' || content[i] === '`') {
+      const quote = content[i]
+      i++
+      while (i < content.length && content[i] !== quote) {
+        if (content[i] === '\\') i++ // skip escaped chars
+        i++
+      }
+    }
+    i++
+  }
+  const settingsBlock = content.slice(braceStart + 1, i - 1)
+
+  // Now walk through settingsBlock at depth 0 to find top-level keys
+  // A top-level key is: identifier (or quoted string) followed by : { at depth 0
+  depth = 0
+  let pos = 0
+  while (pos < settingsBlock.length) {
+    // Skip nested blocks
+    if (settingsBlock[pos] === '{') { depth++; pos++; continue }
+    if (settingsBlock[pos] === '}') { depth--; pos++; continue }
+
+    // Skip string literals
+    if (settingsBlock[pos] === "'" || settingsBlock[pos] === '"' || settingsBlock[pos] === '`') {
+      // Only skip strings at depth > 0 (inside nested objects)
+      if (depth > 0) {
+        const quote = settingsBlock[pos]
+        pos++
+        while (pos < settingsBlock.length && settingsBlock[pos] !== quote) {
+          if (settingsBlock[pos] === '\\') pos++
+          pos++
+        }
+        pos++
+        continue
+      }
+    }
+
+    // At depth 0, look for key: { pattern
+    if (depth === 0) {
+      // Match: optional quotes, key name, optional quotes, colon, optional whitespace, opening brace
+      // Handles: key: {  |  'dotted.key': {
+      const remaining = settingsBlock.slice(pos)
+      const keyMatch = remaining.match(/^(?:['"]([^'"]+)['"]|(\w+))\s*:\s*\{/)
+
+      if (keyMatch) {
+        const key = keyMatch[1] || keyMatch[2]
+
+        // Find this setting entry's body (from the { to the matching })
+        const entryBraceStart = pos + keyMatch[0].length - 1
+        let entryDepth = 1
+        let j = entryBraceStart + 1
+        while (j < settingsBlock.length && entryDepth > 0) {
+          if (settingsBlock[j] === '{') entryDepth++
+          if (settingsBlock[j] === '}') entryDepth--
+          if (settingsBlock[j] === "'" || settingsBlock[j] === '"' || settingsBlock[j] === '`') {
+            const q = settingsBlock[j]
+            j++
+            while (j < settingsBlock.length && settingsBlock[j] !== q) {
+              if (settingsBlock[j] === '\\') j++
+              j++
+            }
+          }
+          j++
+        }
+
+        const entryBody = settingsBlock.slice(entryBraceStart, j)
+
+        if (!entryBody.includes('type:')) {
+          violations.push(`${context} → settings.${key}: missing type`)
+        }
+        if (!entryBody.includes('label:')) {
+          violations.push(`${context} → settings.${key}: missing label`)
+        }
+        if (!/default\s*:/.test(entryBody)) {
+          violations.push(`${context} → settings.${key}: missing default`)
+        }
+
+        // Skip past this entry
+        pos = entryBraceStart + (j - entryBraceStart)
+        continue
+      }
+    }
+
+    pos++
+  }
+
+  return violations
+}
+
 describe('ComponentMeta Validation', () => {
   describe('Widget meta.ts files', () => {
     it('every primitive widget has meta.ts', async () => {
@@ -170,7 +282,7 @@ describe('ComponentMeta Validation', () => {
 
     it('sectionCategory is a valid value', async () => {
       const VALID_SECTION_CATEGORIES = [
-        'hero', 'about', 'project', 'contact', 'content', 'gallery', 'showcase', 'conversion'
+        'hero', 'about', 'project', 'contact', 'content', 'gallery'
       ]
 
       const metaFiles = await getFiles('content/sections/patterns/*/meta.ts')
@@ -284,33 +396,43 @@ describe('ComponentMeta Validation', () => {
   })
 
   describe('Meta structure validation', () => {
-    it('all meta.ts files export const meta', async () => {
-      const metaFiles = await getFiles('content/**/meta.ts')
+    it('all meta.ts files export a const', async () => {
+      const metaFiles = await getFiles('{content,schema}/**/meta.ts')
+      // Exclude utility files that define helper functions, not meta objects
+      const UTILITY_META_FILES = ['schema/meta.ts']
       const violations: string[] = []
 
       for (const file of metaFiles) {
+        const rel = relativePath(file)
+        if (UTILITY_META_FILES.includes(rel)) continue
+
         const content = await readFile(file)
 
-        if (!content.includes('export const meta')) {
-          violations.push(relativePath(file))
+        // Structural metas export as e.g. `export const themeMeta`, component metas as `export const meta`
+        if (!content.includes('export const ')) {
+          violations.push(rel)
         }
       }
 
-      expect(violations, `Meta files missing 'export const meta':\n${violations.join('\n')}`).toHaveLength(0)
+      expect(violations, `Meta files missing 'export const':\n${violations.join('\n')}`).toHaveLength(0)
     })
 
     it('all meta.ts files have required fields', async () => {
-      const metaFiles = await getFiles('content/**/meta.ts')
+      const metaFiles = await getFiles('{content,schema}/**/meta.ts')
+      const UTILITY_META_FILES = ['schema/meta.ts']
       const violations: string[] = []
 
       const requiredFields = ['id:', 'name:', 'description:', 'category:']
 
       for (const file of metaFiles) {
+        const rel = relativePath(file)
+        if (UTILITY_META_FILES.includes(rel)) continue
+
         const content = await readFile(file)
 
         for (const field of requiredFields) {
           if (!content.includes(field)) {
-            violations.push(`${relativePath(file)}: missing ${field}`)
+            violations.push(`${rel}: missing ${field}`)
           }
         }
       }
@@ -327,10 +449,12 @@ describe('ComponentMeta Validation', () => {
         'section',
         'region',
         'overlay',
-        'chrome' // Some may use 'chrome' instead of region/overlay
+        'chrome', // Some may use 'chrome' instead of region/overlay
+        'theme',
+        'page'
       ]
 
-      const metaFiles = await getFiles('content/**/meta.ts')
+      const metaFiles = await getFiles('{content,schema}/**/meta.ts')
       const violations: string[] = []
 
       for (const file of metaFiles) {
@@ -356,6 +480,132 @@ describe('ComponentMeta Validation', () => {
       }
 
       expect(violations).toHaveLength(0)
+    })
+  })
+
+  describe('Structural schema metas', () => {
+    const STRUCTURAL_METAS: Record<string, { file: string; barrel: string; exportName: string }> = {
+      themeMeta: {
+        file: 'schema/theme-meta.ts',
+        barrel: 'schema/index.ts',
+        exportName: 'themeMeta',
+      },
+      pageMeta: {
+        file: 'schema/page-meta.ts',
+        barrel: 'schema/index.ts',
+        exportName: 'pageMeta',
+      },
+      sectionBaseMeta: {
+        file: 'content/sections/base-meta.ts',
+        barrel: 'content/sections/index.ts',
+        exportName: 'sectionBaseMeta',
+      },
+      regionBaseMeta: {
+        file: 'content/chrome/region-base-meta.ts',
+        barrel: 'content/chrome/index.ts',
+        exportName: 'regionBaseMeta',
+      },
+      overlayBaseMeta: {
+        file: 'content/chrome/overlay-base-meta.ts',
+        barrel: 'content/chrome/index.ts',
+        exportName: 'overlayBaseMeta',
+      },
+    }
+
+    it('all structural meta files exist', async () => {
+      const missing: string[] = []
+
+      for (const [name, { file }] of Object.entries(STRUCTURAL_METAS)) {
+        const fullPath = path.join(ENGINE, file)
+        if (!(await fileExists(fullPath))) {
+          missing.push(`${name}: ${file}`)
+        }
+      }
+
+      expect(missing, `Missing structural meta files:\n${missing.join('\n')}`).toHaveLength(0)
+    })
+
+    it('all structural metas are exported from their barrel', async () => {
+      const violations: string[] = []
+
+      for (const [name, { barrel, exportName }] of Object.entries(STRUCTURAL_METAS)) {
+        const barrelPath = path.join(ENGINE, barrel)
+        const content = await readFile(barrelPath)
+
+        if (!content.includes(exportName)) {
+          violations.push(`${name} (${exportName}) not exported from ${barrel}`)
+        }
+      }
+
+      expect(violations, `Structural metas missing barrel exports:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
+    it('all structural metas use defineMeta()', async () => {
+      const violations: string[] = []
+
+      for (const [name, { file }] of Object.entries(STRUCTURAL_METAS)) {
+        const fullPath = path.join(ENGINE, file)
+        const content = await readFile(fullPath)
+
+        if (!content.includes('defineMeta')) {
+          violations.push(`${name}: ${file} does not use defineMeta()`)
+        }
+      }
+
+      expect(violations, `Structural metas not using defineMeta():\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
+    it('all structural metas have required fields (id, name, description, category)', async () => {
+      const requiredFields = ['id:', 'name:', 'description:', 'category:']
+      const violations: string[] = []
+
+      for (const [name, { file }] of Object.entries(STRUCTURAL_METAS)) {
+        const fullPath = path.join(ENGINE, file)
+        const content = await readFile(fullPath)
+
+        for (const field of requiredFields) {
+          if (!content.includes(field)) {
+            violations.push(`${name}: missing ${field}`)
+          }
+        }
+      }
+
+      expect(violations, `Structural metas missing required fields:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
+    it('all structural meta settings have type, label, and default', async () => {
+      const violations: string[] = []
+
+      for (const [name, { file }] of Object.entries(STRUCTURAL_METAS)) {
+        const fullPath = path.join(ENGINE, file)
+        const content = await readFile(fullPath)
+        violations.push(...validateSettings(content, name))
+      }
+
+      expect(violations, `Structural meta settings missing type/label/default:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+  })
+
+  describe('Settings structure validation', () => {
+    it('all meta.ts settings entries have type, label, and default', async () => {
+      // Glob all meta.ts files across the engine
+      const contentMetas = await getFiles('{content,schema}/**/meta.ts')
+      const transitionMetas = await getFiles('experience/transitions/*/meta.ts')
+      const allMetas = [...contentMetas, ...transitionMetas]
+
+      const violations: string[] = []
+
+      for (const file of allMetas) {
+        const content = await readFile(file)
+        const rel = relativePath(file)
+
+        // Skip meta.ts files that are utility/type definitions (no settings block)
+        if (!content.includes('settings:')) continue
+
+        violations.push(...validateSettings(content, rel))
+      }
+
+      expect(violations, `Meta settings missing type/label/default:\n${violations.join('\n')}`).toHaveLength(0)
     })
   })
 })

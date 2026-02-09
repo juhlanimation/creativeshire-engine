@@ -28,6 +28,7 @@ function LogoImage({
   gap: number
 }) {
   const img = (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       className="logo-marquee__logo"
       src={logo.src}
@@ -45,6 +46,7 @@ function LogoImage({
         rel="noopener noreferrer"
         style={{ marginRight: gap }}
       >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className="logo-marquee__logo"
           src={logo.src}

@@ -3,9 +3,9 @@
  * Tests store creation, state management, controller operations, and events.
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { createEngineStore, createSnapshot } from '../../engine/interface/EngineStore'
-import type { EngineInput, EngineEvents, EngineState } from '../../engine/interface/types'
+import type { EngineInput } from '../../engine/interface/types'
 import type { SiteSchema, PageSchema, SectionSchema } from '../../engine/schema'
 
 // =============================================================================

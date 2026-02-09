@@ -90,7 +90,7 @@ export const useModalStore = create<ModalState>((set, get) => ({
   },
 
   setTransitionPhase: (phase) => {
-    set((state) => {
+    set(() => {
       // When fully closed, clear modal data
       if (phase === 'closed') {
         return {

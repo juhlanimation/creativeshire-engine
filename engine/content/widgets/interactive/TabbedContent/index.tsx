@@ -64,11 +64,6 @@ const TabbedContent = memo(forwardRef<HTMLDivElement, TabbedContentProps>(functi
     defaultTab ?? tabs[0]?.id ?? ''
   )
 
-  // Empty state
-  if (tabs.length === 0) {
-    return null
-  }
-
   // Support both controlled and uncontrolled modes
   const activeTab = controlledActiveTab ?? internalActiveTab
   const activeIndex = tabs.findIndex(t => t.id === activeTab)
@@ -112,6 +107,11 @@ const TabbedContent = memo(forwardRef<HTMLDivElement, TabbedContentProps>(functi
       handleTabClick(tabs[newIndex].id)
     }
   }, [activeIndex, tabs, handleTabClick])
+
+  // Empty state
+  if (tabs.length === 0) {
+    return null
+  }
 
   const classNames = [
     'tabbed-content',

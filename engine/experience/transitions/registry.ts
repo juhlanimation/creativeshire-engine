@@ -152,3 +152,50 @@ export function getRegisteredTransitionConfig(id: string): TransitionConfig | un
 export function getAllRegisteredTransitionMetas(): TransitionConfigMeta[] {
   return Array.from(transitionConfigRegistry.values()).map((entry) => entry.meta)
 }
+
+/**
+ * Find which compiled transition config matches a given TransitionConfig (by transition ID).
+ * Returns the compiled config ID, or undefined if no match.
+ */
+export function findTransitionConfigIdBySchemaConfig(config: TransitionConfig): string | undefined {
+  for (const [id, entry] of transitionConfigRegistry) {
+    if (entry.config.id === config.id) {
+      return id
+    }
+  }
+  return undefined
+}
+
+// =============================================================================
+// URL Override Helpers (Dev Mode)
+// =============================================================================
+
+/** Query param name for transition override */
+export const DEV_TRANSITION_PARAM = '_transition'
+
+/**
+ * Get current transition override from URL.
+ * Returns config ID, 'none' to disable, or null for no override.
+ */
+export function getTransitionOverride(): string | null {
+  if (typeof window === 'undefined') return null
+  const params = new URLSearchParams(window.location.search)
+  return params.get(DEV_TRANSITION_PARAM)
+}
+
+/**
+ * Set transition override in URL and reload.
+ * Transitions need a fresh setup, so a reload is required.
+ */
+export function setTransitionOverride(id: string | null): void {
+  if (typeof window === 'undefined') return
+
+  const url = new URL(window.location.href)
+  if (id) {
+    url.searchParams.set(DEV_TRANSITION_PARAM, id)
+  } else {
+    url.searchParams.delete(DEV_TRANSITION_PARAM)
+  }
+
+  window.location.href = url.toString()
+}

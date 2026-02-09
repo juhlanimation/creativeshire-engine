@@ -176,7 +176,6 @@ export function useWheelNavigation(hookOptions: WheelNavigationOptions): void {
       )
 
       const scrollingDown = event.deltaY > 0
-      const scrollingUp = event.deltaY < 0
       const scrollDirection = scrollingDown ? 'down' : 'up'
 
       // Check if the section (or any element within it) can scroll in this direction

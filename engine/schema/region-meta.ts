@@ -58,6 +58,7 @@ export const regionMeta = defineMeta<Record<string, unknown>>({
  * Returns settings config for a RegionSchema.
  * @param name - Region name (header/footer/sidebar) for platform context
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- param reserved for future per-region settings
 export function getRegionSettings(_name?: string) {
   return regionMeta.settings!
 }

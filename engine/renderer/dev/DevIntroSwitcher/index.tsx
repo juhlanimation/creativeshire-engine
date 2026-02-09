@@ -11,7 +11,7 @@
  * sequences that run on page load.
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
 import {
   getAllRegisteredIntroMetas,
@@ -48,20 +48,21 @@ function DevIntroSwitcherInner({
   currentIntroId,
   position,
 }: DevIntroSwitcherProps) {
-  const [mounted, setMounted] = useState(false)
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  )
   const [isOpen, setIsOpen] = useState(false)
-  const [override, setOverride] = useState<string | null>(null)
+  const [override] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null
+    return getIntroOverride()
+  })
 
   const { siteContainer } = useSiteContainer()
 
   // Get all available compiled intros
   const intros = useMemo(() => getAllRegisteredIntroMetas(), [])
-
-  // Read initial override from URL
-  useEffect(() => {
-    setMounted(true)
-    setOverride(getIntroOverride())
-  }, [])
 
   // Handle selection - triggers page reload
   const handleSelect = useCallback((id: string | null) => {

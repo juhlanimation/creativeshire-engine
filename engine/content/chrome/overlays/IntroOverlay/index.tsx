@@ -29,6 +29,7 @@ const IntroOverlay = memo(function IntroOverlay({
   fontSize = '25vw',
   fontWeight = 900,
   fontFamily,
+  letterSpacing,
   bgFadeStep = 1,
   overlayFadeStep = 2,
 }: IntroOverlayProps) {
@@ -101,6 +102,7 @@ const IntroOverlay = memo(function IntroOverlay({
         fontSize={fontSize}
         fontWeight={fontWeight}
         fontFamily={fontFamily}
+        letterSpacing={letterSpacing}
       />
     </div>
   )

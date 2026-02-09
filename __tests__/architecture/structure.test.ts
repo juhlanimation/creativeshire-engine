@@ -52,8 +52,10 @@
 import { describe, it, expect } from 'vitest'
 import { getFiles, getFolders, readFile, relativePath, fileExists } from './helpers'
 import path from 'path'
+import fs from 'fs/promises'
 
-const ENGINE = path.join(process.cwd(), 'engine')
+const ROOT = process.cwd()
+const ENGINE = path.join(ROOT, 'engine')
 
 describe('Component Structure Validation', () => {
   describe('Primitives structure', () => {
@@ -329,8 +331,6 @@ describe('Component Structure Validation', () => {
   })
 
   describe('Effect structure', () => {
-    const EFFECT_MECHANISMS = ['transform', 'mask', 'emphasis', 'page', 'reveal']
-
     /**
      * Per effect.spec.md: Effects are pure CSS. The main barrel is index.css.
      * Mechanism subfolders (transform/, mask/) are imported via the root index.css,
@@ -867,6 +867,26 @@ describe('Component Structure Validation', () => {
       }
 
       expect(missing, `Presets missing chrome/index.ts:\\n${missing.join('\\n')}`).toHaveLength(0)
+    })
+  })
+
+  describe('Package subpath exports', () => {
+    it('all package.json export paths resolve to existing files', async () => {
+      const pkgJson = JSON.parse(await fs.readFile(path.join(ROOT, 'package.json'), 'utf-8'))
+      const exports = pkgJson.exports as Record<string, string>
+      const violations: string[] = []
+
+      for (const [exportPath, target] of Object.entries(exports)) {
+        // Skip wildcard exports (e.g., ./presets/*) — can't resolve concrete paths
+        if (exportPath.includes('*')) continue
+
+        const resolvedPath = path.join(ROOT, target)
+        if (!(await fileExists(resolvedPath))) {
+          violations.push(`"${exportPath}": "${target}" → file not found`)
+        }
+      }
+
+      expect(violations, `Package exports pointing to missing files:\n${violations.join('\n')}`).toHaveLength(0)
     })
   })
 })

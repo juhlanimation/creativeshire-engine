@@ -153,6 +153,7 @@ const Thumbnail = memo(function Thumbnail({
       data-project-id={project.id}
     >
       {/* Poster image */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={project.thumbnailSrc}
         alt={project.thumbnailAlt}

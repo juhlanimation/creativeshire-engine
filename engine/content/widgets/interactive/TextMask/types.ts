@@ -16,6 +16,8 @@ export interface TextMaskProps extends WidgetBaseProps {
   fontFamily?: string
   /** Mask background color (default: 'black') */
   maskColor?: string
+  /** Letter spacing (CSS value, e.g. '-0.02em') */
+  letterSpacing?: string
   /** Max SVG width in px (default: 2400) */
   maxWidth?: number
 }

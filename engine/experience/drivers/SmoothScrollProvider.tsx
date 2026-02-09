@@ -209,7 +209,6 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
     container.addEventListener('click', handleAnchorClick)
 
     // Safe: one-time signal that setup is complete
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsReady(true)
 
     return () => {
@@ -218,7 +217,7 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
       container.removeEventListener('click', handleAnchorClick)
       if (rafId) cancelAnimationFrame(rafId)
     }
-    // Note: containerRef excluded from deps - refs are stable by design
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- containerRef is a stable ref
   }, [isContained, enabledValue, smoothValue])
 
   // Fullpage mode: Use GSAP ScrollSmoother
@@ -226,7 +225,6 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
     // Skip if contained mode or disabled
     if (isContained || !enabledValue) {
       // Safe: one-time signal when disabled (no setup needed)
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (!isContained) setIsReady(true)
       return
     }
@@ -347,7 +345,6 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
 
   // Memoize context value
   // Note: React compiler can't optimize closures over refs, but code is correct
-  // eslint-disable-next-line
   const contextValue = useMemo<SmoothScrollContextValue>(() => ({
     getSmoother: () => smootherRef.current,
     stop: () => smootherRef.current?.paused(true),
@@ -374,7 +371,7 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
     },
     getSmoothValue: () => smoothValueRef.current,
     isEnabled: () => enabledValue,
-    // Note: containerRef excluded - refs are stable and accessed via closure
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- containerRef/smootherRef are stable refs
   }), [isReady, enabledValue, isContained])
 
   // If disabled, render children directly

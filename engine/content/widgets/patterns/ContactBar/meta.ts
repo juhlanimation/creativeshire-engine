@@ -42,7 +42,7 @@ export const meta = defineMeta<ContactBarConfig>({
       type: 'select',
       label: 'Text Color',
       default: 'light',
-      options: [
+      choices: [
         { value: 'light', label: 'Light' },
         { value: 'dark', label: 'Dark' },
       ],
@@ -52,7 +52,7 @@ export const meta = defineMeta<ContactBarConfig>({
       type: 'select',
       label: 'Alignment',
       default: 'end',
-      options: [
+      choices: [
         { value: 'start', label: 'Left' },
         { value: 'center', label: 'Center' },
         { value: 'end', label: 'Right' },

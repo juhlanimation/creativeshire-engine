@@ -40,5 +40,33 @@ export const meta = defineMeta<IntroOverlayProps>({
       default: 900,
       description: 'Font weight for mask text',
     },
+    fontFamily: {
+      type: 'text',
+      label: 'Font Family',
+      default: 'var(--font-title)',
+      description: 'Font family for mask text (CSS value)',
+      advanced: true,
+    },
+    letterSpacing: {
+      type: 'text',
+      label: 'Letter Spacing',
+      default: '',
+      description: 'Letter spacing (CSS value, e.g. -0.02em)',
+      advanced: true,
+    },
+    bgFadeStep: {
+      type: 'number',
+      label: 'Background Fade Step',
+      default: 1,
+      description: 'Step at which background fades, revealing content through text',
+      advanced: true,
+    },
+    overlayFadeStep: {
+      type: 'number',
+      label: 'Overlay Fade Step',
+      default: 2,
+      description: 'Step at which the overlay mask fades out',
+      advanced: true,
+    },
   },
 })

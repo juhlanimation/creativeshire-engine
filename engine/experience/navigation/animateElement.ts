@@ -28,6 +28,12 @@ export interface AnimateElementOptions {
   timeout?: number
   /** Whether to remove the class after animation (default: true) */
   removeClassOnComplete?: boolean
+  /**
+   * Element to listen for animationend on.
+   * Defaults to the element the class is applied to.
+   * Use when the CSS animation runs on a child element (e.g., overlay inside wrapper).
+   */
+  animationTarget?: HTMLElement | null
 }
 
 // =============================================================================
@@ -57,14 +63,17 @@ export function animateElement(
       return
     }
 
-    const { className, timeout = 2000, removeClassOnComplete = true } = options
+    const { className, timeout = 2000, removeClassOnComplete = true, animationTarget } = options
+
+    // Listen on animationTarget if provided (e.g., child overlay), else on element itself
+    const listenEl = animationTarget ?? element
 
     let resolved = false
 
     const cleanup = () => {
       if (resolved) return
       resolved = true
-      element.removeEventListener('animationend', handleAnimationEnd)
+      listenEl.removeEventListener('animationend', handleAnimationEnd)
       if (removeClassOnComplete) {
         element.classList.remove(className)
       }
@@ -72,14 +81,13 @@ export function animateElement(
     }
 
     const handleAnimationEnd = (e: AnimationEvent) => {
-      // Only handle events from this element (not bubbled from children)
-      if (e.target === element) {
+      if (e.target === listenEl) {
         cleanup()
       }
     }
 
-    // Listen for animation end
-    element.addEventListener('animationend', handleAnimationEnd)
+    // Listen for animation end on the target element
+    listenEl.addEventListener('animationend', handleAnimationEnd)
 
     // Add class to trigger animation
     element.classList.add(className)

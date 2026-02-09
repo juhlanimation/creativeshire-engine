@@ -2,6 +2,7 @@
 
 import React, { memo, forwardRef, useState, useRef, useCallback, useEffect } from 'react'
 import type { VideoCompareProps } from './types'
+import { useContainer } from '../../../../interface/ContainerContext'
 import './styles.css'
 
 const VideoCompare = memo(forwardRef<HTMLDivElement, VideoCompareProps>(function VideoCompare(
@@ -17,6 +18,7 @@ const VideoCompare = memo(forwardRef<HTMLDivElement, VideoCompareProps>(function
   },
   ref
 ) {
+  const { mode, containerRef: engineContainerRef } = useContainer()
   const [position, setPosition] = useState(initialPosition)
   const [isDragging, setIsDragging] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -73,18 +75,22 @@ const VideoCompare = memo(forwardRef<HTMLDivElement, VideoCompareProps>(function
     const handleTouchMove = (e: TouchEvent) => updatePosition(e.touches[0].clientX)
     const handleEnd = () => setIsDragging(false)
 
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleEnd)
-    document.addEventListener('touchmove', handleTouchMove)
-    document.addEventListener('touchend', handleEnd)
+    const target = mode === 'contained' && engineContainerRef?.current
+      ? engineContainerRef.current
+      : document
+
+    target.addEventListener('mousemove', handleMouseMove as EventListener)
+    target.addEventListener('mouseup', handleEnd as EventListener)
+    target.addEventListener('touchmove', handleTouchMove as EventListener)
+    target.addEventListener('touchend', handleEnd as EventListener)
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleEnd)
-      document.removeEventListener('touchmove', handleTouchMove)
-      document.removeEventListener('touchend', handleEnd)
+      target.removeEventListener('mousemove', handleMouseMove as EventListener)
+      target.removeEventListener('mouseup', handleEnd as EventListener)
+      target.removeEventListener('touchmove', handleTouchMove as EventListener)
+      target.removeEventListener('touchend', handleEnd as EventListener)
     }
-  }, [isDragging, updatePosition])
+  }, [isDragging, updatePosition, mode, engineContainerRef])
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'ArrowLeft') {

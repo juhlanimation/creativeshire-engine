@@ -16,6 +16,8 @@
 
 import { useMemo, useEffect, useSyncExternalStore, type ReactNode, type ComponentType } from 'react'
 import { createStore, type StoreApi } from 'zustand'
+import { useContainer } from '../interface/ContainerContext'
+import { useSiteContainer } from '../renderer/SiteContainerContext'
 import { IntroContext, type IntroStore } from './IntroContext'
 import { IntroTriggerInitializer } from './IntroTriggerInitializer'
 import type { IntroPattern, IntroPhase, IntroState } from './types'
@@ -68,7 +70,7 @@ function createIntroStore(pattern: IntroPattern | null, lockScroll = true): Stor
     ...initialState,
 
     setPhase: (phase: IntroPhase) =>
-      set((state) => {
+      set(() => {
         // Update related state based on phase
         if (phase === 'revealing') {
           return { phase, isScrollLocked: false }
@@ -109,9 +111,6 @@ function createIntroStore(pattern: IntroPattern | null, lockScroll = true): Stor
       }),
   }))
 }
-
-// SSR-safe subscription
-const subscribeNoop = () => () => {}
 
 /**
  * IntroContentGate - wraps children and controls content opacity during intro.
@@ -184,34 +183,49 @@ export function IntroProvider({
   // Resolve lockScroll setting (default: true)
   const lockScroll = (settings?.lockScroll as boolean) ?? true
 
+  // Container-aware scroll locking
+  const { mode, containerRef } = useContainer()
+  const { siteContainer } = useSiteContainer()
+
   // Create store (memoized)
   const store = useMemo(() => createIntroStore(pattern, lockScroll), [pattern, lockScroll])
 
-  // Apply scroll locking
+  // Apply scroll locking (container-aware)
+  // In contained mode, use containerRef; in fullpage mode, use siteContainer
+  // Never use document.body - breaks iframe/container support
   useEffect(() => {
-    if (typeof document === 'undefined') return
+    // Resolve scroll target: container element in contained mode, site container in fullpage
+    const resolveScrollTarget = (): HTMLElement | null => {
+      if (mode === 'contained' && containerRef?.current) {
+        return containerRef.current
+      }
+      return siteContainer
+    }
+
+    const scrollTarget = resolveScrollTarget()
+
+    // Skip if no scroll target yet (SSR or before mount)
+    if (!scrollTarget) return
 
     // Subscribe to scroll lock changes
     const unsubscribe = store.subscribe((state) => {
-      if (state.isScrollLocked) {
-        document.body.style.overflow = 'hidden'
-      } else {
-        document.body.style.overflow = ''
+      const target = resolveScrollTarget()
+      if (target) {
+        target.style.overflow = state.isScrollLocked ? 'hidden' : ''
       }
     })
 
     // Apply initial state
-    const state = store.getState()
-    if (state.isScrollLocked) {
-      document.body.style.overflow = 'hidden'
+    if (store.getState().isScrollLocked) {
+      scrollTarget.style.overflow = 'hidden'
     }
 
     // Cleanup
     return () => {
       unsubscribe()
-      document.body.style.overflow = ''
+      scrollTarget.style.overflow = ''
     }
-  }, [store])
+  }, [store, mode, containerRef, siteContainer])
 
   // If no pattern, render children directly (no context overhead)
   if (!pattern) {

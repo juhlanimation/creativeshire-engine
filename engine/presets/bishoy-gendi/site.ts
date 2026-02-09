@@ -41,6 +41,6 @@ export const introConfig: IntroConfig = {
   },
   overlay: {
     component: 'IntroOverlay',
-    props: { text: '{{ content.intro.maskText }}' },
+    props: { text: '{{ content.intro.maskText }}', letterSpacing: '-0.02em' },
   },
 }

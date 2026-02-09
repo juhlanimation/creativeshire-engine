@@ -19,7 +19,7 @@
  * ```
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
 import {
   getAllPresetMetas,
@@ -56,20 +56,21 @@ function DevPresetSwitcherInner({
   currentPresetId,
   position,
 }: DevPresetSwitcherProps) {
-  const [mounted, setMounted] = useState(false)
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  )
   const [isOpen, setIsOpen] = useState(false)
-  const [override, setOverride] = useState<string | null>(null)
+  const [override] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null
+    return getPresetOverride()
+  })
 
   const { siteContainer } = useSiteContainer()
 
   // Get all available presets
   const presets = useMemo(() => getAllPresetMetas(), [])
-
-  // Read initial override from URL
-  useEffect(() => {
-    setMounted(true)
-    setOverride(getPresetOverride())
-  }, [])
 
   // Handle selection - triggers page reload
   const handleSelect = useCallback((id: string | null) => {

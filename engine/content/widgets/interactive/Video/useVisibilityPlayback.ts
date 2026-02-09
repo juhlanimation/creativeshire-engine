@@ -71,5 +71,5 @@ export function useVisibilityPlayback(
 
     observer.observe(video)
     return () => observer.disconnect()
-  }, [videoRef, enabled, threshold, lifecycle?.isActive])
+  }, [videoRef, enabled, threshold, lifecycle, lifecycle?.isActive])
 }

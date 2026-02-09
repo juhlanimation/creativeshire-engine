@@ -22,7 +22,7 @@
  * ```
  */
 
-import { type ReactNode, type CSSProperties, useRef, useEffect } from 'react'
+import { type ReactNode, type CSSProperties, useRef, useEffect, useLayoutEffect } from 'react'
 import { usePageTransition } from './PageTransitionContext'
 import { animateElement } from './animateElement'
 import './page-transition.css'
@@ -38,6 +38,8 @@ export interface PageTransitionWrapperProps {
   enabled?: boolean
   /** Transition duration in milliseconds (default: 400) */
   duration?: number
+  /** Page identifier — retriggers entry animation when it changes */
+  pageId?: string
   /** Additional className for the wrapper */
   className?: string
   /** Additional styles for the wrapper */
@@ -60,12 +62,13 @@ const TRACK_ID = 'page-fade-out'
  * Wraps page content with fade transition support.
  *
  * Entry: Automatically fades in via CSS animation on mount.
- * Exit: Registers track on exitTimeline; plays when TransitionLink is clicked.
+ * Exit: Registers track on exit timeline; plays when TransitionLink is clicked.
  */
 export function PageTransitionWrapper({
   children,
   enabled = true,
   duration = 400,
+  pageId,
   className,
   style,
 }: PageTransitionWrapperProps) {
@@ -76,16 +79,25 @@ export function PageTransitionWrapper({
   useEffect(() => {
     if (!enabled || !transitionContext) return
 
-    const { exitTimeline } = transitionContext
+    const exitTimeline = transitionContext.getExitTimeline()
     const animationDuration = duration + 100 // Add buffer for safety
 
-    // Register our exit animation as a track
-    exitTimeline.addTrack(TRACK_ID, () =>
-      animateElement(ref.current, {
+    // Register our exit animation as a track.
+    // --exiting wins over --entering via CSS source order, so the exit
+    // animation plays from 0→1 even while --entering fill holds at 0.
+    // removeClassOnComplete: false keeps --exiting after animation so the
+    // overlay stays opaque during navigation (prevents blink from --entering
+    // fill snapping back to 0).
+    exitTimeline.addTrack(TRACK_ID, () => {
+      const overlay = ref.current?.querySelector('.page-transition__overlay') as HTMLElement | null
+
+      return animateElement(ref.current, {
         className: EXIT_CLASS,
         timeout: animationDuration,
+        removeClassOnComplete: false,
+        animationTarget: overlay,
       })
-    )
+    })
 
     // Cleanup: remove track when unmounting
     return () => {
@@ -93,28 +105,47 @@ export function PageTransitionWrapper({
     }
   }, [enabled, transitionContext, duration])
 
-  // Play entry animation on mount - wait for content to be painted first
-  useEffect(() => {
+  // Play entry animation on mount and when page changes.
+  // pageId triggers re-entry without remounting the wrapper, so the exit
+  // animation runs to completion on the same element before we reveal.
+  //
+  // useLayoutEffect (not useEffect) so stale classes are cleared synchronously
+  // before the browser paints. Without this, there's a single-frame blink where
+  // the old --entering fill (opacity 0) is visible with new page content.
+  useLayoutEffect(() => {
     if (!enabled || !ref.current) return
 
     const element = ref.current
+    const overlay = element.querySelector('.page-transition__overlay') as HTMLElement | null
+
+    // Clear stale transition classes from previous page.
+    // After exit: --exiting fill holds opacity 1. Removing it + --entering
+    // falls back to --enabled base (opacity 1). No visual change.
+    // Runs before paint → no blink.
+    element.classList.remove(EXIT_CLASS, ENTRY_CLASS)
 
     // Double requestAnimationFrame ensures content is painted before we reveal it:
     // 1st RAF: schedules before next paint
     // 2nd RAF: schedules after that paint completes
     // By the time 2nd RAF fires, the page content has been rendered and painted
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        // Add entry class to trigger fade-in
-        // Keep class after animation so `forwards` maintains overlay at opacity 0
+    let raf2: number
+
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
         animateElement(element, {
           className: ENTRY_CLASS,
           timeout: duration + 100,
           removeClassOnComplete: false,
+          animationTarget: overlay,
         })
       })
     })
-  }, [enabled, duration])
+
+    return () => {
+      cancelAnimationFrame(raf1)
+      cancelAnimationFrame(raf2)
+    }
+  }, [enabled, duration, pageId])
 
   const wrapperStyle: CSSProperties = {
     '--page-transition-duration': `${duration}ms`,

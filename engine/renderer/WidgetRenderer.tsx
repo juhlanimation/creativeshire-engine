@@ -152,11 +152,12 @@ export function WidgetRenderer({
   // because JSX compiles to { ...props, children: undefined }.
   const rendered = (
     <ErrorBoundary widgetType={widget.type}>
-      {/* eslint-disable-next-line react-hooks/static-components -- Component from registry is stable */}
+      {/* eslint-disable react-hooks/static-components -- getWidget returns stable refs from registry Map */}
       {children
         ? <Component {...componentProps}>{children}</Component>
         : <Component {...componentProps} />
       }
+      {/* eslint-enable react-hooks/static-components */}
     </ErrorBoundary>
   )
 

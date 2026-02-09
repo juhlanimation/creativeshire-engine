@@ -119,8 +119,14 @@ export {
   registerLazyPageTransition,
   ensurePageTransitionsRegistered,
   fadePageTransition,
+  getTransitionOverride,
+  setTransitionOverride,
+  DEV_TRANSITION_PARAM,
+  findTransitionConfigIdBySchemaConfig,
+  getRegisteredTransitionConfig,
+  getAllRegisteredTransitionMetas,
 } from './transitions'
-export type { PageTransition, PageTransitionMeta, PageTransitionCategory } from './transitions'
+export type { PageTransition, PageTransitionMeta, PageTransitionCategory, TransitionConfigMeta } from './transitions'
 
 // State types
 export type {

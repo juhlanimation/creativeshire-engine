@@ -202,6 +202,7 @@ export function useGsapReveal({
         })
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- getViewportHeight/getViewportWidth are stable refs from useContainer
   }, [revealed, type, transition, duration, ease, sourceRect, sequenceContentFade, contentFadeDuration, onComplete, onReverseComplete])
 
   // Cleanup on unmount

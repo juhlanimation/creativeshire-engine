@@ -75,6 +75,7 @@ export const overlayMeta = defineMeta<Record<string, unknown>>({
  * Returns settings config for an OverlaySchema.
  * @param name - Overlay name for platform context
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- param reserved for future per-overlay settings
 export function getOverlaySettings(_name?: string) {
   return overlayMeta.settings!
 }

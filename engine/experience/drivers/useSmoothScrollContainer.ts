@@ -171,7 +171,7 @@ export function useSmoothScrollContainer(
       const container = containerRef.current
       if (!container) return true
 
-      const { scrollTop, scrollHeight, clientHeight } = container
+      const { scrollHeight, clientHeight } = container
       const maxScroll = scrollHeight - clientHeight
 
       // Not scrollable at all

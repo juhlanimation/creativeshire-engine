@@ -42,7 +42,8 @@ export function hasCalcWithVar(content: string): boolean {
   if (!matches) return false
 
   // Check each match for violations
-  for (const match of matches) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  for (const _ of matches) {
     // If the calc() only contains var() and nothing else, it's a violation
     const calcExpressions = content.match(/calc\s*\([^)]+var\([^)]+\)[^)]*\)/g)
     if (calcExpressions) {

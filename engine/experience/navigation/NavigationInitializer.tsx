@@ -9,7 +9,6 @@ import { useEffect } from 'react'
 import type { StoreApi } from 'zustand'
 import type {
   NavigationConfig,
-  NavigationInputOptions,
   NavigableExperienceState,
 } from '../experiences/types'
 import { useContainer } from '../../interface/ContainerContext'

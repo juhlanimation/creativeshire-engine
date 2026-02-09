@@ -152,15 +152,11 @@ export function hasCalcWithVar(content: string): boolean {
   if (!matches) return false
 
   // Filter out false positives where calc contains operations
-  for (const match of matches) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  for (const _match of matches) {
     // Check if there's an operator AFTER the var() inside the calc()
     // e.g., calc(var(--x) * 1px) - the * is after var()
     // We need to check the full calc expression, not just this match
-    const fullCalcMatch = content.match(new RegExp(
-      match.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').slice(0, -1) + '[^)]*\\)',
-      'g'
-    ))
-
     // Simple check: if the calc() only contains var() and nothing else, it's a violation
     // calc( var(--x) ) with no operators = bad
     // calc( var(--x) * 1px ) = good

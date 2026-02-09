@@ -10,7 +10,6 @@ import {
   parseVersion,
   compareVersions,
   versionToString,
-  type EngineVersion,
 } from '../schema/version'
 
 // =============================================================================

@@ -79,7 +79,7 @@ const introChromeReveal: Behaviour = {
       type: 'select',
       label: 'Chrome Edge',
       default: 'top',
-      options: [
+      choices: [
         { value: 'top', label: 'Top (Header)' },
         { value: 'bottom', label: 'Bottom (Footer)' }
       ]

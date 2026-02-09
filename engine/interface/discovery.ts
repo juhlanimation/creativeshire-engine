@@ -3,7 +3,7 @@
  * Platform queries this to populate the "Add Section" dropdown.
  */
 
-import type { SectionSchema, SectionCategory, SectionMeta, SettingConfig } from '../schema'
+import type { SectionSchema, SectionCategory, SettingConfig } from '../schema'
 import { sectionRegistry, getAllSectionMetas } from '../content/sections/registry'
 
 // =============================================================================

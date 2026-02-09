@@ -396,7 +396,8 @@ export function expandRepeater(
     }
 
     // Create a copy of the widget without __repeat
-    const { __repeat: _, ...widgetWithoutRepeat } = widget
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- destructure to exclude __repeat
+    const { __repeat: _repeat, ...widgetWithoutRepeat } = widget
 
     // Resolve all bindings with item context
     const resolvedWidget = resolveBindings(widgetWithoutRepeat, content, itemContext) as WidgetSchema

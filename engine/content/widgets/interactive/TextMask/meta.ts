@@ -48,6 +48,13 @@ export const meta = defineMeta<TextMaskProps>({
       default: '#000000',
       description: 'Background color of the mask fill',
     },
+    letterSpacing: {
+      type: 'text',
+      label: 'Letter Spacing',
+      default: '',
+      description: 'Letter spacing (CSS value, e.g. -0.02em)',
+      advanced: true,
+    },
     maxWidth: {
       type: 'number',
       label: 'Max Width',

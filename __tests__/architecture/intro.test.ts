@@ -495,7 +495,8 @@ describe('Intro Pattern Meta Files', () => {
       const settingMatches = content.match(/\w+:\s*\{[^}]*type:/g)
 
       if (settingMatches) {
-        for (const match of settingMatches) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        for (const _ of settingMatches) {
           // Check for label and default in the broader context
           if (!content.includes('label:')) {
             violations.push(`${relativePath(file)}: settings missing label`)

@@ -8,7 +8,6 @@
 
 'use client'
 
-import { WidgetRenderer } from '../../../../renderer'
 import type { HeroRolesProps } from './types'
 
 export default function HeroRoles({

@@ -154,6 +154,8 @@ export interface IntroMeta {
   icon?: string
   /** Category for grouping in CMS */
   category?: IntroCategory
+  /** CMS-configurable settings for this intro */
+  settings?: SettingsConfig<Record<string, unknown>>
 }
 
 // =============================================================================

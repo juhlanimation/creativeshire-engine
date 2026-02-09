@@ -21,7 +21,6 @@ const GalleryThumbnail = memo(function GalleryThumbnail({
   project,
   isExpanded = false,
   onExpand,
-  onCollapse,
   expandedWidth = '32rem',
   transitionDuration = 400,
   className,
@@ -94,6 +93,7 @@ const GalleryThumbnail = memo(function GalleryThumbnail({
       {/* Media container - thumbnail/video */}
       <div className="gallery-thumbnail__media">
         {/* Poster image - always present */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={project.thumbnailSrc}
           alt={project.thumbnailAlt}

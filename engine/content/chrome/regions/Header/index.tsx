@@ -6,7 +6,6 @@
  */
 
 import React, { memo, forwardRef, type CSSProperties } from 'react'
-import Link from '../../../widgets/primitives/Link'
 import { TransitionLink } from '../../../widgets/interactive/TransitionLink'
 import type { HeaderProps } from './types'
 import './styles.css'
@@ -51,6 +50,7 @@ const Header = memo(forwardRef<HTMLElement, HeaderProps>(function Header(
       {/* Brand section (logo + title) */}
       <div className="header-chrome__brand">
         {logo && (
+          // eslint-disable-next-line @next/next/no-img-element -- Engine library uses native img
           <img
             src={logo}
             alt=""

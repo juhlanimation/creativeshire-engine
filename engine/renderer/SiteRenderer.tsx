@@ -35,7 +35,13 @@ import {
   PageTransitionProvider,
 } from '../experience/navigation'
 import type { NavigableExperienceState, PageTransitionConfig } from '../experience/experiences/types'
-import { getPageTransition, ensurePageTransitionsRegistered } from '../experience/transitions'
+import {
+  getPageTransition,
+  ensurePageTransitionsRegistered,
+  getTransitionOverride,
+  getRegisteredTransitionConfig,
+  findTransitionConfigIdBySchemaConfig,
+} from '../experience/transitions'
 import type { TransitionConfig } from '../schema/transition'
 import { useScrollIndicatorFade } from './hooks'
 import { PageRenderer } from './PageRenderer'
@@ -55,6 +61,7 @@ import {
 } from './dev/DevExperienceSwitcher'
 import { DevPresetSwitcher } from './dev/DevPresetSwitcher'
 import { DevIntroSwitcher } from './dev/DevIntroSwitcher'
+import { DevTransitionSwitcher } from './dev/DevTransitionSwitcher'
 import { ensurePresetsRegistered } from '../presets'
 
 // Intro system
@@ -197,23 +204,22 @@ function IntroScrollLock(): ReactNode {
 function DevToolsContainer({
   schemaExperienceId,
   schemaIntroId,
+  schemaTransitionId,
   presetId,
 }: {
   schemaExperienceId: string
   schemaIntroId: string
+  schemaTransitionId: string
   presetId: string
 }): ReactNode {
-  const [shouldShow, setShouldShow] = useState(false)
+  const shouldShow = useSyncExternalStore(
+    subscribeNoop,
+    () => process.env.NODE_ENV === 'development'
+      && typeof window !== 'undefined'
+      && window.self === window.top,
+    () => false,
+  )
   const { siteContainer } = useSiteContainer()
-
-  useEffect(() => {
-    // Only show in development mode AND when not in an iframe
-    if (process.env.NODE_ENV !== 'development') return
-
-    // Check if we're in an iframe (platform preview)
-    const inIframe = typeof window !== 'undefined' && window.self !== window.top
-    setShouldShow(!inIframe)
-  }, [])
 
   if (!shouldShow || !siteContainer) return null
 
@@ -230,6 +236,7 @@ function DevToolsContainer({
     }}>
       <DevPresetSwitcher currentPresetId={presetId} position="inline" />
       <DevIntroSwitcher currentIntroId={schemaIntroId} position="inline" />
+      <DevTransitionSwitcher currentTransitionId={schemaTransitionId} position="inline" />
       <DevExperienceSwitcher currentExperienceId={schemaExperienceId} position="inline" />
     </div>,
     siteContainer
@@ -282,13 +289,14 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
   }, [mode])
 
   // Dev-mode experience override (from URL query param)
-  const [devOverride, setDevOverride] = useState<string | null>(null)
+  const [devOverride, setDevOverride] = useState<string | null>(() => {
+    if (process.env.NODE_ENV !== 'development') return null
+    if (typeof window === 'undefined') return null
+    return getExperienceOverride()
+  })
 
   useEffect(() => {
     if (process.env.NODE_ENV !== 'development') return
-
-    // Read initial override from URL
-    setDevOverride(getExperienceOverride())
 
     // Listen for override changes from DevExperienceSwitcher
     const handleOverrideChange = (e: CustomEvent<string | null>) => {
@@ -340,14 +348,11 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
   const experience = syncExperience ?? asyncExperience ?? simpleExperience
 
   // Dev-mode intro override (from URL query param)
-  // Uses useState + useEffect to avoid SSR/client hydration mismatch
-  // (getIntroOverride reads window.location which doesn't exist during SSR)
-  const [introOverrideId, setIntroOverrideId] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (process.env.NODE_ENV !== 'development') return
-    setIntroOverrideId(getIntroOverride())
-  }, [])
+  const [introOverrideId] = useState<string | null>(() => {
+    if (process.env.NODE_ENV !== 'development') return null
+    if (typeof window === 'undefined') return null
+    return getIntroOverride()
+  })
 
   let introConfig: IntroConfig | null
   if (introOverrideId === 'none') {
@@ -366,8 +371,23 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
     ? getChromeComponent(introConfig.overlay.component) ?? null
     : null
 
-  // Resolve page transition from registry
-  const resolvedTransitionConfig = resolveTransitionConfig(site, page)
+  // Dev-mode transition override (from URL query param)
+  const [transitionOverrideId] = useState<string | null>(() => {
+    if (process.env.NODE_ENV !== 'development') return null
+    if (typeof window === 'undefined') return null
+    return getTransitionOverride()
+  })
+
+  // Resolve page transition from registry (with dev override support)
+  let resolvedTransitionConfig: TransitionConfig | undefined
+  if (transitionOverrideId === 'none') {
+    resolvedTransitionConfig = undefined
+  } else if (transitionOverrideId) {
+    resolvedTransitionConfig = getRegisteredTransitionConfig(transitionOverrideId) ?? undefined
+  } else {
+    resolvedTransitionConfig = resolveTransitionConfig(site, page)
+  }
+
   const transitionDef = resolvedTransitionConfig
     ? getPageTransition(resolvedTransitionConfig.id)
     : undefined
@@ -465,6 +485,7 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
                 <PageTransitionWrapper
                   enabled={!!pageTransitionConfig}
                   duration={pageTransitionConfig?.defaultExitDuration ?? 600}
+                  pageId={page.slug}
                 >
                   <PresentationWrapper
                     config={experience.presentation}
@@ -512,6 +533,13 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
                     page.intro === 'disabled' || !(page.intro ?? site.intro)
                       ? 'none'
                       : (findIntroIdByConfig((page.intro ?? site.intro)!) ?? 'none')
+                  }
+                  schemaTransitionId={
+                    (() => {
+                      const schemaTransition = resolveTransitionConfig(site, page)
+                      if (!schemaTransition) return 'none'
+                      return findTransitionConfigIdBySchemaConfig(schemaTransition) ?? 'none'
+                    })()
                   }
                   presetId={presetId ?? site.id}
                 />

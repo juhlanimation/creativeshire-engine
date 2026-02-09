@@ -14,6 +14,8 @@ export interface IntroOverlayProps {
   fontWeight?: number
   /** Font family (default: 'var(--font-title)') */
   fontFamily?: string
+  /** Letter spacing (CSS value, e.g. '-0.02em') */
+  letterSpacing?: string
   /** Step at which background fades, revealing content through text (default: 1) */
   bgFadeStep?: number
   /** Step at which the overlay mask fades out (default: 2) */

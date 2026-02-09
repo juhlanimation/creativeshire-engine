@@ -80,7 +80,7 @@ export function executeAction(id: string, payload: unknown): void {
     return
   }
 
-  handler(payload)
+  handler(payload as ActionPayload)
 }
 
 /**

@@ -27,7 +27,7 @@
 
 import { useRef, useState, useCallback, useEffect, memo } from 'react'
 import { useVideoControls, useAutoSavePosition } from './hooks'
-import type { VideoPlayerProps, VideoPlayerControls } from './types'
+import type { VideoPlayerProps } from './types'
 import './styles.css'
 
 /**

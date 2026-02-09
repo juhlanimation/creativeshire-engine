@@ -15,7 +15,6 @@ import {
   readFile,
   relativePath,
   hasReactState,
-  extractImports,
 } from './helpers'
 
 describe('Widget Structure Validation', () => {

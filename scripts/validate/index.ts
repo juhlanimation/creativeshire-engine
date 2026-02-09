@@ -8,7 +8,7 @@ import fs from 'fs/promises'
 import path from 'path'
 
 import { generateConsoleOutput, generateMarkdownReport } from './reporter'
-import type { CategoryReport, ValidationReport, ValidationResult, Validator } from './types'
+import type { CategoryReport, ValidationReport, ValidationResult } from './types'
 import { validators } from './validators'
 
 export interface ValidateOptions {

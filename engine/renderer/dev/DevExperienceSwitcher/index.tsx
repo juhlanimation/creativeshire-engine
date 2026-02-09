@@ -8,7 +8,7 @@
  * Uses URL query param (?_experience=id) for persistence and sharing.
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
 import { getAllExperienceMetas } from '../../../experience'
 import { useSiteContainer } from '../../SiteContainerContext'
@@ -67,20 +67,21 @@ function DevExperienceSwitcherInner({
   currentExperienceId,
   position,
 }: DevExperienceSwitcherProps) {
-  const [mounted, setMounted] = useState(false)
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  )
   const [isOpen, setIsOpen] = useState(false)
-  const [override, setOverride] = useState<string | null>(null)
+  const [override, setOverride] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null
+    return getExperienceOverride()
+  })
 
   const { siteContainer } = useSiteContainer()
 
   // Get all available experiences
   const experiences = useMemo(() => getAllExperienceMetas(), [])
-
-  // Read initial override from URL
-  useEffect(() => {
-    setMounted(true)
-    setOverride(getExperienceOverride())
-  }, [])
 
   // Handle selection
   const handleSelect = useCallback((id: string | null) => {
