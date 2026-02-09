@@ -6,7 +6,6 @@
 
 import { createStore } from 'zustand'
 import type { Experience, ExperienceState } from '../types'
-import { registerExperience } from '../registry'
 import { meta } from './meta'
 
 export const cinematicPortfolioExperience: Experience = {
@@ -53,5 +52,3 @@ export const cinematicPortfolioExperience: Experience = {
   },
 }
 
-// Auto-register on module load
-registerExperience(cinematicPortfolioExperience)

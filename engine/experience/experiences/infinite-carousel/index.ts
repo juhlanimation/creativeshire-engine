@@ -5,7 +5,6 @@
 
 import { createStore } from 'zustand'
 import type { Experience, InfiniteCarouselState } from '../types'
-import { registerExperience } from '../registry'
 import { meta } from './meta'
 
 export const infiniteCarouselExperience: Experience = {
@@ -123,4 +122,3 @@ export const infiniteCarouselExperience: Experience = {
   hideChrome: ['footer'],
 }
 
-registerExperience(infiniteCarouselExperience)

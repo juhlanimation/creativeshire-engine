@@ -42,6 +42,10 @@ const loadedFonts = new Map<string, string>()
  */
 function loadFont(fontFamily: string, provider: FontProvider = 'google'): string | null {
   const primary = fontFamily.split(',')[0].trim().replace(/['"]/g, '')
+
+  // CSS variable references (e.g. var(--font-inter)) are loaded by next/font — skip
+  if (/^var\(/.test(primary)) return null
+
   const key = primary.toLowerCase()
   if (SYSTEM_FONTS.has(key)) return null
 

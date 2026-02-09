@@ -5,7 +5,6 @@
 
 import { createStore } from 'zustand'
 import type { Experience, ExperienceState } from '../types'
-import { registerExperience } from '../registry'
 
 export const simpleExperience: Experience = {
   id: 'simple',
@@ -36,5 +35,3 @@ export const simpleExperience: Experience = {
   bareMode: true,
 }
 
-// Auto-register on module load
-registerExperience(simpleExperience)

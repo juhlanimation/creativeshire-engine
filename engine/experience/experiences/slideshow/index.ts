@@ -5,7 +5,6 @@
 
 import { createStore } from 'zustand'
 import type { Experience, NavigableExperienceState } from '../types'
-import { registerExperience } from '../registry'
 import { meta } from './meta'
 
 export const slideshowExperience: Experience = {
@@ -119,4 +118,3 @@ export const slideshowExperience: Experience = {
   hideChrome: ['footer'],
 }
 
-registerExperience(slideshowExperience)

@@ -52,7 +52,7 @@ registerLazyExperience(infiniteCarouselMeta, () =>
   import('./infinite-carousel').then((m) => m.infiniteCarouselExperience)
 )
 
-// Direct exports for backward compatibility (eagerly imports the experience)
+// Direct exports (eagerly imports the experience)
 // Use getExperienceAsync() for lazy loading in new code
 export { simpleExperience } from './simple'
 export { cinematicPortfolioExperience } from './cinematic-portfolio'
