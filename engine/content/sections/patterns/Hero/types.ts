@@ -34,7 +34,7 @@ export const DEFAULT_HERO_STYLES: HeroTextStyles = {
     mixBlendMode: 'difference'
   },
   roleTitle: {
-    fontFamily: 'var(--font-display, Inter, system-ui, sans-serif)',
+    fontFamily: 'var(--font-title, Inter, system-ui, sans-serif)',
     fontSize: '2.25rem',
     fontWeight: 700,
     textTransform: 'uppercase',

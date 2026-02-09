@@ -7,6 +7,7 @@
  */
 
 import type { PageTransition, PageTransitionMeta } from './types'
+import type { TransitionConfig } from '../../schema/transition'
 
 /** Registry entry - either loaded transition or lazy loader */
 type RegistryEntry =
@@ -107,4 +108,47 @@ export function getAllPageTransitionMetas(): PageTransitionMeta[] {
  */
 export function getPageTransitionIds(): string[] {
   return Array.from(registry.keys())
+}
+
+// =============================================================================
+// Compiled Transition Config Registry
+// =============================================================================
+
+/** Metadata for a compiled transition config (transition + settings bundled) */
+export interface TransitionConfigMeta {
+  /** Unique identifier (e.g., 'default-fade') */
+  id: string
+  /** Human-readable name (e.g., 'Default Fade') */
+  name: string
+  /** Description for CMS display */
+  description: string
+  /** Icon identifier for CMS UI */
+  icon?: string
+}
+
+/** Registry of compiled transition configs */
+const transitionConfigRegistry = new Map<string, { meta: TransitionConfigMeta; config: TransitionConfig }>()
+
+/**
+ * Register a compiled transition config (full config with meta).
+ */
+export function registerTransitionConfig(meta: TransitionConfigMeta, config: TransitionConfig): void {
+  if (transitionConfigRegistry.has(meta.id)) {
+    console.warn(`[Transition] Compiled config "${meta.id}" already registered, overwriting`)
+  }
+  transitionConfigRegistry.set(meta.id, { meta, config })
+}
+
+/**
+ * Get a compiled transition config by ID.
+ */
+export function getRegisteredTransitionConfig(id: string): TransitionConfig | undefined {
+  return transitionConfigRegistry.get(id)?.config
+}
+
+/**
+ * Get meta for all registered compiled transition configs.
+ */
+export function getAllRegisteredTransitionMetas(): TransitionConfigMeta[] {
+  return Array.from(transitionConfigRegistry.values()).map((entry) => entry.meta)
 }

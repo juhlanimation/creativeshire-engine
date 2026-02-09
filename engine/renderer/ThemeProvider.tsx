@@ -27,8 +27,8 @@ const DEFAULTS = {
     trackDark: '#0a0a0a',
   },
   typography: {
-    title: 'var(--font-inter), system-ui, -apple-system, sans-serif',
-    paragraph: 'var(--font-plus-jakarta), system-ui, -apple-system, sans-serif',
+    title: 'Inter, system-ui, -apple-system, sans-serif',
+    paragraph: 'Plus Jakarta Sans, system-ui, -apple-system, sans-serif',
   },
 }
 

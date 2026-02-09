@@ -136,6 +136,27 @@ export interface IntroPatternMeta<T = unknown> {
 }
 
 // =============================================================================
+// Compiled Intro Meta (CMS listing for full intro configs)
+// =============================================================================
+
+/**
+ * Metadata for a compiled intro (pattern + settings + overlay bundled together).
+ * Used by DevIntroSwitcher and CMS to list available intros.
+ */
+export interface IntroMeta {
+  /** Unique identifier (e.g., 'cinematic-text-mask') */
+  id: string
+  /** Human-readable name (e.g., 'Cinematic Text Mask') */
+  name: string
+  /** Description for CMS display */
+  description: string
+  /** Icon identifier for CMS UI */
+  icon?: string
+  /** Category for grouping in CMS */
+  category?: IntroCategory
+}
+
+// =============================================================================
 // Patterns
 // =============================================================================
 

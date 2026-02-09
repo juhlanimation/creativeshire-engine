@@ -7,6 +7,7 @@
  */
 
 import type { IntroPattern } from '../../types'
+import { registerIntroPattern } from '../../registry'
 import { meta } from './meta'
 
 export const sequenceTimedPattern: IntroPattern = {
@@ -22,3 +23,6 @@ export const sequenceTimedPattern: IntroPattern = {
   revealDuration: 800,
   hideChrome: true,
 }
+
+// Auto-register on module load
+registerIntroPattern(sequenceTimedPattern)

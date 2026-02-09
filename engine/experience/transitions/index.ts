@@ -16,7 +16,11 @@ export {
   preloadPageTransition,
   getAllPageTransitionMetas,
   getPageTransitionIds,
+  registerTransitionConfig,
+  getRegisteredTransitionConfig,
+  getAllRegisteredTransitionMetas,
 } from './registry'
+export type { TransitionConfigMeta } from './registry'
 
 // Types
 export type { PageTransition, PageTransitionMeta, PageTransitionCategory } from './types'
@@ -37,6 +41,10 @@ registerLazyPageTransition(fadeMeta, () =>
 // Direct export for eager loading when needed
 export { fadePageTransition } from './fade'
 
+// Compiled transition configs
+import { ensureTransitionConfigsRegistered } from './configs'
+export { ensureTransitionConfigsRegistered }
+
 /**
  * Ensures all page transitions are registered.
  * Call at engine entry point to guarantee registration before lookups.
@@ -44,4 +52,5 @@ export { fadePageTransition } from './fade'
 export function ensurePageTransitionsRegistered(): void {
   // Lazy registrations already ran on import above.
   // This function exists so bundlers don't tree-shake them.
+  ensureTransitionConfigsRegistered()
 }

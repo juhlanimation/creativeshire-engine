@@ -74,7 +74,7 @@
 /* Navigation links - uses display font, scales 14px → 16px */
 /* MOVED TO L2: data-effect="color-shift" */
 .footer-chrome__nav-link {
-  font-family: var(--font-display, 'Inter', system-ui, sans-serif);
+  font-family: var(--font-title, 'Inter', system-ui, sans-serif);
   font-size: 14px;
   font-weight: 300;
   color: white;

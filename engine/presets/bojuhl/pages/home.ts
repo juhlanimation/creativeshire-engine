@@ -26,7 +26,7 @@ export const bojuhlHeroStyles: HeroTextStyles = {
     mixBlendMode: 'difference'
   },
   roleTitle: {
-    fontFamily: 'var(--font-display, Inter, system-ui, sans-serif)',
+    fontFamily: 'var(--font-title, Inter, system-ui, sans-serif)',
     fontSize: 'clamp(2rem, 6vw, 6rem)',
     fontWeight: 900,
     lineHeight: 0.95,

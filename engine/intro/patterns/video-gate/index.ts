@@ -4,6 +4,7 @@
  */
 
 import type { IntroPattern } from '../../types'
+import { registerIntroPattern } from '../../registry'
 import { meta } from './meta'
 
 export const videoGatePattern: IntroPattern = {
@@ -21,3 +22,6 @@ export const videoGatePattern: IntroPattern = {
   revealDuration: 800,
   hideChrome: true,
 }
+
+// Auto-register on module load
+registerIntroPattern(videoGatePattern)

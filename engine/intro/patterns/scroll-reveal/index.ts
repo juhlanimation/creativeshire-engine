@@ -4,6 +4,7 @@
  */
 
 import type { IntroPattern } from '../../types'
+import { registerIntroPattern } from '../../registry'
 import { meta } from './meta'
 
 export const scrollRevealPattern: IntroPattern = {
@@ -23,3 +24,6 @@ export const scrollRevealPattern: IntroPattern = {
   revealDuration: 600,
   hideChrome: false, // Chrome visible for scroll-reveal
 }
+
+// Auto-register on module load
+registerIntroPattern(scrollRevealPattern)

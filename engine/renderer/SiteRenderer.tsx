@@ -54,6 +54,7 @@ import {
   getExperienceOverride,
 } from './dev/DevExperienceSwitcher'
 import { DevPresetSwitcher } from './dev/DevPresetSwitcher'
+import { DevIntroSwitcher } from './dev/DevIntroSwitcher'
 import { ensurePresetsRegistered } from '../presets'
 
 // Intro system
@@ -62,13 +63,19 @@ import {
   useIntro,
   getIntroPattern,
   ensureIntroPatternsRegistered,
+  getIntroOverride,
+  getRegisteredIntro,
+  findIntroIdByConfig,
 } from '../intro'
+import { ensureIntrosRegistered } from '../intro/intros'
+import type { IntroConfig } from '../intro'
 import { getChromeComponent, ensureChromeRegistered } from '../content/chrome/registry'
 
 // Ensure all experiences, presets, intro patterns, transitions, and chrome are registered before any lookups
 ensureExperiencesRegistered()
 ensurePresetsRegistered()
 ensureIntroPatternsRegistered()
+ensureIntrosRegistered()
 ensurePageTransitionsRegistered()
 ensureChromeRegistered()
 
@@ -189,9 +196,11 @@ function IntroScrollLock(): ReactNode {
  */
 function DevToolsContainer({
   schemaExperienceId,
+  schemaIntroId,
   presetId,
 }: {
   schemaExperienceId: string
+  schemaIntroId: string
   presetId: string
 }): ReactNode {
   const [shouldShow, setShouldShow] = useState(false)
@@ -220,6 +229,7 @@ function DevToolsContainer({
       fontSize: 12,
     }}>
       <DevPresetSwitcher currentPresetId={presetId} position="inline" />
+      <DevIntroSwitcher currentIntroId={schemaIntroId} position="inline" />
       <DevExperienceSwitcher currentExperienceId={schemaExperienceId} position="inline" />
     </div>,
     siteContainer
@@ -329,9 +339,25 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
   // Use sync experience if available, then async, then fallback to simple
   const experience = syncExperience ?? asyncExperience ?? simpleExperience
 
-  // Resolve intro: page override > site config > none
-  const introConfig =
-    page.intro === 'disabled' ? null : (page.intro ?? site.intro)
+  // Dev-mode intro override (from URL query param)
+  // Uses useState + useEffect to avoid SSR/client hydration mismatch
+  // (getIntroOverride reads window.location which doesn't exist during SSR)
+  const [introOverrideId, setIntroOverrideId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'development') return
+    setIntroOverrideId(getIntroOverride())
+  }, [])
+
+  let introConfig: IntroConfig | null
+  if (introOverrideId === 'none') {
+    introConfig = null
+  } else if (introOverrideId) {
+    // Look up compiled intro from registry
+    introConfig = getRegisteredIntro(introOverrideId) ?? null
+  } else {
+    introConfig = page.intro === 'disabled' ? null : (page.intro ?? site.intro) ?? null
+  }
 
   const introPattern = introConfig ? getIntroPattern(introConfig.pattern) : null
 
@@ -482,6 +508,11 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
                 {/* Dev-mode switchers (only in development AND not in iframe) */}
                 <DevToolsContainer
                   schemaExperienceId={schemaExperienceId}
+                  schemaIntroId={
+                    page.intro === 'disabled' || !(page.intro ?? site.intro)
+                      ? 'none'
+                      : (findIntroIdByConfig((page.intro ?? site.intro)!) ?? 'none')
+                  }
                   presetId={presetId ?? site.id}
                 />
               </PageTransitionProvider>

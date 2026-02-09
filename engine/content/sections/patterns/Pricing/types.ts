@@ -72,13 +72,13 @@ export interface PricingTextStyles {
  */
 export const DEFAULT_PRICING_STYLES: PricingTextStyles = {
   planName: {
-    fontFamily: 'var(--font-display, Inter, system-ui, sans-serif)',
+    fontFamily: 'var(--font-title, Inter, system-ui, sans-serif)',
     fontSize: '1.5rem',
     fontWeight: 700,
     color: 'var(--text-primary, #000)'
   },
   price: {
-    fontFamily: 'var(--font-display, Inter, system-ui, sans-serif)',
+    fontFamily: 'var(--font-title, Inter, system-ui, sans-serif)',
     fontSize: '3rem',
     fontWeight: 800,
     color: 'var(--text-primary, #000)'
@@ -121,7 +121,7 @@ export const DEFAULT_PRICING_STYLES: PricingTextStyles = {
     borderRadius: '999px'
   },
   sectionTitle: {
-    fontFamily: 'var(--font-display, Inter, system-ui, sans-serif)',
+    fontFamily: 'var(--font-title, Inter, system-ui, sans-serif)',
     fontSize: 'clamp(2rem, 5vw, 3.5rem)',
     fontWeight: 700,
     color: 'var(--text-primary, #000)',

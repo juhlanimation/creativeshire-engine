@@ -6,7 +6,7 @@
  * 2. Lazy: Loader function registered, pattern loaded on demand
  */
 
-import type { IntroPattern, IntroPatternMeta } from './types'
+import type { IntroPattern, IntroPatternMeta, IntroMeta, IntroConfig } from './types'
 
 /** Registry entry - either loaded pattern or lazy loader */
 type RegistryEntry =
@@ -118,3 +118,89 @@ export function getAllIntroPatternMetas(): IntroPatternMeta[] {
       : entry.meta
   )
 }
+
+// =============================================================================
+// Compiled Intro Registry
+// =============================================================================
+
+/** Registry of compiled intros (pattern + settings + overlay bundled) */
+const introRegistry = new Map<string, { meta: IntroMeta; config: IntroConfig }>()
+
+/**
+ * Register a compiled intro (full config with meta).
+ */
+export function registerIntro(meta: IntroMeta, config: IntroConfig): void {
+  if (introRegistry.has(meta.id)) {
+    console.warn(`[Intro] Compiled intro "${meta.id}" already registered, overwriting`)
+  }
+  introRegistry.set(meta.id, { meta, config })
+}
+
+/**
+ * Get a compiled intro config by ID.
+ */
+export function getRegisteredIntro(id: string): IntroConfig | undefined {
+  return introRegistry.get(id)?.config
+}
+
+/**
+ * Get compiled intro meta by ID.
+ */
+export function getRegisteredIntroMeta(id: string): IntroMeta | undefined {
+  return introRegistry.get(id)?.meta
+}
+
+/**
+ * Get meta for all registered compiled intros (for CMS listing / DevIntroSwitcher).
+ */
+export function getAllRegisteredIntroMetas(): IntroMeta[] {
+  return Array.from(introRegistry.values()).map((entry) => entry.meta)
+}
+
+/**
+ * Find which compiled intro matches a given IntroConfig (by pattern ID).
+ * Returns the compiled intro ID, or undefined if no match.
+ */
+export function findIntroIdByConfig(config: IntroConfig): string | undefined {
+  for (const [id, entry] of introRegistry) {
+    if (entry.config.pattern === config.pattern) {
+      return id
+    }
+  }
+  return undefined
+}
+
+// =============================================================================
+// URL Override Helpers (Dev Mode)
+// =============================================================================
+
+/** Query param name for intro override */
+export const DEV_INTRO_PARAM = '_intro'
+
+/**
+ * Get current intro override from URL.
+ * Returns pattern ID, 'none' to disable, or null for no override.
+ */
+export function getIntroOverride(): string | null {
+  if (typeof window === 'undefined') return null
+  const params = new URLSearchParams(window.location.search)
+  return params.get(DEV_INTRO_PARAM)
+}
+
+/**
+ * Set intro override in URL and reload.
+ * Intros are one-shot sequences, so a reload is required.
+ */
+export function setIntroOverride(id: string | null): void {
+  if (typeof window === 'undefined') return
+
+  const url = new URL(window.location.href)
+  if (id) {
+    url.searchParams.set(DEV_INTRO_PARAM, id)
+  } else {
+    url.searchParams.delete(DEV_INTRO_PARAM)
+  }
+
+  window.location.href = url.toString()
+}
+
