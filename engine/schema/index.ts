@@ -66,6 +66,7 @@ export type {
   SmoothScrollConfig,
   TypographyConfig,
   SectionTransitionConfig,
+  FontProvider,
 } from './theme'
 
 // Shell types

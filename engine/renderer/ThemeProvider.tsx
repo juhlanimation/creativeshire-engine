@@ -6,7 +6,7 @@
  */
 
 import { useEffect } from 'react'
-import type { ThemeSchema } from '../schema'
+import type { ThemeSchema, FontProvider } from '../schema'
 import { useContainer } from '../interface/ContainerContext'
 import { useSiteContainer } from './SiteContainerContext'
 
@@ -21,24 +21,55 @@ const SYSTEM_FONTS = new Set([
   'times new roman', 'courier new', 'inter', 'plus jakarta sans',
 ])
 
+/** Builds the stylesheet URL for each font provider. */
+const PROVIDER_URL: Record<FontProvider, (family: string) => string> = {
+  google: (f) =>
+    `https://fonts.googleapis.com/css2?family=${encodeURIComponent(f)}:wght@300;400;500;600;700&display=swap`,
+  bunny: (f) =>
+    `https://fonts.bunny.net/css2?family=${encodeURIComponent(f)}:300,400,500,600,700&display=swap`,
+  fontshare: (f) =>
+    `https://api.fontshare.com/v2/css?f[]=${f.toLowerCase().replace(/\s+/g, '-')}@300,400,500,600,700&display=swap`,
+}
+
+/** Tracks loaded fonts by normalized name so no font is loaded twice. */
+const loadedFonts = new Map<string, string>()
+
 /**
- * Load a Google Font by injecting a <link> stylesheet into <head>.
- * Skips system fonts and fonts already loaded.
+ * Load a web font by injecting a <link> stylesheet into <head>.
+ * Deduplicates by font name across all providers — a font loaded
+ * from any provider won't be loaded again from another.
  * Returns the link element ID for cleanup tracking.
  */
-function loadGoogleFont(fontFamily: string): string | null {
+function loadFont(fontFamily: string, provider: FontProvider = 'google'): string | null {
   const primary = fontFamily.split(',')[0].trim().replace(/['"]/g, '')
-  if (SYSTEM_FONTS.has(primary.toLowerCase())) return null
+  const key = primary.toLowerCase()
+  if (SYSTEM_FONTS.has(key)) return null
 
-  const id = `google-font-${primary.replace(/\s+/g, '-').toLowerCase()}`
-  if (document.getElementById(id)) return id
+  // Already loaded (from any provider) — return existing ID
+  const existing = loadedFonts.get(key)
+  if (existing) return existing
+
+  const id = `engine-font-${key.replace(/\s+/g, '-')}`
+  const buildUrl = PROVIDER_URL[provider]
 
   const link = document.createElement('link')
   link.id = id
   link.rel = 'stylesheet'
-  link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(primary)}:wght@300;400;500;600;700&display=swap`
+  link.href = buildUrl(primary)
   document.head.appendChild(link)
+
+  loadedFonts.set(key, id)
   return id
+}
+
+/**
+ * Remove a previously loaded font link and its tracking entry.
+ */
+function unloadFont(id: string): void {
+  document.getElementById(id)?.remove()
+  for (const [key, value] of loadedFonts) {
+    if (value === id) { loadedFonts.delete(key); break }
+  }
 }
 
 /**
@@ -108,6 +139,7 @@ export function ThemeProvider({ theme, children }: ThemeProviderProps): React.Re
 
     // Typography variables (on container where font vars are defined)
     const typography = theme?.typography
+    const provider = typography?.provider ?? 'google'
     const fontLinkIds: string[] = []
     if (container) {
       const titleValue = typography?.title ?? DEFAULTS.typography.title
@@ -116,15 +148,15 @@ export function ThemeProvider({ theme, children }: ThemeProviderProps): React.Re
       container.style.setProperty('--font-title', titleValue)
       container.style.setProperty('--font-paragraph', paragraphValue)
 
-      // Load Google Fonts for non-system font families
-      const titleLinkId = loadGoogleFont(titleValue)
+      // Load web fonts for non-system font families
+      const titleLinkId = loadFont(titleValue, provider)
       if (titleLinkId) fontLinkIds.push(titleLinkId)
-      const paragraphLinkId = loadGoogleFont(paragraphValue)
+      const paragraphLinkId = loadFont(paragraphValue, provider)
       if (paragraphLinkId) fontLinkIds.push(paragraphLinkId)
 
       if (typography?.ui) {
         container.style.setProperty('--font-ui', typography.ui)
-        const uiLinkId = loadGoogleFont(typography.ui)
+        const uiLinkId = loadFont(typography.ui, provider)
         if (uiLinkId) fontLinkIds.push(uiLinkId)
       }
     }
@@ -152,9 +184,9 @@ export function ThemeProvider({ theme, children }: ThemeProviderProps): React.Re
         container.style.removeProperty('--section-fade-duration')
         container.style.removeProperty('--section-fade-easing')
       }
-      // Remove injected Google Font links
+      // Remove injected font links
       for (const id of fontLinkIds) {
-        document.getElementById(id)?.remove()
+        unloadFont(id)
       }
     }
   }, [theme, mode, containerRef, siteContainer])

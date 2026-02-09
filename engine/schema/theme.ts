@@ -34,6 +34,9 @@ export interface SmoothScrollConfig {
   effects?: boolean
 }
 
+/** Font provider for dynamic loading. */
+export type FontProvider = 'google' | 'bunny' | 'fontshare'
+
 /**
  * Typography configuration.
  * Maps semantic font roles to CSS variable names.
@@ -45,6 +48,8 @@ export interface TypographyConfig {
   paragraph?: string
   /** Font for UI elements (maps to --font-ui) */
   ui?: string
+  /** Font CDN provider (default: 'google') */
+  provider?: FontProvider
 }
 
 /**
