@@ -15,6 +15,32 @@ interface ThemeProviderProps {
   children: React.ReactNode
 }
 
+const SYSTEM_FONTS = new Set([
+  'system-ui', 'sans-serif', 'serif', 'monospace', 'cursive', 'fantasy',
+  '-apple-system', 'blinkmacsystemfont', 'segoe ui', 'arial', 'helvetica',
+  'times new roman', 'courier new', 'inter', 'plus jakarta sans',
+])
+
+/**
+ * Load a Google Font by injecting a <link> stylesheet into <head>.
+ * Skips system fonts and fonts already loaded.
+ * Returns the link element ID for cleanup tracking.
+ */
+function loadGoogleFont(fontFamily: string): string | null {
+  const primary = fontFamily.split(',')[0].trim().replace(/['"]/g, '')
+  if (SYSTEM_FONTS.has(primary.toLowerCase())) return null
+
+  const id = `google-font-${primary.replace(/\s+/g, '-').toLowerCase()}`
+  if (document.getElementById(id)) return id
+
+  const link = document.createElement('link')
+  link.id = id
+  link.rel = 'stylesheet'
+  link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(primary)}:wght@300;400;500;600;700&display=swap`
+  document.head.appendChild(link)
+  return id
+}
+
 /**
  * Default theme values.
  */
@@ -82,17 +108,24 @@ export function ThemeProvider({ theme, children }: ThemeProviderProps): React.Re
 
     // Typography variables (on container where font vars are defined)
     const typography = theme?.typography
+    const fontLinkIds: string[] = []
     if (container) {
-      container.style.setProperty(
-        '--font-title',
-        typography?.title ?? DEFAULTS.typography.title
-      )
-      container.style.setProperty(
-        '--font-paragraph',
-        typography?.paragraph ?? DEFAULTS.typography.paragraph
-      )
+      const titleValue = typography?.title ?? DEFAULTS.typography.title
+      const paragraphValue = typography?.paragraph ?? DEFAULTS.typography.paragraph
+
+      container.style.setProperty('--font-title', titleValue)
+      container.style.setProperty('--font-paragraph', paragraphValue)
+
+      // Load Google Fonts for non-system font families
+      const titleLinkId = loadGoogleFont(titleValue)
+      if (titleLinkId) fontLinkIds.push(titleLinkId)
+      const paragraphLinkId = loadGoogleFont(paragraphValue)
+      if (paragraphLinkId) fontLinkIds.push(paragraphLinkId)
+
       if (typography?.ui) {
         container.style.setProperty('--font-ui', typography.ui)
+        const uiLinkId = loadGoogleFont(typography.ui)
+        if (uiLinkId) fontLinkIds.push(uiLinkId)
       }
     }
 
@@ -118,6 +151,10 @@ export function ThemeProvider({ theme, children }: ThemeProviderProps): React.Re
         container.style.removeProperty('--font-ui')
         container.style.removeProperty('--section-fade-duration')
         container.style.removeProperty('--section-fade-easing')
+      }
+      // Remove injected Google Font links
+      for (const id of fontLinkIds) {
+        document.getElementById(id)?.remove()
       }
     }
   }, [theme, mode, containerRef, siteContainer])
