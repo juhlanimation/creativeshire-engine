@@ -68,14 +68,19 @@ describe('Experience Settings', () => {
   })
 
   it('experience settings match meta.ts settings (no drift)', async () => {
-    // Dynamically import meta files and compare
-    const metaModules = await Promise.all([
-      import('../../engine/experience/experiences/slideshow/meta'),
-      import('../../engine/experience/experiences/infinite-carousel/meta'),
-      import('../../engine/experience/experiences/cinematic-portfolio/meta'),
-    ])
+    // Dynamically discover and import all experience meta files
+    const ids = getExperienceIds()
+    const metaModules = await Promise.all(
+      ids.map(async (id) => {
+        try {
+          return await import(`../../engine/experience/experiences/${id}/meta`)
+        } catch {
+          return null
+        }
+      })
+    )
 
-    const metas = metaModules.map((m) => m.meta)
+    const metas = metaModules.filter(Boolean).map((m) => m!.meta)
     const violations: string[] = []
 
     for (const meta of metas) {
@@ -95,6 +100,21 @@ describe('Experience Settings', () => {
             `${meta.id}: settings mismatch - experience has [${expKeys}], meta has [${metaKeys}]`
           )
         }
+      }
+    }
+
+    expect(violations, violations.join('\n')).toHaveLength(0)
+  })
+
+  it('all experience metas have icon and tags', () => {
+    const violations: string[] = []
+
+    for (const exp of experiences) {
+      if (!exp.icon) {
+        violations.push(`Experience "${exp.id}" missing icon`)
+      }
+      if (!exp.tags || exp.tags.length === 0) {
+        violations.push(`Experience "${exp.id}" missing tags`)
       }
     }
 

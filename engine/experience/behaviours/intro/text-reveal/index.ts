@@ -11,23 +11,23 @@
  * - --intro-text-progress: Reveal progress (0-1)
  */
 
-import type { Behaviour } from '../types'
-import { registerBehaviour } from '../registry'
+import type { Behaviour } from '../../types'
+import { registerBehaviour } from '../../registry'
+import { meta } from './meta'
 
-interface IntroTextRevealOptions {
+export interface IntroTextRevealSettings {
   /** Stagger index for multiple text elements (affects delay) */
-  staggerIndex?: number
+  staggerIndex: number
   /** Delay per stagger index (ms) */
-  staggerDelay?: number
+  staggerDelay: number
   /** Y offset in pixels for slide effect */
-  yOffset?: number
+  yOffset: number
   /** Use clip-path reveal instead of fade */
-  useClipPath?: boolean
+  useClipPath: boolean
 }
 
-const introTextReveal: Behaviour = {
-  id: 'intro/text-reveal',
-  name: 'Intro Text Reveal',
+const introTextReveal: Behaviour<IntroTextRevealSettings> = {
+  ...meta,
   requires: ['phase', 'revealProgress', 'prefersReducedMotion'],
 
   compute: (state, options) => {
@@ -36,7 +36,7 @@ const introTextReveal: Behaviour = {
       staggerDelay = 100,
       yOffset = 20,
       useClipPath = false
-    } = (options as IntroTextRevealOptions) || {}
+    } = (options as Partial<IntroTextRevealSettings>) || {}
 
     const phase = (state.phase as string) ?? 'intro-locked'
     const revealProgress = (state.revealProgress as number) ?? 0
@@ -78,38 +78,6 @@ const introTextReveal: Behaviour = {
     clip-path: inset(0 calc((100 - var(--intro-text-clip, 100)) * 1%) 0 0);
     will-change: opacity, transform, clip-path;
   `,
-
-  optionConfig: {
-    staggerIndex: {
-      type: 'range',
-      label: 'Stagger Index',
-      default: 0,
-      min: 0,
-      max: 10,
-      step: 1
-    },
-    staggerDelay: {
-      type: 'range',
-      label: 'Stagger Delay (ms)',
-      default: 100,
-      min: 0,
-      max: 300,
-      step: 25
-    },
-    yOffset: {
-      type: 'range',
-      label: 'Y Offset (px)',
-      default: 20,
-      min: 0,
-      max: 50,
-      step: 5
-    },
-    useClipPath: {
-      type: 'toggle',
-      label: 'Use Clip-Path',
-      default: false
-    }
-  }
 }
 
 // Auto-register on module load

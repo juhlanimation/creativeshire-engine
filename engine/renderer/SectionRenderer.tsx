@@ -104,12 +104,11 @@ export function SectionRenderer({ section, index }: SectionRendererProps) {
     sectionIndex: index
   }), [schemaBehaviourOptions, index])
 
-  // Subscribe to visibility from store
-  // useIntersection trigger auto-discovers elements with data-section-id attribute
-  const sectionVisibility = useStore(
-    store,
-    (state) => state.sectionVisibilities[section.id] ?? 0
-  )
+  // Read visibility once (no subscription) - ScrollDriver reads via visibilityGetter at 60fps
+  // useStore subscription here caused ~21 wasted React re-renders per section during scroll
+  const initialVisibility = useRef(
+    store.getState().sectionVisibilities[section.id] ?? 0
+  ).current
 
   // Create a stable visibility getter for ScrollDriver
   // This reads directly from store, avoiding duplicate IntersectionObserver tracking
@@ -154,7 +153,7 @@ export function SectionRenderer({ section, index }: SectionRendererProps) {
     <BehaviourWrapper
       behaviourId={behaviourId}
       options={behaviourOptions}
-      initialState={{ sectionVisibility, sectionIndex: index }}
+      initialState={{ sectionVisibility: initialVisibility, sectionIndex: index }}
       visibilityGetter={visibilityGetter}
     >
       {content}

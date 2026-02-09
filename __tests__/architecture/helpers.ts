@@ -216,3 +216,158 @@ export function isL1ToL2Import(filePath: string, importPath: string): boolean {
 export function formatViolation(file: string, rule: string, detail: string): string {
   return `${relativePath(file)}: ${rule} - ${detail}`
 }
+
+/**
+ * Validate that a meta.ts file content uses the correct define helper function.
+ * Returns violations as strings.
+ */
+export function validateMetaFileContent(
+  content: string,
+  context: string,
+  expectedHelper?: string
+): string[] {
+  const violations: string[] = []
+
+  if (!content.includes('export const meta')) {
+    violations.push(`${context}: missing 'export const meta'`)
+  }
+
+  if (expectedHelper && !content.includes(expectedHelper)) {
+    violations.push(`${context}: should use ${expectedHelper}()`)
+  }
+
+  const requiredFields = ['id:', 'name:', 'description:', 'category:']
+  for (const field of requiredFields) {
+    if (!content.includes(field)) {
+      violations.push(`${context}: missing ${field}`)
+    }
+  }
+
+  return violations
+}
+
+/**
+ * Validate settings in source code content.
+ * Checks that each top-level settings entry has type, label, and default.
+ * Returns violations as strings.
+ */
+export function validateSettingsContent(content: string, context: string): string[] {
+  const violations: string[] = []
+
+  const settingsStart = content.indexOf('settings:')
+  if (settingsStart === -1) return violations
+
+  const braceStart = content.indexOf('{', settingsStart)
+  if (braceStart === -1) return violations
+
+  // Extract the full settings block by tracking brace depth
+  let depth = 1
+  let i = braceStart + 1
+  while (i < content.length && depth > 0) {
+    if (content[i] === '{') depth++
+    if (content[i] === '}') depth--
+    if (content[i] === "'" || content[i] === '"' || content[i] === '`') {
+      const quote = content[i]
+      i++
+      while (i < content.length && content[i] !== quote) {
+        if (content[i] === '\\') i++
+        i++
+      }
+    }
+    i++
+  }
+  const settingsBlock = content.slice(braceStart + 1, i - 1)
+
+  // Walk through settingsBlock at depth 0 to find top-level keys
+  depth = 0
+  let pos = 0
+  while (pos < settingsBlock.length) {
+    if (settingsBlock[pos] === '{') { depth++; pos++; continue }
+    if (settingsBlock[pos] === '}') { depth--; pos++; continue }
+
+    if (settingsBlock[pos] === "'" || settingsBlock[pos] === '"' || settingsBlock[pos] === '`') {
+      if (depth > 0) {
+        const quote = settingsBlock[pos]
+        pos++
+        while (pos < settingsBlock.length && settingsBlock[pos] !== quote) {
+          if (settingsBlock[pos] === '\\') pos++
+          pos++
+        }
+        pos++
+        continue
+      }
+    }
+
+    if (depth === 0) {
+      const remaining = settingsBlock.slice(pos)
+      const keyMatch = remaining.match(/^(?:['"]([^'"]+)['"]|(\w+))\s*:\s*\{/)
+
+      if (keyMatch) {
+        const key = keyMatch[1] || keyMatch[2]
+        const entryBraceStart = pos + keyMatch[0].length - 1
+        let entryDepth = 1
+        let j = entryBraceStart + 1
+        while (j < settingsBlock.length && entryDepth > 0) {
+          if (settingsBlock[j] === '{') entryDepth++
+          if (settingsBlock[j] === '}') entryDepth--
+          if (settingsBlock[j] === "'" || settingsBlock[j] === '"' || settingsBlock[j] === '`') {
+            const q = settingsBlock[j]
+            j++
+            while (j < settingsBlock.length && settingsBlock[j] !== q) {
+              if (settingsBlock[j] === '\\') j++
+              j++
+            }
+          }
+          j++
+        }
+
+        const entryBody = settingsBlock.slice(entryBraceStart, j)
+
+        if (!entryBody.includes('type:')) {
+          violations.push(`${context} → settings.${key}: missing type`)
+        }
+        if (!entryBody.includes('label:')) {
+          violations.push(`${context} → settings.${key}: missing label`)
+        }
+        if (!/default\s*:/.test(entryBody)) {
+          violations.push(`${context} → settings.${key}: missing default`)
+        }
+
+        pos = entryBraceStart + (j - entryBraceStart)
+        continue
+      }
+    }
+
+    pos++
+  }
+
+  return violations
+}
+
+/**
+ * Validate registry completeness: every folder has a registry entry and vice versa.
+ * Returns violations as strings.
+ */
+export function validateRegistryCompleteness(
+  folderNames: string[],
+  registryKeys: string[],
+  layerName: string
+): string[] {
+  const violations: string[] = []
+  const folderSet = new Set(folderNames)
+  const registrySet = new Set(registryKeys)
+
+  for (const folder of folderNames) {
+    if (!registrySet.has(folder)) {
+      violations.push(`${layerName}: folder "${folder}" exists but not registered`)
+    }
+  }
+
+  for (const key of registryKeys) {
+    if (!folderSet.has(key)) {
+      violations.push(`${layerName}: registry has "${key}" but no folder exists`)
+    }
+  }
+
+  return violations
+}

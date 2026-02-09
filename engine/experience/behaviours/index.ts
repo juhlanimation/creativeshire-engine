@@ -9,7 +9,7 @@
  */
 
 // ============================================
-// Trigger-based behaviours (NEW structure)
+// Trigger-based behaviours
 // ============================================
 
 // Scroll-based triggers
@@ -36,7 +36,7 @@ import './intro'
 // ============================================
 // Types
 // ============================================
-export type { Behaviour, BehaviourRegistry } from './types'
+export type { Behaviour, BehaviourMeta, BehaviourCategory } from './types'
 
 // ============================================
 // Registry
@@ -45,6 +45,11 @@ export {
   behaviourRegistry,
   registerBehaviour,
   unregisterBehaviour,
+  getBehaviour,
+  getBehaviourIds,
+  getAllBehaviourMetas,
+  getBehavioursByCategory,
+  defineBehaviourMeta,
 } from './registry'
 
 // ============================================

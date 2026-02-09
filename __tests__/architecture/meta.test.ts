@@ -397,7 +397,7 @@ describe('ComponentMeta Validation', () => {
 
   describe('Meta structure validation', () => {
     it('all meta.ts files export a const', async () => {
-      const metaFiles = await getFiles('{content,schema}/**/meta.ts')
+      const metaFiles = await getFiles('{content,schema,experience}/**/meta.ts')
       // Exclude utility files that define helper functions, not meta objects
       const UTILITY_META_FILES = ['schema/meta.ts']
       const violations: string[] = []
@@ -418,7 +418,7 @@ describe('ComponentMeta Validation', () => {
     })
 
     it('all meta.ts files have required fields', async () => {
-      const metaFiles = await getFiles('{content,schema}/**/meta.ts')
+      const metaFiles = await getFiles('{content,schema,experience}/**/meta.ts')
       const UTILITY_META_FILES = ['schema/meta.ts']
       const violations: string[] = []
 
@@ -451,17 +451,23 @@ describe('ComponentMeta Validation', () => {
         'overlay',
         'chrome', // Some may use 'chrome' instead of region/overlay
         'theme',
-        'page'
+        'page',
+        // Behaviour categories (trigger-based)
+        'scroll', 'hover', 'visibility', 'animation', 'interaction', 'video', 'intro',
+        // Experience categories (presentation models)
+        'scroll-driven', 'physics', 'simple', 'presentation',
+        // Transition categories (mechanisms)
+        'fade',
       ]
 
-      const metaFiles = await getFiles('{content,schema}/**/meta.ts')
+      const metaFiles = await getFiles('{content,schema,experience}/**/meta.ts')
       const violations: string[] = []
 
       for (const file of metaFiles) {
         const content = await readFile(file)
 
         // Extract category value: category: 'xxx' or category: "xxx"
-        const categoryMatch = content.match(/category:\s*['"](\w+)['"]/)
+        const categoryMatch = content.match(/category:\s*['"]([a-z][a-z0-9-]*)['"]/)
 
         if (categoryMatch) {
           const category = categoryMatch[1]
@@ -591,7 +597,8 @@ describe('ComponentMeta Validation', () => {
       // Glob all meta.ts files across the engine
       const contentMetas = await getFiles('{content,schema}/**/meta.ts')
       const transitionMetas = await getFiles('experience/transitions/*/meta.ts')
-      const allMetas = [...contentMetas, ...transitionMetas]
+      const behaviourMetas = await getFiles('experience/behaviours/*/*/meta.ts')
+      const allMetas = [...contentMetas, ...transitionMetas, ...behaviourMetas]
 
       const violations: string[] = []
 
@@ -606,6 +613,50 @@ describe('ComponentMeta Validation', () => {
       }
 
       expect(violations, `Meta settings missing type/label/default:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+  })
+
+  describe('Behaviour meta.ts validation', () => {
+    it('behaviour meta.ts files use defineBehaviourMeta()', async () => {
+      const metaFiles = await getFiles('experience/behaviours/*/*/meta.ts')
+      const violations: string[] = []
+
+      for (const file of metaFiles) {
+        const content = await readFile(file)
+        if (!content.includes('defineBehaviourMeta')) {
+          violations.push(relativePath(file))
+        }
+      }
+
+      expect(violations, `Behaviour metas not using defineBehaviourMeta():\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
+    it('experience meta.ts files use defineExperienceMeta()', async () => {
+      const metaFiles = await getFiles('experience/experiences/*/meta.ts')
+      const violations: string[] = []
+
+      for (const file of metaFiles) {
+        const content = await readFile(file)
+        if (!content.includes('defineExperienceMeta')) {
+          violations.push(relativePath(file))
+        }
+      }
+
+      expect(violations, `Experience metas not using defineExperienceMeta():\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
+    it('transition meta.ts files use definePageTransitionMeta()', async () => {
+      const metaFiles = await getFiles('experience/transitions/*/meta.ts')
+      const violations: string[] = []
+
+      for (const file of metaFiles) {
+        const content = await readFile(file)
+        if (!content.includes('definePageTransitionMeta')) {
+          violations.push(relativePath(file))
+        }
+      }
+
+      expect(violations, `Transition metas not using definePageTransitionMeta():\n${violations.join('\n')}`).toHaveLength(0)
     })
   })
 })

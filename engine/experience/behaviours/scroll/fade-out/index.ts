@@ -9,12 +9,12 @@
  * - --section-y: Vertical offset (always 0px for this behaviour)
  */
 
-import type { Behaviour } from '../types'
-import { registerBehaviour } from '../registry'
+import type { Behaviour } from '../../types'
+import { registerBehaviour } from '../../registry'
+import { meta } from './meta'
 
 const scrollFadeOut: Behaviour = {
-  id: 'scroll/fade-out',
-  name: 'Scroll Fade Out',
+  ...meta,
   requires: ['sectionVisibility', 'prefersReducedMotion'],
 
   cssTemplate: `

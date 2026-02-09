@@ -10,26 +10,26 @@
  * - --center-progress: Smooth progress as element approaches center (0-1)
  */
 
-import type { Behaviour } from '../types'
-import { registerBehaviour } from '../registry'
+import type { Behaviour } from '../../types'
+import { registerBehaviour } from '../../registry'
+import { meta } from './meta'
 
-interface VisibilityCenterOptions {
+export interface CenterSettings {
   /** Threshold for considering element "centered" (0-1, default 0.3 = 30% of viewport) */
-  threshold?: number
+  threshold: number
   /** Enable smooth interpolation based on distance */
-  smooth?: boolean
+  smooth: boolean
 }
 
-const visibilityCenter: Behaviour = {
-  id: 'visibility/center',
-  name: 'Visibility Center',
+const visibilityCenter: Behaviour<CenterSettings> = {
+  ...meta,
   requires: ['centerDistance', 'isCentered', 'prefersReducedMotion'],
 
   compute: (state, options) => {
     const {
       threshold = 0.3,
       smooth = true
-    } = (options as VisibilityCenterOptions) || {}
+    } = (options as Partial<CenterSettings>) || {}
 
     // State values populated by viewport center driver
     const isCentered = (state.isCentered as boolean) ?? false
@@ -60,22 +60,6 @@ const visibilityCenter: Behaviour = {
   cssTemplate: `
     /* Applied via effects that consume these variables */
   `,
-
-  optionConfig: {
-    threshold: {
-      type: 'range',
-      label: 'Center Threshold',
-      default: 0.3,
-      min: 0.1,
-      max: 0.5,
-      step: 0.05
-    },
-    smooth: {
-      type: 'toggle',
-      label: 'Smooth Progress',
-      default: true
-    }
-  }
 }
 
 // Auto-register on module load

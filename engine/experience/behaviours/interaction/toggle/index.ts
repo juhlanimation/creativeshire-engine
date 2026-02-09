@@ -10,12 +10,16 @@
  * - --active-opacity: Opacity for active content
  */
 
-import type { Behaviour } from '../types'
-import { registerBehaviour } from '../registry'
+import type { Behaviour } from '../../types'
+import { registerBehaviour } from '../../registry'
+import { meta } from './meta'
 
-const interactionToggle: Behaviour = {
-  id: 'interaction/toggle',
-  name: 'Interaction Toggle',
+export interface ToggleSettings {
+  scale: number
+}
+
+const interactionToggle: Behaviour<ToggleSettings> = {
+  ...meta,
   requires: ['isActive', 'prefersReducedMotion'],
 
   compute: (state, options) => {
@@ -42,17 +46,6 @@ const interactionToggle: Behaviour = {
     transform: scale(var(--active-scale, 1));
     will-change: transform;
   `,
-
-  optionConfig: {
-    scale: {
-      type: 'range',
-      label: 'Active Scale',
-      default: 1.02,
-      min: 1,
-      max: 1.2,
-      step: 0.01
-    }
-  }
 }
 
 // Auto-register on module load

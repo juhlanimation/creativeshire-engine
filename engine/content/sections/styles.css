@@ -23,11 +23,22 @@
   box-sizing: border-box;
 }
 
+/* Scroll-driven behaviours bypass CSS transition - driver handles updates directly */
+[data-behaviour^="scroll/"] > .section {
+  transition: none;
+  will-change: opacity, transform;
+}
+
 /* Respect reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   .section {
     transition: none;
   }
+}
+
+/* Layout containment for section wrappers - prevents cross-section layout thrashing */
+[data-section-id] {
+  contain: layout style;
 }
 
 /* Layout type: flex */

@@ -10,30 +10,30 @@
  * - --scroll-indicator-pulse: Pulse animation state (0-1, loops)
  */
 
-import type { Behaviour } from '../types'
-import { registerBehaviour } from '../registry'
+import type { Behaviour } from '../../types'
+import { registerBehaviour } from '../../registry'
+import { meta } from './meta'
 
-interface IntroScrollIndicatorOptions {
+export interface IntroScrollIndicatorSettings {
   /** Delay after intro completes before showing (ms) */
-  delay?: number
+  delay: number
   /** Enable pulsing animation */
-  enablePulse?: boolean
+  enablePulse: boolean
   /** Hide after user starts scrolling */
-  hideOnScroll?: boolean
+  hideOnScroll: boolean
   /** Scroll threshold to hide (0-1) */
-  hideThreshold?: number
+  hideThreshold: number
 }
 
-const introScrollIndicator: Behaviour = {
-  id: 'intro/scroll-indicator',
-  name: 'Intro Scroll Indicator',
+const introScrollIndicator: Behaviour<IntroScrollIndicatorSettings> = {
+  ...meta,
   requires: ['phase', 'introCompleted', 'scrollProgress', 'isScrollLocked', 'prefersReducedMotion'],
 
   compute: (state, options) => {
     const {
       hideOnScroll = true,
       hideThreshold = 0.05
-    } = (options as IntroScrollIndicatorOptions) || {}
+    } = (options as Partial<IntroScrollIndicatorSettings>) || {}
 
     const phase = (state.phase as string) ?? 'intro-locked'
     const introCompleted = (state.introCompleted as boolean) ?? false
@@ -79,35 +79,6 @@ const introScrollIndicator: Behaviour = {
     will-change: opacity;
     transition: opacity 400ms ease;
   `,
-
-  optionConfig: {
-    delay: {
-      type: 'range',
-      label: 'Show Delay (ms)',
-      default: 0,
-      min: 0,
-      max: 1000,
-      step: 100
-    },
-    enablePulse: {
-      type: 'toggle',
-      label: 'Pulsing Animation',
-      default: true
-    },
-    hideOnScroll: {
-      type: 'toggle',
-      label: 'Hide On Scroll',
-      default: true
-    },
-    hideThreshold: {
-      type: 'range',
-      label: 'Hide Threshold',
-      default: 0.05,
-      min: 0,
-      max: 0.2,
-      step: 0.01
-    }
-  }
 }
 
 // Auto-register on module load

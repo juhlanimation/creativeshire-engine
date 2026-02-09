@@ -13,8 +13,16 @@
  * - --overlay-opacity: Overlay opacity for card effects
  */
 
-import type { Behaviour } from '../types'
-import { registerBehaviour } from '../registry'
+import type { Behaviour } from '../../types'
+import { registerBehaviour } from '../../registry'
+import { meta } from './meta'
+
+export interface HoverScaleSettings {
+  hoverScale: number
+  pressScale: number
+  overlayOpacity: number
+  hoverOverlayOpacity: number
+}
 
 interface HoverScaleOptions {
   hoverScale?: number
@@ -25,9 +33,8 @@ interface HoverScaleOptions {
   hoverOverlayOpacity?: number
 }
 
-const hoverScale: Behaviour = {
-  id: 'hover/scale',
-  name: 'Hover Scale',
+const hoverScale: Behaviour<HoverScaleSettings> = {
+  ...meta,
   requires: ['isHovered', 'isPressed', 'prefersReducedMotion'],
 
   compute: (state, options) => {
@@ -81,41 +88,6 @@ const hoverScale: Behaviour = {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     will-change: transform, box-shadow;
   `,
-
-  optionConfig: {
-    hoverScale: {
-      type: 'range',
-      label: 'Hover Scale',
-      default: 1.03,
-      min: 1,
-      max: 1.1,
-      step: 0.01
-    },
-    pressScale: {
-      type: 'range',
-      label: 'Press Scale',
-      default: 0.98,
-      min: 0.9,
-      max: 1,
-      step: 0.01
-    },
-    overlayOpacity: {
-      type: 'range',
-      label: 'Default Overlay Opacity',
-      default: 0.1,
-      min: 0,
-      max: 0.5,
-      step: 0.05
-    },
-    hoverOverlayOpacity: {
-      type: 'range',
-      label: 'Hover Overlay Opacity',
-      default: 0.3,
-      min: 0.1,
-      max: 0.8,
-      step: 0.05
-    }
-  }
 }
 
 // Auto-register on module load

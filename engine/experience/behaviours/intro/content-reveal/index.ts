@@ -11,30 +11,30 @@
  * - --intro-progress: Reveal progress (0-1)
  */
 
-import type { Behaviour } from '../types'
-import { registerBehaviour } from '../registry'
+import type { Behaviour } from '../../types'
+import { registerBehaviour } from '../../registry'
+import { meta } from './meta'
 
-interface IntroContentRevealOptions {
+export interface IntroContentRevealSettings {
   /** Delay after intro completes before starting reveal (ms) */
-  delay?: number
+  delay: number
   /** Reveal duration (ms) */
-  duration?: number
+  duration: number
   /** Y offset in pixels for slide effect */
-  yOffset?: number
+  yOffset: number
   /** Scale start value */
-  scaleStart?: number
+  scaleStart: number
 }
 
-const introContentReveal: Behaviour = {
-  id: 'intro/content-reveal',
-  name: 'Intro Content Reveal',
+const introContentReveal: Behaviour<IntroContentRevealSettings> = {
+  ...meta,
   requires: ['phase', 'revealProgress', 'prefersReducedMotion'],
 
   compute: (state, options) => {
     const {
       yOffset = 30,
       scaleStart = 0.98
-    } = (options as IntroContentRevealOptions) || {}
+    } = (options as Partial<IntroContentRevealSettings>) || {}
 
     const phase = (state.phase as string) ?? 'intro-locked'
     const revealProgress = (state.revealProgress as number) ?? 0
@@ -71,41 +71,6 @@ const introContentReveal: Behaviour = {
     transform: translateY(calc(var(--intro-y, 0) * 1px)) scale(var(--intro-scale, 1));
     will-change: opacity, transform;
   `,
-
-  optionConfig: {
-    delay: {
-      type: 'range',
-      label: 'Reveal Delay (ms)',
-      default: 0,
-      min: 0,
-      max: 1000,
-      step: 50
-    },
-    duration: {
-      type: 'range',
-      label: 'Reveal Duration (ms)',
-      default: 600,
-      min: 200,
-      max: 1500,
-      step: 50
-    },
-    yOffset: {
-      type: 'range',
-      label: 'Y Offset (px)',
-      default: 30,
-      min: 0,
-      max: 100,
-      step: 5
-    },
-    scaleStart: {
-      type: 'range',
-      label: 'Scale Start',
-      default: 0.98,
-      min: 0.9,
-      max: 1,
-      step: 0.01
-    }
-  }
 }
 
 // Auto-register on module load

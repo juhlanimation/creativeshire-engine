@@ -11,7 +11,6 @@ export type {
   CSSVariables,
   BehaviourState,
   BehaviourConfig,
-  OptionConfig,
   ExperienceConfig,
 } from './experience'
 

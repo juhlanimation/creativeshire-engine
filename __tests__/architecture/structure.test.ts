@@ -293,7 +293,7 @@ describe('Component Structure Validation', () => {
 
       const unexpected = [...folders].filter(f => !BEHAVIOUR_TRIGGERS.includes(f))
 
-      expect(unexpected, `Unexpected behaviour folders (should be trigger-named):\\n${unexpected.join('\\n')}`).toHaveLength(0)
+      expect(unexpected, `Unexpected behaviour folders (should be trigger-named):\n${unexpected.join('\n')}`).toHaveLength(0)
     })
 
     it('each behaviour trigger folder has index.ts', async () => {
@@ -309,24 +309,46 @@ describe('Component Structure Validation', () => {
         }
       }
 
-      expect(missing, `Behaviour folders missing index.ts:\\n${missing.join('\\n')}`).toHaveLength(0)
+      expect(missing, `Behaviour folders missing index.ts:\n${missing.join('\n')}`).toHaveLength(0)
     })
 
-    it('behaviour files are kebab-case', async () => {
-      const files = await getFiles('experience/behaviours/**/*.ts')
-      const violations: string[] = []
+    it('each behaviour has a folder with index.ts + meta.ts', async () => {
+      const missingIndex: string[] = []
+      const missingMeta: string[] = []
 
-      for (const file of files) {
-        const filename = path.basename(file, '.ts')
-        if (filename === 'index') continue
+      for (const trigger of BEHAVIOUR_TRIGGERS) {
+        const folders = await getFolders(`experience/behaviours/${trigger}/*`)
 
-        // Check kebab-case: lowercase letters, numbers, hyphens only
-        if (!/^[a-z][a-z0-9-]*$/.test(filename)) {
-          violations.push(`${relativePath(file)}: "${filename}" is not kebab-case`)
+        for (const folder of folders) {
+          const name = path.basename(folder)
+          if (!(await fileExists(path.join(folder, 'index.ts')))) {
+            missingIndex.push(`experience/behaviours/${trigger}/${name}/index.ts`)
+          }
+          if (!(await fileExists(path.join(folder, 'meta.ts')))) {
+            missingMeta.push(`experience/behaviours/${trigger}/${name}/meta.ts`)
+          }
         }
       }
 
-      expect(violations, `Non-kebab-case behaviour files:\\n${violations.join('\\n')}`).toHaveLength(0)
+      expect(missingIndex, `Missing index.ts:\n${missingIndex.join('\n')}`).toHaveLength(0)
+      expect(missingMeta, `Missing meta.ts:\n${missingMeta.join('\n')}`).toHaveLength(0)
+    })
+
+    it('behaviour files are kebab-case', async () => {
+      const violations: string[] = []
+
+      for (const trigger of BEHAVIOUR_TRIGGERS) {
+        const folders = await getFolders(`experience/behaviours/${trigger}/*`)
+
+        for (const folder of folders) {
+          const name = path.basename(folder)
+          if (!/^[a-z][a-z0-9-]*$/.test(name)) {
+            violations.push(`experience/behaviours/${trigger}/${name}: not kebab-case`)
+          }
+        }
+      }
+
+      expect(violations, `Non-kebab-case behaviour folders:\n${violations.join('\n')}`).toHaveLength(0)
     })
   })
 

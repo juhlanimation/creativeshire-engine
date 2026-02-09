@@ -152,6 +152,7 @@ export function NavTimeline({
   const nextNumberRef = useRef<HTMLDivElement>(null)
   const numberContainerRef = useRef<HTMLDivElement>(null)
   const timelineRef = useRef<gsap.core.Timeline | null>(null)
+  const hasRevealedRef = useRef(false)
 
   // Autohide animation state
   const autohideTweenRef = useRef<gsap.core.Tween | null>(null)
@@ -227,8 +228,12 @@ export function NavTimeline({
     }
 
     if (show) {
+      hasRevealedRef.current = false
       const tl = gsap.timeline({
-        onComplete: onAnimationComplete,
+        onComplete: () => {
+          hasRevealedRef.current = true
+          onAnimationComplete?.()
+        },
       })
 
       // Reset initial states
@@ -368,9 +373,11 @@ export function NavTimeline({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show, onAnimationComplete])
 
-  // Handle top arrow visibility changes
+  // Handle top arrow visibility changes (only after reveal completes)
   useEffect(() => {
     if (!show || !topArrowRef.current || !showArrows) return
+    // Skip during reveal — the reveal timeline animates the arrow itself
+    if (!hasRevealedRef.current) return
 
     gsap.to(topArrowRef.current, {
       scale: showTopArrow ? 1 : 0,

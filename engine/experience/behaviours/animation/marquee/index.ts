@@ -9,12 +9,16 @@
  * - --marquee-duration: Animation duration
  */
 
-import type { Behaviour } from '../types'
-import { registerBehaviour } from '../registry'
+import type { Behaviour } from '../../types'
+import { registerBehaviour } from '../../registry'
+import { meta } from './meta'
 
-const animationMarquee: Behaviour = {
-  id: 'animation/marquee',
-  name: 'Animation Marquee',
+export interface MarqueeSettings {
+  speed: number
+}
+
+const animationMarquee: Behaviour<MarqueeSettings> = {
+  ...meta,
   requires: ['prefersReducedMotion'],
 
   compute: (state, options) => {
@@ -38,17 +42,6 @@ const animationMarquee: Behaviour = {
     animation-play-state: var(--marquee-play-state, running);
     animation-duration: var(--marquee-duration, 30s);
   `,
-
-  optionConfig: {
-    speed: {
-      type: 'range',
-      label: 'Animation Speed (seconds)',
-      default: 30,
-      min: 10,
-      max: 60,
-      step: 5
-    }
-  }
 }
 
 // Auto-register on module load

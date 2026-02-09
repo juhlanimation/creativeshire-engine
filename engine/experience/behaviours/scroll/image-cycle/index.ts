@@ -4,12 +4,17 @@
  * Generic behaviour for scroll-driven image/content cycling.
  */
 
-import type { Behaviour } from '../types'
-import { registerBehaviour } from '../registry'
+import type { Behaviour } from '../../types'
+import { registerBehaviour } from '../../registry'
+import { meta } from './meta'
 
-const scrollImageCycle: Behaviour = {
-  id: 'scroll/image-cycle',
-  name: 'Scroll Image Cycle',
+export interface ScrollImageCycleSettings {
+  imageCount: number
+  cycleRange: number
+}
+
+const scrollImageCycle: Behaviour<ScrollImageCycleSettings> = {
+  ...meta,
   requires: ['scrollProgress', 'prefersReducedMotion'],
 
   compute: (state, options) => {
@@ -41,25 +46,6 @@ const scrollImageCycle: Behaviour = {
     opacity: var(--bg-opacity, 1);
     will-change: contents;
   `,
-
-  optionConfig: {
-    imageCount: {
-      type: 'range',
-      label: 'Number of Images',
-      default: 5,
-      min: 2,
-      max: 10,
-      step: 1
-    },
-    cycleRange: {
-      type: 'range',
-      label: 'Cycle Range (0-1)',
-      default: 0.2,
-      min: 0.1,
-      max: 1,
-      step: 0.1
-    }
-  }
 }
 
 // Auto-register on module load

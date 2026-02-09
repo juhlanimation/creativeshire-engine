@@ -417,7 +417,8 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
   // - Slideshow: Disable ScrollSmoother (body locked), use section-level smoothing
   // - Bare mode: Disable for raw layout testing
   const isSlideshow = experience.presentation?.model === 'slideshow'
-  const smoothScrollConfig = (isSlideshow || experience.bareMode)
+  const isInfiniteCarousel = experience.presentation?.model === 'infinite-carousel'
+  const smoothScrollConfig = (isSlideshow || isInfiniteCarousel || experience.bareMode)
     ? { ...site.theme?.smoothScroll, enabled: false }  // Disable page-level, keep config for section use
     : site.theme?.smoothScroll
 

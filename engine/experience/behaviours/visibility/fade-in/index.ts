@@ -9,12 +9,16 @@
  * - --y: Vertical offset in pixels
  */
 
-import type { Behaviour } from '../types'
-import { registerBehaviour } from '../registry'
+import type { Behaviour } from '../../types'
+import { registerBehaviour } from '../../registry'
+import { meta } from './meta'
 
-const visibilityFadeIn: Behaviour = {
-  id: 'visibility/fade-in',
-  name: 'Visibility Fade In',
+export interface FadeInSettings {
+  distance: number
+}
+
+const visibilityFadeIn: Behaviour<FadeInSettings> = {
+  ...meta,
   requires: ['sectionVisibility', 'prefersReducedMotion'],
 
   compute: (state, options) => {
@@ -41,17 +45,6 @@ const visibilityFadeIn: Behaviour = {
     transform: translateY(calc(var(--y, 0) * 1px));
     will-change: opacity, transform;
   `,
-
-  optionConfig: {
-    distance: {
-      type: 'range',
-      label: 'Slide Distance',
-      default: 20,
-      min: 0,
-      max: 100,
-      step: 5
-    }
-  }
 }
 
 // Auto-register on module load

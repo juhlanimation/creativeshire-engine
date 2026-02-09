@@ -2,10 +2,10 @@
  * Bishoy Gendi preset site-level defaults.
  * Experience and intro configuration.
  *
- * Currently uses simple experience (vertical scroll) for baseline rendering.
- * Will switch to infinite-carousel once all sections are verified.
+ * Uses infinite-carousel experience for momentum-based vertical scrolling
+ * with snap-to-section behavior.
  *
- * @see engine/experience/experiences/simple/index.ts
+ * @see engine/experience/experiences/infinite-carousel/index.ts
  */
 
 import type { PresetExperienceConfig } from '../types'
@@ -13,10 +13,10 @@ import type { IntroConfig } from '../../intro/types'
 
 /**
  * Experience configuration for Bishoy Gendi preset.
- * Simple vertical scroll for now — sections stack naturally.
+ * Infinite carousel — momentum-based vertical scroll with snap.
  */
 export const experienceConfig: PresetExperienceConfig = {
-  id: 'simple',
+  id: 'infinite-carousel',
 }
 
 /**

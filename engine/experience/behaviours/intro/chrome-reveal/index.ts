@@ -10,28 +10,28 @@
  * - --chrome-visible: Visibility flag (0 or 1)
  */
 
-import type { Behaviour } from '../types'
-import { registerBehaviour } from '../registry'
+import type { Behaviour } from '../../types'
+import { registerBehaviour } from '../../registry'
+import { meta } from './meta'
 
-interface IntroChromeRevealOptions {
+export interface IntroChromeRevealSettings {
   /** Y offset in pixels for slide effect (positive = from top, negative = from bottom) */
-  yOffset?: number
+  yOffset: number
   /** Which edge this chrome is on (affects slide direction) */
-  edge?: 'top' | 'bottom'
+  edge: 'top' | 'bottom'
   /** Delay after intro completes (ms) */
-  delay?: number
+  delay: number
 }
 
-const introChromeReveal: Behaviour = {
-  id: 'intro/chrome-reveal',
-  name: 'Intro Chrome Reveal',
+const introChromeReveal: Behaviour<IntroChromeRevealSettings> = {
+  ...meta,
   requires: ['phase', 'chromeVisible', 'introCompleted', 'prefersReducedMotion'],
 
   compute: (state, options) => {
     const {
       yOffset = 20,
       edge = 'top'
-    } = (options as IntroChromeRevealOptions) || {}
+    } = (options as Partial<IntroChromeRevealSettings>) || {}
 
     const chromeVisible = (state.chromeVisible as boolean) ?? false
     const introCompleted = (state.introCompleted as boolean) ?? false
@@ -65,34 +65,6 @@ const introChromeReveal: Behaviour = {
     will-change: opacity, transform;
     transition: opacity 400ms ease, transform 400ms ease;
   `,
-
-  optionConfig: {
-    yOffset: {
-      type: 'range',
-      label: 'Slide Distance (px)',
-      default: 20,
-      min: 0,
-      max: 50,
-      step: 5
-    },
-    edge: {
-      type: 'select',
-      label: 'Chrome Edge',
-      default: 'top',
-      choices: [
-        { value: 'top', label: 'Top (Header)' },
-        { value: 'bottom', label: 'Bottom (Footer)' }
-      ]
-    },
-    delay: {
-      type: 'range',
-      label: 'Reveal Delay (ms)',
-      default: 0,
-      min: 0,
-      max: 500,
-      step: 50
-    }
-  }
 }
 
 // Auto-register on module load

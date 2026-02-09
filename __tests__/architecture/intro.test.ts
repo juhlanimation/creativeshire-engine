@@ -67,13 +67,13 @@ describe('Intro Sequence-Timed Pattern', () => {
   })
 
   it('intro/step behaviour exists', async () => {
-    const behaviourPath = path.join(ENGINE, 'experience', 'behaviours', 'intro', 'step.ts')
-    expect(await fileExists(behaviourPath), 'intro/step.ts should exist').toBe(true)
+    const behaviourPath = path.join(ENGINE, 'experience', 'behaviours', 'intro', 'step', 'index.ts')
+    expect(await fileExists(behaviourPath), 'intro/step/index.ts should exist').toBe(true)
   })
 
   it('intro/step behaviour has correct ID', async () => {
-    const behaviourPath = path.join(ENGINE, 'experience', 'behaviours', 'intro', 'step.ts')
-    const content = await readFile(behaviourPath)
+    const metaPath = path.join(ENGINE, 'experience', 'behaviours', 'intro', 'step', 'meta.ts')
+    const content = await readFile(metaPath)
     expect(content).toContain("'intro/step'")
   })
 
@@ -631,13 +631,17 @@ describe('Intro Cross-Validation', () => {
       expect(exists, 'experience/behaviours/intro/ folder should exist').toBe(true)
     })
 
-    it('all expected intro behaviour files exist', async () => {
+    it('all expected intro behaviour folders exist with index.ts + meta.ts', async () => {
       const missing: string[] = []
 
       for (const behaviour of EXPECTED_BEHAVIOURS) {
-        const filePath = path.join(ENGINE, 'experience', 'behaviours', 'intro', `${behaviour}.ts`)
-        if (!(await fileExists(filePath))) {
-          missing.push(`experience/behaviours/intro/${behaviour}.ts`)
+        const indexPath = path.join(ENGINE, 'experience', 'behaviours', 'intro', behaviour, 'index.ts')
+        const metaPath = path.join(ENGINE, 'experience', 'behaviours', 'intro', behaviour, 'meta.ts')
+        if (!(await fileExists(indexPath))) {
+          missing.push(`experience/behaviours/intro/${behaviour}/index.ts`)
+        }
+        if (!(await fileExists(metaPath))) {
+          missing.push(`experience/behaviours/intro/${behaviour}/meta.ts`)
         }
       }
 
@@ -651,18 +655,21 @@ describe('Intro Cross-Validation', () => {
     })
 
     it('intro behaviour IDs are prefixed with intro/', async () => {
-      const behaviourFiles = await getFiles('experience/behaviours/intro/*.ts')
+      const metaFiles = await getFiles('experience/behaviours/intro/*/meta.ts')
       const violations: string[] = []
 
-      for (const file of behaviourFiles) {
-        const filename = path.basename(file, '.ts')
-        if (filename === 'index' || filename === 'types') continue
+      for (const file of metaFiles) {
+        const rel = relativePath(file)
+        const parts = rel.split('/')
+        // Path: experience/behaviours/intro/{name}/meta.ts → name is parts[3]
+        const behaviourName = parts[3]
+        if (!behaviourName) continue
 
         const content = await readFile(file)
-        const expectedId = `intro/${filename}`
+        const expectedId = `intro/${behaviourName}`
 
         if (!content.includes(`'${expectedId}'`) && !content.includes(`"${expectedId}"`)) {
-          violations.push(`${relativePath(file)}: expected behaviour ID "${expectedId}"`)
+          violations.push(`${rel}: expected behaviour ID "${expectedId}"`)
         }
       }
 

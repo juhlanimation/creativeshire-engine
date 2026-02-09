@@ -100,6 +100,29 @@ export class ScrollDriver implements Driver {
   /** Scroll target (container or window) */
   private scrollTarget!: HTMLElement | Window
 
+  /** Cached max scroll distance (recomputed on resize) */
+  private cachedMaxScroll = 0
+
+  /** Per-target last-written CSS values (skip redundant setProperty calls) */
+  private lastValues: Map<string, Record<string, string>> = new Map()
+
+  /** Last-frame store visibility values (detect changes for idle-aware tick) */
+  private lastStoreVisibilities: Map<string, number> = new Map()
+
+  /** Reusable state object (avoids allocation per target per frame) */
+  private reusableState: BehaviourState = {
+    scrollProgress: 0,
+    scrollVelocity: 0,
+    sectionProgress: 0,
+    sectionVisibility: 0,
+    sectionIndex: 0,
+    totalSections: 1,
+    isActive: true,
+    isHovered: false,
+    isPressed: false,
+    prefersReducedMotion: false,
+  }
+
   constructor(config?: ScrollDriverConfig) {
     // Only run in browser environment
     if (typeof window === 'undefined') return
@@ -123,6 +146,10 @@ export class ScrollDriver implements Driver {
       threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
     })
 
+    // Cache max scroll distance (recomputed on resize)
+    this.cachedMaxScroll = this.computeMaxScroll()
+    window.addEventListener('resize', this.onResize, { passive: true })
+
     // Cache reduced motion preference (avoid calling matchMedia every frame)
     this.reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     this.prefersReducedMotion = this.reducedMotionQuery.matches
@@ -143,16 +170,22 @@ export class ScrollDriver implements Driver {
   }
 
   /**
-   * Get max scroll distance (container or document).
+   * Compute max scroll distance (container or document).
    * Uses document.documentElement for fullpage mode (not document.body).
    */
-  private getMaxScroll(): number {
+  private computeMaxScroll(): number {
     if (this.container) {
       return this.container.scrollHeight - this.container.clientHeight
     }
-    // Use documentElement for cross-browser compatibility
-    // (document.body can have quirks, documentElement is more reliable)
     return document.documentElement.scrollHeight - window.innerHeight
+  }
+
+  /**
+   * Resize handler - recompute cached max scroll.
+   */
+  private onResize = (): void => {
+    this.cachedMaxScroll = this.computeMaxScroll()
+    this.state.needsUpdate = true
   }
 
   /**
@@ -186,7 +219,6 @@ export class ScrollDriver implements Driver {
   private onScroll = (): void => {
     const now = performance.now()
     const scrollY = this.getScrollY()
-    const maxScroll = this.getMaxScroll()
     const deltaTime = now - this.state.lastTime
 
     // Calculate velocity (pixels per millisecond)
@@ -194,8 +226,10 @@ export class ScrollDriver implements Driver {
       this.state.scrollVelocity = (scrollY - this.state.lastScrollY) / deltaTime
     }
 
-    // Calculate progress (0-1)
-    this.state.scrollProgress = maxScroll > 0 ? scrollY / maxScroll : 0
+    // Calculate progress (0-1) using cached max scroll
+    this.state.scrollProgress = this.cachedMaxScroll > 0
+      ? scrollY / this.cachedMaxScroll
+      : 0
 
     // Update last values
     this.state.lastScrollY = scrollY
@@ -207,17 +241,24 @@ export class ScrollDriver implements Driver {
 
   /**
    * Animation frame tick - arrow function for stable reference.
-   * Requests next frame and updates all targets only when dirty.
+   * Idle-aware: skips update when nothing changed (scroll, local observer, OR store visibility).
    */
   private tick = (): void => {
     if (this.isDestroyed) return
 
-    // For elements using store-based visibility (sections), we must update every frame
-    // because the store can change without triggering our local IntersectionObserver.
-    // For elements using local observer only, we can skip frames when nothing changed.
-    const hasStoreVisibilities = this.storeVisibilities.size > 0
+    // Check if any store-based visibility changed since last frame
+    let storeChanged = false
+    if (this.storeVisibilities.size > 0) {
+      this.storeVisibilities.forEach((getter, id) => {
+        const current = getter()
+        if (current !== this.lastStoreVisibilities.get(id)) {
+          this.lastStoreVisibilities.set(id, current)
+          storeChanged = true
+        }
+      })
+    }
 
-    if (this.state.needsUpdate || hasStoreVisibilities) {
+    if (this.state.needsUpdate || storeChanged) {
       this.state.needsUpdate = false
       this.update()
     }
@@ -228,40 +269,43 @@ export class ScrollDriver implements Driver {
   /**
    * Update all registered targets.
    * Calls behaviour.compute() and applies CSS variables via setProperty().
+   * Uses reusable state object and value-change guard to minimize allocations and DOM writes.
    */
   private update(): void {
     // Batch read: get current scroll state once
     const { scrollProgress, scrollVelocity } = this.state
 
+    // Update shared fields on reusable state (mutate, don't allocate)
+    this.reusableState.scrollProgress = scrollProgress
+    this.reusableState.scrollVelocity = scrollVelocity
+    this.reusableState.sectionProgress = scrollProgress
+    this.reusableState.prefersReducedMotion = this.prefersReducedMotion
+
     // Batch write: update all targets
     this.targets.forEach(({ element, behaviour, options }, id) => {
       // Get visibility - prefer store-based getter (for sections), fallback to local observer
       const storeGetter = this.storeVisibilities.get(id)
-      const elementVisibility = storeGetter?.()
+      this.reusableState.sectionVisibility = storeGetter?.()
         ?? this.visibility.get(id)?.visibility
         ?? 0
 
-      // Build state object for behaviour
-      const behaviourState: BehaviourState = {
-        scrollProgress,
-        scrollVelocity,
-        sectionProgress: scrollProgress, // Default to global progress
-        sectionVisibility: elementVisibility,
-        sectionIndex: 0,
-        totalSections: 1,
-        isActive: true,
-        isHovered: false,
-        isPressed: false,
-        prefersReducedMotion: this.prefersReducedMotion, // Use cached value
+      // Compute CSS variables from behaviour
+      const vars = behaviour.compute(this.reusableState, options)
+
+      // Value-change guard: only call setProperty when value actually changed
+      let cached = this.lastValues.get(id)
+      if (!cached) {
+        cached = {}
+        this.lastValues.set(id, cached)
       }
 
-      // Compute CSS variables from behaviour
-      const vars = behaviour.compute(behaviourState, options)
-
-      // Apply CSS variables via setProperty
-      Object.entries(vars).forEach(([key, value]) => {
-        element.style.setProperty(key, String(value))
-      })
+      for (const key in vars) {
+        const value = String(vars[key])
+        if (cached[key] !== value) {
+          cached[key] = value
+          element.style.setProperty(key, value)
+        }
+      }
     })
   }
 
@@ -320,9 +364,13 @@ export class ScrollDriver implements Driver {
       prefersReducedMotion: this.prefersReducedMotion,
     }
     const vars = behaviour.compute(initialState, options)
-    Object.entries(vars).forEach(([key, value]) => {
-      element.style.setProperty(key, String(value))
-    })
+    const cached: Record<string, string> = {}
+    for (const key in vars) {
+      const value = String(vars[key])
+      cached[key] = value
+      element.style.setProperty(key, value)
+    }
+    this.lastValues.set(id, cached)
 
     // Mark dirty to apply values on next frame (visibility may change)
     this.state.needsUpdate = true
@@ -345,6 +393,8 @@ export class ScrollDriver implements Driver {
     this.targets.delete(id)
     this.visibility.delete(id)
     this.storeVisibilities.delete(id)
+    this.lastValues.delete(id)
+    this.lastStoreVisibilities.delete(id)
   }
 
   /**
@@ -355,9 +405,10 @@ export class ScrollDriver implements Driver {
     // Mark as destroyed to prevent further updates
     this.isDestroyed = true
 
-    // Remove scroll listener from the correct target
+    // Remove scroll and resize listeners
     if (typeof window !== 'undefined') {
       this.scrollTarget.removeEventListener('scroll', this.onScroll)
+      window.removeEventListener('resize', this.onResize)
     }
 
     // Remove reduced motion listener
@@ -378,10 +429,12 @@ export class ScrollDriver implements Driver {
       this.rafId = null
     }
 
-    // Clear all targets and visibility tracking
+    // Clear all targets, visibility tracking, and caches
     this.targets.clear()
     this.visibility.clear()
     this.storeVisibilities.clear()
+    this.lastValues.clear()
+    this.lastStoreVisibilities.clear()
   }
 
   /**

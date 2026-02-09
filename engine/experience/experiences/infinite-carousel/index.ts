@@ -103,17 +103,7 @@ export const infiniteCarouselExperience: Experience = {
   // No pageWrapper - the presentation wrapper handles layout
   // pageWrapper: undefined,
 
-  experienceChrome: [
-    {
-      type: 'NavTimeline',
-      position: 'overlay',
-      props: {
-        position: 'center',
-        showArrows: true,
-        autohide: true,
-      },
-    },
-  ],
+  experienceChrome: [],
 
   constraints: {
     fullViewportSections: true,

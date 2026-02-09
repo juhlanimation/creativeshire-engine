@@ -11,8 +11,15 @@
  * - --expand-opacity: Opacity for content that appears on expand
  */
 
-import type { Behaviour } from '../types'
-import { registerBehaviour } from '../registry'
+import type { Behaviour } from '../../types'
+import { registerBehaviour } from '../../registry'
+import { meta } from './meta'
+
+export interface HoverExpandSettings {
+  baseWidth: number
+  expandedWidth: number
+  expandScale: number
+}
 
 interface HoverExpandOptions {
   baseWidth?: number
@@ -21,9 +28,8 @@ interface HoverExpandOptions {
   expandScale?: number
 }
 
-const hoverExpand: Behaviour = {
-  id: 'hover/expand',
-  name: 'Hover Expand',
+const hoverExpand: Behaviour<HoverExpandSettings> = {
+  ...meta,
   requires: ['isHovered', 'prefersReducedMotion'],
 
   compute: (state, options) => {
@@ -52,33 +58,6 @@ const hoverExpand: Behaviour = {
     transition: width 0.3s ease;
     will-change: width;
   `,
-
-  optionConfig: {
-    baseWidth: {
-      type: 'range',
-      label: 'Base Width',
-      default: 78,
-      min: 50,
-      max: 120,
-      step: 2
-    },
-    expandedWidth: {
-      type: 'range',
-      label: 'Expanded Width',
-      default: 268,
-      min: 200,
-      max: 400,
-      step: 10
-    },
-    expandScale: {
-      type: 'range',
-      label: 'Expand Scale',
-      default: 1,
-      min: 1,
-      max: 1.2,
-      step: 0.01
-    }
-  }
 }
 
 // Auto-register on module load

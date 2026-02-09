@@ -10,21 +10,21 @@
  * - --intro-overlay-opacity: Overlay opacity (computed from step/progress)
  */
 
-import type { Behaviour } from '../types'
-import { registerBehaviour } from '../registry'
+import type { Behaviour } from '../../types'
+import { registerBehaviour } from '../../registry'
+import { meta } from './meta'
 
-interface IntroStepOptions {
+export interface IntroStepSettings {
   /** Step index at which the overlay starts fading (default: 2) */
-  overlayFadeStep?: number
+  overlayFadeStep: number
 }
 
-const introStep: Behaviour = {
-  id: 'intro/step',
-  name: 'Intro Step',
+const introStep: Behaviour<IntroStepSettings> = {
+  ...meta,
   requires: ['currentStep', 'stepProgress', 'prefersReducedMotion'],
 
   compute: (state, options) => {
-    const { overlayFadeStep = 2 } = (options as IntroStepOptions) || {}
+    const { overlayFadeStep = 2 } = (options as Partial<IntroStepSettings>) || {}
 
     const currentStep = (state.currentStep as number) ?? 0
     const stepProgress = (state.stepProgress as number) ?? 0
@@ -53,17 +53,6 @@ const introStep: Behaviour = {
       '--intro-step-progress': stepProgress,
       '--intro-overlay-opacity': overlayOpacity,
     }
-  },
-
-  optionConfig: {
-    overlayFadeStep: {
-      type: 'range',
-      label: 'Overlay Fade Step',
-      default: 2,
-      min: 0,
-      max: 10,
-      step: 1,
-    },
   },
 }
 

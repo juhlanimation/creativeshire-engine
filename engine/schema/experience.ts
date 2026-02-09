@@ -3,8 +3,6 @@
  * Behaviours transform runtime state into CSS variables for animation.
  */
 
-import type { SettingConfig } from './settings'
-
 /**
  * CSS variables record - all keys must be --prefixed.
  * Behaviours WRITE these, widgets READ them via CSS.
@@ -51,13 +49,6 @@ export interface BehaviourState {
   /** Mode-specific state (extensible) */
   [key: string]: unknown
 }
-
-/**
- * Configuration for behaviour options displayed in UI.
- * @deprecated Use SettingConfig from './settings' instead.
- * Kept as alias for backward compatibility with existing behaviours.
- */
-export type OptionConfig = SettingConfig
 
 /**
  * Behaviour configuration - either a behaviour ID string or full config object.

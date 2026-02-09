@@ -1,10 +1,10 @@
 /**
  * Bishoy Gendi preset chrome configuration.
  *
- * Minimal chrome - the infinite-carousel experience provides:
- * - NavTimeline via experienceChrome
- * - Footer hiding via hideChrome: ['footer']
- * - IntroOverlay is configured in intro config (not chrome)
+ * NavTimeline is a preset overlay (not experience chrome) — the preset
+ * decides what UI wraps sections; the experience only controls scroll physics.
+ * Footer hiding via hideChrome: ['footer']
+ * IntroOverlay is configured in intro config (not chrome)
  */
 
 import type { PresetChromeConfig } from '../../types'
@@ -20,5 +20,9 @@ export const chromeConfig: PresetChromeConfig = {
   },
   overlays: {
     modal: { component: 'ModalRoot' },
+    navTimeline: {
+      component: 'NavTimeline',
+      props: { position: 'center', showArrows: true, autohide: true },
+    },
   },
 }

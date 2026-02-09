@@ -6,7 +6,7 @@
  * NOT by effect or widget name.
  */
 
-import { behaviourRegistry } from './registry'
+import { getBehaviour } from './registry'
 import type { Behaviour } from './types'
 
 /**
@@ -23,7 +23,7 @@ export function resolveBehaviour(
     return null
   }
 
-  return behaviourRegistry[behaviourId] ?? null
+  return getBehaviour(behaviourId) ?? null
 }
 
 /**

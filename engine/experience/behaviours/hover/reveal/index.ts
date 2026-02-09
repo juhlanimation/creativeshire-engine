@@ -14,8 +14,16 @@
  * - --fade-duration: Animation duration for fades
  */
 
-import type { Behaviour } from '../types'
-import { registerBehaviour } from '../registry'
+import type { Behaviour } from '../../types'
+import { registerBehaviour } from '../../registry'
+import { meta } from './meta'
+
+export interface HoverRevealSettings {
+  hoverScale: number
+  pressScale: number
+  flipDuration: number
+  fadeDuration: number
+}
 
 interface HoverRevealOptions {
   hoverScale?: number
@@ -26,9 +34,8 @@ interface HoverRevealOptions {
   defaultColor?: string
 }
 
-const hoverReveal: Behaviour = {
-  id: 'hover/reveal',
-  name: 'Hover Reveal',
+const hoverReveal: Behaviour<HoverRevealSettings> = {
+  ...meta,
   requires: ['isHovered', 'isPressed', 'prefersReducedMotion'],
 
   compute: (state, options) => {
@@ -86,41 +93,6 @@ const hoverReveal: Behaviour = {
     transform: scale(var(--hover-reveal-scale, 1));
     will-change: transform;
   `,
-
-  optionConfig: {
-    hoverScale: {
-      type: 'range',
-      label: 'Hover Scale',
-      default: 1.02,
-      min: 1,
-      max: 1.1,
-      step: 0.01
-    },
-    pressScale: {
-      type: 'range',
-      label: 'Press Scale',
-      default: 0.98,
-      min: 0.9,
-      max: 1,
-      step: 0.01
-    },
-    flipDuration: {
-      type: 'range',
-      label: 'Flip Duration (ms)',
-      default: 400,
-      min: 100,
-      max: 800,
-      step: 50
-    },
-    fadeDuration: {
-      type: 'range',
-      label: 'Fade Duration (ms)',
-      default: 200,
-      min: 50,
-      max: 500,
-      step: 25
-    }
-  }
 }
 
 // Auto-register on module load

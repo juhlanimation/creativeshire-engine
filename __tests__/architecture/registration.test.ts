@@ -19,7 +19,7 @@ import {
 // Import registries
 import { widgetRegistry } from '../../engine/content/widgets/registry'
 import { getChromeComponent, getAllChromeMetas, getChromeComponentIds } from '../../engine/content/chrome/registry'
-import { behaviourRegistry } from '../../engine/experience/behaviours/registry'
+import { behaviourRegistry, getBehaviourIds, getAllBehaviourMetas } from '../../engine/experience/behaviours/registry'
 import { transitionRegistry } from '../../engine/experience/drivers/gsap/transitions/registry'
 import { sectionRegistry } from '../../engine/content/sections/registry'
 
@@ -261,57 +261,58 @@ describe('Registration Validation', () => {
   })
 
   describe('Behaviour Registry', () => {
-    const TRIGGER_FOLDERS = ['scroll', 'hover', 'visibility', 'animation', 'interaction']
-    const EXCLUDED_FILES = ['index.ts', 'registry.ts', 'types.ts', 'resolve.ts', 'BehaviourWrapper.tsx']
+    const TRIGGER_FOLDERS = ['scroll', 'hover', 'visibility', 'animation', 'interaction', 'video', 'intro']
 
-    it('all behaviour files are registered', async () => {
+    it('all behaviour folders are registered', async () => {
       const violations: string[] = []
 
       for (const trigger of TRIGGER_FOLDERS) {
-        const files = await getFiles(`experience/behaviours/${trigger}/*.ts`)
+        const folders = await getFolders(`experience/behaviours/${trigger}/*`)
 
-        for (const file of files) {
-          const filename = file.split('/').pop() || ''
-          if (EXCLUDED_FILES.includes(filename)) continue
+        for (const folder of folders) {
+          const name = getComponentName(folder)
+          const expectedId = `${trigger}/${name}`
 
-          const content = await readFile(file)
-          const id = extractBehaviourId(content)
-
-          if (!id) {
-            violations.push(`${relativePath(file)}: No behaviour ID found in file`)
-            continue
-          }
-
-          if (!behaviourRegistry[id]) {
-            violations.push(`${relativePath(file)}: Behaviour "${id}" not registered in behaviourRegistry`)
+          if (!behaviourRegistry[expectedId]) {
+            violations.push(`Behaviour "${expectedId}" folder exists but is not registered`)
           }
         }
       }
 
-      if (violations.length > 0) {
-        console.log('Unregistered behaviours:')
-        violations.forEach((v) => console.log(`  - ${v}`))
+      expect(violations, `Unregistered behaviours:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
+    it('no orphaned behaviour registry entries', async () => {
+      const folderIds = new Set<string>()
+      for (const trigger of TRIGGER_FOLDERS) {
+        const folders = await getFolders(`experience/behaviours/${trigger}/*`)
+        for (const folder of folders) {
+          const name = getComponentName(folder)
+          folderIds.add(`${trigger}/${name}`)
+        }
       }
 
-      expect(violations).toHaveLength(0)
+      const registryIds = getBehaviourIds()
+      const orphaned = registryIds.filter((id) => !folderIds.has(id))
+
+      expect(
+        orphaned,
+        `Orphaned behaviour registry entries:\n${orphaned.join('\n')}`
+      ).toHaveLength(0)
     })
 
     it('behaviour IDs follow trigger/name convention', async () => {
       const violations: string[] = []
 
       for (const trigger of TRIGGER_FOLDERS) {
-        const files = await getFiles(`experience/behaviours/${trigger}/*.ts`)
+        const metaFiles = await getFiles(`experience/behaviours/${trigger}/*/meta.ts`)
 
-        for (const file of files) {
-          const filename = file.split('/').pop() || ''
-          if (EXCLUDED_FILES.includes(filename)) continue
-
+        for (const file of metaFiles) {
           const content = await readFile(file)
           const id = extractBehaviourId(content)
 
           if (!id) continue
 
-          // ID should be trigger/name format
           const expectedPrefix = `${trigger}/`
           if (!id.startsWith(expectedPrefix)) {
             violations.push(`${relativePath(file)}: Behaviour ID "${id}" should start with "${expectedPrefix}"`)
@@ -319,12 +320,21 @@ describe('Registration Validation', () => {
         }
       }
 
-      if (violations.length > 0) {
-        console.log('Incorrect behaviour ID format:')
-        violations.forEach((v) => console.log(`  - ${v}`))
+      expect(violations, `Incorrect behaviour ID format:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
+    it('getAllBehaviourMetas() returns entries with required fields', () => {
+      const metas = getAllBehaviourMetas()
+      const violations: string[] = []
+
+      for (const meta of metas) {
+        if (!meta.id) violations.push(`Behaviour meta missing id`)
+        if (!meta.name) violations.push(`Behaviour meta "${meta.id}" missing name`)
+        if (!meta.description) violations.push(`Behaviour meta "${meta.id}" missing description`)
+        if (!meta.category) violations.push(`Behaviour meta "${meta.id}" missing category`)
       }
 
-      expect(violations).toHaveLength(0)
+      expect(violations, `Behaviour meta validation:\n${violations.join('\n')}`).toHaveLength(0)
     })
   })
 

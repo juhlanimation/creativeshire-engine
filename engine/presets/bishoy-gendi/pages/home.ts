@@ -31,7 +31,6 @@ const showreelSection: SectionSchema = {
   },
   style: {
     height: '100dvh',
-    transform: 'none',
   },
   className: 'section-showreel',
   widgets: [
@@ -47,7 +46,7 @@ const showreelSection: SectionSchema = {
         background: true,
       },
       style: {
-        position: 'fixed',
+        position: 'absolute',
         inset: 0,
         zIndex: -1,
         objectFit: 'cover',

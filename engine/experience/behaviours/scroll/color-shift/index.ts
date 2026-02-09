@@ -5,8 +5,13 @@
  * Uses same scroll-to-index calculation as scroll/image-cycle for coordination.
  */
 
-import type { Behaviour } from '../types'
-import { registerBehaviour } from '../registry'
+import type { Behaviour } from '../../types'
+import { registerBehaviour } from '../../registry'
+import { meta } from './meta'
+
+export interface ScrollColorShiftSettings {
+  cycleRange: number
+}
 
 // Default color palette mapped to scroll states
 const DEFAULT_COLOR_PALETTE = [
@@ -17,9 +22,8 @@ const DEFAULT_COLOR_PALETTE = [
   'rgb(255, 255, 255)'  // White
 ]
 
-const scrollColorShift: Behaviour = {
-  id: 'scroll/color-shift',
-  name: 'Scroll Color Shift',
+const scrollColorShift: Behaviour<ScrollColorShiftSettings> = {
+  ...meta,
   requires: ['scrollProgress', 'prefersReducedMotion'],
 
   compute: (state, options) => {
@@ -54,17 +58,6 @@ const scrollColorShift: Behaviour = {
     transition: color 0.3s ease;
     will-change: color;
   `,
-
-  optionConfig: {
-    cycleRange: {
-      type: 'range',
-      label: 'Cycle Range (0-1)',
-      default: 0.2,
-      min: 0.1,
-      max: 1,
-      step: 0.1
-    }
-  }
   // Note: colorPalette is passed via options programmatically
   // UI configuration not supported for array types
 }
