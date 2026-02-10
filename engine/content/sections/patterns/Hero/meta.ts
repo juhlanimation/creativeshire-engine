@@ -22,7 +22,7 @@ export const meta = defineSectionMeta<HeroProps>({
       label: 'Intro Text',
       default: '',
       description: 'Introduction text (e.g., "I\'m Bo Juhl")',
-      validation: { required: true },
+      validation: { required: true, maxLength: 100 },
       group: 'Content',
     },
     roles: {
@@ -37,6 +37,7 @@ export const meta = defineSectionMeta<HeroProps>({
       label: 'Scroll Indicator',
       default: '(SCROLL)',
       description: 'Text for scroll indicator',
+      validation: { maxLength: 100 },
       group: 'Content',
     },
     videoSrc: {

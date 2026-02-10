@@ -20,7 +20,7 @@ export const meta = defineMeta<ModalProps>({
       label: 'Modal ID',
       default: 'modal',
       description: 'Unique identifier for the modal',
-      validation: { required: true },
+      validation: { required: true, maxLength: 100 },
     },
   },
 })

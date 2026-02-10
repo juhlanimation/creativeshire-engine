@@ -21,7 +21,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       label: 'Section ID',
       default: '',
       description: 'Unique identifier for anchor linking',
-      validation: { required: true },
+      validation: { required: true, maxLength: 100 },
       group: 'Identity',
     },
     label: {
@@ -29,6 +29,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       label: 'Label',
       default: '',
       description: 'Human-readable display name for the UI hierarchy',
+      validation: { maxLength: 100 },
       group: 'Identity',
     },
     patternId: {
@@ -37,6 +38,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Pattern that created this section (read-only context)',
       advanced: true,
+      validation: { maxLength: 100 },
       group: 'Identity',
     },
 
@@ -96,6 +98,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       label: 'Gap',
       default: 0,
       description: 'Gap between items',
+      validation: { min: 0, max: 500 },
       group: 'Layout',
     },
     'layout.columns': {
@@ -146,6 +149,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Additional CSS class names',
       advanced: true,
+      validation: { maxLength: 200 },
       group: 'Advanced',
     },
   },

@@ -25,6 +25,8 @@ export interface ImageProps {
   decorative?: boolean
   /** Inline styles */
   style?: CSSProperties
+  /** CSS filter (e.g., 'brightness(0) invert(1)', 'grayscale(1)') */
+  filter?: string
   /** Additional CSS class names */
   className?: string
   /** Data attribute for behaviour binding */

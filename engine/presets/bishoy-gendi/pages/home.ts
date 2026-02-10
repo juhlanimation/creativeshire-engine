@@ -41,9 +41,11 @@ const showreelSection: SectionSchema = {
       props: {
         src: '{{ content.showreel.videoSrc }}',
         poster: '{{ content.showreel.videoPoster }}',
+        posterTime: '{{ content.showreel.posterTime }}',
         autoplay: true,
         loop: true,
         muted: true,
+        preload: 'auto',
         background: true,
       },
       style: {
@@ -112,6 +114,7 @@ const azukiElementalsSection: SectionSchema = {
             src: '{{ content.azukiElementals.logo.src }}',
             alt: '{{ content.azukiElementals.logo.alt }}',
             decorative: false,
+            filter: '{{ content.azukiElementals.logo.filter }}',
           },
           style: {
             width: '{{ content.azukiElementals.logo.width }}',
@@ -119,55 +122,77 @@ const azukiElementalsSection: SectionSchema = {
         },
       ],
     },
-    // Main video area
+    // Video area with selector overlay
     {
-      id: 'azuki-main-video',
-      type: 'Video',
-      props: {
-        src: '{{ content.azukiElementals.mainVideo.src }}',
-        poster: '{{ content.azukiElementals.mainVideo.poster }}',
-        autoplay: true,
-        loop: true,
-        muted: true,
-        aspectRatio: '16/9',
-      },
-      className: 'project-gallery__video',
-    },
-    // Project selector thumbnails - uses __repeat for hierarchy visibility
-    {
-      id: 'azuki-selector',
-      type: 'ProjectSelector',
-      props: {
-        activeIndex: 0,
-        orientation: 'horizontal',
-        showInfo: true,
-      },
-      className: 'project-gallery__selector',
+      id: 'azuki-video-area',
+      type: 'Box',
+      className: 'project-gallery__video-area',
       widgets: [
+        // Main video
         {
-          __repeat: '{{ content.azukiElementals.projects }}',
-          id: 'project-item',
-          type: 'GalleryThumbnail',
+          id: 'azuki-main-video',
+          type: 'Video',
           props: {
-            thumbnailSrc: '{{ item.thumbnail }}',
-            thumbnailAlt: '{{ item.title }}',
-            videoSrc: '{{ item.video }}',
-            title: '{{ item.title }}',
-            year: '{{ item.year }}',
-            studio: '{{ item.studio }}',
+            src: '{{ content.azukiElementals.mainVideo.src }}',
+            poster: '{{ content.azukiElementals.mainVideo.poster }}',
+            posterTime: '{{ content.azukiElementals.mainVideo.posterTime }}',
+            autoplay: true,
+            loop: true,
+            muted: true,
+            preload: 'auto',
+            aspectRatio: '16/9',
           },
+          className: 'project-gallery__video',
+        },
+        // Project selector thumbnails - overlays bottom of video
+        {
+          id: 'azuki-selector',
+          type: 'ProjectSelector',
+          props: {
+            activeIndex: 0,
+            orientation: 'horizontal',
+            showInfo: true,
+            thumbnailWidth: 192,
+            activeThumbnailWidth: 220,
+            accentColor: '{{ content.azukiElementals.accentColor }}',
+            showPlayingIndicator: true,
+            showPlayIcon: true,
+            showOverlay: true,
+            thumbnailBorder: '1px solid rgba(255,255,255,0.3)',
+            thumbnailBorderRadius: '0px',
+          },
+          className: 'project-gallery__selector',
+          widgets: [
+            {
+              __repeat: '{{ content.azukiElementals.projects }}',
+              id: 'project-item',
+              type: 'GalleryThumbnail',
+              props: {
+                thumbnailSrc: '{{ item.thumbnail }}',
+                thumbnailAlt: '{{ item.title }}',
+                videoSrc: '{{ item.video }}',
+                title: '{{ item.title }}',
+                year: '{{ item.year }}',
+                studio: '{{ item.studio }}',
+                role: '{{ item.role }}',
+                posterTime: '{{ item.posterTime }}',
+              },
+            },
+          ],
         },
       ],
     },
-    // ContactBar
+    // Section footer
     {
-      id: 'azuki-contact',
-      type: 'ContactPrompt',
+      id: 'azuki-footer',
+      type: 'SectionFooter',
       props: {
         email: '{{ content.contact.email }}',
-        showPrompt: false,
+        instagram: '{{ content.contact.instagram }}',
+        linkedin: '{{ content.contact.linkedin }}',
+        displayName: '{{ content.contact.displayName }}',
+        textColor: 'light',
       },
-      className: 'contact-bar',
     },
   ],
 }
@@ -239,9 +264,11 @@ const boyMoleFoxHorseSection: SectionSchema = {
           props: {
             src: '{{ content.boyMoleFoxHorse.videoSrc }}',
             poster: '{{ content.boyMoleFoxHorse.videoPoster }}',
+            posterTime: '{{ content.boyMoleFoxHorse.posterTime }}',
             autoplay: true,
             loop: true,
             muted: true,
+            preload: 'auto',
             aspectRatio: '16/9',
           },
           className: 'project-showcase__video',
@@ -268,15 +295,17 @@ const boyMoleFoxHorseSection: SectionSchema = {
         },
       ],
     },
-    // ContactBar
+    // Section footer
     {
-      id: 'bmfh-contact',
-      type: 'ContactPrompt',
+      id: 'bmfh-footer',
+      type: 'SectionFooter',
       props: {
         email: '{{ content.contact.email }}',
-        showPrompt: false,
+        instagram: '{{ content.contact.instagram }}',
+        linkedin: '{{ content.contact.linkedin }}',
+        displayName: '{{ content.contact.displayName }}',
+        textColor: 'dark',
       },
-      className: 'contact-bar contact-bar--dark',
     },
   ],
 }
@@ -344,15 +373,17 @@ const the21Section: SectionSchema = {
       },
       className: 'project-compare__description',
     },
-    // ContactBar
+    // Section footer
     {
-      id: 'the21-contact',
-      type: 'ContactPrompt',
+      id: 'the21-footer',
+      type: 'SectionFooter',
       props: {
         email: '{{ content.contact.email }}',
-        showPrompt: false,
+        instagram: '{{ content.contact.instagram }}',
+        linkedin: '{{ content.contact.linkedin }}',
+        displayName: '{{ content.contact.displayName }}',
+        textColor: 'dark',
       },
-      className: 'contact-bar contact-bar--dark',
     },
   ],
 }
@@ -448,15 +479,17 @@ const clashRoyaleSection: SectionSchema = {
         },
       ],
     },
-    // ContactBar
+    // Section footer
     {
-      id: 'clash-contact',
-      type: 'ContactPrompt',
+      id: 'clash-footer',
+      type: 'SectionFooter',
       props: {
         email: '{{ content.contact.email }}',
-        showPrompt: false,
+        instagram: '{{ content.contact.instagram }}',
+        linkedin: '{{ content.contact.linkedin }}',
+        displayName: '{{ content.contact.displayName }}',
+        textColor: 'light',
       },
-      className: 'contact-bar',
     },
   ],
 }
@@ -525,15 +558,17 @@ const riotGamesSection: SectionSchema = {
         },
       ],
     },
-    // ContactBar
+    // Section footer
     {
-      id: 'riot-contact',
-      type: 'ContactPrompt',
+      id: 'riot-footer',
+      type: 'SectionFooter',
       props: {
         email: '{{ content.contact.email }}',
-        showPrompt: false,
+        instagram: '{{ content.contact.instagram }}',
+        linkedin: '{{ content.contact.linkedin }}',
+        displayName: '{{ content.contact.displayName }}',
+        textColor: 'light',
       },
-      className: 'contact-bar',
     },
   ],
 }
@@ -609,15 +644,17 @@ const projectsILikeSection: SectionSchema = {
         },
       ],
     },
-    // ContactBar
+    // Section footer
     {
-      id: 'pil-contact',
-      type: 'ContactPrompt',
+      id: 'pil-footer',
+      type: 'SectionFooter',
       props: {
         email: '{{ content.contact.email }}',
-        showPrompt: false,
+        instagram: '{{ content.contact.instagram }}',
+        linkedin: '{{ content.contact.linkedin }}',
+        displayName: '{{ content.contact.displayName }}',
+        textColor: 'light',
       },
-      className: 'contact-bar',
     },
   ],
 }

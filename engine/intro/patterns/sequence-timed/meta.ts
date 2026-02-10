@@ -31,7 +31,8 @@ export const meta = defineIntroPatternMeta<SequenceTimedSettings>({
       label: 'Reveal Duration',
       description: 'Duration of content reveal after sequence completes (ms)',
       default: 800,
-      validation: { min: 200, max: 2000 },
+      min: 200,
+      max: 2000,
     },
   } satisfies SettingsConfig<SequenceTimedSettings>,
 })

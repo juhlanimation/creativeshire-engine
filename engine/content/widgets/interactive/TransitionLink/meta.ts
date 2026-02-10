@@ -20,7 +20,7 @@ export const meta = defineMeta<TransitionLinkProps>({
       label: 'URL',
       default: '/',
       description: 'Target navigation URL',
-      validation: { required: true },
+      validation: { required: true, maxLength: 2048, pattern: '^(https?:\\/\\/|\\/|#|mailto:)', message: 'Must be a valid URL, path, or anchor' },
       bindable: true,
     },
     duration: {
@@ -28,7 +28,8 @@ export const meta = defineMeta<TransitionLinkProps>({
       label: 'Duration',
       default: 400,
       description: 'Transition duration in milliseconds',
-      validation: { min: 0, max: 2000 },
+      min: 0,
+      max: 2000,
     },
     skipTransition: {
       type: 'toggle',

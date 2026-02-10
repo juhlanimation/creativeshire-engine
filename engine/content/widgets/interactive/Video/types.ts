@@ -54,12 +54,16 @@ export interface VideoProps extends WidgetBaseProps {
   loop?: boolean
   /** Whether to mute the video */
   muted?: boolean
+  /** Preload behavior for the video element */
+  preload?: 'none' | 'metadata' | 'auto'
   /** Object fit style */
   objectFit?: 'cover' | 'contain' | 'fill'
   /** Whether video is a background (absolute positioning) */
   background?: boolean
   /** Aspect ratio for hover-play container (e.g., '16/9') */
   aspectRatio?: string
+  /** Time in seconds to seek to for initial frame display (when no poster image) */
+  posterTime?: number
 
   // Modal integration props
   /** Full-length video URL for modal playback (enables click-to-open) */

@@ -22,6 +22,7 @@ export const meta = defineMeta<ContactPromptProps>({
       description: 'Email address to copy on click',
       validation: {
         required: true,
+        maxLength: 320,
         pattern: '^[^@]+@[^@]+\\.[^@]+$',
         message: 'Please enter a valid email address',
       },
@@ -32,6 +33,7 @@ export const meta = defineMeta<ContactPromptProps>({
       label: 'Prompt Text',
       default: 'How can I help you?',
       description: 'Text shown before hovering (when Show Prompt is enabled)',
+      validation: { maxLength: 100 },
       condition: 'showPrompt === true',
       bindable: true,
     },

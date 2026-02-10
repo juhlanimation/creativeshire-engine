@@ -22,14 +22,16 @@ export const meta = definePageTransitionMeta<FadeSettings>({
       label: 'Exit Duration (ms)',
       description: 'Duration of the page exit fade animation',
       default: 400,
-      validation: { min: 100, max: 2000 },
+      min: 100,
+      max: 2000,
     },
     entryDuration: {
       type: 'number',
       label: 'Entry Duration (ms)',
       description: 'Duration of the page entry fade animation',
       default: 400,
-      validation: { min: 100, max: 2000 },
+      min: 100,
+      max: 2000,
     },
   },
 })

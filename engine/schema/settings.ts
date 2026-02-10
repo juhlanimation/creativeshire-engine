@@ -21,10 +21,14 @@ export interface SettingValidation {
   pattern?: string
   /** Error message for validation failure */
   message?: string
-  /** Minimum length/value */
+  /** Minimum numeric value */
   min?: number
-  /** Maximum length/value */
+  /** Maximum numeric value */
   max?: number
+  /** Minimum text length */
+  minLength?: number
+  /** Maximum text length */
+  maxLength?: number
 }
 
 // =============================================================================

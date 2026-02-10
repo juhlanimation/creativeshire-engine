@@ -20,6 +20,7 @@ export const meta = defineMeta<ExpandableGalleryRowProps>({
       label: 'Row Height',
       default: '32rem',
       description: 'Height of the gallery row',
+      validation: { maxLength: 50 },
       bindable: true,
     },
     gap: {
@@ -27,6 +28,7 @@ export const meta = defineMeta<ExpandableGalleryRowProps>({
       label: 'Gap',
       default: '4px',
       description: 'Space between thumbnails',
+      validation: { min: 0, max: 500 },
       bindable: true,
     },
     expandedWidth: {
@@ -34,6 +36,7 @@ export const meta = defineMeta<ExpandableGalleryRowProps>({
       label: 'Expanded Width',
       default: '32rem',
       description: 'Width of expanded thumbnail',
+      validation: { maxLength: 50 },
       advanced: true,
       bindable: true,
     },
@@ -53,6 +56,7 @@ export const meta = defineMeta<ExpandableGalleryRowProps>({
       label: 'Cursor Label',
       default: 'WATCH',
       description: 'Text shown on cursor when hovering',
+      validation: { maxLength: 100 },
       bindable: true,
     },
   },

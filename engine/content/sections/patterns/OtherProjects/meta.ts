@@ -22,12 +22,14 @@ export const meta = defineSectionMeta<OtherProjectsProps>({
       label: 'Section Heading',
       default: 'Other Projects',
       description: 'Section heading text',
+      validation: { maxLength: 100 },
     },
     yearRange: {
       type: 'text',
       label: 'Year Range',
       default: '',
       description: 'Year range label (e.g., "2020-2024")',
+      validation: { maxLength: 20 },
     },
     projects: {
       type: 'custom',

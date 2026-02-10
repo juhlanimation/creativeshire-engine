@@ -20,6 +20,7 @@ export const meta = defineMeta<IntroOverlayProps>({
       label: 'Mask Text',
       default: '',
       description: 'Text to display as mask cutout',
+      validation: { maxLength: 100 },
       bindable: true,
     },
     maskColor: {
@@ -33,18 +34,22 @@ export const meta = defineMeta<IntroOverlayProps>({
       label: 'Font Size',
       default: '25vw',
       description: 'Font size for mask text (CSS value)',
+      validation: { maxLength: 50 },
     },
     fontWeight: {
       type: 'number',
       label: 'Font Weight',
       default: 900,
       description: 'Font weight for mask text',
+      min: 100,
+      max: 900,
     },
     fontFamily: {
       type: 'text',
       label: 'Font Family',
       default: 'var(--font-title)',
       description: 'Font family for mask text (CSS value)',
+      validation: { maxLength: 100 },
       advanced: true,
     },
     letterSpacing: {
@@ -52,6 +57,7 @@ export const meta = defineMeta<IntroOverlayProps>({
       label: 'Letter Spacing',
       default: '',
       description: 'Letter spacing (CSS value, e.g. -0.02em)',
+      validation: { maxLength: 50 },
       advanced: true,
     },
     bgFadeStep: {
@@ -59,6 +65,8 @@ export const meta = defineMeta<IntroOverlayProps>({
       label: 'Background Fade Step',
       default: 1,
       description: 'Step at which background fades, revealing content through text',
+      min: 0,
+      max: 20,
       advanced: true,
     },
     overlayFadeStep: {
@@ -66,6 +74,8 @@ export const meta = defineMeta<IntroOverlayProps>({
       label: 'Overlay Fade Step',
       default: 2,
       description: 'Step at which the overlay mask fades out',
+      min: 0,
+      max: 20,
       advanced: true,
     },
   },

@@ -5,6 +5,13 @@ import type { ProjectSelectorProps, ProjectSelectorItem } from './types'
 import type { WidgetSchema } from '../../../../schema'
 import './styles.css'
 
+const VIDEO_EXTENSIONS = /\.(webm|mp4|ogg|mov)$/i
+
+/** Detect if a URL points to a video file */
+function isVideoSrc(src: string): boolean {
+  return VIDEO_EXTENSIONS.test(src)
+}
+
 /**
  * Extract project items from widget children.
  * Children should be GalleryThumbnail widgets with props containing project data.
@@ -19,7 +26,9 @@ function extractProjectsFromWidgets(widgets: WidgetSchema[]): ProjectSelectorIte
       title: (props.title as string) ?? '',
       year: props.year as string | undefined,
       studio: props.studio as string | undefined,
+      role: props.role as string | undefined,
       url: (props.videoSrc as string) ?? (props.url as string),
+      posterTime: props.posterTime as number | undefined,
     }
   })
 }
@@ -33,6 +42,14 @@ const ProjectSelector = memo(forwardRef<HTMLDivElement, ProjectSelectorProps>(fu
     onActiveClick,
     orientation = 'horizontal',
     showInfo = true,
+    thumbnailWidth,
+    activeThumbnailWidth,
+    accentColor,
+    showPlayingIndicator = false,
+    showPlayIcon = false,
+    showOverlay = false,
+    thumbnailBorder,
+    thumbnailBorderRadius,
     className,
     'data-behaviour': dataBehaviour,
   },
@@ -85,10 +102,19 @@ const ProjectSelector = memo(forwardRef<HTMLDivElement, ProjectSelectorProps>(fu
     className
   ].filter(Boolean).join(' ')
 
+  // CSS custom properties for configurable sizing/colors
+  const cssVars: Record<string, string | undefined> = {}
+  if (thumbnailWidth) cssVars['--ps-thumb-w'] = `${thumbnailWidth}px`
+  if (activeThumbnailWidth) cssVars['--ps-active-thumb-w'] = `${activeThumbnailWidth}px`
+  if (accentColor) cssVars['--ps-accent'] = accentColor
+  if (thumbnailBorder) cssVars['--ps-border'] = thumbnailBorder
+  if (thumbnailBorderRadius !== undefined) cssVars['--ps-radius'] = thumbnailBorderRadius
+
   return (
     <div
       ref={ref}
       className={classNames}
+      style={Object.keys(cssVars).length > 0 ? cssVars as React.CSSProperties : undefined}
       data-behaviour={dataBehaviour}
       role="listbox"
       aria-label="Project selector"
@@ -111,12 +137,50 @@ const ProjectSelector = memo(forwardRef<HTMLDivElement, ProjectSelectorProps>(fu
           >
             {/* Thumbnail */}
             <div className="project-selector__thumbnail">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={project.thumbnail}
-                alt={project.alt ?? project.title}
-                className="project-selector__image"
-              />
+              {isVideoSrc(project.thumbnail) ? (
+                <video
+                  src={project.thumbnail}
+                  muted
+                  playsInline
+                  preload="auto"
+                  className="project-selector__image"
+                  aria-label={project.alt ?? project.title}
+                  onLoadedData={(e) => {
+                    const v = e.currentTarget
+                    const t = project.posterTime ?? 0.001
+                    if (v.currentTime === 0) v.currentTime = t
+                  }}
+                />
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={project.thumbnail}
+                  alt={project.alt ?? project.title}
+                  className="project-selector__image"
+                />
+              )}
+
+              {/* Dark overlay on active/hover */}
+              {showOverlay && (isActive || isHovered) && (
+                <div className={`project-selector__overlay ${isActive ? 'project-selector__overlay--active' : ''}`} />
+              )}
+
+              {/* Play icon on hover (inactive only) */}
+              {showPlayIcon && isHovered && !isActive && (
+                <div className="project-selector__play-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+              )}
+
+              {/* Playing indicator on active card */}
+              {showPlayingIndicator && isActive && (
+                <div className="project-selector__playing">
+                  <span className="project-selector__playing-dot" />
+                  <span className="project-selector__playing-label">Playing</span>
+                </div>
+              )}
 
               {/* Progress bar for active item */}
               {isActive && (
@@ -128,6 +192,9 @@ const ProjectSelector = memo(forwardRef<HTMLDivElement, ProjectSelectorProps>(fu
             {showInfo && isHovered && (
               <div className="project-selector__info">
                 <span className="project-selector__title">{project.title}</span>
+                {project.role && (
+                  <span className="project-selector__role">{project.role}</span>
+                )}
                 {project.year && (
                   <span className="project-selector__year">{project.year}</span>
                 )}

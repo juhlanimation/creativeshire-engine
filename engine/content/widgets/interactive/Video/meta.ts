@@ -35,6 +35,7 @@ export const meta = defineMeta<VideoProps>({
       label: 'Alt Text',
       default: '',
       description: 'Accessibility description for poster',
+      validation: { maxLength: 200 },
       bindable: true,
     },
     hoverPlay: {
@@ -86,6 +87,29 @@ export const meta = defineMeta<VideoProps>({
         { value: '9/16', label: 'Portrait (9:16)' },
       ],
       advanced: true,
+    },
+    preload: {
+      type: 'select',
+      label: 'Preload',
+      default: '',
+      description: 'How much video data to preload before playback',
+      choices: [
+        { value: '', label: 'Default' },
+        { value: 'none', label: 'None' },
+        { value: 'metadata', label: 'Metadata' },
+        { value: 'auto', label: 'Auto (full)' },
+      ],
+      advanced: true,
+    },
+    posterTime: {
+      type: 'number',
+      label: 'Poster Time',
+      default: 0,
+      description: 'Time in seconds to seek to for initial frame display (useful when first frame is black)',
+      min: 0,
+      max: 3600,
+      advanced: true,
+      bindable: true,
     },
     background: {
       type: 'toggle',

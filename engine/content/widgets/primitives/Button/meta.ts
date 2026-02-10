@@ -20,7 +20,7 @@ export const meta = defineMeta<ButtonProps>({
       label: 'Label',
       default: 'Button',
       description: 'Button text',
-      validation: { required: true },
+      validation: { required: true, maxLength: 50 },
       bindable: true,
     },
     variant: {

@@ -31,6 +31,7 @@ export const meta = defineSectionMeta<ProjectTabsProps>({
       label: 'Default Tab',
       default: '',
       description: 'ID of initially active tab',
+      validation: { maxLength: 100 },
       group: 'Content',
     },
     externalLink: {
@@ -50,7 +51,7 @@ export const meta = defineSectionMeta<ProjectTabsProps>({
       type: 'text',
       label: 'Email',
       default: '',
-      validation: { required: true },
+      validation: { required: true, maxLength: 320, pattern: '^[^@]+@[^@]+\\.[^@]+$', message: 'Please enter a valid email address' },
       group: 'Contact',
       bindable: true,
     },

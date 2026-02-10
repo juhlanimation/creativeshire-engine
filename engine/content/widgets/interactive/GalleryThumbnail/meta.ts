@@ -20,6 +20,7 @@ export const meta = defineMeta<GalleryThumbnailProps>({
       label: 'Expanded Width',
       default: '32rem',
       description: 'Width when thumbnail is expanded',
+      validation: { maxLength: 50 },
       bindable: true,
     },
     transitionDuration: {

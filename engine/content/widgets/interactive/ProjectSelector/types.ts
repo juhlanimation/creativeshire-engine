@@ -23,8 +23,12 @@ export interface ProjectSelectorItem {
   year?: string
   /** Studio name (optional) */
   studio?: string
+  /** Role (optional, shown in info card) */
+  role?: string
   /** External URL (optional, for click-through) */
   url?: string
+  /** Time in seconds to seek to for thumbnail frame display */
+  posterTime?: number
 }
 
 export interface ProjectSelectorProps extends WidgetBaseProps {
@@ -42,6 +46,25 @@ export interface ProjectSelectorProps extends WidgetBaseProps {
   orientation?: 'horizontal' | 'vertical'
   /** Show info card on hover */
   showInfo?: boolean
+
+  // Visual enhancement props
+  /** Inactive thumbnail width in px */
+  thumbnailWidth?: number
+  /** Active thumbnail width in px (defaults to thumbnailWidth) */
+  activeThumbnailWidth?: number
+  /** Accent color for progress bar and playing indicator */
+  accentColor?: string
+  /** Show "Playing" indicator (pulsing dot + label) on active card */
+  showPlayingIndicator?: boolean
+  /** Show play icon on hover for inactive cards */
+  showPlayIcon?: boolean
+  /** Show dark overlay on active/hover cards */
+  showOverlay?: boolean
+  /** CSS border value for thumbnails */
+  thumbnailBorder?: string
+  /** Border radius for thumbnails */
+  thumbnailBorderRadius?: string
+
   /** Additional class names */
   className?: string
   /** Data attribute for behaviour binding */

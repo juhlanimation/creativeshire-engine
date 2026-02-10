@@ -22,6 +22,7 @@ export const meta = defineSectionMeta<PricingProps>({
       label: 'Section Title',
       default: 'Pricing',
       description: 'Section heading',
+      validation: { maxLength: 100 },
       group: 'Content',
     },
     subtitle: {
@@ -29,6 +30,7 @@ export const meta = defineSectionMeta<PricingProps>({
       label: 'Subtitle',
       default: '',
       description: 'Optional subtitle below title',
+      validation: { maxLength: 150 },
       group: 'Content',
     },
     plans: {
@@ -44,6 +46,7 @@ export const meta = defineSectionMeta<PricingProps>({
       label: 'Footer Text',
       default: '',
       description: 'Optional footer text (e.g., "All prices in USD")',
+      validation: { maxLength: 150 },
       group: 'Content',
     },
     columns: {
@@ -61,6 +64,7 @@ export const meta = defineSectionMeta<PricingProps>({
       label: 'Card Gap',
       default: '2rem',
       description: 'Gap between cards (CSS value)',
+      validation: { maxLength: 50 },
       group: 'Layout',
     },
     cardRadius: {
@@ -68,6 +72,7 @@ export const meta = defineSectionMeta<PricingProps>({
       label: 'Card Border Radius',
       default: '1rem',
       description: 'Card corner radius (CSS value)',
+      validation: { maxLength: 50 },
       group: 'Styling',
     },
     cardShadow: {

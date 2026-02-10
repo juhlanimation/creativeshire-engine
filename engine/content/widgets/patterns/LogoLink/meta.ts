@@ -20,6 +20,7 @@ export const meta = defineMeta<LogoLinkConfig>({
       label: 'Text',
       default: '',
       description: 'Logo text (if no image)',
+      validation: { maxLength: 100 },
       bindable: true,
     },
     imageSrc: {
@@ -34,6 +35,7 @@ export const meta = defineMeta<LogoLinkConfig>({
       label: 'Image Alt',
       default: 'Logo',
       description: 'Alt text for logo image',
+      validation: { maxLength: 200 },
       bindable: true,
     },
     href: {
@@ -41,6 +43,7 @@ export const meta = defineMeta<LogoLinkConfig>({
       label: 'Link URL',
       default: '/',
       description: 'Navigation URL when clicked',
+      validation: { maxLength: 2048, pattern: '^(https?:\\/\\/|\\/|#|mailto:)', message: 'Must be a valid URL, path, or anchor' },
       bindable: true,
     },
   },

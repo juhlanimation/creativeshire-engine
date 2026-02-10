@@ -49,6 +49,7 @@ export const meta = defineMeta<IconProps>({
       label: 'Accessible Label',
       default: '',
       description: 'Screen reader label (required if not decorative)',
+      validation: { maxLength: 50 },
       condition: 'decorative === false',
       bindable: true,
     },

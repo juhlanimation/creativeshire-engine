@@ -32,6 +32,7 @@ export const meta = defineMeta<VideoCompareProps>({
       label: 'Before Label',
       default: '',
       description: 'Label for before video (optional)',
+      validation: { maxLength: 100 },
       bindable: true,
     },
     afterLabel: {
@@ -39,6 +40,7 @@ export const meta = defineMeta<VideoCompareProps>({
       label: 'After Label',
       default: '',
       description: 'Label for after video (optional)',
+      validation: { maxLength: 100 },
       bindable: true,
     },
     initialPosition: {
@@ -46,13 +48,15 @@ export const meta = defineMeta<VideoCompareProps>({
       label: 'Initial Position',
       default: 50,
       description: 'Initial divider position (0-100)',
-      validation: { min: 0, max: 100 },
+      min: 0,
+      max: 100,
     },
     aspectRatio: {
       type: 'text',
       label: 'Aspect Ratio',
       default: '16/9',
       description: 'Container aspect ratio',
+      validation: { maxLength: 50 },
       advanced: true,
     },
   },

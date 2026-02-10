@@ -42,7 +42,18 @@ const COLLECTION_WIDGETS: Record<string, string> = {
   ShotIndicator: 'shots',
   TabbedContent: 'tabs',
   ProjectSelector: 'projects',
+  TeamShowcase: 'members',
 }
+
+/**
+ * Widgets that manage array data internally (video layers + names + state).
+ * These accept arrays as props but cannot use __repeat children because
+ * they coordinate multiple DOM structures from a single data source.
+ * Exempt from the "use __repeat children" schema validation.
+ */
+const SELF_MANAGED_COLLECTIONS = new Set([
+  'TeamShowcase', // Renders videos + names + hover/scroll state from members array
+])
 
 /**
  * Extract all widget usages from a schema file.
@@ -142,7 +153,7 @@ describe('Collection Widgets Architecture', () => {
         const widgets = analyzeSchemaWidgets(content, file)
 
         for (const widget of widgets) {
-          if (widget.hasDirectArrayProp && !widget.hasRepeatChildren) {
+          if (widget.hasDirectArrayProp && !widget.hasRepeatChildren && !SELF_MANAGED_COLLECTIONS.has(widget.type)) {
             violations.push(
               `${widget.location}: ${widget.type} uses direct '${widget.propName}' prop instead of __repeat children`
             )

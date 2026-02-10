@@ -21,6 +21,7 @@ export const overlayMeta = defineMeta<Record<string, unknown>>({
       label: 'Component',
       default: '',
       description: 'Component name to render for this overlay',
+      validation: { maxLength: 200 },
       group: 'Component',
     },
 

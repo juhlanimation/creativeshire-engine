@@ -20,7 +20,7 @@ export const meta = defineMeta<TextProps>({
       label: 'Content',
       default: '',
       description: 'Text content to display',
-      validation: { required: true },
+      validation: { required: true, maxLength: 50000 },
       bindable: true,
     },
     as: {
@@ -44,6 +44,7 @@ export const meta = defineMeta<TextProps>({
       label: 'Variant',
       default: '',
       description: 'Semantic variant for CSS styling (data-variant attribute)',
+      validation: { maxLength: 100 },
       advanced: true,
     },
     html: {

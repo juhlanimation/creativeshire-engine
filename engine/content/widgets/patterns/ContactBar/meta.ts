@@ -21,7 +21,7 @@ export const meta = defineMeta<ContactBarConfig>({
       label: 'Email',
       default: '',
       description: 'Email address for copy-to-clipboard',
-      validation: { required: true },
+      validation: { required: true, maxLength: 320, pattern: '^[^@]+@[^@]+\\.[^@]+$', message: 'Please enter a valid email address' },
       bindable: true,
     },
     prompt: {
@@ -29,6 +29,7 @@ export const meta = defineMeta<ContactBarConfig>({
       label: 'Prompt Text',
       default: '',
       description: 'Optional prompt text (leave empty for email-only mode)',
+      validation: { maxLength: 100 },
       bindable: true,
     },
     socialLinks: {

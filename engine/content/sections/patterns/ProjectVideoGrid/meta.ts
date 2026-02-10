@@ -63,7 +63,7 @@ export const meta = defineSectionMeta<ProjectVideoGridProps>({
       label: 'Contact Email',
       default: '',
       description: 'Email for contact bar',
-      validation: { required: true },
+      validation: { required: true, maxLength: 320, pattern: '^[^@]+@[^@]+\\.[^@]+$', message: 'Please enter a valid email address' },
       group: 'Contact',
       bindable: true,
     },

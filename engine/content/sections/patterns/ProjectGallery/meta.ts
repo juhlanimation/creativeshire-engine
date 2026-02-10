@@ -37,6 +37,8 @@ export const meta = defineSectionMeta<ProjectGalleryProps>({
       label: 'Default Active',
       default: 0,
       description: 'Initially selected project index',
+      min: 0,
+      max: 100,
       group: 'Content',
     },
     backgroundColor: {
@@ -59,7 +61,7 @@ export const meta = defineSectionMeta<ProjectGalleryProps>({
       type: 'text',
       label: 'Email',
       default: '',
-      validation: { required: true },
+      validation: { required: true, maxLength: 320, pattern: '^[^@]+@[^@]+\\.[^@]+$', message: 'Please enter a valid email address' },
       group: 'Contact',
       bindable: true,
     },

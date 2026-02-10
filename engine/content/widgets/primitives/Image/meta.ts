@@ -28,7 +28,7 @@ export const meta = defineMeta<ImageProps>({
       label: 'Alt Text',
       default: '',
       description: 'Accessibility description of the image',
-      validation: { required: true },
+      validation: { required: true, maxLength: 200 },
       bindable: true,
     },
     aspectRatio: {
@@ -63,7 +63,17 @@ export const meta = defineMeta<ImageProps>({
       label: 'Object Position',
       default: 'center',
       description: 'Position of the image within container (e.g., center, top, bottom 20%)',
+      validation: { maxLength: 50 },
       advanced: true,
+    },
+    filter: {
+      type: 'text',
+      label: 'CSS Filter',
+      default: '',
+      description: 'CSS filter function (e.g., brightness(0) invert(1), grayscale(1))',
+      validation: { maxLength: 100 },
+      advanced: true,
+      bindable: true,
     },
     decorative: {
       type: 'toggle',

@@ -28,13 +28,25 @@
   transform: scale(1.05);
 }
 
+/* When custom widths are set, disable scale transforms and use width-based sizing */
+.project-selector[style*='--ps-thumb-w'] .project-selector__item:hover,
+.project-selector[style*='--ps-thumb-w'] .project-selector__item--active {
+  transform: none;
+}
+
 .project-selector__thumbnail {
   position: relative;
-  width: 120px;
+  width: var(--ps-thumb-w, 120px);
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: 4px;
+  border-radius: var(--ps-radius, 4px);
+  border: var(--ps-border, none);
   background: rgba(0, 0, 0, 0.2);
+  transition: width 0.3s ease;
+}
+
+.project-selector__item--active .project-selector__thumbnail {
+  width: var(--ps-active-thumb-w, var(--ps-thumb-w, 120px));
 }
 
 .project-selector--vertical .project-selector__thumbnail {
@@ -56,15 +68,82 @@
   opacity: 1;
 }
 
+/* Dark overlay */
+.project-selector__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.project-selector__overlay--active {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* Play icon (inactive hover) */
+.project-selector__play-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.project-selector__play-icon svg {
+  width: 28px;
+  height: 28px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+}
+
+/* Playing indicator (active card) */
+.project-selector__playing {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.project-selector__playing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ps-accent, #fff);
+  animation: ps-pulse 1.5s ease-in-out infinite;
+}
+
+.project-selector__playing-label {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+@keyframes ps-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* Progress bar */
 .project-selector__progress {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   height: 3px;
-  background: var(--accent, #fff);
+  background: var(--ps-accent, var(--accent, #fff));
 }
 
+/* Info card */
 .project-selector__info {
   position: absolute;
   bottom: calc(100% + 0.5rem);
@@ -84,6 +163,11 @@
 
 .project-selector__title {
   font-weight: 600;
+}
+
+.project-selector__role {
+  opacity: 0.8;
+  font-style: italic;
 }
 
 .project-selector__year,

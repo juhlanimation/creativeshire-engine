@@ -135,6 +135,7 @@ export const themeMeta = defineMeta<Record<string, unknown>>({
       label: 'Fade Duration',
       default: '0.15s',
       description: 'Section fade transition duration (e.g., "0.15s", "150ms")',
+      validation: { maxLength: 50 },
       group: 'Section Transitions',
     },
     'sectionTransition.fadeEasing': {
@@ -142,6 +143,7 @@ export const themeMeta = defineMeta<Record<string, unknown>>({
       label: 'Fade Easing',
       default: 'ease-out',
       description: 'Section fade transition easing (e.g., "ease-out", "cubic-bezier(...)")',
+      validation: { maxLength: 50 },
       group: 'Section Transitions',
     },
   },

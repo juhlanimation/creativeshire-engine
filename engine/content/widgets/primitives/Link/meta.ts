@@ -20,7 +20,7 @@ export const meta = defineMeta<LinkProps>({
       label: 'URL',
       default: '/',
       description: 'Navigation URL (internal paths start with /)',
-      validation: { required: true },
+      validation: { required: true, maxLength: 2048, pattern: '^(https?:\\/\\/|\\/|#|mailto:)', message: 'Must be a valid URL, path, or anchor' },
       bindable: true,
     },
     target: {
@@ -49,6 +49,7 @@ export const meta = defineMeta<LinkProps>({
       label: 'Rel Attribute',
       default: '',
       description: 'Relationship attribute (e.g., noopener noreferrer)',
+      validation: { maxLength: 50 },
       advanced: true,
     },
   },

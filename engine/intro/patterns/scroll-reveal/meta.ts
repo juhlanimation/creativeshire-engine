@@ -25,14 +25,16 @@ export const meta = defineIntroPatternMeta<ScrollRevealSettings>({
       label: 'Reveal Duration',
       description: 'Duration of content reveal animation (ms)',
       default: 600,
-      validation: { min: 200, max: 2000 },
+      min: 200,
+      max: 2000,
     },
     scrollDelay: {
       type: 'number',
       label: 'Scroll Delay',
       description: 'Delay before starting reveal after scroll (ms)',
       default: 0,
-      validation: { min: 0, max: 1000 },
+      min: 0,
+      max: 1000,
     },
   } satisfies SettingsConfig<ScrollRevealSettings>,
 })

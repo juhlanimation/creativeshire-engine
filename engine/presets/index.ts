@@ -10,6 +10,7 @@
 export { bojuhlPreset, bojuhlMeta, bojuhlContentContract } from './bojuhl'
 export { bishoyGendiPreset, bishoyGendiMeta, bishoyGendiContentContract } from './bishoy-gendi'
 export { testMultipagePreset, testMultipageMeta, testMultipageContentContract } from './test-multipage'
+export { port12Preset, port12Meta, port12ContentContract } from './port-12'
 
 /**
  * Ensures all presets are registered.

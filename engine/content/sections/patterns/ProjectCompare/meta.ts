@@ -42,6 +42,7 @@ export const meta = defineSectionMeta<ProjectCompareProps>({
       label: 'Before Label',
       default: '',
       description: 'Label for before video',
+      validation: { maxLength: 100 },
       group: 'Content',
     },
     afterLabel: {
@@ -49,6 +50,7 @@ export const meta = defineSectionMeta<ProjectCompareProps>({
       label: 'After Label',
       default: '',
       description: 'Label for after video',
+      validation: { maxLength: 100 },
       group: 'Content',
     },
     description: {
@@ -56,6 +58,7 @@ export const meta = defineSectionMeta<ProjectCompareProps>({
       label: 'Description',
       default: '',
       description: 'Project description text',
+      validation: { maxLength: 5000 },
       group: 'Content',
       bindable: true,
     },
@@ -75,7 +78,7 @@ export const meta = defineSectionMeta<ProjectCompareProps>({
       type: 'text',
       label: 'Email',
       default: '',
-      validation: { required: true },
+      validation: { required: true, maxLength: 320, pattern: '^[^@]+@[^@]+\\.[^@]+$', message: 'Please enter a valid email address' },
       group: 'Contact',
       bindable: true,
     },

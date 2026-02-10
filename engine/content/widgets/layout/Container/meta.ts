@@ -21,6 +21,7 @@ export const meta = defineMeta<ContainerProps>({
       default: '1200px',
       description: 'Maximum width (px number or CSS value)',
       bindable: true,
+      validation: { maxLength: 50 },
     },
     padding: {
       type: 'spacing',
@@ -28,6 +29,7 @@ export const meta = defineMeta<ContainerProps>({
       default: '1rem',
       description: 'Left and right padding',
       bindable: true,
+      validation: { min: 0, max: 500 },
     },
     center: {
       type: 'toggle',

@@ -22,6 +22,7 @@ const Image = memo(forwardRef<HTMLImageElement, ImageProps>(function Image(
     objectFit = 'cover',
     objectPosition = 'center',
     decorative = false,
+    filter,
     style,
     className,
     'data-behaviour': dataBehaviour
@@ -33,7 +34,8 @@ const Image = memo(forwardRef<HTMLImageElement, ImageProps>(function Image(
     ...(aspectRatio ? { aspectRatio } : {}),
     objectFit,
     objectPosition,
-  }), [style, aspectRatio, objectFit, objectPosition])
+    ...(filter ? { filter } : {}),
+  }), [style, aspectRatio, objectFit, objectPosition, filter])
 
   return (
     // eslint-disable-next-line @next/next/no-img-element

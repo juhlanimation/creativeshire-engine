@@ -24,11 +24,13 @@ import type { PresetChromeConfig } from '../../engine/presets/types'
 // Sample content for preset preview (optional imports)
 import { bishoyGendiSampleContent } from '../../engine/presets/bishoy-gendi'
 import { bojuhlSampleContent } from '../../engine/presets/bojuhl'
+import { port12SampleContent } from '../../engine/presets/port-12'
 
 /** Map of preset IDs to their sample content */
 const PRESET_SAMPLE_CONTENT: Record<string, Record<string, unknown>> = {
   'bishoy-gendi': bishoyGendiSampleContent,
   'bojuhl': bojuhlSampleContent,
+  'port-12': port12SampleContent,
 }
 
 /**

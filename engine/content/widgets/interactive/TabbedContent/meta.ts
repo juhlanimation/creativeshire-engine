@@ -28,6 +28,7 @@ export const meta = defineMeta<TabbedContentProps>({
       label: 'Default Tab',
       default: '',
       description: 'ID of the default active tab',
+      validation: { maxLength: 100 },
     },
     position: {
       type: 'select',

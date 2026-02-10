@@ -28,6 +28,8 @@ export const meta = defineMeta<LogoMarqueeProps>({
       label: 'Duration',
       default: 30,
       description: 'Animation duration in seconds',
+      min: 1,
+      max: 120,
       bindable: true,
     },
     logoWidth: {
@@ -35,6 +37,8 @@ export const meta = defineMeta<LogoMarqueeProps>({
       label: 'Logo Width',
       default: 120,
       description: 'Width of each logo in pixels',
+      min: 16,
+      max: 800,
       bindable: true,
     },
     logoGap: {
@@ -42,6 +46,8 @@ export const meta = defineMeta<LogoMarqueeProps>({
       label: 'Logo Gap',
       default: 48,
       description: 'Gap between logos in pixels',
+      min: 0,
+      max: 200,
       bindable: true,
     },
   },

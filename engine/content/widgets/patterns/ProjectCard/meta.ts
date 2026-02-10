@@ -28,7 +28,7 @@ export const meta = defineMeta<ProjectCardConfig>({
       label: 'Thumbnail Alt',
       default: '',
       description: 'Accessibility description for thumbnail',
-      validation: { required: true },
+      validation: { required: true, maxLength: 200 },
       bindable: true,
     },
     videoSrc: {
@@ -50,7 +50,7 @@ export const meta = defineMeta<ProjectCardConfig>({
       label: 'Client',
       default: '',
       description: 'Client name',
-      validation: { required: true },
+      validation: { required: true, maxLength: 100 },
       bindable: true,
     },
     studio: {
@@ -58,7 +58,7 @@ export const meta = defineMeta<ProjectCardConfig>({
       label: 'Studio',
       default: '',
       description: 'Studio name',
-      validation: { required: true },
+      validation: { required: true, maxLength: 100 },
       bindable: true,
     },
     title: {
@@ -66,7 +66,7 @@ export const meta = defineMeta<ProjectCardConfig>({
       label: 'Title',
       default: '',
       description: 'Project title',
-      validation: { required: true },
+      validation: { required: true, maxLength: 100 },
       bindable: true,
     },
     description: {
@@ -74,7 +74,7 @@ export const meta = defineMeta<ProjectCardConfig>({
       label: 'Description',
       default: '',
       description: 'Project description',
-      validation: { required: true },
+      validation: { required: true, maxLength: 1000 },
       bindable: true,
     },
     year: {
@@ -82,6 +82,7 @@ export const meta = defineMeta<ProjectCardConfig>({
       label: 'Year',
       default: '',
       description: 'Project year (e.g., 2024)',
+      validation: { maxLength: 20 },
       advanced: true,
       bindable: true,
     },
@@ -90,6 +91,7 @@ export const meta = defineMeta<ProjectCardConfig>({
       label: 'Role',
       default: '',
       description: 'Role in project (e.g., Director)',
+      validation: { maxLength: 50 },
       advanced: true,
       bindable: true,
     },

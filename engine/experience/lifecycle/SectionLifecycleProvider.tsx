@@ -40,6 +40,8 @@ import { createContext, useContext, useState, useEffect, type ReactNode } from '
 export interface SectionLifecycleContextValue {
   /** Whether this section is currently active (visible) */
   isActive: boolean
+  /** Whether this section is adjacent to active (should preload assets) */
+  isPreloading: boolean
   /** Section index (0-based) */
   sectionIndex: number
 }
@@ -94,17 +96,20 @@ export function SectionLifecycleProvider({
     }
   }, [shouldMount, hasBeenMounted])
 
+  // Adjacent but not active = preloading (assets should load ahead of time)
+  const isPreloading = isAdjacent && !isActive
+
   // Don't render children if not mounted
   if (!shouldMount) {
     return (
-      <SectionLifecycleContext.Provider value={{ isActive, sectionIndex }}>
+      <SectionLifecycleContext.Provider value={{ isActive, isPreloading, sectionIndex }}>
         <div data-lifecycle-scope data-mounted="false" />
       </SectionLifecycleContext.Provider>
     )
   }
 
   return (
-    <SectionLifecycleContext.Provider value={{ isActive, sectionIndex }}>
+    <SectionLifecycleContext.Provider value={{ isActive, isPreloading, sectionIndex }}>
       <div data-lifecycle-scope data-mounted="true" data-active={isActive}>
         {children}
       </div>

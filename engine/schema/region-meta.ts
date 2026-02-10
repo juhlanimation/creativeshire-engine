@@ -21,6 +21,7 @@ export const regionMeta = defineMeta<Record<string, unknown>>({
       label: 'Component',
       default: '',
       description: 'Component name to render for this region',
+      validation: { maxLength: 200 },
       group: 'Component',
     },
 

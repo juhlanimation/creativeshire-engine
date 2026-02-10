@@ -29,7 +29,7 @@ export const meta = defineSectionMeta<AboutProps>({
       label: 'Signature',
       default: '',
       description: 'Signature text (e.g., name)',
-      validation: { required: true },
+      validation: { required: true, maxLength: 100 },
       group: 'Content',
     },
     photoSrc: {
@@ -45,7 +45,7 @@ export const meta = defineSectionMeta<AboutProps>({
       label: 'Photo Alt',
       default: '',
       description: 'Accessibility description for photo',
-      validation: { required: true },
+      validation: { required: true, maxLength: 200 },
       group: 'Media',
     },
     clientLogos: {

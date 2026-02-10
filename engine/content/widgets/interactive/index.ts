@@ -45,3 +45,15 @@ export type { LogoMarqueeProps, LogoItem } from './LogoMarquee/types'
 // EmailReveal - hover-triggered email fold-out with copy-to-clipboard
 export { default as EmailReveal } from './EmailReveal'
 export type { EmailRevealProps } from './EmailReveal/types'
+
+// SectionFooter - footer bar for project sections with social icons and email copy
+export { default as SectionFooter } from './SectionFooter'
+export type { SectionFooterProps } from './SectionFooter/types'
+
+// HeroVideo - full-screen video hero with intro timing and scroll cover progress
+export { default as HeroVideo } from './HeroVideo'
+export type { HeroVideoProps } from './HeroVideo/types'
+
+// TeamShowcase - fullscreen video showcase with hover/scroll team member selection
+export { default as TeamShowcase } from './TeamShowcase'
+export type { TeamShowcaseProps, TeamMember } from './TeamShowcase/types'

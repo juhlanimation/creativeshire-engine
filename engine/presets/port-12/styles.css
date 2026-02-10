@@ -1,0 +1,592 @@
+/* Port-12 Preset Styles */
+@import "@fontsource/bbh-sans-hegarty/400.css";
+
+/* ── Custom Properties ───────────────────────────────────────── */
+:root {
+  --port12-bg: #d8d8d5;
+  --port12-fg: #27272A;
+  --background: #d8d8d5;
+  --foreground: #27272A;
+}
+
+/* Base styles applied when preset is active */
+body {
+  background-color: var(--port12-bg);
+  color: var(--port12-fg);
+}
+
+/* ── Font Utilities ──────────────────────────────────────────── */
+.port12-font-title {
+  font-family: "BBH Sans Hegarty", system-ui, sans-serif;
+}
+
+.port12-font-heading {
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+.port12-font-body {
+  font-family: var(--font-plus-jakarta), system-ui, sans-serif;
+}
+
+/* ── Corner Border ───────────────────────────────────────────── */
+.corner-border {
+  --corner-size: 12px;
+  --corner-thickness: 2px;
+  --corner-color: var(--port12-fg);
+  background:
+    linear-gradient(var(--corner-color), var(--corner-color)) 0 0,
+    linear-gradient(var(--corner-color), var(--corner-color)) 0 0,
+    linear-gradient(var(--corner-color), var(--corner-color)) 0 100%,
+    linear-gradient(var(--corner-color), var(--corner-color)) 0 100%,
+    linear-gradient(var(--corner-color), var(--corner-color)) 100% 0,
+    linear-gradient(var(--corner-color), var(--corner-color)) 100% 0,
+    linear-gradient(var(--corner-color), var(--corner-color)) 100% 100%,
+    linear-gradient(var(--corner-color), var(--corner-color)) 100% 100%;
+  background-repeat: no-repeat;
+  background-size:
+    var(--corner-size) var(--corner-thickness),
+    var(--corner-thickness) var(--corner-size),
+    var(--corner-size) var(--corner-thickness),
+    var(--corner-thickness) var(--corner-size),
+    var(--corner-size) var(--corner-thickness),
+    var(--corner-thickness) var(--corner-size),
+    var(--corner-size) var(--corner-thickness),
+    var(--corner-thickness) var(--corner-size);
+}
+
+/* ── Nav Link ────────────────────────────────────────────────── */
+.nav-link {
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: repeating-linear-gradient(
+    to right,
+    currentColor 0,
+    currentColor 9px,
+    transparent 9px,
+    transparent 15px
+  );
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* ── Container Padding ───────────────────────────────────────── */
+.container-padding {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .container-padding {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .container-padding {
+    padding-left: 6rem;
+    padding-right: 6rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-padding {
+    padding-left: 8rem;
+    padding-right: 8rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-padding {
+    padding-left: 12rem;
+    padding-right: 12rem;
+  }
+}
+
+/* ── Footer Link ─────────────────────────────────────────────── */
+.footer-link {
+  font-family: var(--font-plus-jakarta), system-ui, sans-serif;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: white;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.footer-link:hover {
+  opacity: 0.7;
+}
+
+/* ── Header Chrome Wrapper ───────────────────────────────────── */
+/* Remove from document flow so it doesn't push sections down.
+   Both children (navbar=fixed, logo=fixed) are positioned independently. */
+header[role="banner"] {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  overflow: visible;
+  z-index: 50;
+  pointer-events: none;
+}
+
+header[role="banner"] > * {
+  pointer-events: auto;
+}
+
+/* ── Navbar ───────────────────────────────────────────────────── */
+.port12-navbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 50;
+  width: auto;
+  padding: 1.25rem 2rem;
+  mix-blend-mode: difference;
+  color: white;
+  gap: 3rem !important;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Hide on mobile and touch devices */
+@media (max-width: 767px) {
+  .port12-navbar {
+    display: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .port12-navbar {
+    display: none;
+  }
+}
+
+.port12-navbar__divider {
+  height: 0.75rem;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.5);
+  align-self: center;
+  margin-left: -1.5rem;
+}
+
+.port12-navbar__email {
+  margin-left: -1.5rem;
+  font-weight: 300;
+  font-size: 0.625rem;
+  text-decoration: none;
+  align-self: center;
+  line-height: 1;
+}
+
+/* ── Logo ─────────────────────────────────────────────────────── */
+.port12-logo {
+  position: fixed;
+  top: 1.25rem;
+  left: 0;
+  z-index: 50;
+  padding-left: 1.5rem;
+  mix-blend-mode: difference;
+  color: white;
+  font-family: "BBH Sans Hegarty", system-ui, sans-serif;
+  font-size: clamp(1.25rem, 3vw, 2rem);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  clip-path: inset(0 calc(100% - var(--hero-cover-progress, 0) * 1%) 0 0);
+  pointer-events: none;
+}
+
+/* ── Sections Base ────────────────────────────────────────────── */
+.section-om,
+.section-medlemmer,
+.section-medlemskab {
+  position: relative;
+  z-index: 10;
+  background-color: var(--port12-bg);
+}
+
+/* ── Om Section ──────────────────────────────────────────────── */
+.section-om {
+  padding: 4rem 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .section-om {
+    padding: 4rem 3rem;
+  }
+}
+
+.om-text {
+  max-width: 80vw;
+  margin: 0 auto 2rem;
+  padding: 1rem;
+  text-align: justify;
+  font-family: var(--font-plus-jakarta), system-ui, sans-serif;
+  font-size: clamp(0.875rem, 1.5vw, 1.125rem);
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.om-image {
+  width: 80%;
+  max-width: 400px;
+  object-fit: contain;
+}
+
+.om-image:nth-child(odd) {
+  align-self: flex-start;
+}
+
+.om-image:nth-child(even) {
+  align-self: flex-end;
+}
+
+/* Desktop scattered layout */
+@media (min-width: 1024px) {
+  .section-om {
+    position: relative;
+    height: 74vw;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .om-text {
+    position: absolute;
+    width: 28vw;
+    height: 16vw;
+    left: 20vw;
+    top: 5vw;
+    max-width: none;
+    padding: 1vw;
+    margin: 0;
+    font-size: 1.1vw;
+  }
+
+  .om-image {
+    position: absolute;
+    max-width: none;
+    object-fit: contain;
+  }
+
+  /* Image 1 (top right - portrait) */
+  .om-image:nth-of-type(1) {
+    width: 32vw;
+    height: 23vw;
+    left: 56vw;
+    top: 6vw;
+    object-position: top;
+  }
+
+  /* Image 2 (below paragraph, left) */
+  .om-image:nth-of-type(2) {
+    width: 28vw;
+    height: 18vw;
+    left: 8vw;
+    top: 30vw;
+    object-position: left;
+  }
+
+  /* Image 3 (center-right) */
+  .om-image:nth-of-type(3) {
+    width: 26vw;
+    height: 17vw;
+    left: 52vw;
+    top: 38vw;
+    object-position: left;
+  }
+
+  /* Image 4 (bottom left) */
+  .om-image:nth-of-type(4) {
+    width: 24vw;
+    height: 18vw;
+    left: 14vw;
+    top: 56vw;
+    object-position: left;
+  }
+}
+
+/* ── Medlemmer Section ───────────────────────────────────────── */
+.section-medlemmer {
+  min-height: 100dvh;
+}
+
+/* ── Medlemskab Section ──────────────────────────────────────── */
+.section-medlemskab {
+  padding: 0 1.5rem 4rem;
+}
+
+@media (min-width: 640px) {
+  .section-medlemskab {
+    padding: 0 3rem 4rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .section-medlemskab {
+    padding: 0 5rem 4rem;
+  }
+}
+
+.pricing-grid {
+  max-width: 42rem;
+  width: 100%;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .pricing-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 4rem !important;
+  }
+}
+
+/* ── Plan Card ───────────────────────────────────────────────── */
+.plan-card {
+  padding: 1.5rem 0;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .plan-card {
+    padding: 1.5rem;
+  }
+}
+
+.plan-card__illustration {
+  width: 12rem;
+  height: 12rem;
+  object-fit: contain;
+}
+
+.plan-card__name {
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 2.25rem;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  color: var(--port12-fg);
+  margin: 0;
+}
+
+.plan-card__price {
+  font-family: var(--font-plus-jakarta), system-ui, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+.plan-card__subtitle {
+  font-family: var(--font-plus-jakarta), system-ui, sans-serif;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+}
+
+.plan-card__description {
+  font-family: var(--font-plus-jakarta), system-ui, sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.625;
+  white-space: pre-line;
+  opacity: 0.8;
+  max-width: 20rem;
+  margin: 0.75rem auto 1rem;
+}
+
+.plan-card__divider {
+  width: 8rem;
+  height: 1px;
+  background: var(--port12-fg);
+  opacity: 0.2;
+  margin: 0 auto 1rem;
+}
+
+@media (min-width: 768px) {
+  .plan-card__divider {
+    width: 100%;
+  }
+}
+
+.plan-card__features {
+  width: 100%;
+  max-width: 16rem;
+  margin: 0 auto;
+}
+
+.plan-card__feature {
+  width: 100%;
+}
+
+.plan-card__feature-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+}
+
+.plan-card__feature-name {
+  font-family: var(--font-plus-jakarta), system-ui, sans-serif;
+  font-size: 0.6875rem;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Pricing Contact ─────────────────────────────────────────── */
+.pricing-contact {
+  margin-top: 3.5rem;
+  text-align: center;
+  max-width: 24rem;
+}
+
+@media (min-width: 768px) {
+  .pricing-contact {
+    margin-top: 6rem;
+  }
+}
+
+.pricing-contact__illustration {
+  width: 9rem;
+  height: 9rem;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+.pricing-contact__title {
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 1.875rem;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+
+.pricing-contact__line {
+  font-family: var(--font-plus-jakarta), system-ui, sans-serif;
+  font-size: 0.875rem;
+  margin: 0;
+  line-height: 1.625;
+  opacity: 0.8;
+}
+
+.pricing-contact__email {
+  font-family: var(--font-plus-jakarta), system-ui, sans-serif;
+  font-size: 0.875rem;
+  margin-top: 1.5rem;
+  color: var(--port12-fg);
+}
+
+/* ── Footer ──────────────────────────────────────────────────── */
+.port12-footer {
+  position: relative;
+  z-index: 10;
+  background-color: var(--port12-fg);
+  padding: 1.5rem 2rem;
+  width: 100%;
+  gap: 2rem !important;
+}
+
+@media (min-width: 640px) {
+  .port12-footer {
+    padding: 1.5rem 5rem;
+  }
+}
+
+.port12-footer__brand {
+  order: 1;
+  flex: 1;
+}
+
+.port12-footer__nav {
+  order: 2;
+  flex: 1;
+}
+
+.port12-footer__contact {
+  order: 3;
+  flex: 1;
+}
+
+.port12-footer__logo {
+  font-family: "BBH Sans Hegarty", system-ui, sans-serif;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+@media (min-width: 768px) {
+  .port12-footer__logo {
+    font-size: 3rem;
+  }
+}
+
+.port12-footer__copyright {
+  font-family: var(--font-plus-jakarta), system-ui, sans-serif;
+  font-size: 0.625rem;
+  color: white;
+  letter-spacing: 0.05em;
+}
+
+@media (min-width: 768px) {
+  .port12-footer {
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    padding: 1.5rem 8rem;
+    gap: 0 !important;
+  }
+
+  .port12-footer__nav {
+    order: 1;
+    align-items: flex-start !important;
+  }
+
+  .port12-footer__brand {
+    order: 2;
+  }
+
+  .port12-footer__contact {
+    order: 3;
+    align-items: flex-end !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .port12-footer {
+    padding: 1.5rem 12rem;
+  }
+}
+
+/* ── Dotted Line Utility ─────────────────────────────────────── */
+.dotted-line {
+  height: 2px;
+  background: repeating-linear-gradient(
+    to right,
+    white 0,
+    white 9px,
+    transparent 9px,
+    transparent 15px
+  );
+  mix-blend-mode: difference;
+}
+
+/* Instant text reveal — matches port12.dk gsap.set behavior */
+.hero-video__overlay,
+.hero-video__scroll-indicator {
+  transition-duration: 0s;
+}

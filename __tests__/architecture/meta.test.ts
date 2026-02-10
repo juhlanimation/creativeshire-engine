@@ -128,6 +128,226 @@ function validateSettings(content: string, context: string): string[] {
   return violations
 }
 
+/**
+ * Validate that settings with specific types have appropriate validation constraints.
+ *
+ * Rules:
+ * - text/textarea: must have validation.maxLength
+ * - number: must have min and max
+ * - spacing: must have validation.min and validation.max
+ * - toggle/select/range/image/video/icon/color/alignment/custom: no constraints needed
+ */
+function validateSettingConstraints(content: string, context: string): string[] {
+  const violations: string[] = []
+
+  // Find the settings: { ... } block by matching braces from 'settings:'
+  const settingsStart = content.indexOf('settings:')
+  if (settingsStart === -1) return violations
+
+  // Find the opening brace of settings
+  const braceStart = content.indexOf('{', settingsStart)
+  if (braceStart === -1) return violations
+
+  // Extract the full settings block by tracking brace depth
+  let depth = 1
+  let i = braceStart + 1
+  while (i < content.length && depth > 0) {
+    if (content[i] === '{') depth++
+    if (content[i] === '}') depth--
+    // Skip string literals to avoid false brace matches
+    if (content[i] === "'" || content[i] === '"' || content[i] === '`') {
+      const quote = content[i]
+      i++
+      while (i < content.length && content[i] !== quote) {
+        if (content[i] === '\\') i++ // skip escaped chars
+        i++
+      }
+    }
+    i++
+  }
+  const settingsBlock = content.slice(braceStart + 1, i - 1)
+
+  // Types that don't need constraints
+  const SKIP_TYPES = [
+    'toggle', 'select', 'range', 'image', 'video', 'icon', 'color', 'alignment', 'custom',
+  ]
+
+  // Now walk through settingsBlock at depth 0 to find top-level keys
+  depth = 0
+  let pos = 0
+  while (pos < settingsBlock.length) {
+    // Skip nested blocks
+    if (settingsBlock[pos] === '{') { depth++; pos++; continue }
+    if (settingsBlock[pos] === '}') { depth--; pos++; continue }
+
+    // Skip string literals
+    if (settingsBlock[pos] === "'" || settingsBlock[pos] === '"' || settingsBlock[pos] === '`') {
+      if (depth > 0) {
+        const quote = settingsBlock[pos]
+        pos++
+        while (pos < settingsBlock.length && settingsBlock[pos] !== quote) {
+          if (settingsBlock[pos] === '\\') pos++
+          pos++
+        }
+        pos++
+        continue
+      }
+    }
+
+    // At depth 0, look for key: { pattern
+    if (depth === 0) {
+      const remaining = settingsBlock.slice(pos)
+      const keyMatch = remaining.match(/^(?:['"]([^'"]+)['"]|(\w+))\s*:\s*\{/)
+
+      if (keyMatch) {
+        const key = keyMatch[1] || keyMatch[2]
+
+        // Find this setting entry's body (from the { to the matching })
+        const entryBraceStart = pos + keyMatch[0].length - 1
+        let entryDepth = 1
+        let j = entryBraceStart + 1
+        while (j < settingsBlock.length && entryDepth > 0) {
+          if (settingsBlock[j] === '{') entryDepth++
+          if (settingsBlock[j] === '}') entryDepth--
+          if (settingsBlock[j] === "'" || settingsBlock[j] === '"' || settingsBlock[j] === '`') {
+            const q = settingsBlock[j]
+            j++
+            while (j < settingsBlock.length && settingsBlock[j] !== q) {
+              if (settingsBlock[j] === '\\') j++
+              j++
+            }
+          }
+          j++
+        }
+
+        const entryBody = settingsBlock.slice(entryBraceStart, j)
+
+        // Extract the type
+        const typeMatch = entryBody.match(/type:\s*['"](\w+)['"]/)
+        if (typeMatch) {
+          const type = typeMatch[1]
+
+          // All known types that need constraint checks
+          const CONSTRAINED_TYPES = ['text', 'textarea', 'number', 'spacing']
+          const ALL_KNOWN_TYPES = [...SKIP_TYPES, ...CONSTRAINED_TYPES]
+
+          if (!ALL_KNOWN_TYPES.includes(type)) {
+            // Unknown type — force developer to add it to SKIP_TYPES or CONSTRAINED_TYPES
+            violations.push(`${context} → settings.${key}: unknown type '${type}' — add to SKIP_TYPES or handle explicitly`)
+          } else if (SKIP_TYPES.includes(type)) {
+            // No constraints needed
+          } else if (type === 'text' || type === 'textarea') {
+            // Must have validation: { ... maxLength: ... }
+            const validationIdx = entryBody.indexOf('validation:')
+            if (validationIdx === -1) {
+              violations.push(`${context} → settings.${key}: type '${type}' requires validation.maxLength`)
+            } else {
+              const valBraceStart = entryBody.indexOf('{', validationIdx)
+              if (valBraceStart !== -1) {
+                const valBraceEnd = entryBody.indexOf('}', valBraceStart)
+                const validationBlock = entryBody.slice(valBraceStart, valBraceEnd + 1)
+                if (!validationBlock.includes('maxLength:')) {
+                  violations.push(`${context} → settings.${key}: type '${type}' requires validation.maxLength`)
+                }
+              } else {
+                violations.push(`${context} → settings.${key}: type '${type}' requires validation.maxLength`)
+              }
+            }
+          } else if (type === 'number') {
+            // Must have min: and max: anywhere in the entry body
+            if (!entryBody.includes('min:') || !entryBody.includes('max:')) {
+              violations.push(`${context} → settings.${key}: type 'number' requires min and max`)
+            }
+          } else if (type === 'spacing') {
+            // Must have validation: { ... min: ... max: ... }
+            const validationIdx = entryBody.indexOf('validation:')
+            if (validationIdx === -1) {
+              violations.push(`${context} → settings.${key}: type 'spacing' requires validation.min and validation.max`)
+            } else {
+              const valBraceStart = entryBody.indexOf('{', validationIdx)
+              if (valBraceStart !== -1) {
+                const valBraceEnd = entryBody.indexOf('}', valBraceStart)
+                const validationBlock = entryBody.slice(valBraceStart, valBraceEnd + 1)
+                if (!validationBlock.includes('min:') || !validationBlock.includes('max:')) {
+                  violations.push(`${context} → settings.${key}: type 'spacing' requires validation.min and validation.max`)
+                }
+              } else {
+                violations.push(`${context} → settings.${key}: type 'spacing' requires validation.min and validation.max`)
+              }
+            }
+          }
+
+          // ── Semantic checks ─────────────────────────────────────────────
+          // Helper: extract validation block content from entry body
+          const getValidationBlock = (body: string): string | null => {
+            const vIdx = body.indexOf('validation:')
+            if (vIdx === -1) return null
+            const vBrace = body.indexOf('{', vIdx)
+            if (vBrace === -1) return null
+            const vEnd = body.indexOf('}', vBrace)
+            return body.slice(vBrace, vEnd + 1)
+          }
+
+          // Email fields: key contains 'email' (case-insensitive) → pattern + maxLength: 320
+          if (/email/i.test(key) && type === 'text') {
+            const vBlock = getValidationBlock(entryBody)
+            if (!vBlock) {
+              violations.push(`${context} → settings.${key}: email field requires validation with pattern and maxLength: 320`)
+            } else {
+              if (!vBlock.includes('pattern:')) {
+                violations.push(`${context} → settings.${key}: email field requires validation.pattern`)
+              }
+              if (!vBlock.includes('maxLength: 320')) {
+                violations.push(`${context} → settings.${key}: email field requires validation.maxLength: 320`)
+              }
+            }
+          }
+
+          // URL fields: key matches url/href/linkedin/instagram/canonical → pattern + maxLength: 2048
+          // Also matches 'logo' key in Header region (which is a URL, not an image picker)
+          if (/url|href|linkedin|instagram|canonical/i.test(key) && type === 'text') {
+            const vBlock = getValidationBlock(entryBody)
+            if (!vBlock) {
+              violations.push(`${context} → settings.${key}: URL field requires validation with pattern and maxLength: 2048`)
+            } else {
+              if (!vBlock.includes('pattern:')) {
+                violations.push(`${context} → settings.${key}: URL field requires validation.pattern`)
+              }
+              if (!vBlock.includes('maxLength: 2048')) {
+                violations.push(`${context} → settings.${key}: URL field requires validation.maxLength: 2048`)
+              }
+            }
+          }
+
+          // Slug fields: key is 'slug' → must have pattern
+          if (/^slug$/i.test(key) && type === 'text') {
+            const vBlock = getValidationBlock(entryBody)
+            if (!vBlock || !vBlock.includes('pattern:')) {
+              violations.push(`${context} → settings.${key}: slug field requires validation.pattern`)
+            }
+          }
+
+          // Twitter handle fields: key contains 'twitter' (case-insensitive) → must have pattern
+          if (/twitter/i.test(key) && type === 'text') {
+            const vBlock = getValidationBlock(entryBody)
+            if (!vBlock || !vBlock.includes('pattern:')) {
+              violations.push(`${context} → settings.${key}: twitter handle field requires validation.pattern`)
+            }
+          }
+        }
+
+        // Skip past this entry
+        pos = entryBraceStart + (j - entryBraceStart)
+        continue
+      }
+    }
+
+    pos++
+  }
+
+  return violations
+}
+
 describe('ComponentMeta Validation', () => {
   describe('Widget meta.ts files', () => {
     it('every primitive widget has meta.ts', async () => {
@@ -516,6 +736,11 @@ describe('ComponentMeta Validation', () => {
         barrel: 'content/chrome/index.ts',
         exportName: 'overlayBaseMeta',
       },
+      siteMetadataMeta: {
+        file: 'schema/site-meta.ts',
+        barrel: 'schema/index.ts',
+        exportName: 'siteMetadataMeta',
+      },
     }
 
     it('all structural meta files exist', async () => {
@@ -596,9 +821,12 @@ describe('ComponentMeta Validation', () => {
     it('all meta.ts settings entries have type, label, and default', async () => {
       // Glob all meta.ts files across the engine
       const contentMetas = await getFiles('{content,schema}/**/meta.ts')
+      const schemaMetas = await getFiles('schema/*-meta.ts')
       const transitionMetas = await getFiles('experience/transitions/*/meta.ts')
       const behaviourMetas = await getFiles('experience/behaviours/*/*/meta.ts')
-      const allMetas = [...contentMetas, ...transitionMetas, ...behaviourMetas]
+      const experienceMetas = await getFiles('experience/experiences/*/meta.ts')
+      const introMetas = await getFiles('intro/patterns/*/meta.ts')
+      const allMetas = [...contentMetas, ...schemaMetas, ...transitionMetas, ...behaviourMetas, ...experienceMetas, ...introMetas]
 
       const violations: string[] = []
 
@@ -657,6 +885,34 @@ describe('ComponentMeta Validation', () => {
       }
 
       expect(violations, `Transition metas not using definePageTransitionMeta():\n${violations.join('\n')}`).toHaveLength(0)
+    })
+  })
+
+  describe('Settings validation constraints', () => {
+    it('all settings have appropriate validation constraints', async () => {
+      const contentMetas = await getFiles('{content,schema}/**/meta.ts')
+      const schemaMetas = await getFiles('schema/*-meta.ts')
+      const transitionMetas = await getFiles('experience/transitions/*/meta.ts')
+      const behaviourMetas = await getFiles('experience/behaviours/*/*/meta.ts')
+      const experienceMetas = await getFiles('experience/experiences/*/meta.ts')
+      const introMetas = await getFiles('intro/patterns/*/meta.ts')
+      const allMetas = [...contentMetas, ...schemaMetas, ...transitionMetas, ...behaviourMetas, ...experienceMetas, ...introMetas]
+
+      // Skip utility meta files
+      const UTILITY_META_FILES = ['schema/meta.ts']
+      const violations: string[] = []
+
+      for (const file of allMetas) {
+        const content = await readFile(file)
+        const rel = relativePath(file)
+
+        if (UTILITY_META_FILES.includes(rel)) continue
+        if (!content.includes('settings:')) continue
+
+        violations.push(...validateSettingConstraints(content, rel))
+      }
+
+      expect(violations, `Settings missing validation constraints:\n${violations.join('\n')}`).toHaveLength(0)
     })
   })
 })

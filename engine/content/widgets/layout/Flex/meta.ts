@@ -66,6 +66,7 @@ export const meta = defineMeta<FlexProps>({
       default: 0,
       description: 'Space between child items',
       bindable: true,
+      validation: { min: 0, max: 500 },
     },
   },
 })

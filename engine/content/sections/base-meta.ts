@@ -72,6 +72,7 @@ export const sectionBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Gap',
       default: 0,
       description: 'Gap between items',
+      validation: { min: 0, max: 500 },
       group: 'Layout',
     },
     'layout.columns': {
@@ -120,6 +121,7 @@ export const sectionBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Padding',
       default: '',
       description: 'Section padding',
+      validation: { min: 0, max: 500 },
       group: 'Style',
     },
     'style.minHeight': {
@@ -127,6 +129,7 @@ export const sectionBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Min Height',
       default: '',
       description: 'Minimum section height (e.g., "100vh", "400px")',
+      validation: { maxLength: 200 },
       group: 'Style',
     },
     'style.maxWidth': {
@@ -134,6 +137,7 @@ export const sectionBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Max Width',
       default: '',
       description: 'Maximum section content width (e.g., "1200px", "80rem")',
+      validation: { maxLength: 200 },
       group: 'Style',
     },
     className: {
@@ -141,6 +145,7 @@ export const sectionBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'CSS Class',
       default: '',
       description: 'Additional CSS class names',
+      validation: { maxLength: 200 },
       advanced: true,
       group: 'Style',
     },

@@ -22,6 +22,7 @@ export const meta = defineSectionMeta<MemberGalleryProps>({
       label: 'Section Title',
       default: '',
       description: 'Optional section title (e.g., "Our Members")',
+      validation: { maxLength: 100 },
       group: 'Content',
     },
     members: {

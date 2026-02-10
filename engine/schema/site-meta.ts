@@ -21,6 +21,7 @@ export const siteMetadataMeta = defineMeta<Record<string, unknown>>({
       label: 'Default Title',
       default: '',
       description: 'Default page title (used when page doesn\'t specify one)',
+      validation: { maxLength: 70 },
       group: 'SEO',
     },
     description: {
@@ -28,6 +29,7 @@ export const siteMetadataMeta = defineMeta<Record<string, unknown>>({
       label: 'Default Description',
       default: '',
       description: 'Default meta description for the site',
+      validation: { maxLength: 5000 },
       group: 'SEO',
     },
     language: {
@@ -59,6 +61,7 @@ export const siteMetadataMeta = defineMeta<Record<string, unknown>>({
       label: 'Site Name',
       default: '',
       description: 'Site or brand name',
+      validation: { maxLength: 100 },
       group: 'Identity',
     },
     tagline: {
@@ -66,6 +69,7 @@ export const siteMetadataMeta = defineMeta<Record<string, unknown>>({
       label: 'Tagline',
       default: '',
       description: 'Short site tagline or slogan',
+      validation: { maxLength: 100 },
       group: 'Identity',
     },
 
@@ -75,20 +79,6 @@ export const siteMetadataMeta = defineMeta<Record<string, unknown>>({
       label: 'Favicon',
       default: '',
       description: 'Site favicon URL',
-      group: 'Assets',
-    },
-    logo: {
-      type: 'image',
-      label: 'Logo',
-      default: '',
-      description: 'Site logo URL',
-      group: 'Assets',
-    },
-    logoDark: {
-      type: 'image',
-      label: 'Logo (Dark)',
-      default: '',
-      description: 'Dark variant logo URL',
       group: 'Assets',
     },
     ogImage: {
@@ -105,6 +95,7 @@ export const siteMetadataMeta = defineMeta<Record<string, unknown>>({
       label: 'Canonical Domain',
       default: '',
       description: 'Canonical domain (e.g., "example.com")',
+      validation: { maxLength: 2048, pattern: '^([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$', message: 'Enter a valid domain (e.g., example.com)' },
       group: 'Technical',
     },
     robots: {
@@ -125,6 +116,7 @@ export const siteMetadataMeta = defineMeta<Record<string, unknown>>({
       label: 'Twitter Handle',
       default: '',
       description: 'Twitter/X handle (e.g., "@handle")',
+      validation: { maxLength: 16, pattern: '^@?[a-zA-Z0-9_]{1,15}$', message: 'Enter a valid Twitter/X handle (e.g., @handle)' },
       group: 'Social',
     },
   },

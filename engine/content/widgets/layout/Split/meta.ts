@@ -37,6 +37,7 @@ export const meta = defineMeta<SplitProps>({
       default: 0,
       description: 'Space between columns',
       bindable: true,
+      validation: { min: 0, max: 500 },
     },
     reverse: {
       type: 'toggle',

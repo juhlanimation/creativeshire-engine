@@ -130,3 +130,23 @@
   background: transparent !important;
   pointer-events: none;
 }
+
+/* ── Azuki Elementals — ProjectGallery layout ──────────────────────── */
+
+/* Video area: relative container so selector can overlay */
+.project-gallery__video-area {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Selector overlays bottom-center of video area */
+.project-gallery__selector {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+}

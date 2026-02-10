@@ -25,14 +25,16 @@ export const meta = defineIntroPatternMeta<TimedSettings>({
       label: 'Duration',
       description: 'Time to wait before revealing content (ms)',
       default: 2000,
-      validation: { min: 500, max: 10000 },
+      min: 500,
+      max: 10000,
     },
     revealDuration: {
       type: 'number',
       label: 'Reveal Duration',
       description: 'Duration of content reveal animation (ms)',
       default: 800,
-      validation: { min: 200, max: 2000 },
+      min: 200,
+      max: 2000,
     },
   } satisfies SettingsConfig<TimedSettings>,
 })

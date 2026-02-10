@@ -22,6 +22,7 @@ export const meta = defineMeta<EmailRevealProps>({
       description: 'Email address to reveal and copy on click',
       validation: {
         required: true,
+        maxLength: 320,
         pattern: '^[^@]+@[^@]+\\.[^@]+$',
         message: 'Please enter a valid email address',
       },
@@ -32,6 +33,7 @@ export const meta = defineMeta<EmailRevealProps>({
       label: 'Label',
       default: 'Email',
       description: 'Label text shown before the fold-out email',
+      validation: { maxLength: 100 },
       bindable: true,
     },
     accentColor: {

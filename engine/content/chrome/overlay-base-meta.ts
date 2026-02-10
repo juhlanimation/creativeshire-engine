@@ -21,6 +21,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Overlay ID',
       default: '',
       description: 'Unique identifier for the overlay',
+      validation: { maxLength: 100 },
       group: 'Identity',
     },
     type: {
@@ -28,6 +29,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Type',
       default: '',
       description: 'Overlay type identifier',
+      validation: { maxLength: 100 },
       group: 'Identity',
     },
 
@@ -91,6 +93,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Easing',
       default: 'ease-out',
       description: 'Animation easing function (e.g., "ease-out", "cubic-bezier(...)")',
+      validation: { maxLength: 200 },
       group: 'Animation',
     },
 
@@ -100,6 +103,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Width',
       default: '',
       description: 'Overlay width',
+      validation: { maxLength: 200 },
       group: 'Style',
     },
     'style.maxWidth': {
@@ -107,6 +111,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Max Width',
       default: '',
       description: 'Maximum overlay width',
+      validation: { maxLength: 200 },
       group: 'Style',
     },
     'style.maxHeight': {
@@ -114,6 +119,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Max Height',
       default: '',
       description: 'Maximum overlay height',
+      validation: { maxLength: 200 },
       group: 'Style',
     },
     'style.padding': {
@@ -121,6 +127,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Padding',
       default: '',
       description: 'Overlay padding',
+      validation: { min: 0, max: 500 },
       group: 'Style',
     },
     'style.borderRadius': {
@@ -128,6 +135,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Border Radius',
       default: '',
       description: 'Overlay border radius (e.g., "8px", "0.5rem")',
+      validation: { maxLength: 200 },
       group: 'Style',
     },
     'style.backgroundColor': {
@@ -142,6 +150,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'CSS Class',
       default: '',
       description: 'Additional CSS class names',
+      validation: { maxLength: 200 },
       advanced: true,
       group: 'Style',
     },

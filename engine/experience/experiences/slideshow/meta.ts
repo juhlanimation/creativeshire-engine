@@ -31,7 +31,8 @@ export const meta = defineExperienceMeta<SlideshowSettings>({
       label: 'Transition Duration',
       description: 'Duration of slide transitions in milliseconds',
       default: 600,
-      validation: { min: 200, max: 2000 },
+      min: 200,
+      max: 2000,
       group: 'Animation',
     },
     transitionEasing: {

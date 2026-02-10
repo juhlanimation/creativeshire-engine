@@ -25,6 +25,7 @@
  */
 
 import { useState, useRef, useEffect, useCallback, type CSSProperties } from 'react'
+import { useSectionLifecycle } from '../../../../experience'
 import { useVisibilityPlayback } from './useVisibilityPlayback'
 import { usePlaybackPosition } from '../VideoPlayer/hooks'
 import type { VideoProps } from './types'
@@ -42,9 +43,11 @@ export default function Video({
   hoverPlay = false,
   loop = true,
   muted = true,
+  preload,
   objectFit = 'cover',
   background = false,
   aspectRatio,
+  posterTime,
   className,
   videoUrl,
   modalAnimationType,
@@ -92,8 +95,47 @@ export default function Video({
   // Playback position persistence
   const { getPosition } = usePlaybackPosition()
 
+  // Lifecycle awareness for preloading adjacent sections
+  const lifecycle = useSectionLifecycle()
+
   // Pause autoplay videos when scrolled out of view (performance optimization)
   useVisibilityPlayback(videoRef, autoplay && !hoverPlay)
+
+  // Force frame display for autoplay videos.
+  // preload="auto" is just a hint — browsers may ignore it. Even when data loads,
+  // a paused, never-played video may not render a frame. Seeking to a time offset
+  // forces the browser to decode and display a frame.
+  // posterTime allows choosing which frame to show (useful when first frame is black).
+  //
+  // PRELOAD-AWARE: When the section is adjacent (isPreloading), explicitly call
+  // video.load() to force the browser to start fetching data. This ensures the
+  // frame is decoded and visible before the user navigates to this section.
+  useEffect(() => {
+    if (hoverPlay || !autoplay) return
+    const video = videoRef.current
+    if (!video) return
+
+    const targetTime = posterTime ?? 0.001
+    const showFrame = () => {
+      if (video.paused && video.currentTime === 0) {
+        video.currentTime = targetTime
+      }
+    }
+
+    // When section is preloading (adjacent to active), kick the loading process.
+    // Browsers may deprioritize loading for paused off-screen videos even with
+    // preload="auto". Calling load() explicitly forces the resource fetch.
+    if (lifecycle?.isPreloading && video.networkState === 0) {
+      video.load()
+    }
+
+    if (video.readyState >= 2) {
+      showFrame()
+    } else {
+      video.addEventListener('loadeddata', showFrame, { once: true })
+      return () => video.removeEventListener('loadeddata', showFrame)
+    }
+  }, [autoplay, hoverPlay, posterTime, lifecycle?.isPreloading])
 
   // Hover-play mode: control playback based on hover state
   useEffect(() => {
@@ -152,13 +194,13 @@ export default function Video({
         ref={videoRef}
         src={src}
         poster={poster}
-        autoPlay={autoplay}
         loop={loop}
         muted={muted}
         playsInline
+        preload={preload ?? (autoplay ? 'auto' : undefined)}
         className={classes}
         data-behaviour={dataBehaviour}
-        style={!background ? { objectFit } : undefined}
+        style={!background ? { objectFit, ...(aspectRatio ? { aspectRatio } : {}) } : undefined}
       />
     )
   }
@@ -205,7 +247,7 @@ export default function Video({
         loop={loop}
         muted={muted}
         playsInline
-        preload="metadata"
+        preload={preload ?? 'metadata'}
         className={`video-widget__video ${isHovered ? 'video-widget__video--visible' : ''}`}
         style={{ objectFit }}
         data-effect="media-crossfade"

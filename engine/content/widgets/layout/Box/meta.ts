@@ -22,6 +22,7 @@ export const meta = defineMeta<BoxProps>({
       description: 'Width (px number or CSS value like 50%, auto)',
       group: 'Size',
       bindable: true,
+      validation: { maxLength: 50 },
     },
     height: {
       type: 'text',
@@ -30,6 +31,7 @@ export const meta = defineMeta<BoxProps>({
       description: 'Height (px number or CSS value)',
       group: 'Size',
       bindable: true,
+      validation: { maxLength: 50 },
     },
     minWidth: {
       type: 'text',
@@ -39,6 +41,7 @@ export const meta = defineMeta<BoxProps>({
       group: 'Size',
       advanced: true,
       bindable: true,
+      validation: { maxLength: 50 },
     },
     maxWidth: {
       type: 'text',
@@ -48,6 +51,7 @@ export const meta = defineMeta<BoxProps>({
       group: 'Size',
       advanced: true,
       bindable: true,
+      validation: { maxLength: 50 },
     },
     flexGrow: {
       type: 'number',

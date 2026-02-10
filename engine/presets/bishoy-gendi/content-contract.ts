@@ -39,10 +39,12 @@ export const bishoyGendiContentContract: ContentContract = {
     { path: 'contact.email', type: 'text', label: 'Email', section: 'contact', required: true, placeholder: 'hello@example.com' },
     { path: 'contact.instagram', type: 'text', label: 'Instagram URL', section: 'contact', placeholder: 'https://instagram.com/username' },
     { path: 'contact.linkedin', type: 'text', label: 'LinkedIn URL', section: 'contact', placeholder: 'https://linkedin.com/in/username' },
+    { path: 'contact.displayName', type: 'text', label: 'Display Name', section: 'contact', default: 'Bishoy Gendi' },
 
     // ── Showreel ───────────────────────────────────────────────────────────
     { path: 'showreel.videoSrc', type: 'text', label: 'Showreel Video URL', section: 'showreel', required: true },
     { path: 'showreel.videoPoster', type: 'image', label: 'Showreel Poster', section: 'showreel' },
+    { path: 'showreel.posterTime', type: 'number', label: 'Poster Frame Time (s)', section: 'showreel', default: 3 },
 
     // ── About ─────────────────────────────────────────────────────────────
     { path: 'about.label', type: 'text', label: 'About Label', section: 'about', default: 'HEY, I AM' },
@@ -57,8 +59,11 @@ export const bishoyGendiContentContract: ContentContract = {
     { path: 'azukiElementals.logo.src', type: 'image', label: 'Logo Image', section: 'azukiElementals', required: true },
     { path: 'azukiElementals.logo.alt', type: 'text', label: 'Logo Alt Text', section: 'azukiElementals', default: 'Azuki' },
     { path: 'azukiElementals.logo.width', type: 'number', label: 'Logo Width', section: 'azukiElementals', default: 300 },
+    { path: 'azukiElementals.logo.filter', type: 'text', label: 'Logo CSS Filter', section: 'azukiElementals', default: 'brightness(0) invert(1)' },
+    { path: 'azukiElementals.accentColor', type: 'text', label: 'Accent Color', section: 'azukiElementals', default: '#C03540' },
     { path: 'azukiElementals.mainVideo.src', type: 'text', label: 'Main Video URL', section: 'azukiElementals', required: true },
     { path: 'azukiElementals.mainVideo.poster', type: 'image', label: 'Main Video Poster', section: 'azukiElementals' },
+    { path: 'azukiElementals.mainVideo.posterTime', type: 'number', label: 'Main Video Poster Time (s)', section: 'azukiElementals', default: 4 },
     {
       path: 'azukiElementals.projects',
       type: 'collection',
@@ -71,6 +76,8 @@ export const bishoyGendiContentContract: ContentContract = {
         { path: 'video', type: 'text', label: 'Preview Video URL', section: 'azukiElementals' },
         { path: 'year', type: 'text', label: 'Year', section: 'azukiElementals' },
         { path: 'studio', type: 'text', label: 'Studio', section: 'azukiElementals' },
+        { path: 'role', type: 'text', label: 'Role', section: 'azukiElementals' },
+        { path: 'posterTime', type: 'number', label: 'Thumbnail Frame Time (s)', section: 'azukiElementals' },
       ],
     },
 
@@ -83,6 +90,7 @@ export const bishoyGendiContentContract: ContentContract = {
     { path: 'boyMoleFoxHorse.role', type: 'text', label: 'Role', section: 'boyMoleFoxHorse', required: true, default: 'Character Animator' },
     { path: 'boyMoleFoxHorse.videoSrc', type: 'text', label: 'Main Video URL', section: 'boyMoleFoxHorse', required: true },
     { path: 'boyMoleFoxHorse.videoPoster', type: 'image', label: 'Video Poster', section: 'boyMoleFoxHorse' },
+    { path: 'boyMoleFoxHorse.posterTime', type: 'number', label: 'Poster Frame Time (s)', section: 'boyMoleFoxHorse', default: 5 },
     {
       path: 'boyMoleFoxHorse.shots',
       type: 'collection',

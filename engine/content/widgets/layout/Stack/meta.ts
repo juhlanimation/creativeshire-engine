@@ -21,6 +21,7 @@ export const meta = defineMeta<StackProps>({
       default: 0,
       description: 'Vertical space between items',
       bindable: true,
+      validation: { min: 0, max: 500 },
     },
     align: {
       type: 'alignment',

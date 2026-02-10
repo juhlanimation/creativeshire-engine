@@ -150,9 +150,12 @@ function IntroContentGate({
     () => 0,
   )
 
+  // contentVisible: skip opacity gating (e.g. video-gate where video IS the intro)
+  const contentVisible = (settings?.contentVisible as boolean) ?? false
+
   // Compute content opacity
   let contentOpacity: number
-  if (introCompleted || currentStep > contentFadeStep) {
+  if (contentVisible || introCompleted || currentStep > contentFadeStep) {
     contentOpacity = 1
   } else if (currentStep === contentFadeStep) {
     contentOpacity = stepProgress

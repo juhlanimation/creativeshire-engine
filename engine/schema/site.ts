@@ -36,10 +36,6 @@ export interface SiteMetadata {
   // Assets (URLs to storage)
   /** URL to favicon */
   favicon?: string
-  /** URL to logo */
-  logo?: string
-  /** URL to dark variant logo */
-  logoDark?: string
   /** URL to default Open Graph image */
   ogImage?: string
 

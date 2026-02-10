@@ -45,6 +45,9 @@ import TabbedContent from './interactive/TabbedContent'
 import ShotIndicator from './interactive/ShotIndicator'
 import TextMask from './interactive/TextMask'
 import EmailReveal from './interactive/EmailReveal'
+import SectionFooter from './interactive/SectionFooter'
+import HeroVideo from './interactive/HeroVideo'
+import TeamShowcase from './interactive/TeamShowcase'
 
 // Chrome overlays (used by experience chrome)
 import SlideIndicators from '../chrome/overlays/SlideIndicators'
@@ -85,6 +88,9 @@ export const widgetRegistry: Record<string, WidgetComponent> = {
   ShotIndicator,
   TextMask,
   EmailReveal,
+  SectionFooter,
+  HeroVideo,
+  TeamShowcase,
   // Chrome overlays
   SlideIndicators,
 }

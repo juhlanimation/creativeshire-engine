@@ -24,12 +24,15 @@ export const meta = defineMeta<ShotIndicatorProps>({
       label: 'Active Shot',
       default: 0,
       description: 'Currently active shot number',
+      min: 0,
+      max: 1000,
     },
     prefix: {
       type: 'text',
       label: 'Prefix',
       default: 'sh',
       description: 'Label prefix (e.g., "sh" for shot)',
+      validation: { maxLength: 100 },
     },
     position: {
       type: 'select',

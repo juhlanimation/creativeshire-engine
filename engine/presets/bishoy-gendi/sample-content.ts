@@ -11,6 +11,7 @@
 
 const VIDEO_BASE = '/videos/bishoy-gendi'
 const IMAGE_BASE = '/images/bishoy-gendi'
+const POSTER_BASE = '/images/bishoy-gendi/posters'
 
 export const bishoyGendiSampleContent = {
   intro: {
@@ -26,11 +27,13 @@ export const bishoyGendiSampleContent = {
     email: 'bishoygendi@yahoo.co.uk',
     instagram: 'https://instagram.com/bishoygendi',
     linkedin: 'https://linkedin.com/in/bishoygendi',
+    displayName: 'Bishoy Gendi',
   },
 
   showreel: {
     videoSrc: `${VIDEO_BASE}/sample-showreel.webm`,
-    videoPoster: '',
+    videoPoster: `${POSTER_BASE}/showreel.jpg`,
+    posterTime: 3,
   },
 
   about: {
@@ -44,14 +47,17 @@ export const bishoyGendiSampleContent = {
 
   azukiElementals: {
     backgroundColor: '#C03540',
+    accentColor: '#C03540',
     logo: {
       src: `${IMAGE_BASE}/Azuki_logo.png`,
       alt: 'Azuki',
       width: 300,
+      filter: 'brightness(0) invert(1)',
     },
     mainVideo: {
       src: `${VIDEO_BASE}/azuki-elementals/azuki-reel-vimeo.webm`,
-      poster: '',
+      poster: `${POSTER_BASE}/azuki-reel-vimeo.jpg`,
+      posterTime: 4,
     },
     projects: [
       {
@@ -60,6 +66,8 @@ export const bishoyGendiSampleContent = {
         video: `${VIDEO_BASE}/azuki-elementals/azuki-reel-vimeo.webm`,
         year: '2024',
         studio: 'Crossroad',
+        role: 'Character Animator',
+        posterTime: 4,
       },
       {
         thumbnail: `${VIDEO_BASE}/azuki-elementals/proof-of-skate.webm`,
@@ -67,6 +75,8 @@ export const bishoyGendiSampleContent = {
         video: `${VIDEO_BASE}/azuki-elementals/proof-of-skate.webm`,
         year: '2022',
         studio: 'Juhl Animation',
+        role: 'Character Animator',
+        posterTime: 3,
       },
       {
         thumbnail: `${VIDEO_BASE}/azuki-elementals/azukimoser.webm`,
@@ -74,6 +84,8 @@ export const bishoyGendiSampleContent = {
         video: `${VIDEO_BASE}/azuki-elementals/azukimoser.webm`,
         year: '2025',
         studio: 'Crossroad',
+        role: 'Character Animator',
+        posterTime: 5,
       },
       {
         thumbnail: `${VIDEO_BASE}/azuki-elementals/animecoin.webm`,
@@ -81,6 +93,8 @@ export const bishoyGendiSampleContent = {
         video: `${VIDEO_BASE}/azuki-elementals/animecoin.webm`,
         year: '2025',
         studio: 'Crossroad',
+        role: 'Character Animator',
+        posterTime: 2,
       },
     ],
   },
@@ -95,7 +109,8 @@ export const bishoyGendiSampleContent = {
     studio: 'WellHello Productions',
     role: 'Character Animator',
     videoSrc: `${VIDEO_BASE}/the-boy-mole-fox-horse/reel.webm`,
-    videoPoster: '',
+    videoPoster: `${POSTER_BASE}/bmfh-reel.jpg`,
+    posterTime: 5,
     shots: [
       { frame: 275, videoSrc: `${VIDEO_BASE}/the-boy-mole-fox-horse/275.webm` },
       { frame: 300, videoSrc: `${VIDEO_BASE}/the-boy-mole-fox-horse/300.webm` },

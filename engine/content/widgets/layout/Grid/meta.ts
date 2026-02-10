@@ -32,6 +32,7 @@ export const meta = defineMeta<GridProps>({
       description: 'Number of rows or CSS grid-template-rows',
       advanced: true,
       bindable: true,
+      validation: { maxLength: 100 },
     },
     gap: {
       type: 'spacing',
@@ -39,6 +40,7 @@ export const meta = defineMeta<GridProps>({
       default: 0,
       description: 'Space between grid items',
       bindable: true,
+      validation: { min: 0, max: 500 },
     },
     columnGap: {
       type: 'spacing',
@@ -47,6 +49,7 @@ export const meta = defineMeta<GridProps>({
       description: 'Override gap for columns only',
       advanced: true,
       bindable: true,
+      validation: { min: 0, max: 500 },
     },
     rowGap: {
       type: 'spacing',
@@ -55,6 +58,7 @@ export const meta = defineMeta<GridProps>({
       description: 'Override gap for rows only',
       advanced: true,
       bindable: true,
+      validation: { min: 0, max: 500 },
     },
   },
 })

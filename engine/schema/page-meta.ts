@@ -21,7 +21,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       label: 'URL Slug',
       default: '',
       description: 'URL path for the page (e.g., "/", "/about", "/work/project-1")',
-      validation: { required: true },
+      validation: { required: true, maxLength: 200, pattern: '^(\\/|[a-z0-9][a-z0-9\\-\\/]*)$', message: 'Slug must start with / or use lowercase letters, numbers, and hyphens' },
       group: 'Route',
     },
 
@@ -31,7 +31,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       label: 'Page Title',
       default: '',
       description: 'Document title displayed in browser tab and search results',
-      validation: { required: true },
+      validation: { required: true, maxLength: 70 },
       group: 'SEO',
     },
     'head.description': {
@@ -39,6 +39,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       label: 'Meta Description',
       default: '',
       description: 'Meta description for search engine results',
+      validation: { maxLength: 5000 },
       group: 'SEO',
     },
     'head.canonical': {
@@ -46,6 +47,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       label: 'Canonical URL',
       default: '',
       description: 'Canonical URL to prevent duplicate content issues',
+      validation: { maxLength: 2048, pattern: '^(https?:\\/\\/|\\/|#|mailto:)', message: 'Must be a valid URL, path, or anchor' },
       group: 'SEO',
     },
 
@@ -55,6 +57,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       label: 'OG Title',
       default: '',
       description: 'Open Graph title for social sharing (falls back to page title)',
+      validation: { maxLength: 70 },
       group: 'Open Graph',
     },
     'head.ogDescription': {
@@ -62,6 +65,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       label: 'OG Description',
       default: '',
       description: 'Open Graph description for social sharing',
+      validation: { maxLength: 5000 },
       group: 'Open Graph',
     },
     'head.ogImage': {
@@ -76,6 +80,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       label: 'OG URL',
       default: '',
       description: 'Open Graph canonical URL',
+      validation: { maxLength: 2048, pattern: '^(https?:\\/\\/|\\/|#|mailto:)', message: 'Must be a valid URL, path, or anchor' },
       group: 'Open Graph',
     },
 
@@ -96,6 +101,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       label: 'Twitter Creator',
       default: '',
       description: 'Twitter handle of the content creator (e.g., "@handle")',
+      validation: { maxLength: 16, pattern: '^@?[a-zA-Z0-9_]{1,15}$', message: 'Enter a valid Twitter/X handle (e.g., @handle)' },
       group: 'Twitter',
     },
 
@@ -128,6 +134,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       label: 'Viewport',
       default: 'width=device-width, initial-scale=1',
       description: 'Viewport meta tag value',
+      validation: { maxLength: 100 },
       advanced: true,
       group: 'Browser',
     },

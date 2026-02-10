@@ -21,6 +21,7 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Region ID',
       default: '',
       description: 'Unique identifier for the region',
+      validation: { maxLength: 100 },
       group: 'Common',
     },
     'style.backgroundColor': {
@@ -35,6 +36,7 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Padding',
       default: '',
       description: 'Region padding',
+      validation: { min: 0, max: 500 },
       group: 'Common',
     },
     'style.maxWidth': {
@@ -42,6 +44,7 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Max Width',
       default: '',
       description: 'Maximum region content width',
+      validation: { maxLength: 200 },
       group: 'Common',
     },
     className: {
@@ -49,6 +52,7 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'CSS Class',
       default: '',
       description: 'Additional CSS class names',
+      validation: { maxLength: 200 },
       advanced: true,
       group: 'Common',
     },
@@ -73,6 +77,7 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Height',
       default: '',
       description: 'Header height (e.g., "64px", "4rem")',
+      validation: { maxLength: 200 },
       group: 'Header',
     },
 
@@ -82,6 +87,7 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Min Height',
       default: '',
       description: 'Footer minimum height',
+      validation: { maxLength: 200 },
       group: 'Footer',
     },
 
@@ -102,6 +108,7 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Width',
       default: '',
       description: 'Sidebar width (e.g., "280px", "20rem")',
+      validation: { maxLength: 200 },
       group: 'Sidebar',
     },
     collapsible: {

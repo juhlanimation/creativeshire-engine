@@ -43,6 +43,7 @@ export const meta = defineMeta<VideoPlayerProps>({
       default: 0,
       description: 'Start playback at this time (seconds)',
       min: 0,
+      max: 3600,
       step: 1,
       advanced: true,
       bindable: true,

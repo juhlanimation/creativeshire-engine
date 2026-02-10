@@ -20,12 +20,14 @@ export const meta = defineMeta<CursorLabelProps>({
       label: 'Label Text',
       default: 'ENTER',
       description: 'Text to display near cursor',
+      validation: { maxLength: 100 },
     },
     targetSelector: {
       type: 'text',
       label: 'Target Selector',
       default: '.text-widget a',
       description: 'CSS selector for elements that trigger the label',
+      validation: { maxLength: 200 },
       advanced: true,
     },
     offsetX: {
@@ -33,6 +35,8 @@ export const meta = defineMeta<CursorLabelProps>({
       label: 'X Offset',
       default: 24,
       description: 'Horizontal offset from cursor in pixels',
+      min: -500,
+      max: 500,
       advanced: true,
     },
     offsetY: {
@@ -40,6 +44,8 @@ export const meta = defineMeta<CursorLabelProps>({
       label: 'Y Offset',
       default: 8,
       description: 'Vertical offset from cursor in pixels',
+      min: -500,
+      max: 500,
       advanced: true,
     },
   },
