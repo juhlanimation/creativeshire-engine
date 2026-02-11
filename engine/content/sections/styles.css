@@ -21,6 +21,15 @@
   width: 100%;
   position: relative;
   box-sizing: border-box;
+
+  /* Centering: harmless without max-width, enables constraint when toggled */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Constrained sections: opt-in max-width from site theme */
+.section[data-constrained] {
+  max-width: var(--site-max-width, none);
 }
 
 /* Scroll-driven behaviours bypass CSS transition - driver handles updates directly */

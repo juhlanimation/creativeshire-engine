@@ -8,7 +8,7 @@ export interface IntroOverlayProps {
   text?: string
   /** Mask color (default: 'black') */
   maskColor?: string
-  /** Font size for mask text (default: '25vw') */
+  /** Font size for mask text (default: '25cqw') */
   fontSize?: string
   /** Font weight (default: 900) */
   fontWeight?: number

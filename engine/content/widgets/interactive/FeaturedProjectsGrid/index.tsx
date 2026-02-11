@@ -12,7 +12,7 @@
 'use client'
 
 import { memo } from 'react'
-import { WidgetRenderer } from '../../../../renderer'
+import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
 import { createProjectCard } from '../../patterns'
 import type { FeaturedProjectsGridProps } from './types'
 import './styles.css'

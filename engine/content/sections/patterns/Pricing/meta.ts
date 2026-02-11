@@ -15,6 +15,7 @@ export const meta = defineSectionMeta<PricingProps>({
   icon: 'credit-card',
   tags: ['pricing', 'plans', 'comparison', 'features', 'conversion', 'cards'],
   component: false, // Factory function
+  ownedFields: ['layout', 'behaviour', 'behaviourOptions', 'className'],
 
   settings: {
     title: {

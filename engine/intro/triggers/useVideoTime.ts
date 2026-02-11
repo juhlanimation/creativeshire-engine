@@ -3,6 +3,9 @@
 /**
  * useVideoTime - watches video currentTime for intro triggers.
  * Queries for [data-intro-video] element and tracks its time.
+ *
+ * Resilient to the video element being recreated in the DOM
+ * (e.g., portal switch from inline to pinned backdrop).
  */
 
 import { useEffect, useRef } from 'react'
@@ -31,59 +34,90 @@ export function useVideoTime(
   useEffect(() => {
     if (typeof document === 'undefined') return
 
-    const video = document.querySelector<HTMLVideoElement>(selector)
-    if (!video) {
-      console.warn(`[Intro] Video element not found: ${selector}`)
-      return
-    }
-
     let rafId: number | null = null
+    let retryTimer: ReturnType<typeof setInterval> | null = null
+    let currentVideo: HTMLVideoElement | null = null
 
     const updateTime = () => {
-      const currentTime = video.currentTime
-      store.getState().setVideoTime(currentTime)
+      if (!currentVideo) return
+      const time = currentVideo.currentTime
+      store.getState().setVideoTime(time)
 
-      // Check if target time reached
-      if (!hasTriggered.current && currentTime >= targetTime) {
+      if (!hasTriggered.current && time >= targetTime) {
         hasTriggered.current = true
         onTargetReached?.()
       }
 
       // Continue polling while video is playing
-      if (!video.paused && !video.ended) {
+      if (!currentVideo.paused && !currentVideo.ended) {
         rafId = requestAnimationFrame(updateTime)
+      } else if (!hasTriggered.current) {
+        // Video paused unexpectedly (e.g., DOM removal during portal switch)
+        // Retry finding the new video element
+        startRetry()
       }
     }
 
-    // Start tracking on play
-    const handlePlay = () => {
-      updateTime()
-    }
+    const handlePlay = () => updateTime()
 
-    // Update on timeupdate as fallback
     const handleTimeUpdate = () => {
-      store.getState().setVideoTime(video.currentTime)
+      if (!currentVideo) return
+      store.getState().setVideoTime(currentVideo.currentTime)
 
-      if (!hasTriggered.current && video.currentTime >= targetTime) {
+      if (!hasTriggered.current && currentVideo.currentTime >= targetTime) {
         hasTriggered.current = true
         onTargetReached?.()
       }
     }
 
-    video.addEventListener('play', handlePlay)
-    video.addEventListener('timeupdate', handleTimeUpdate)
+    function attachToVideo(video: HTMLVideoElement) {
+      // Detach from previous video if different
+      if (currentVideo && currentVideo !== video) {
+        currentVideo.removeEventListener('play', handlePlay)
+        currentVideo.removeEventListener('timeupdate', handleTimeUpdate)
+        if (rafId !== null) {
+          cancelAnimationFrame(rafId)
+          rafId = null
+        }
+      }
 
-    // Initial check if video already playing
-    if (!video.paused) {
-      updateTime()
+      currentVideo = video
+      video.addEventListener('play', handlePlay)
+      video.addEventListener('timeupdate', handleTimeUpdate)
+
+      // Start tracking immediately if already playing
+      if (!video.paused) {
+        updateTime()
+      }
+    }
+
+    function startRetry() {
+      if (retryTimer || hasTriggered.current) return
+      retryTimer = setInterval(() => {
+        const video = document.querySelector<HTMLVideoElement>(selector)
+        if (video && video !== currentVideo) {
+          clearInterval(retryTimer!)
+          retryTimer = null
+          attachToVideo(video)
+        }
+      }, 100)
+    }
+
+    // Initial query
+    const video = document.querySelector<HTMLVideoElement>(selector)
+    if (video) {
+      attachToVideo(video)
+    } else {
+      startRetry()
     }
 
     return () => {
-      if (rafId !== null) {
-        cancelAnimationFrame(rafId)
+      if (rafId !== null) cancelAnimationFrame(rafId)
+      if (retryTimer) clearInterval(retryTimer)
+      if (currentVideo) {
+        currentVideo.removeEventListener('play', handlePlay)
+        currentVideo.removeEventListener('timeupdate', handleTimeUpdate)
       }
-      video.removeEventListener('play', handlePlay)
-      video.removeEventListener('timeupdate', handleTimeUpdate)
     }
   }, [store, selector, targetTime, onTargetReached])
 }

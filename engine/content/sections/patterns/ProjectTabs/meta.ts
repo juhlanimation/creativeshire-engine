@@ -15,6 +15,7 @@ export const meta = defineSectionMeta<ProjectTabsProps>({
   icon: 'tabs',
   tags: ['project', 'tabs', 'gallery', 'multi-project'],
   component: false,
+  ownedFields: ['layout', 'behaviour', 'behaviourOptions', 'className'],
 
   settings: {
     tabs: {

@@ -15,6 +15,7 @@ export const meta = defineSectionMeta<MemberGalleryProps>({
   icon: 'users',
   tags: ['gallery', 'video', 'members', 'portfolio', 'showcase', 'fullscreen'],
   component: false, // Factory function
+  ownedFields: ['layout', 'behaviour', 'behaviourOptions', 'className'],
 
   settings: {
     title: {

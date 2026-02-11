@@ -228,7 +228,7 @@ export function createMemberGallerySection(props: MemberGalleryProps): SectionSc
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        minHeight: '100vh'
+        minHeight: '100dvh'
       })
   }
 
@@ -297,7 +297,7 @@ export function createMemberGallerySection(props: MemberGalleryProps): SectionSc
     },
     style: {
       position: 'relative',
-      minHeight: '100vh',
+      minHeight: '100dvh',
       backgroundColor: props.backgroundColor ?? 'black',
       overflow: 'hidden'
     },

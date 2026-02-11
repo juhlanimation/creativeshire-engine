@@ -52,7 +52,4 @@ export { useSwipeNavigation, type SwipeNavigationOptions } from './useSwipeNavig
 export { useExperienceActions } from './useExperienceActions'
 
 // Section navigation component (wire-up)
-export {
-  NavigationInitializer,
-  type NavigationInitializerProps,
-} from './NavigationInitializer'
+export { NavigationInitializer } from './NavigationInitializer'

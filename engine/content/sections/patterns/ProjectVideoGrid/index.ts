@@ -193,7 +193,7 @@ export function createProjectVideoGridSection(
     style: {
       backgroundColor: props.backgroundColor ?? '#000000',
       color: props.textColor === 'dark' ? '#000' : '#fff',
-      minHeight: '100vh',
+      minHeight: '100dvh',
       padding: '2rem',
     },
     className: 'project-video-grid',

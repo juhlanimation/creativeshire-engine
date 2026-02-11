@@ -47,10 +47,16 @@ export function usePhaseController(
     // Already completed, skip
     if (state.phase === 'ready') return
 
-    // Transition to revealing phase
+    // Instant reveal: skip animation, go straight to ready.
+    // Ensures scroll, chrome, and content all appear in one frame.
+    if (revealDuration <= 100) {
+      state.completeIntro()
+      return
+    }
+
+    // Animated reveal: transition through revealing → ready
     state.setPhase('revealing')
 
-    // Animate reveal progress
     const startTime = performance.now()
 
     const animateReveal = () => {

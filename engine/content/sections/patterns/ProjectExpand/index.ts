@@ -123,7 +123,7 @@ export function createProjectExpandSection(props: ProjectExpandProps): SectionSc
     style: {
       backgroundColor: props.backgroundColor ?? '#0B0A0A',
       color: '#ffffff',
-      minHeight: '100vh',
+      minHeight: '100dvh',
       padding: '2rem',
     },
     className: 'project-expand',

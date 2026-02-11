@@ -289,8 +289,8 @@ export class ScrollDriver implements Driver {
         ?? this.visibility.get(id)?.visibility
         ?? 0
 
-      // Compute CSS variables from behaviour
-      const vars = behaviour.compute(this.reusableState, options)
+      // Compute CSS variables from behaviour (pass element for DOM-aware behaviours)
+      const vars = behaviour.compute(this.reusableState, options, element)
 
       // Value-change guard: only call setProperty when value actually changed
       let cached = this.lastValues.get(id)
@@ -363,7 +363,7 @@ export class ScrollDriver implements Driver {
       isPressed: false,
       prefersReducedMotion: this.prefersReducedMotion,
     }
-    const vars = behaviour.compute(initialState, options)
+    const vars = behaviour.compute(initialState, options, element)
     const cached: Record<string, string> = {}
     for (const key in vars) {
       const value = String(vars[key])

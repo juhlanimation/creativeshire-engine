@@ -15,6 +15,7 @@ export const meta = defineSectionMeta<ProjectGalleryProps>({
   icon: 'gallery',
   tags: ['project', 'gallery', 'video', 'selector', 'thumbnails'],
   component: false,
+  ownedFields: ['layout', 'behaviour', 'behaviourOptions', 'className'],
 
   settings: {
     logo: {

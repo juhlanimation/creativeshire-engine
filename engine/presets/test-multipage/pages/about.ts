@@ -20,7 +20,7 @@ const aboutSection: SectionSchema = {
     align: 'center',
   },
   style: {
-    minHeight: '60vh',
+    minHeight: '60dvh',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -36,7 +36,7 @@ const aboutSection: SectionSchema = {
         as: 'h1',
       },
       style: {
-        fontSize: 'clamp(2rem, 5vw, 4rem)',
+        fontSize: 'clamp(2rem, 5cqw, 4rem)',
         fontWeight: 700,
         marginBottom: '1rem',
         textAlign: 'center',
@@ -50,7 +50,7 @@ const aboutSection: SectionSchema = {
         as: 'p',
       },
       style: {
-        fontSize: 'clamp(1rem, 2vw, 1.25rem)',
+        fontSize: 'clamp(1rem, 2cqw, 1.25rem)',
         maxWidth: '600px',
         textAlign: 'center',
         lineHeight: 1.6,
@@ -71,7 +71,7 @@ const teamSection: SectionSchema = {
     align: 'center',
   },
   style: {
-    minHeight: '50vh',
+    minHeight: '50dvh',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -87,7 +87,7 @@ const teamSection: SectionSchema = {
         as: 'h2',
       },
       style: {
-        fontSize: 'clamp(1.5rem, 3vw, 2.5rem)',
+        fontSize: 'clamp(1.5rem, 3cqw, 2.5rem)',
         fontWeight: 600,
         marginBottom: '1rem',
         textAlign: 'center',

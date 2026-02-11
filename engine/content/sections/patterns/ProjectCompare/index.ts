@@ -80,7 +80,7 @@ export function createProjectCompareSection(props: ProjectCompareProps): Section
     },
     style: {
       backgroundColor: props.backgroundColor ?? '#FDF9F0',
-      minHeight: '100vh',
+      minHeight: '100dvh',
       padding: '2rem'
     },
     className: 'project-compare',

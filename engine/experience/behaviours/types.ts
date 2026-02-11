@@ -59,8 +59,8 @@ export interface Behaviour<T = unknown> {
   category?: BehaviourCategory
   /** Required state keys that must be available */
   requires?: string[]
-  /** Compute CSS variables from state and options */
-  compute: (state: BehaviourState, options?: Record<string, unknown>) => CSSVariables
+  /** Compute CSS variables from state and options. Element is the registered DOM element (provided by ScrollDriver). */
+  compute: (state: BehaviourState, options?: Record<string, unknown>, element?: HTMLElement) => CSSVariables
   /** Optional CSS template for static styles */
   cssTemplate?: string
   /** Configurable settings for CMS UI */

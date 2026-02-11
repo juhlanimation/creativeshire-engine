@@ -59,6 +59,8 @@ export type { TriggerConfig, TriggerProps, TriggerInitializerProps } from './tri
 
 // Drivers (apply CSS vars at 60fps, bypass React)
 export {
+  ScrollLockProvider,
+  useScrollLock,
   SmoothScrollProvider,
   useSmoothScroll,
   useSmoothScrollContainer,

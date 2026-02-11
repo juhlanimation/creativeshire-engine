@@ -15,6 +15,7 @@ export const meta = defineSectionMeta<FeaturedProjectsProps>({
   icon: 'projects',
   tags: ['portfolio', 'projects', 'grid', 'featured'],
   component: false, // Factory function
+  ownedFields: ['layout', 'behaviour', 'behaviourOptions', 'className'],
 
   settings: {
     projects: {

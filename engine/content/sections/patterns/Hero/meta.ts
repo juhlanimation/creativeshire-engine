@@ -15,6 +15,7 @@ export const meta = defineSectionMeta<HeroProps>({
   icon: 'hero',
   tags: ['hero', 'landing', 'video', 'fullscreen'],
   component: false, // Factory function
+  ownedFields: ['layout', 'behaviour', 'behaviourOptions', 'className'],
 
   settings: {
     introText: {

@@ -96,6 +96,7 @@ export const siteMetadataMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Canonical domain (e.g., "example.com")',
       validation: { maxLength: 2048, pattern: '^([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$', message: 'Enter a valid domain (e.g., example.com)' },
+      editorHint: 'structural',
       group: 'Technical',
     },
     robots: {
@@ -107,6 +108,7 @@ export const siteMetadataMeta = defineMeta<Record<string, unknown>>({
         { value: 'index', label: 'Allow Indexing' },
         { value: 'noindex', label: 'No Indexing' },
       ],
+      editorHint: 'structural',
       group: 'Technical',
     },
 

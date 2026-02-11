@@ -42,7 +42,7 @@ export interface MemberGalleryTextStyles {
 export const DEFAULT_MEMBER_GALLERY_STYLES: MemberGalleryTextStyles = {
   name: {
     fontFamily: 'var(--font-title, Inter, system-ui, sans-serif)',
-    fontSize: 'clamp(2rem, 5vw, 4rem)',
+    fontSize: 'clamp(2rem, 5cqw, 4rem)',
     fontWeight: 700,
     color: 'white',
     mixBlendMode: 'difference',

@@ -7,11 +7,20 @@
  * Desktop: Hover on a name to crossfade to that member's video.
  * Mobile: Scroll-based viewport-center detection auto-selects the closest name.
  *
- * Videos are preloaded in a fixed overlay layer. Names use mix-blend-mode: difference
- * for contrast against any video content.
+ * Fullscreen strategy:
+ * CSS containment (container-type, contain, transform) on site ancestors traps
+ * position:fixed. Videos and display-names portal to the viewport foreground layer
+ * where position:fixed works. Interactive names stay in-section for hover/scroll.
+ * The foreground layer has pointer-events:none so hovers pass through to the
+ * in-section names beneath.
+ *
+ * Fallback (contained mode / SSR): videos render inline with position:absolute,
+ * covering the section only.
  */
 
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
+import { useViewportPortal } from '../../../../renderer/ViewportPortalContext'
 import type { TeamShowcaseProps, TeamMember } from './types'
 import './styles.css'
 
@@ -33,6 +42,9 @@ export default function TeamShowcase({
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
   const nameRefs = useRef<(HTMLElement | null)[]>([])
   const rafRef = useRef<number | null>(null)
+
+  // Viewport foreground layer — portal target outside CSS containment
+  const { foregroundLayer } = useViewportPortal()
 
   // Normalize members: binding expressions come as strings before platform resolution
   const memberList: TeamMember[] = Array.isArray(members) ? members : []
@@ -126,55 +138,110 @@ export default function TeamShowcase({
     className,
   ].filter(Boolean).join(' ')
 
-  return (
-    <div className={classes} data-behaviour={dataBehaviour}>
-      {/* Video layer - fixed fullscreen, preloaded */}
-      <div className="team-showcase__video-layer">
-        {memberList.map((member, i) => (
-          member.videoSrc ? (
-            <video
-              key={i}
-              ref={(el) => { videoRefs.current[i] = el }}
-              src={member.videoSrc}
-              className={`team-showcase__video ${i === activeIndex ? 'team-showcase__video--active' : ''}`}
-              style={{ transitionDuration: `${videoTransitionMs}ms` }}
-              muted
-              loop
-              playsInline
-              preload="auto"
-            />
-          ) : null
-        ))}
-      </div>
+  const isActive = activeIndex !== null
 
-      {/* Names layer */}
-      <div className="team-showcase__names">
-        {labelText && (
-          <span className="team-showcase__label">{labelText}</span>
+  // ── Video elements (shared between portal and inline) ──────────────
+  const videoElements = memberList.map((member, i) => (
+    member.videoSrc ? (
+      <video
+        key={i}
+        ref={(el) => { videoRefs.current[i] = el }}
+        src={member.videoSrc}
+        className={`team-showcase__video ${i === activeIndex ? 'team-showcase__video--active' : ''}`}
+        style={{ transitionDuration: `${videoTransitionMs}ms` }}
+        muted
+        loop
+        playsInline
+        preload="auto"
+      />
+    ) : null
+  ))
+
+  // ── Display-only names for the viewport overlay ────────────────────
+  // Mirrors the in-section names but without hover handlers.
+  // Visible above the video with mix-blend-mode: difference.
+  const overlayNames = (
+    <div className="team-showcase__overlay-names">
+      {labelText && (
+        <span className="team-showcase__label">{labelText}</span>
+      )}
+      {memberList.map((member, i) => (
+        <h2
+          key={i}
+          className="team-showcase__name"
+          style={{
+            opacity: isActive ? (i === activeIndex ? 1 : inactiveOpacity) : 1,
+            transitionDuration: `${nameTransitionMs}ms`,
+          }}
+        >
+          {member.name}
+        </h2>
+      ))}
+    </div>
+  )
+
+  return (
+    <>
+      {/* ── Viewport overlay (fullpage mode) ─────────────────────────
+          Portaled to foreground layer outside CSS containment.
+          position:fixed works here. Contains videos + display names.
+          pointer-events:none inherited from viewport layer — hovers
+          pass through to the in-section interactive names below. */}
+      {foregroundLayer && createPortal(
+        <div
+          className={`team-showcase__viewport-overlay${isActive ? ' team-showcase__viewport-overlay--active' : ''}`}
+        >
+          <div className="team-showcase__viewport-videos">
+            {videoElements}
+          </div>
+          {overlayNames}
+        </div>,
+        foregroundLayer
+      )}
+
+      {/* ── In-section content ───────────────────────────────────────
+          Interactive names handle hover/scroll/click.
+          Video layer is inline fallback (contained mode only). */}
+      <div className={classes} data-behaviour={dataBehaviour}>
+        {/* Inline video fallback — only when viewport portal is unavailable */}
+        {!foregroundLayer && (
+          <div className={`team-showcase__video-layer${isActive ? ' team-showcase__video-layer--active' : ''}`}>
+            {videoElements}
+          </div>
         )}
 
-        {memberList.map((member, i) => {
-          const isActive = i === activeIndex
-          const hasLink = isActive && !!member.portfolioUrl
+        {/* Interactive names — always in section for hover/scroll detection */}
+        <div
+          className="team-showcase__names"
+          style={foregroundLayer && isActive ? { visibility: 'hidden' } : undefined}
+        >
+          {labelText && (
+            <span className="team-showcase__label">{labelText}</span>
+          )}
 
-          return (
-            <h2
-              key={i}
-              ref={(el) => { nameRefs.current[i] = el }}
-              className={`team-showcase__name ${hasLink ? 'team-showcase__name--clickable' : ''}`}
-              style={{
-                opacity: activeIndex === null ? 1 : isActive ? 1 : inactiveOpacity,
-                transitionDuration: `${nameTransitionMs}ms`,
-              }}
-              onMouseEnter={() => handleMouseEnter(i)}
-              onMouseLeave={handleMouseLeave}
-              onClick={() => handleClick(i)}
-            >
-              {member.name}
-            </h2>
-          )
-        })}
+          {memberList.map((member, i) => {
+            const memberActive = i === activeIndex
+            const hasLink = memberActive && !!member.portfolioUrl
+
+            return (
+              <h2
+                key={i}
+                ref={(el) => { nameRefs.current[i] = el }}
+                className={`team-showcase__name ${hasLink ? 'team-showcase__name--clickable' : ''}`}
+                style={{
+                  opacity: isActive ? (memberActive ? 1 : inactiveOpacity) : 1,
+                  transitionDuration: `${nameTransitionMs}ms`,
+                }}
+                onMouseEnter={() => handleMouseEnter(i)}
+                onMouseLeave={handleMouseLeave}
+                onClick={() => handleClick(i)}
+              >
+                {member.name}
+              </h2>
+            )
+          })}
+        </div>
       </div>
-    </div>
+    </>
   )
 }

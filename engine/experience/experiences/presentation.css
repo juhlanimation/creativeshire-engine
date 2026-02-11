@@ -132,3 +132,22 @@ body:has(.presentation-wrapper[data-presentation='infinite-carousel']):not(:has(
   opacity: 1;
   pointer-events: auto;
 }
+
+/* ============================================================================
+ * Cover Scroll Mode
+ * Pinned section portals to a fixed backdrop layer (outside ScrollSmoother).
+ * Remaining sections scroll over it with elevated z-index.
+ * ============================================================================ */
+
+/* Non-pinned sections sit above the pinned backdrop.
+ * z-index set directly on wrapper (not via --section-z) because
+ * contain:layout on [data-section-id] creates isolated stacking contexts. */
+.presentation-wrapper[data-presentation='cover-scroll'] [data-section-index]:not([data-section-pinned]) {
+  z-index: 10;
+}
+
+/* Cover-scroll: content area must be transparent so the pinned backdrop
+   (hero) shows through the spacer area. Sections set their own backgrounds. */
+[data-site-content]:has(.presentation-wrapper[data-presentation='cover-scroll']) {
+  background: transparent;
+}

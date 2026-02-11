@@ -19,8 +19,8 @@ const Image = memo(forwardRef<HTMLImageElement, ImageProps>(function Image(
     src,
     alt,
     aspectRatio,
-    objectFit = 'cover',
-    objectPosition = 'center',
+    objectFit,
+    objectPosition,
     decorative = false,
     filter,
     style,
@@ -32,8 +32,8 @@ const Image = memo(forwardRef<HTMLImageElement, ImageProps>(function Image(
   const computedStyle = useMemo<CSSProperties>(() => ({
     ...style,
     ...(aspectRatio ? { aspectRatio } : {}),
-    objectFit,
-    objectPosition,
+    ...(objectFit ? { objectFit } : {}),
+    ...(objectPosition ? { objectPosition } : {}),
     ...(filter ? { filter } : {}),
   }), [style, aspectRatio, objectFit, objectPosition, filter])
 

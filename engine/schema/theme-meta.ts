@@ -60,7 +60,20 @@ export const themeMeta = defineMeta<Record<string, unknown>>({
       type: 'toggle',
       label: 'Enable Smooth Scroll',
       default: true,
-      description: 'Enable GSAP ScrollSmoother for butter-smooth scrolling',
+      description: 'Enable smooth scrolling',
+      editorHint: 'structural',
+      group: 'Smooth Scroll',
+    },
+    'smoothScroll.provider': {
+      type: 'select',
+      label: 'Scroll Provider',
+      default: 'gsap',
+      description: 'Smooth scroll engine',
+      choices: [
+        { value: 'gsap', label: 'GSAP ScrollSmoother' },
+        { value: 'lenis', label: 'Lenis' },
+      ],
+      editorHint: 'structural',
       group: 'Smooth Scroll',
     },
     'smoothScroll.smooth': {
@@ -71,6 +84,7 @@ export const themeMeta = defineMeta<Record<string, unknown>>({
       min: 0,
       max: 5,
       step: 0.1,
+      editorHint: 'structural',
       group: 'Smooth Scroll',
     },
     'smoothScroll.smoothMac': {
@@ -81,6 +95,7 @@ export const themeMeta = defineMeta<Record<string, unknown>>({
       min: 0,
       max: 5,
       step: 0.1,
+      editorHint: 'structural',
       group: 'Smooth Scroll',
     },
     'smoothScroll.effects': {
@@ -88,6 +103,40 @@ export const themeMeta = defineMeta<Record<string, unknown>>({
       label: 'ScrollTrigger Effects',
       default: true,
       description: 'Enable ScrollTrigger effects like parallax',
+      editorHint: 'structural',
+      group: 'Smooth Scroll',
+    },
+    'smoothScroll.lenis.duration': {
+      type: 'number',
+      label: 'Lenis Duration',
+      default: 0.8,
+      description: 'Scroll animation duration in seconds',
+      min: 0.1,
+      max: 3,
+      step: 0.1,
+      editorHint: 'structural',
+      group: 'Smooth Scroll',
+    },
+    'smoothScroll.lenis.touchMultiplier': {
+      type: 'number',
+      label: 'Touch Multiplier',
+      default: 1.5,
+      description: 'Touch scroll sensitivity',
+      min: 0.1,
+      max: 5,
+      step: 0.1,
+      editorHint: 'structural',
+      group: 'Smooth Scroll',
+    },
+    'smoothScroll.lenis.wheelMultiplier': {
+      type: 'number',
+      label: 'Wheel Multiplier',
+      default: 1,
+      description: 'Wheel scroll sensitivity',
+      min: 0.1,
+      max: 5,
+      step: 0.1,
+      editorHint: 'structural',
       group: 'Smooth Scroll',
     },
 
@@ -136,6 +185,7 @@ export const themeMeta = defineMeta<Record<string, unknown>>({
       default: '0.15s',
       description: 'Section fade transition duration (e.g., "0.15s", "150ms")',
       validation: { maxLength: 50 },
+      editorHint: 'structural',
       group: 'Section Transitions',
     },
     'sectionTransition.fadeEasing': {
@@ -144,7 +194,25 @@ export const themeMeta = defineMeta<Record<string, unknown>>({
       default: 'ease-out',
       description: 'Section fade transition easing (e.g., "ease-out", "cubic-bezier(...)")',
       validation: { maxLength: 50 },
+      editorHint: 'structural',
       group: 'Section Transitions',
+    },
+
+    // ── Container ───────────────────────────────────────────────────────────
+    'container.maxWidth': {
+      type: 'text',
+      label: 'Max Width',
+      default: '',
+      description: 'Maximum width of site content (e.g., "1920px")',
+      validation: { maxLength: 50 },
+      group: 'Container',
+    },
+    'container.outerBackground': {
+      type: 'color',
+      label: 'Outer Background',
+      default: '',
+      description: 'Background color outside the container',
+      group: 'Container',
     },
   },
 })
@@ -161,5 +229,6 @@ export function getThemeGroups(): SettingsGroup[] {
     { id: 'Smooth Scroll', label: 'Smooth Scroll', icon: 'mouse' },
     { id: 'Typography', label: 'Typography', icon: 'type' },
     { id: 'Section Transitions', label: 'Section Transitions', icon: 'transition' },
+    { id: 'Container', label: 'Container', icon: 'maximize' },
   ]
 }

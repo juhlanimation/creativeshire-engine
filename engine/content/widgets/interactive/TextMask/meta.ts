@@ -26,7 +26,7 @@ export const meta = defineMeta<TextMaskProps>({
     fontSize: {
       type: 'text',
       label: 'Font Size',
-      default: '25vw',
+      default: '25cqw',
       description: 'Font size (CSS value)',
       validation: { maxLength: 50 },
     },

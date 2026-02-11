@@ -42,20 +42,29 @@ export const homePage: PageSchema = {
       scrollIndicatorText: '(SCROLL)',
       styles: bojuhlHeroStyles,
     }),
-    createAboutSection({
-      bioParagraphs,
-      signature,
-      photoSrc: profilePhoto.src,
-      photoAlt: profilePhoto.alt,
-      clientLogos,
-    }),
-    createFeaturedProjectsSection({
-      projects: featuredProjects,
-    }),
-    createOtherProjectsSection({
-      heading: 'OTHER SELECTED PROJECTS',
-      yearRange: otherProjectsYearRange,
-      projects: otherProjects,
-    }),
+    {
+      ...createAboutSection({
+        bioParagraphs,
+        signature,
+        photoSrc: profilePhoto.src,
+        photoAlt: profilePhoto.alt,
+        clientLogos,
+      }),
+      constrained: true,
+    },
+    {
+      ...createFeaturedProjectsSection({
+        projects: featuredProjects,
+      }),
+      constrained: true,
+    },
+    {
+      ...createOtherProjectsSection({
+        heading: 'OTHER SELECTED PROJECTS',
+        yearRange: otherProjectsYearRange,
+        projects: otherProjects,
+      }),
+      constrained: true,
+    },
   ],
 }

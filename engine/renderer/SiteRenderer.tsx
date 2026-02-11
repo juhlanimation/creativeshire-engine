@@ -12,71 +12,54 @@
  * Page transitions resolved from schema (site.transition / page.transition).
  */
 
-import { useMemo, useEffect, useLayoutEffect, useSyncExternalStore, useState, useRef, type CSSProperties, type ReactNode } from 'react'
-import { createPortal } from 'react-dom'
-import type { StoreApi } from 'zustand'
+import { useEffect, useState, useRef } from 'react'
 import {
   ExperienceProvider,
+  ScrollLockProvider,
   SmoothScrollProvider,
   TriggerInitializer,
-  getExperience,
-  getExperienceAsync,
-  simpleExperience,
   ensureExperiencesRegistered,
-  PresentationWrapper,
-  InfiniteCarouselController,
 } from '../experience'
 
-import { BehaviourWrapper } from '../experience/behaviours'
 import {
   TransitionProvider,
-  NavigationInitializer,
   PageTransitionWrapper,
   PageTransitionProvider,
 } from '../experience/navigation'
-import type { NavigableExperienceState, PageTransitionConfig } from '../experience/experiences/types'
+import { ExperienceChoreographer } from '../experience/ExperienceChoreographer'
 import {
-  getPageTransition,
   ensurePageTransitionsRegistered,
-  getTransitionOverride,
-  getRegisteredTransitionConfig,
-  findTransitionConfigIdBySchemaConfig,
 } from '../experience/transitions'
-import type { TransitionConfig } from '../schema/transition'
-import { useScrollIndicatorFade } from './hooks'
+import {
+  useScrollIndicatorFade,
+  useResolvedExperience,
+  useResolvedIntro,
+  useResolvedTransition,
+} from './hooks'
 import { PageRenderer } from './PageRenderer'
 import { ChromeRenderer } from './ChromeRenderer'
-import { SiteContainerProvider, SiteContainerRegistrar, useSiteContainer } from './SiteContainerContext'
+import { SiteContainerProvider, SiteContainerRegistrar } from './SiteContainerContext'
+import { PinnedBackdropProvider, PinnedBackdropRegistrar } from './PinnedBackdropContext'
+import { ViewportPortalProvider, ViewportPortalRegistrar } from './ViewportPortalContext'
 import { ThemeProvider } from './ThemeProvider'
 import { ExperienceChromeRenderer } from './ExperienceChromeRenderer'
-import type { SiteSchema, PageSchema } from '../schema'
-import type { Experience, ExperienceConstraints } from '../experience/experiences/types'
+import type { SiteSchema, PageSchema, ThemeSchema } from '../schema'
 import { getBreakpointValue, type BreakpointValue } from '../config/breakpoints'
 import { useContainer } from '../interface/ContainerContext'
+import { THEME_DEFAULTS } from './hooks/useThemeVariables'
 
-// Dev-only switchers (tree-shaken in production)
-import {
-  DevExperienceSwitcher,
-  getExperienceOverride,
-} from './dev/DevExperienceSwitcher'
-import { DevPresetSwitcher } from './dev/DevPresetSwitcher'
-import { DevIntroSwitcher } from './dev/DevIntroSwitcher'
-import { DevTransitionSwitcher } from './dev/DevTransitionSwitcher'
+// Dev-only (tree-shaken in production)
+import { DevToolsContainer } from './dev/DevToolsContainer'
 import { ensurePresetsRegistered } from '../presets'
 
 // Intro system
 import {
   IntroProvider,
-  useIntro,
-  getIntroPattern,
+  IntroContentGate,
   ensureIntroPatternsRegistered,
-  getIntroOverride,
-  getRegisteredIntro,
-  findIntroIdByConfig,
 } from '../intro'
 import { ensureIntrosRegistered } from '../intro/intros'
-import type { IntroConfig } from '../intro'
-import { getChromeComponent, ensureChromeRegistered } from '../content/chrome/registry'
+import { ensureChromeRegistered } from '../content/chrome/registry'
 
 // Ensure all experiences, presets, intro patterns, transitions, and chrome are registered before any lookups
 ensureExperiencesRegistered()
@@ -86,179 +69,40 @@ ensureIntrosRegistered()
 ensurePageTransitionsRegistered()
 ensureChromeRegistered()
 
+/**
+ * Build inline CSS variable styles from theme schema.
+ * These are set directly on the [data-site-renderer] element in the JSX,
+ * so they're present in the server-rendered HTML — zero FOUC.
+ *
+ * Variables that also need to be on document.documentElement (scrollbar, outer-bg)
+ * are duplicated there by useThemeVariables at runtime.
+ */
+function buildThemeStyle(theme?: ThemeSchema): React.CSSProperties {
+  const d = THEME_DEFAULTS
+  const vars: Record<string, string> = {
+    '--font-title': theme?.typography?.title ?? d.typography.title,
+    '--font-paragraph': theme?.typography?.paragraph ?? d.typography.paragraph,
+    '--scrollbar-width': `${theme?.scrollbar?.width ?? d.scrollbar.width}px`,
+    '--scrollbar-thumb': theme?.scrollbar?.thumb ?? d.scrollbar.thumb,
+    '--scrollbar-track': theme?.scrollbar?.track ?? d.scrollbar.track,
+    '--scrollbar-thumb-dark': theme?.scrollbar?.thumbDark ?? d.scrollbar.thumbDark,
+    '--scrollbar-track-dark': theme?.scrollbar?.trackDark ?? d.scrollbar.trackDark,
+  }
+
+  if (theme?.typography?.ui) vars['--font-ui'] = theme.typography.ui
+  if (theme?.container?.maxWidth) vars['--site-max-width'] = theme.container.maxWidth
+  if (theme?.container?.outerBackground) vars['--site-outer-bg'] = theme.container.outerBackground
+  if (theme?.sectionTransition?.fadeDuration) vars['--section-fade-duration'] = theme.sectionTransition.fadeDuration
+  if (theme?.sectionTransition?.fadeEasing) vars['--section-fade-easing'] = theme.sectionTransition.fadeEasing
+
+  return vars as React.CSSProperties
+}
+
 interface SiteRendererProps {
   site: SiteSchema
   page: PageSchema
   /** Current preset ID (for dev mode preset switcher) */
   presetId?: string
-}
-
-/**
- * Generates CSS properties from experience constraints.
- * Applied to the page wrapper container.
- */
-function getConstraintStyles(constraints?: ExperienceConstraints): CSSProperties | undefined {
-  if (!constraints) return undefined
-
-  const styles: Record<string, string | number> = {}
-
-  if (constraints.fullViewportSections) {
-    // Applied at page level - sections inherit this via CSS custom property
-    styles['--section-min-height'] = '100vh'
-  }
-
-  if (constraints.sectionOverflow) {
-    styles.overflow = constraints.sectionOverflow
-  }
-
-  return Object.keys(styles).length > 0 ? (styles as CSSProperties) : undefined
-}
-
-/**
- * Wraps content with experience pageWrapper if defined.
- * Otherwise renders children directly.
- */
-function PageWrapperRenderer({
-  experience,
-  children,
-}: {
-  experience: Experience
-  children: ReactNode
-}) {
-  const constraintStyles = useMemo(
-    () => getConstraintStyles(experience.constraints),
-    [experience.constraints]
-  )
-
-  if (!experience.pageWrapper) {
-    // No wrapper - return children with constraint styles
-    if (constraintStyles) {
-      return <div style={constraintStyles}>{children}</div>
-    }
-    return <>{children}</>
-  }
-
-  // Apply pageWrapper behaviour around page content
-  return (
-    <BehaviourWrapper
-      behaviourId={experience.pageWrapper.behaviourId}
-      options={experience.pageWrapper.options}
-      style={constraintStyles}
-    >
-      {children}
-    </BehaviourWrapper>
-  )
-}
-
-
-// SSR-safe subscription
-const subscribeNoop = () => () => {}
-
-/**
- * IntroScrollLock - blocks scroll input during intro.
- *
- * Registers on `window` in capture phase — the highest point in the event
- * propagation chain. stopImmediatePropagation() kills the event before
- * ScrollSmoother's normalizeScroll (also on window) can process it.
- *
- * body.style.overflow is set by IntroProvider as a CSS-level backstop,
- * but ScrollSmoother bypasses it via JS-level event interception.
- */
-function IntroScrollLock(): ReactNode {
-  const intro = useIntro()
-
-  const isScrollLocked = useSyncExternalStore(
-    intro?.store.subscribe ?? subscribeNoop,
-    () => intro?.store.getState().isScrollLocked ?? false,
-    () => false,
-  )
-
-  // useLayoutEffect so listeners register before SmoothScrollProvider's normalizeScroll.
-  // As a child component, our layout effect fires first in React's commit phase.
-  useLayoutEffect(() => {
-    if (!isScrollLocked) return
-
-    const prevent = (e: Event) => {
-      e.preventDefault()
-      e.stopImmediatePropagation()
-    }
-
-    // window is the top of capture chain — fires before any element listeners
-    window.addEventListener('wheel', prevent, { passive: false, capture: true })
-    window.addEventListener('touchmove', prevent, { passive: false, capture: true })
-
-    return () => {
-      window.removeEventListener('wheel', prevent, { capture: true })
-      window.removeEventListener('touchmove', prevent, { capture: true })
-    }
-  }, [isScrollLocked])
-
-  return null
-}
-
-/**
- * Dev tools container - only renders in dev mode AND not in iframe.
- * When in an iframe (platform preview), dev tools are hidden.
- * Renders experience and preset switchers side by side at bottom-right.
- */
-function DevToolsContainer({
-  schemaExperienceId,
-  schemaIntroId,
-  schemaTransitionId,
-  presetId,
-}: {
-  schemaExperienceId: string
-  schemaIntroId: string
-  schemaTransitionId: string
-  presetId: string
-}): ReactNode {
-  const shouldShow = useSyncExternalStore(
-    subscribeNoop,
-    () => process.env.NODE_ENV === 'development'
-      && typeof window !== 'undefined'
-      && window.self === window.top,
-    () => false,
-  )
-  const { siteContainer } = useSiteContainer()
-
-  if (!shouldShow || !siteContainer) return null
-
-  return createPortal(
-    <div style={{
-      position: 'fixed',
-      bottom: 16,
-      right: 16,
-      zIndex: 99999,
-      display: 'flex',
-      gap: 8,
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-      fontSize: 12,
-    }}>
-      <DevPresetSwitcher currentPresetId={presetId} position="inline" />
-      <DevIntroSwitcher currentIntroId={schemaIntroId} position="inline" />
-      <DevTransitionSwitcher currentTransitionId={schemaTransitionId} position="inline" />
-      <DevExperienceSwitcher currentExperienceId={schemaExperienceId} position="inline" />
-    </div>,
-    siteContainer
-  )
-}
-
-/**
- * Resolve which transition config to use.
- * Resolution order: page default → site default → none.
- */
-function resolveTransitionConfig(
-  site: SiteSchema,
-  page: PageSchema
-): TransitionConfig | undefined {
-  const pageTransition = page.transition
-  if (pageTransition === 'disabled') return undefined
-
-  // 1. Check page default (leaving this page)
-  if (pageTransition?.default) return pageTransition.default
-
-  // 2. Site default
-  return site.transition
 }
 
 /**
@@ -288,138 +132,31 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
     return () => window.removeEventListener('resize', updateBreakpoint)
   }, [mode])
 
-  // Dev-mode experience override (from URL query param)
-  const [devOverride, setDevOverride] = useState<string | null>(() => {
-    if (process.env.NODE_ENV !== 'development') return null
-    if (typeof window === 'undefined') return null
-    return getExperienceOverride()
-  })
+  // Resolve experience, intro, and transition via hooks
+  const {
+    experience, store, schemaExperienceId,
+    beforeChrome, afterChrome, overlayChrome,
+  } = useResolvedExperience(site, page)
 
-  useEffect(() => {
-    if (process.env.NODE_ENV !== 'development') return
+  const {
+    introConfig, introPattern,
+    overlayComponent: introOverlayComponent,
+    overlayProps: introOverlayProps,
+    schemaIntroId,
+  } = useResolvedIntro(site, page)
 
-    // Listen for override changes from DevExperienceSwitcher
-    const handleOverrideChange = (e: CustomEvent<string | null>) => {
-      setDevOverride(e.detail)
-    }
-
-    window.addEventListener('experienceOverrideChange', handleOverrideChange as EventListener)
-    return () => {
-      window.removeEventListener('experienceOverrideChange', handleOverrideChange as EventListener)
-    }
-  }, [])
-
-  // Resolve experience: dev override > page config > site config > fallback
-  const schemaExperienceId = page.experience?.id ?? site.experience?.id ?? 'simple'
-  const experienceId = (process.env.NODE_ENV === 'development' && devOverride)
-    ? devOverride
-    : schemaExperienceId
-
-  // Try sync lookup first (for already-loaded experiences)
-  const syncExperience = getExperience(experienceId)
-
-  // Track async-loaded experience
-  const [asyncExperience, setAsyncExperience] = useState<Experience | null>(null)
-
-  useEffect(() => {
-    // If sync lookup worked, no need for async
-    if (syncExperience) return
-
-    // Load async and cache
-    let cancelled = false
-    getExperienceAsync(experienceId).then((exp: Experience | undefined) => {
-      if (cancelled) return
-      if (!exp) {
-        console.warn(
-          `[Creativeshire] Unknown experience "${experienceId}", falling back to "simple"`
-        )
-        setAsyncExperience(simpleExperience)
-      } else {
-        setAsyncExperience(exp)
-      }
-    })
-
-    return () => {
-      cancelled = true
-    }
-  }, [experienceId, syncExperience])
-
-  // Use sync experience if available, then async, then fallback to simple
-  const experience = syncExperience ?? asyncExperience ?? simpleExperience
-
-  // Dev-mode intro override (from URL query param)
-  const [introOverrideId] = useState<string | null>(() => {
-    if (process.env.NODE_ENV !== 'development') return null
-    if (typeof window === 'undefined') return null
-    return getIntroOverride()
-  })
-
-  let introConfig: IntroConfig | null
-  if (introOverrideId === 'none') {
-    introConfig = null
-  } else if (introOverrideId) {
-    // Look up compiled intro from registry
-    introConfig = getRegisteredIntro(introOverrideId) ?? null
-  } else {
-    introConfig = page.intro === 'disabled' ? null : (page.intro ?? site.intro) ?? null
-  }
-
-  const introPattern = introConfig ? getIntroPattern(introConfig.pattern) : null
-
-  // Resolve intro overlay component from chrome registry
-  const introOverlayComponent = introConfig?.overlay
-    ? getChromeComponent(introConfig.overlay.component) ?? null
-    : null
-
-  // Dev-mode transition override (from URL query param)
-  const [transitionOverrideId] = useState<string | null>(() => {
-    if (process.env.NODE_ENV !== 'development') return null
-    if (typeof window === 'undefined') return null
-    return getTransitionOverride()
-  })
-
-  // Resolve page transition from registry (with dev override support)
-  let resolvedTransitionConfig: TransitionConfig | undefined
-  if (transitionOverrideId === 'none') {
-    resolvedTransitionConfig = undefined
-  } else if (transitionOverrideId) {
-    resolvedTransitionConfig = getRegisteredTransitionConfig(transitionOverrideId) ?? undefined
-  } else {
-    resolvedTransitionConfig = resolveTransitionConfig(site, page)
-  }
-
-  const transitionDef = resolvedTransitionConfig
-    ? getPageTransition(resolvedTransitionConfig.id)
-    : undefined
-
-  const pageTransitionConfig = transitionDef ? {
-    defaultExitDuration: (resolvedTransitionConfig!.settings?.exitDuration as number)
-      ?? transitionDef.defaults.exitDuration,
-    defaultEntryDuration: (resolvedTransitionConfig!.settings?.entryDuration as number)
-      ?? transitionDef.defaults.entryDuration,
-    timeout: transitionDef.defaults.timeout,
-    respectReducedMotion: transitionDef.respectReducedMotion ?? true,
-  } satisfies PageTransitionConfig : undefined
+  const {
+    pageTransitionConfig,
+    schemaTransitionId,
+  } = useResolvedTransition(site, page)
 
   // Fade out scroll indicator on scroll (disabled in bare mode)
   useScrollIndicatorFade('#hero-scroll', !experience.bareMode)
 
-  // Create store for this render (memoized to avoid recreating on every render)
-  const store = useMemo(() => experience.createStore(), [experience])
-
-  // Filter experience chrome by position
-  const beforeChrome = experience.experienceChrome?.filter(c => c.position === 'before') ?? []
-  const afterChrome = experience.experienceChrome?.filter(c => c.position === 'after') ?? []
-  const overlayChrome = experience.experienceChrome?.filter(c => c.position === 'overlay') ?? []
-
-  // Smooth scrolling: ScrollSmoother needs page-level scroll to work
-  // - Stacking/parallax: Use ScrollSmoother (page scrolls)
-  // - Slideshow: Disable ScrollSmoother (body locked), use section-level smoothing
-  // - Bare mode: Disable for raw layout testing
-  const isSlideshow = experience.presentation?.model === 'slideshow'
-  const isInfiniteCarousel = experience.presentation?.model === 'infinite-carousel'
-  const smoothScrollConfig = (isSlideshow || isInfiniteCarousel || experience.bareMode)
-    ? { ...site.theme?.smoothScroll, enabled: false }  // Disable page-level, keep config for section use
+  // Smooth scrolling: disabled when experience owns page scroll (e.g., slideshow, carousel).
+  // bareMode disables behaviours, not theme-level smooth scrolling.
+  const smoothScrollConfig = experience.presentation?.ownsPageScroll
+    ? { ...site.theme?.smoothScroll, enabled: false }
     : site.theme?.smoothScroll
 
   // In fullpage mode, we set the breakpoint attribute here
@@ -430,25 +167,67 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
   // Overlays portal here to maintain container query context
   const siteContainerRef = useRef<HTMLDivElement>(null)
 
+  // Ref for pinned section backdrop (outside ScrollSmoother's transform context)
+  const pinnedBackdropRef = useRef<HTMLDivElement>(null)
+
+  // Refs for viewport portal layers (outside all containment)
+  const backgroundLayerRef = useRef<HTMLDivElement>(null)
+  const foregroundLayerRef = useRef<HTMLDivElement>(null)
+
+  // Viewport layers only in fullpage mode (no containment escape needed in iframes)
+  const renderViewportLayers = mode === 'fullpage'
+
+  const themeStyle = buildThemeStyle(site.theme)
+
   return (
     <SiteContainerProvider>
-    <div ref={siteContainerRef} data-site-renderer data-breakpoint={breakpointAttr}>
+    <PinnedBackdropProvider>
+    <ViewportPortalProvider>
+    <div data-engine-root style={themeStyle}>
+      {/* Background viewport layer — between page bg and site content (z-index: 0) */}
+      {renderViewportLayers && (
+        <div
+          ref={backgroundLayerRef}
+          data-viewport-layer="background"
+          data-breakpoint={breakpointAttr}
+          style={themeStyle}
+        />
+      )}
+    <div ref={siteContainerRef} data-site-renderer data-breakpoint={breakpointAttr} style={themeStyle}>
       {/* Register site container for portal targets */}
       <SiteContainerRegistrar containerRef={siteContainerRef} />
+      {/* Register viewport layers (only when rendered) */}
+      {renderViewportLayers && (
+        <ViewportPortalRegistrar
+          backgroundRef={backgroundLayerRef}
+          foregroundRef={foregroundLayerRef}
+        />
+      )}
     <ThemeProvider theme={site.theme}>
+      <ScrollLockProvider>
       <IntroProvider
         pattern={introPattern ?? null}
         settings={introConfig?.settings}
         overlayComponent={introOverlayComponent}
-        overlayProps={introConfig?.overlay?.props}
+        overlayProps={introOverlayProps}
       >
         <ExperienceProvider experience={experience} store={store}>
           <TransitionProvider config={pageTransitionConfig}>
             <TriggerInitializer>
+            {/* Backdrop for pinned sections — outside ScrollSmoother to avoid transforms.
+                position:fixed puts it behind #smooth-wrapper (DOM order stacking). */}
+            <div
+              ref={pinnedBackdropRef}
+              data-pinned-backdrop
+              style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}
+            />
+            <PinnedBackdropRegistrar backdropRef={pinnedBackdropRef} />
             {/* Smooth scroll wrapper for main content (disabled for slideshow) */}
             <SmoothScrollProvider config={smoothScrollConfig}>
-              {/* Pause ScrollSmoother when intro locks scroll */}
-              <IntroScrollLock />
+              <div data-site-content>
+              {/* IntroContentGate inside #smooth-content: opacity wrapper doesn't
+                  break ScrollSmoother's position:fixed #smooth-wrapper */}
+              <IntroContentGate settings={introConfig?.settings}>
               {/* PageTransitionProvider wraps ALL content so TransitionLink in chrome can access it */}
               <PageTransitionProvider
                 enabled={!!pageTransitionConfig}
@@ -463,45 +242,24 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
                   currentPageSlug={page.slug}
                 />
 
-                {/* Experience chrome (before page) */}
-                {beforeChrome.length > 0 && (
-                  <ExperienceChromeRenderer items={beforeChrome} />
-                )}
+                {/* Experience chrome: before sections */}
+                {beforeChrome.length > 0 && <ExperienceChromeRenderer items={beforeChrome} />}
 
-                {/* Navigation input handlers for navigable experiences */}
-                {experience.navigation && experience.presentation?.model !== 'infinite-carousel' && (
-                  <NavigationInitializer
-                    store={store as StoreApi<NavigableExperienceState>}
-                    config={experience.navigation}
-                    totalSections={page.sections?.length ?? 0}
-                  />
-                )}
-
-                {/* Infinite carousel controller - handles MomentumDriver and section transforms */}
-                {experience.presentation?.model === 'infinite-carousel' && (
-                  <InfiniteCarouselController />
-                )}
-
-                {/* Page content - wrapped by transition wrapper, presentation, and experience pageWrapper */}
+                {/* ExperienceChoreographer renders controllers, presentation, and page wrapper.
+                    Experience chrome stays here (SiteRenderer) to avoid circular dependency
+                    through chrome/registry → widgets → WidgetRenderer. */}
                 <PageTransitionWrapper
                   enabled={!!pageTransitionConfig}
                   duration={pageTransitionConfig?.defaultExitDuration ?? 600}
                   pageId={page.slug}
                 >
-                  <PresentationWrapper
-                    config={experience.presentation}
-                    store={store}
-                  >
-                    <PageWrapperRenderer experience={experience}>
-                      <PageRenderer page={page} />
-                    </PageWrapperRenderer>
-                  </PresentationWrapper>
+                  <ExperienceChoreographer>
+                    <PageRenderer page={page} />
+                  </ExperienceChoreographer>
                 </PageTransitionWrapper>
 
-                {/* Experience chrome (after page) */}
-                {afterChrome.length > 0 && (
-                  <ExperienceChromeRenderer items={afterChrome} />
-                )}
+                {/* Experience chrome: after sections */}
+                {afterChrome.length > 0 && <ExperienceChromeRenderer items={afterChrome} />}
 
                 {/* Footer chrome */}
                 <ChromeRenderer
@@ -522,36 +280,39 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
                   currentPageSlug={page.slug}
                 />
 
-                {/* Experience chrome (overlays) */}
-                {overlayChrome.length > 0 && (
-                  <ExperienceChromeRenderer items={overlayChrome} isOverlay />
-                )}
+                {/* Experience chrome: overlays (portaled to escape transform context) */}
+                {overlayChrome.length > 0 && <ExperienceChromeRenderer items={overlayChrome} isOverlay />}
 
                 {/* Dev-mode switchers (only in development AND not in iframe) */}
                 <DevToolsContainer
                   schemaExperienceId={schemaExperienceId}
-                  schemaIntroId={
-                    page.intro === 'disabled' || !(page.intro ?? site.intro)
-                      ? 'none'
-                      : (findIntroIdByConfig((page.intro ?? site.intro)!) ?? 'none')
-                  }
-                  schemaTransitionId={
-                    (() => {
-                      const schemaTransition = resolveTransitionConfig(site, page)
-                      if (!schemaTransition) return 'none'
-                      return findTransitionConfigIdBySchemaConfig(schemaTransition) ?? 'none'
-                    })()
-                  }
+                  schemaIntroId={schemaIntroId}
+                  schemaTransitionId={schemaTransitionId}
                   presetId={presetId ?? site.id}
                 />
               </PageTransitionProvider>
+              </IntroContentGate>
+              </div>
             </SmoothScrollProvider>
             </TriggerInitializer>
           </TransitionProvider>
         </ExperienceProvider>
       </IntroProvider>
+    </ScrollLockProvider>
     </ThemeProvider>
     </div>
+      {/* Foreground viewport layer — above site content (z-index: 100) */}
+      {renderViewportLayers && (
+        <div
+          ref={foregroundLayerRef}
+          data-viewport-layer="foreground"
+          data-breakpoint={breakpointAttr}
+          style={themeStyle}
+        />
+      )}
+    </div>
+    </ViewportPortalProvider>
+    </PinnedBackdropProvider>
     </SiteContainerProvider>
   )
 }

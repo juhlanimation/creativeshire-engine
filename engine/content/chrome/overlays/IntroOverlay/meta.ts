@@ -32,7 +32,7 @@ export const meta = defineMeta<IntroOverlayProps>({
     fontSize: {
       type: 'text',
       label: 'Font Size',
-      default: '25vw',
+      default: '25cqw',
       description: 'Font size for mask text (CSS value)',
       validation: { maxLength: 50 },
     },

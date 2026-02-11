@@ -39,9 +39,95 @@ html:has([data-site-renderer]) {
  * ============================================================================= */
 
 [data-site-renderer] img,
-[data-site-renderer] video {
+[data-site-renderer] video,
+[data-viewport-layer] img,
+[data-viewport-layer] video {
   display: block;
   max-width: 100%;
+}
+
+/* =============================================================================
+ * SITE CONTAINER
+ * Per-section max-width pattern for full-bleed section backgrounds.
+ *
+ * [data-engine-root] — Outermost wrapper with page background (--site-outer-bg).
+ *   Holds viewport portal layers as siblings of site-renderer.
+ *
+ * [data-viewport-layer="background"] — z-index: 0. Fullscreen portal target
+ *   for content that needs to sit between the page bg and site content
+ *   (e.g., TeamShowcase video). Transparent sections reveal this layer.
+ *
+ * [data-site-renderer] — z-index: 1, bg: transparent. Container query root.
+ *   Sections own their backgrounds — transparent sections show the layer below.
+ *
+ * [data-viewport-layer="foreground"] — z-index: 100. Portal target for
+ *   content above everything (modals, lightboxes, cursor effects).
+ *
+ * [data-site-content] — Full-width structural wrapper (no max-width).
+ *   Sections own their own max-width via var(--site-max-width).
+ *
+ * DOM per scroll provider:
+ *   Lenis/none: [data-engine-root] > [data-site-renderer] > [data-site-content] > content
+ *   GSAP:       [data-engine-root] > [data-site-renderer] > #smooth-wrapper > ... > content
+ *   Contained:  [data-engine-container] > [data-engine-root] > [data-site-renderer] > ...
+ * ============================================================================= */
+
+/* Engine root — outermost wrapper, holds viewport portal layers as siblings of site-renderer.
+   Carries the page background (--site-outer-bg) so it paints BEHIND the viewport layers. */
+[data-engine-root] {
+  position: relative;
+  min-height: 100dvh;
+  background-color: var(--site-outer-bg, transparent);
+}
+
+/* Viewport portal layers — outside all containment (container-type, contain, transform).
+   position:fixed works correctly here because no ancestor creates a containing block.
+   pointer-events:none so they don't intercept clicks — portaled content opts in.
+
+   Stacking: engine-root bg → background(0) → site-renderer(1) → foreground(100).
+   Transparent areas in site-renderer reveal the background layer beneath. */
+[data-viewport-layer] {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+[data-viewport-layer="background"] {
+  z-index: 0;
+}
+
+[data-viewport-layer="foreground"] {
+  z-index: 100;
+}
+
+/* Site renderer — transparent so viewport background layer shows through
+   where sections don't set their own background.
+   z-index: 1 places it above the background layer in the stacking order. */
+[data-site-renderer] {
+  position: relative;
+  z-index: 1;
+}
+
+/* Content wrapper — structural container (sections own their max-width) */
+[data-site-content] {
+  position: relative;
+  min-height: 100dvh;
+}
+
+/* GSAP ScrollSmoother: outer frame becomes fixed viewport.
+   Content div inside still has max-width — unaffected by inset:0.
+   transform:translateZ(0) forces GPU compositing and creates a containing
+   block for position:fixed descendants. */
+[data-site-renderer]:has(> #smooth-wrapper) {
+  position: fixed;
+  inset: 0;
+  overflow: clip;
+  transform: translateZ(0);
+}
+
+/* Pinned backdrop: full-width, pinned sections constrain their own content */
+[data-pinned-backdrop] {
+  /* No max-width — sections own their constraint via .section max-width */
 }
 
 /* =============================================================================
@@ -65,3 +151,16 @@ html:has([data-site-renderer]) {
   display: block;
   max-width: 100%;
 }
+
+/* Contained mode container constraints */
+[data-engine-container] {
+  max-width: var(--site-max-width, none);
+  margin-left: auto;
+  margin-right: auto;
+  background-color: var(--site-outer-bg, transparent);
+}
+
+/* Contained: container handles constraints, don't force viewport height */
+[data-engine-container] [data-engine-root] { min-height: auto; background-color: transparent; }
+[data-engine-container] [data-site-renderer] { min-height: auto; }
+[data-engine-container] [data-site-content] { min-height: auto; }

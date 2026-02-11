@@ -18,46 +18,23 @@
  * instead of ScrollSmoother, which is designed for page-level scrolling.
  */
 
-import { useRef, createContext, useContext, useLayoutEffect, useMemo, useState } from 'react'
+import { useRef, useLayoutEffect, useEffect, useMemo, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrollSmoother } from 'gsap/ScrollSmoother'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import type { SmoothScrollConfig } from '../../schema'
 import { useContainer } from '../../interface/ContainerContext'
+import { useScrollLock } from './ScrollLockContext'
+import { SmoothScrollContext } from './SmoothScrollContext'
+import type { SmoothScrollContextValue } from './SmoothScrollContext'
+import { LenisSmoothScrollProvider } from './LenisSmoothScrollProvider'
+
+export { useSmoothScroll } from './SmoothScrollContext'
 
 // Register GSAP plugins (client-only)
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger, ScrollSmoother, ScrollToPlugin)
-}
-
-/**
- * Context value for smooth scroll access.
- */
-interface SmoothScrollContextValue {
-  /** Get the ScrollSmoother instance */
-  getSmoother: () => ScrollSmoother | null
-  /** Pause smooth scrolling */
-  stop: () => void
-  /** Resume smooth scrolling */
-  start: () => void
-  /** Scroll to target element or position */
-  scrollTo: (target: string | HTMLElement, smooth?: boolean) => void
-  /** Get current scroll position */
-  getScroll: () => number
-  /** Get the active smooth value (accounts for device type) */
-  getSmoothValue: () => number
-  /** Whether smooth scrolling is enabled */
-  isEnabled: () => boolean
-}
-
-const SmoothScrollContext = createContext<SmoothScrollContextValue | null>(null)
-
-/**
- * Hook to access smooth scroll controls.
- */
-export function useSmoothScroll(): SmoothScrollContextValue | null {
-  return useContext(SmoothScrollContext)
 }
 
 interface SmoothScrollProviderProps {
@@ -66,20 +43,38 @@ interface SmoothScrollProviderProps {
 }
 
 /**
- * Default smooth scroll values matching bojuhl.com.
+ * Default smooth scroll values (when enabled by preset).
+ * Smooth scrolling is opt-in — presets must set `enabled: true`.
  */
 const DEFAULTS: Required<SmoothScrollConfig> = {
-  enabled: true,
+  enabled: false,
+  provider: 'gsap',
   smooth: 1.2,
   smoothMac: 0.5,
   effects: true,
+  lenis: {},
 }
 
 /**
- * Provides smooth scrolling via GSAP ScrollSmoother.
- * In contained mode, uses CSS scroll-behavior instead.
+ * Provides smooth scrolling via GSAP ScrollSmoother or Lenis.
+ * Routes to the appropriate provider based on config.provider.
  */
 export function SmoothScrollProvider({ config, children }: SmoothScrollProviderProps): React.ReactNode {
+  // Route to Lenis provider if configured
+  const settings = { ...DEFAULTS, ...config }
+  if (settings.provider === 'lenis') {
+    return <LenisSmoothScrollProvider config={config}>{children}</LenisSmoothScrollProvider>
+  }
+
+  // GSAP ScrollSmoother path below
+  return <GsapSmoothScrollProvider config={config}>{children}</GsapSmoothScrollProvider>
+}
+
+/**
+ * GSAP ScrollSmoother implementation.
+ * In contained mode, uses wheel-lerp interpolation instead.
+ */
+function GsapSmoothScrollProvider({ config, children }: SmoothScrollProviderProps): React.ReactNode {
   const smootherRef = useRef<ScrollSmoother | null>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -89,6 +84,11 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
   // Get container context for contained mode support
   const { mode: containerMode, containerRef } = useContainer()
   const isContained = containerMode === 'contained'
+
+  // Subscribe to generic scroll lock service — any system (intro, modal, transition)
+  // can lock scroll. Here we pause/unpause ScrollSmoother at the GSAP level.
+  const scrollLock = useScrollLock()
+  const isScrollLocked = scrollLock?.isLocked ?? false
 
   // Merge config with defaults
   const settings = { ...DEFAULTS, ...config }
@@ -221,6 +221,9 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
   }, [isContained, enabledValue, smoothValue])
 
   // Fullpage mode: Use GSAP ScrollSmoother
+  // Created immediately — normalizeScroll + IntroScrollLock together handle
+  // scroll locking during intro (normalizeScroll intercepts input,
+  // IntroScrollLock blocks events in capture phase).
   useLayoutEffect(() => {
     // Skip if contained mode or disabled
     if (isContained || !enabledValue) {
@@ -238,7 +241,8 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     // Normalize scroll on non-Mac desktop (Mac trackpads have native inertia)
-    if (!isTouchDevice && !isMac && !prefersReducedMotion) {
+    const shouldNormalize = !isTouchDevice && !isMac && !prefersReducedMotion
+    if (shouldNormalize) {
       ScrollTrigger.normalizeScroll(true)
     }
 
@@ -265,13 +269,14 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
     // Store for context access
     smoothValueRef.current = deviceSmoothValue
 
-    // Create ScrollSmoother
+    // Create ScrollSmoother — start paused if intro locks scroll
     const smoother = ScrollSmoother.create({
       wrapper: wrapperRef.current!,
       content: contentRef.current!,
       smooth: deviceSmoothValue,
       effects: effectsValue,
       smoothTouch: false, // Never smooth touch input
+      paused: isScrollLocked,
     })
 
     smootherRef.current = smoother
@@ -335,7 +340,7 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
       window.removeEventListener('orientationchange', handleOrientationChange)
       window.removeEventListener('resize', handleResize)
       if (orientationTimeout) clearTimeout(orientationTimeout)
-      if (!isTouchDevice && !isMac && !prefersReducedMotion) {
+      if (shouldNormalize) {
         ScrollTrigger.normalizeScroll(false)
       }
       smoother.kill()
@@ -343,10 +348,32 @@ export function SmoothScrollProvider({ config, children }: SmoothScrollProviderP
     }
   }, [isContained, enabledValue, smoothValue, smoothMacValue, effectsValue])
 
+  // Pause/unpause ScrollSmoother based on intro store's isScrollLocked.
+  // useEffect (not useLayoutEffect) so it fires after the ScrollSmoother
+  // instance is created in the useLayoutEffect above.
+  useEffect(() => {
+    const smoother = smootherRef.current
+    if (!smoother) return
+
+    if (isScrollLocked) {
+      smoother.paused(true)
+    } else {
+      smoother.paused(false)
+      // Refresh after unpause — overflow:hidden during intro may cause
+      // stale content height measurements
+      smoother.refresh()
+      ScrollTrigger.refresh(true)
+      requestAnimationFrame(() => {
+        smoother.refresh()
+        ScrollTrigger.refresh(true)
+      })
+    }
+  }, [isScrollLocked])
+
   // Memoize context value
   // Note: React compiler can't optimize closures over refs, but code is correct
   const contextValue = useMemo<SmoothScrollContextValue>(() => ({
-    getSmoother: () => smootherRef.current,
+    getEngine: () => smootherRef.current,
     stop: () => smootherRef.current?.paused(true),
     start: () => smootherRef.current?.paused(false),
     scrollTo: (target, smooth = true) => {

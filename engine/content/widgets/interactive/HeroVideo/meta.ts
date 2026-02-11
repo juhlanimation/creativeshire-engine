@@ -65,5 +65,12 @@ export const meta = defineMeta<HeroVideoProps>({
       validation: { maxLength: 100 },
       bindable: true,
     },
+    externalReveal: {
+      type: 'toggle',
+      label: 'External Reveal',
+      default: false,
+      description: 'Text/scroll-indicator visibility follows external CSS variable instead of textRevealTime',
+      advanced: true,
+    },
   },
 })

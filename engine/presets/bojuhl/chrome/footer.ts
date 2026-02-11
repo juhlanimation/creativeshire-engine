@@ -56,6 +56,8 @@ function createSection(
  * are resolved at runtime by the platform.
  */
 export const footerConfig: PresetRegionConfig = {
+  style: { backgroundColor: 'rgb(0, 0, 0)' },
+  constrained: true,
   widgets: [
     // Main container - applies footer-chrome styles
     {

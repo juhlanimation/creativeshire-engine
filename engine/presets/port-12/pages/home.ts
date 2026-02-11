@@ -23,9 +23,14 @@ const heroSection: SectionSchema = {
   label: 'Hero',
   layout: { type: 'stack', direction: 'column' },
   style: { height: '100dvh', position: 'relative', overflow: 'hidden' },
+  pinned: true,
   behaviour: {
     id: 'scroll/cover-progress',
-    options: { propagateToRoot: '--hero-cover-progress' },
+    options: {
+      propagateToRoot: '--hero-cover-progress',
+      propagateContentEdge: '--hero-content-edge',
+      targetSelector: '.hero-video__title',
+    },
   },
   widgets: [
     {
@@ -34,10 +39,10 @@ const heroSection: SectionSchema = {
       props: {
         src: '{{ content.hero.videoSrc }}',
         loopStartTime: '{{ content.hero.loopStartTime }}',
-        textRevealTime: '{{ content.hero.textRevealTime }}',
         title: '{{ content.hero.title }}',
         tagline: '{{ content.hero.tagline }}',
         scrollIndicatorText: '{{ content.hero.scrollIndicatorText }}',
+        externalReveal: true,
       },
     },
   ],

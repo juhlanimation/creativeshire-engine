@@ -4,6 +4,7 @@
  * Users select Experiences in the CMS.
  */
 
+import type { ComponentType } from 'react'
 import type { StoreApi } from 'zustand'
 import type { SerializableValue } from '../../schema/types'
 import type { SettingsConfig } from '../../schema/settings'
@@ -162,6 +163,7 @@ export type PresentationModel =
   | 'parallax'           // Layered depth effect, sections overlap
   | 'horizontal'         // Horizontal layout, scroll/swipe to navigate
   | 'infinite-carousel'  // Transform-based infinite vertical scroll with momentum
+  | 'cover-scroll'       // First section is backdrop, rest scroll over it
 
 /**
  * Presentation configuration.
@@ -170,6 +172,10 @@ export type PresentationModel =
 export interface PresentationConfig {
   /** Presentation model type */
   model: PresentationModel
+
+  /** Whether this presentation model takes over page-level scrolling.
+   *  When true, SmoothScrollProvider is disabled regardless of theme config. */
+  ownsPageScroll?: boolean
 
   /** Section visibility behavior */
   visibility: {
@@ -413,6 +419,11 @@ export interface Experience {
   navigation?: NavigationConfig
   /** Programmatic actions for external control */
   actions?: ExperienceActions
+
+  /** Runtime controller(s) to render when this experience is active.
+   *  Controllers handle experience-specific logic (navigation, physics, etc.)
+   *  They read from useExperience() hook — no props needed. */
+  controller?: ComponentType | ComponentType[]
 
   /** Chrome items to hide by ID (regions: 'header', 'footer', 'sidebar'; overlays by key) */
   hideChrome?: string[]

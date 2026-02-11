@@ -138,7 +138,7 @@ export function createProjectTabsSection(props: ProjectTabsProps): SectionSchema
     style: {
       backgroundColor: props.backgroundColor ?? '#000000',
       color: '#fff',
-      minHeight: '100vh',
+      minHeight: '100dvh',
       padding: '2rem'
     },
     className: 'project-tabs',

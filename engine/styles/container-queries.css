@@ -23,10 +23,16 @@
  * - xl: 1280px
  */
 
-/* Site-level container for the main renderer */
+/* Site-level container — full viewport width (for full-bleed queries) */
 [data-site-renderer] {
   container-type: inline-size;
   container-name: site;
+}
+
+/* Content container — max-width constrained (for layout queries) */
+[data-site-content] {
+  container-type: inline-size;
+  container-name: site-content;
 }
 
 /* Generic engine container for nested query contexts */

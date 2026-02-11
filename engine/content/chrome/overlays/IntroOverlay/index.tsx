@@ -26,7 +26,7 @@ const subscribeNoop = () => () => {}
 const IntroOverlay = memo(function IntroOverlay({
   text = '',
   maskColor = 'black',
-  fontSize = '25vw',
+  fontSize = '25cqw',
   fontWeight = 900,
   fontFamily,
   letterSpacing,

@@ -29,4 +29,7 @@ export interface HeroVideoProps extends WidgetBaseProps {
   tagline?: string
   /** Scroll indicator text for desktop (e.g., "(SCROLL)") */
   scrollIndicatorText?: string
+  /** When true, text/scroll-indicator visibility follows --intro-complete CSS variable
+   *  instead of textRevealTime. Used when an external system controls reveal timing. */
+  externalReveal?: boolean
 }

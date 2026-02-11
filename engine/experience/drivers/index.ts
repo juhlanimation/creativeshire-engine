@@ -14,7 +14,10 @@
  * 2. Hook-based (legacy): useScrollFadeDriver for existing code
  */
 
-// Smooth scroll driver (GSAP ScrollSmoother) - page-level
+// Scroll lock service (generic key-based, any system can participate)
+export { ScrollLockProvider, useScrollLock } from './ScrollLockContext'
+
+// Smooth scroll driver (GSAP ScrollSmoother or Lenis) - page-level
 export { SmoothScrollProvider, useSmoothScroll } from './SmoothScrollProvider'
 
 // Smooth scroll for any container - unified hook

@@ -22,7 +22,24 @@ export const regionMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Component name to render for this region',
       validation: { maxLength: 200 },
+      editorHint: 'structural',
       group: 'Component',
+    },
+
+    // ── Style ─────────────────────────────────────────────────────────────
+    constrained: {
+      type: 'toggle',
+      label: 'Constrain Width',
+      default: false,
+      description: 'Constrain region content to site max-width',
+      group: 'Style',
+    },
+    'style.backgroundColor': {
+      type: 'color',
+      label: 'Background Color',
+      default: '',
+      description: 'Region background color (edge-to-edge on wrapper)',
+      group: 'Style',
     },
 
     // ── Animation ──────────────────────────────────────────────────────────
@@ -32,6 +49,7 @@ export const regionMeta = defineMeta<Record<string, unknown>>({
       default: null,
       description: 'Behaviour configuration for region animation',
       component: 'BehaviourPicker',
+      editorHint: 'structural',
       group: 'Animation',
     },
     behaviourOptions: {
@@ -40,6 +58,7 @@ export const regionMeta = defineMeta<Record<string, unknown>>({
       default: null,
       description: 'Additional behaviour options',
       component: 'BehaviourOptions',
+      editorHint: 'structural',
       group: 'Animation',
     },
 
@@ -50,6 +69,7 @@ export const regionMeta = defineMeta<Record<string, unknown>>({
       default: [],
       description: 'Pages where this region should be hidden',
       component: 'PageSelector',
+      editorHint: 'structural',
       group: 'Visibility',
     },
   },
@@ -68,6 +88,7 @@ export function getRegionSettings(_name?: string) {
 export function getRegionGroups(): SettingsGroup[] {
   return [
     { id: 'Component', label: 'Component', icon: 'component' },
+    { id: 'Style', label: 'Style', icon: 'paintbrush' },
     { id: 'Animation', label: 'Animation', icon: 'sparkle' },
     { id: 'Visibility', label: 'Visibility', icon: 'eye' },
   ]

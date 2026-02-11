@@ -17,7 +17,7 @@ import type { TextMaskProps } from './types'
 const TextMask = memo(forwardRef<HTMLDivElement, TextMaskProps>(function TextMask(
   {
     text,
-    fontSize = '25vw',
+    fontSize = '25cqw',
     fontWeight = 900,
     fontFamily = 'var(--font-title), system-ui, sans-serif',
     maskColor = 'black',

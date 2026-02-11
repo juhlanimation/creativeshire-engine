@@ -4,6 +4,8 @@
  */
 
 import './cinematic-text-mask'
+import './video-hero-gate'
+import './wait'
 
 /**
  * Ensure all compiled intros are registered.

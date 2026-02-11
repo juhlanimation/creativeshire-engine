@@ -7,6 +7,7 @@
  * 2. Component-based (legacy): Chrome component handles both positioning and content
  */
 
+import type { CSSProperties } from 'react'
 import type { PageSchema } from '../schema/page'
 import type { WidgetSchema } from '../schema/widget'
 import type { ThemeSchema } from '../schema/theme'
@@ -97,6 +98,10 @@ export interface PresetRegionConfig {
   component?: string
   /** Props to pass to the component (component-based approach) */
   props?: Record<string, unknown>
+  /** Inline styles for the semantic wrapper element (e.g., backgroundColor for edge-to-edge) */
+  style?: CSSProperties
+  /** Whether region content is constrained to --site-max-width (opt-in) */
+  constrained?: boolean
 }
 
 /**

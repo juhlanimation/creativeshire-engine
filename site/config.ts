@@ -31,6 +31,8 @@ export const siteConfig: SiteSchema = {
     regions: {
       footer: {
         component: 'Footer',
+        constrained: true,
+        style: { backgroundColor: 'rgb(0, 0, 0)' },
         props: {
           navLinks: [
             { label: 'HOME', href: '#hero' },

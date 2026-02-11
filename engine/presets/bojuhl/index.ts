@@ -59,6 +59,10 @@ export const bojuhlPreset: SitePreset = {
       fadeDuration: '0.15s',
       fadeEasing: 'ease-out',
     },
+    container: {
+      maxWidth: '1920px',
+      outerBackground: '#000000',
+    },
   },
   experience: experienceConfig,
   chrome: {

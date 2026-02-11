@@ -15,6 +15,18 @@
  * and absolute (contained/preview) positioning.
  */
 
+/* Chrome region wrapper — full-width (like [data-section-id]).
+   Semantic wrappers (header, footer, aside) stay full-width for edge-to-edge backgrounds.
+   region.style carries backgroundColor etc. via inline styles.
+   When constrained, direct children (content widgets) get max-width from site theme. */
+
+/* Constrained chrome regions: opt-in max-width for direct children */
+.chrome-region--constrained > * {
+  max-width: var(--site-max-width, none);
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Base overlay - shared properties */
 .chrome-overlay {
   position: var(--overlay-position, fixed);
@@ -52,69 +64,71 @@
   mix-blend-mode: difference;
 }
 
-/* Position variants */
+/* Position variants — max-width aware.
+   On ultrawide screens, overlays stay within the content area boundary.
+   max() ensures minimum offset when viewport <= max-width. */
 .chrome-overlay--top-left {
   top: 24px;
-  left: 24px;
+  left: max(24px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 24px));
 }
 
 .chrome-overlay--top-right {
   top: 24px;
-  right: 24px;
+  right: max(24px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 24px));
 }
 
 .chrome-overlay--bottom-left {
   bottom: 24px;
-  left: 24px;
+  left: max(24px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 24px));
 }
 
 .chrome-overlay--bottom-right {
   bottom: 24px;
-  right: 24px;
+  right: max(24px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 24px));
 }
 
 /* Desktop: match bojuhl.com reference positioning */
 @container site (min-width: 1024px) {
   .chrome-overlay--top-left {
     top: 22px;
-    left: 48px;
+    left: max(48px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 48px));
   }
 
   .chrome-overlay--top-right {
     top: 22px;
-    right: 48px;
+    right: max(48px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 48px));
   }
 
   .chrome-overlay--bottom-left {
     bottom: 22px;
-    left: 48px;
+    left: max(48px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 48px));
   }
 
   .chrome-overlay--bottom-right {
     bottom: 22px;
-    right: 48px;
+    right: max(48px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 48px));
   }
 }
 
 /* Fallback for browsers without container query support */
 :where([data-breakpoint="desktop"]) .chrome-overlay--top-left {
   top: 22px;
-  left: 48px;
+  left: max(48px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 48px));
 }
 
 :where([data-breakpoint="desktop"]) .chrome-overlay--top-right {
   top: 22px;
-  right: 48px;
+  right: max(48px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 48px));
 }
 
 :where([data-breakpoint="desktop"]) .chrome-overlay--bottom-left {
   bottom: 22px;
-  left: 48px;
+  left: max(48px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 48px));
 }
 
 :where([data-breakpoint="desktop"]) .chrome-overlay--bottom-right {
   bottom: 22px;
-  right: 48px;
+  right: max(48px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 48px));
 }
 
 /* Mobile: hide overlays */

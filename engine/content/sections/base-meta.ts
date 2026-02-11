@@ -26,6 +26,7 @@ export const sectionBaseMeta = defineMeta<Record<string, unknown>>({
         { value: 'grid', label: 'Grid' },
         { value: 'stack', label: 'Stack' },
       ],
+      editorHint: 'structural',
       group: 'Layout',
     },
     'layout.direction': {
@@ -38,6 +39,7 @@ export const sectionBaseMeta = defineMeta<Record<string, unknown>>({
         { value: 'column', label: 'Column' },
       ],
       condition: "layout.type !== 'grid'",
+      editorHint: 'structural',
       group: 'Layout',
     },
     'layout.align': {
@@ -51,6 +53,7 @@ export const sectionBaseMeta = defineMeta<Record<string, unknown>>({
         { value: 'end', label: 'End' },
         { value: 'stretch', label: 'Stretch' },
       ],
+      editorHint: 'structural',
       group: 'Layout',
     },
     'layout.justify': {
@@ -65,6 +68,7 @@ export const sectionBaseMeta = defineMeta<Record<string, unknown>>({
         { value: 'between', label: 'Space Between' },
         { value: 'around', label: 'Space Around' },
       ],
+      editorHint: 'structural',
       group: 'Layout',
     },
     'layout.gap': {
@@ -73,6 +77,7 @@ export const sectionBaseMeta = defineMeta<Record<string, unknown>>({
       default: 0,
       description: 'Gap between items',
       validation: { min: 0, max: 500 },
+      editorHint: 'structural',
       group: 'Layout',
     },
     'layout.columns': {
@@ -84,6 +89,7 @@ export const sectionBaseMeta = defineMeta<Record<string, unknown>>({
       max: 12,
       step: 1,
       condition: "layout.type === 'grid'",
+      editorHint: 'structural',
       group: 'Layout',
     },
     'layout.rows': {
@@ -95,6 +101,7 @@ export const sectionBaseMeta = defineMeta<Record<string, unknown>>({
       max: 12,
       step: 1,
       condition: "layout.type === 'grid'",
+      editorHint: 'structural',
       group: 'Layout',
     },
 
@@ -105,6 +112,7 @@ export const sectionBaseMeta = defineMeta<Record<string, unknown>>({
       default: null,
       description: 'Behaviour configuration for scroll/visibility animation',
       component: 'BehaviourPicker',
+      editorHint: 'structural',
       group: 'Behaviour',
     },
 
@@ -128,16 +136,26 @@ export const sectionBaseMeta = defineMeta<Record<string, unknown>>({
       type: 'text',
       label: 'Min Height',
       default: '',
-      description: 'Minimum section height (e.g., "100vh", "400px")',
+      description: 'Minimum section height (e.g., "100dvh", "400px")',
       validation: { maxLength: 200 },
+      editorHint: 'structural',
+      group: 'Style',
+    },
+    constrained: {
+      type: 'toggle',
+      label: 'Constrain Width',
+      default: false,
+      description: 'Constrain section content to site max-width',
+      editorHint: 'structural',
       group: 'Style',
     },
     'style.maxWidth': {
       type: 'text',
-      label: 'Max Width',
+      label: 'Max Width Override',
       default: '',
-      description: 'Maximum section content width (e.g., "1200px", "80rem")',
+      description: 'Custom max-width override (e.g., "1200px", "80rem")',
       validation: { maxLength: 200 },
+      editorHint: 'structural',
       group: 'Style',
     },
     className: {
@@ -147,6 +165,7 @@ export const sectionBaseMeta = defineMeta<Record<string, unknown>>({
       description: 'Additional CSS class names',
       validation: { maxLength: 200 },
       advanced: true,
+      editorHint: 'structural',
       group: 'Style',
     },
   },

@@ -54,6 +54,8 @@ export const DEFAULT_HERO_STYLES: HeroTextStyles = {
 export interface HeroProps {
   /** Section ID override (default: 'hero') */
   id?: string
+  /** Section-level inline styles (e.g., maxWidth override) */
+  style?: CSSProperties
 
   // === Content (what to display) ===
   /** Intro text (e.g., "I'm Bo Juhl") */

@@ -50,6 +50,8 @@ export interface SectionSchema {
   behaviour?: BehaviourConfig
   /** Additional behaviour options */
   behaviourOptions?: Record<string, SerializableValue>
+  /** Whether section content is constrained to --site-max-width (opt-in) */
+  constrained?: boolean
   /** Widgets contained in this section */
   widgets: WidgetSchema[]
   /** Whether this section stays visible (pinned) while the next section scrolls over it */

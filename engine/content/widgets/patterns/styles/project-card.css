@@ -7,7 +7,7 @@
  * - Computed from index: Flex widget computes from data-index
  *
  * Reference: bojuhl.com project-card.tsx
- * - Thumbnail: w-full md:w-[55vw] shrink-0 min-w-0
+ * - Thumbnail: w-full md:w-[55cqw] shrink-0 min-w-0
  * - Gap: gap-4 md:gap-2 (16px / 8px)
  * - Metadata: text-[10px] opacity-60 gap-x-8 gap-y-1 mt-2
  * - Content: max-w-[280px]
@@ -137,14 +137,14 @@
 
 @container site (min-width: 768px) {
   .project-card__thumbnail-column {
-    width: var(--card-width, 55vw);
+    width: var(--card-width, 55cqw);
     flex-shrink: 0;
     min-width: 0;
   }
 }
 
 :where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card__thumbnail-column {
-  width: var(--card-width, 55vw);
+  width: var(--card-width, 55cqw);
   flex-shrink: 0;
   min-width: 0;
 }

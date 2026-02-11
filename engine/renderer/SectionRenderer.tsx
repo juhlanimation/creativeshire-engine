@@ -9,6 +9,11 @@
  * - Resolves behaviours via resolveBehaviour()
  * - Registers scroll-based behaviours with ScrollDriver for 60fps updates
  * - Computes CSS variables for interaction-based behaviours
+ *
+ * Pinned sections (section.pinned = true):
+ * Portal visual content to a fixed backdrop layer outside ScrollSmoother's
+ * transform context. A transparent spacer stays in the scroll flow for
+ * IntersectionObserver tracking and BehaviourWrapper scroll measurement.
  */
 
 import { useRef, useMemo, useCallback } from 'react'
@@ -18,6 +23,8 @@ import { WidgetRenderer } from './WidgetRenderer'
 import { BehaviourWrapper } from '../experience/behaviours'
 import { SectionLifecycleProvider } from '../experience/lifecycle'
 import { useExperience, useSmoothScrollContainer } from '../experience'
+import { usePinnedBackdrop } from './PinnedBackdropContext'
+import { PinnedSection } from './PinnedSection'
 import { capitalize } from './utils'
 import type { SectionSchema } from '../schema'
 import type { Experience } from '../experience'
@@ -69,6 +76,7 @@ function resolveSectionBehaviour(
 export function SectionRenderer({ section, index }: SectionRendererProps) {
   const ref = useRef<HTMLDivElement>(null)
   const { experience, store } = useExperience()
+  const { backdropTarget } = usePinnedBackdrop()
 
   // Check if experience has navigation (slideshow, etc.)
   // Subscribe to active section if navigable experience
@@ -127,11 +135,33 @@ export function SectionRenderer({ section, index }: SectionRendererProps) {
       layout={section.layout}
       style={section.style}
       className={section.className}
+      constrained={section.constrained}
       widgets={section.widgets}
     >
       {widgets}
     </Section>
   )
+
+  // ── Pinned section portal ──────────────────────────────────────────
+  if (section.pinned && backdropTarget) {
+    return (
+      <PinnedSection
+        sectionId={section.id}
+        index={index}
+        isActive={isActive}
+        sectionHeight={section.style?.height ?? '100dvh'}
+        behaviourId={behaviourId}
+        behaviourOptions={behaviourOptions}
+        initialVisibility={initialVisibility}
+        visibilityGetter={visibilityGetter}
+        backdropTarget={backdropTarget}
+        content={content}
+        sectionRef={ref}
+      />
+    )
+  }
+
+  // ── Normal section rendering ───────────────────────────────────────
 
   // Inherit background from section to prevent white flash during fade
   const wrapperStyle = section.style?.backgroundColor

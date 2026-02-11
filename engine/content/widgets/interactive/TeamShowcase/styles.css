@@ -1,21 +1,37 @@
+/* TeamShowcase - generic structural defaults.
+ * Presets override sizing, fonts, and spacing via section class selectors. */
+
 .team-showcase {
   position: relative;
   width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 2rem 0;
 }
 
-.team-showcase__video-layer {
+/* =============================================================================
+ * VIEWPORT OVERLAY (fullpage mode)
+ * Portaled to foreground layer — outside CSS containment.
+ * position:fixed works here (no container-type/contain/transform ancestors).
+ * ============================================================================= */
+
+/* Fullscreen overlay container — hidden by default, fades in when active */
+.team-showcase__viewport-overlay {
   position: fixed;
   inset: 0;
-  z-index: 40;
+  opacity: 0;
+  transition: opacity 500ms ease;
   pointer-events: none;
 }
 
-.team-showcase__video {
+.team-showcase__viewport-overlay--active {
+  opacity: 1;
+}
+
+/* Videos inside viewport overlay — fullscreen, stacked */
+.team-showcase__viewport-videos {
+  position: absolute;
+  inset: 0;
+}
+
+.team-showcase__viewport-videos .team-showcase__video {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -25,56 +41,83 @@
   transition: opacity 500ms ease;
 }
 
-.team-showcase__video--active {
+.team-showcase__viewport-videos .team-showcase__video--active {
   opacity: 1;
 }
 
-.team-showcase__names {
-  position: relative;
-  z-index: 50;
+/* Display names inside viewport overlay — centered, blend for contrast.
+ * Preset styles override font-size, padding, etc. via
+ * .team-showcase__overlay-names selectors. */
+.team-showcase__overlay-names {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: center;
+  mix-blend-mode: difference;
+  color: white;
+}
+
+/* =============================================================================
+ * INLINE FALLBACK (contained mode / SSR)
+ * When viewport portal is unavailable, video covers the section only.
+ * ============================================================================= */
+
+.team-showcase__video-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+.team-showcase__video-layer--active {
+  opacity: 1;
+}
+
+.team-showcase__video-layer .team-showcase__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+.team-showcase__video-layer .team-showcase__video--active {
+  opacity: 1;
+}
+
+/* =============================================================================
+ * NAMES (shared base styles)
+ * In-section names handle interaction. Overlay names are display-only.
+ * ============================================================================= */
+
+.team-showcase__names {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
   mix-blend-mode: difference;
   color: white;
 }
 
 .team-showcase__label {
-  font-size: clamp(0.75rem, 1.5vw, 1.25rem);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  margin-bottom: 1rem;
-  font-weight: 300;
+  margin-bottom: 0.5rem;
 }
 
 .team-showcase__name {
-  font-family: var(--font-inter), system-ui, sans-serif;
-  font-size: clamp(2.5rem, 12vw, 7rem);
   font-weight: 900;
-  line-height: 1;
   text-transform: uppercase;
   margin: 0;
-  padding: 2px 0;
   transition: opacity 300ms ease;
   cursor: default;
-  text-align: center;
   user-select: none;
 }
 
 .team-showcase__name--clickable {
   cursor: pointer;
-}
-
-/* Mobile: add gap between names for scroll selection */
-@media (max-width: 767px) {
-  .team-showcase__name {
-    padding: 4px 0;
-  }
-}
-
-/* Desktop: no gap */
-@media (min-width: 768px) {
-  .team-showcase__name {
-    padding: 0;
-  }
 }

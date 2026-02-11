@@ -88,7 +88,7 @@ const config: IntroConfig = {
     props: {
       text: 'HELLO',
       maskColor: 'black',
-      fontSize: '25vw',
+      fontSize: '25cqw',
       fontWeight: 900,
       letterSpacing: '-0.02em',
       bgFadeStep: 1,

@@ -1,23 +1,22 @@
 'use client'
 
 /**
- * IntroProvider - manages intro state, scroll locking, overlay, and content gate.
+ * IntroProvider - manages intro state, scroll locking, and overlay.
  *
  * Wraps ExperienceProvider in the hierarchy:
  * ThemeProvider -> IntroProvider -> ExperienceProvider -> ...
  *
- * Renders two layers when an overlay is configured:
- * 1. Overlay component (rendered FIRST, covers viewport)
- * 2. Content gate (wraps children, controls content opacity)
+ * Content gating (opacity fade) is handled by IntroContentGate,
+ * placed inside SmoothScrollProvider's #smooth-content to avoid
+ * the CSS containing block issue (opacity < 1 breaks position: fixed).
  *
  * L1/L2 boundary: IntroProvider (L2) does NOT import overlay components.
  * It receives the resolved React component via props from SiteRenderer.
  */
 
-import { useMemo, useEffect, useSyncExternalStore, type ReactNode, type ComponentType } from 'react'
+import { useMemo, useEffect, type ReactNode, type ComponentType } from 'react'
 import { createStore, type StoreApi } from 'zustand'
-import { useContainer } from '../interface/ContainerContext'
-import { useSiteContainer } from '../renderer/SiteContainerContext'
+import { useScrollLock } from '../experience/drivers/ScrollLockContext'
 import { IntroContext, type IntroStore } from './IntroContext'
 import { IntroTriggerInitializer } from './IntroTriggerInitializer'
 import type { IntroPattern, IntroPhase, IntroState } from './types'
@@ -113,66 +112,6 @@ function createIntroStore(pattern: IntroPattern | null, lockScroll = true): Stor
 }
 
 /**
- * IntroContentGate - wraps children and controls content opacity during intro.
- *
- * For sequence patterns: opacity = 0 before contentFadeStep, fades with
- * stepProgress at that step, 1 after.
- *
- * Always renders a stable wrapper div to avoid DOM re-parenting when intro
- * completes (which would trigger ScrollSmoother recalculation and layout jump).
- * When opacity is 1, no inline style is applied — no stacking context.
- * SSR: renders with opacity: 0 (content hidden from first paint).
- */
-function IntroContentGate({
-  store,
-  settings,
-  children,
-}: {
-  store: StoreApi<IntroStore>
-  settings?: Record<string, unknown>
-  children: ReactNode
-}) {
-  const contentFadeStep = (settings?.contentFadeStep as number) ?? 1
-
-  const introCompleted = useSyncExternalStore(
-    store.subscribe,
-    () => store.getState().introCompleted,
-    () => false,
-  )
-  const currentStep = useSyncExternalStore(
-    store.subscribe,
-    () => store.getState().currentStep,
-    () => 0,
-  )
-  const stepProgress = useSyncExternalStore(
-    store.subscribe,
-    () => store.getState().stepProgress,
-    () => 0,
-  )
-
-  // contentVisible: skip opacity gating (e.g. video-gate where video IS the intro)
-  const contentVisible = (settings?.contentVisible as boolean) ?? false
-
-  // Compute content opacity
-  let contentOpacity: number
-  if (contentVisible || introCompleted || currentStep > contentFadeStep) {
-    contentOpacity = 1
-  } else if (currentStep === contentFadeStep) {
-    contentOpacity = stepProgress
-  } else {
-    contentOpacity = 0
-  }
-
-  // Always render wrapper div to avoid DOM re-parenting (which triggers ScrollSmoother recalc).
-  // When opacity is 1, pass no inline style — no stacking context, no layout impact.
-  return (
-    <div style={contentOpacity < 1 ? { opacity: contentOpacity } : undefined}>
-      {children}
-    </div>
-  )
-}
-
-/**
  * IntroProvider component.
  * Manages intro state, scroll locking, overlay rendering, and content gating.
  */
@@ -186,49 +125,39 @@ export function IntroProvider({
   // Resolve lockScroll setting (default: true)
   const lockScroll = (settings?.lockScroll as boolean) ?? true
 
-  // Container-aware scroll locking
-  const { mode, containerRef } = useContainer()
-  const { siteContainer } = useSiteContainer()
-
   // Create store (memoized)
   const store = useMemo(() => createIntroStore(pattern, lockScroll), [pattern, lockScroll])
 
-  // Apply scroll locking (container-aware)
-  // In contained mode, use containerRef; in fullpage mode, use siteContainer
-  // Never use document.body - breaks iframe/container support
+  // Delegate scroll locking to generic ScrollLockContext.
+  // IntroProvider still owns its isScrollLocked state — it just calls
+  // lock('intro') / unlock('intro') on the shared service.
+  const scrollLock = useScrollLock()
+
   useEffect(() => {
-    // Resolve scroll target: container element in contained mode, site container in fullpage
-    const resolveScrollTarget = (): HTMLElement | null => {
-      if (mode === 'contained' && containerRef?.current) {
-        return containerRef.current
-      }
-      return siteContainer
-    }
+    if (!scrollLock) return
 
-    const scrollTarget = resolveScrollTarget()
-
-    // Skip if no scroll target yet (SSR or before mount)
-    if (!scrollTarget) return
-
-    // Subscribe to scroll lock changes
-    const unsubscribe = store.subscribe((state) => {
-      const target = resolveScrollTarget()
-      if (target) {
-        target.style.overflow = state.isScrollLocked ? 'hidden' : ''
+    const unsubscribe = store.subscribe((state, prev) => {
+      if (state.isScrollLocked !== prev.isScrollLocked) {
+        if (state.isScrollLocked) {
+          scrollLock.lock('intro')
+        } else {
+          scrollLock.unlock('intro')
+        }
       }
     })
 
     // Apply initial state
     if (store.getState().isScrollLocked) {
-      scrollTarget.style.overflow = 'hidden'
+      scrollLock.lock('intro')
     }
 
-    // Cleanup
     return () => {
       unsubscribe()
-      scrollTarget.style.overflow = ''
+      scrollLock.unlock('intro')
     }
-  }, [store, mode, containerRef, siteContainer])
+  }, [store, scrollLock])
+
+  const contextValue = useMemo(() => ({ pattern, store }), [pattern, store])
 
   // If no pattern, render children directly (no context overhead)
   if (!pattern) {
@@ -236,7 +165,7 @@ export function IntroProvider({
   }
 
   return (
-    <IntroContext.Provider value={{ pattern, store }}>
+    <IntroContext.Provider value={contextValue}>
       {/* Overlay renders FIRST, outside content tree, covers viewport */}
       {OverlayComponent && (
         <OverlayComponent {...(overlayProps ?? {})} />
@@ -246,10 +175,7 @@ export function IntroProvider({
         store={store}
         settings={settings}
       >
-        {/* Content gate controls content opacity during intro */}
-        <IntroContentGate store={store} settings={settings}>
-          {children}
-        </IntroContentGate>
+        {children}
       </IntroTriggerInitializer>
     </IntroContext.Provider>
   )

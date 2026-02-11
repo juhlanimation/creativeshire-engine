@@ -104,7 +104,7 @@ export function createProjectShowcaseSection(props: ProjectShowcaseProps): Secti
     style: {
       backgroundColor: props.backgroundColor ?? '#FAF6ED',
       color: isDark ? '#fff' : '#000',
-      minHeight: '100vh',
+      minHeight: '100dvh',
       padding: '2rem'
     },
     className: 'project-showcase',

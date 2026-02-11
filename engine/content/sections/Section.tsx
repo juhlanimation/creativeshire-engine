@@ -50,6 +50,7 @@ export default function Section({
   layout,
   style,
   className,
+  constrained,
   children,
 }: SectionProps): ReactNode {
   const computedStyle = getLayoutStyles(layout, style)
@@ -63,6 +64,7 @@ export default function Section({
       data-direction={layout.direction}
       data-align={layout.align}
       data-justify={layout.justify}
+      data-constrained={constrained ? '' : undefined}
       style={Object.keys(computedStyle).length > 0 ? computedStyle : undefined}
     >
       {children}

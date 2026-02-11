@@ -19,10 +19,20 @@ export const port12Meta: PresetMeta = {
 
 export const port12Preset: SitePreset = {
   theme: {
-    smoothScroll: { enabled: true },
+    smoothScroll: {
+      enabled: true,
+      provider: 'lenis',
+      lenis: {
+        duration: 0.8,
+        touchMultiplier: 1.5,
+      },
+    },
     typography: {
       title: '"BBH Sans Hegarty", system-ui, sans-serif',
       paragraph: 'var(--font-plus-jakarta), system-ui, sans-serif',
+    },
+    container: {
+      outerBackground: '#000000',
     },
   },
   intro: introConfig,

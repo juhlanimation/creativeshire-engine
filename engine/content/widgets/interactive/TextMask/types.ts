@@ -8,7 +8,7 @@ import type { WidgetBaseProps } from '../../types'
 export interface TextMaskProps extends WidgetBaseProps {
   /** Text to display as mask cutout */
   text: string
-  /** Font size (CSS value, default: '25vw') */
+  /** Font size (CSS value, default: '25cqw') */
   fontSize?: string
   /** Font weight (default: 900) */
   fontWeight?: number

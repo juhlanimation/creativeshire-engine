@@ -10,23 +10,26 @@
  * Supports both widget-based and component-based chrome definitions.
  *
  * Portal Pattern:
- * Widget-based overlays are portaled to the SITE CONTAINER (not document.body!)
- * to escape CSS transform contexts while maintaining:
+ * Header regions and widget-based overlays are portaled to the SITE CONTAINER
+ * (not document.body!) to escape CSS transform contexts while maintaining:
  * - Container query context (@container site)
  * - Iframe embedding support
+ * - React context tree (TransitionProvider, ExperienceProvider, etc.)
+ *
+ * Headers portal because position:fixed navbars inside ScrollSmoother's
+ * #smooth-content are trapped by the CSS transform containing block.
  *
  * IMPORTANT: Never use document.body for portals - it breaks container queries
  * and iframe support. See ESLint rule local/no-document-events.
  */
 
 import { createPortal } from 'react-dom'
-import { useSyncExternalStore } from 'react'
 import type { ChromeSchema, PageChromeOverrides, RegionSchema, OverlaySchema } from '../schema'
 import { getChromeComponent } from '../content/chrome/registry'
 import { WidgetRenderer } from './WidgetRenderer'
 import { useContainer } from '../interface/ContainerContext'
 import { useSiteContainer } from './SiteContainerContext'
-import { useIntro } from '../intro'
+import { useChromeVisibility } from './hooks/useChromeVisibility'
 import './chrome.css'
 
 /**
@@ -61,7 +64,17 @@ function renderRegion(
     if (!Component) {
       return <div data-error={`Unknown chrome: ${region.component}`}>Unknown chrome: {region.component}</div>
     }
-    return <Component {...(region.props || {})} />
+
+    const content = <Component {...(region.props || {})} />
+
+    // Wrap in chrome-region for constrained/style support.
+    // Uses a non-semantic div — component handles its own semantic element.
+    if (region.constrained || region.style) {
+      const regionClass = `chrome-region${region.constrained ? ' chrome-region--constrained' : ''}`
+      return <div className={regionClass} style={region.style}>{content}</div>
+    }
+
+    return content
   }
 
   // Widget-based approach - wrap in semantic element
@@ -70,14 +83,19 @@ function renderRegion(
       <WidgetRenderer key={widget.id} widget={widget} />
     ))
 
-    // Wrap in semantic element based on position
+    // Wrap in semantic element based on position.
+    // chrome-region class marks the wrapper as full-width (like [data-section-id]).
+    // chrome-region--constrained applies max-width to direct children (content widgets).
+    // region.style carries background color etc. for edge-to-edge backgrounds.
+    const regionClass = `chrome-region${region.constrained ? ' chrome-region--constrained' : ''}`
+
     switch (position) {
       case 'header':
-        return <header role="banner">{children}</header>
+        return <header role="banner" className={regionClass} style={region.style}>{children}</header>
       case 'footer':
-        return <footer role="contentinfo">{children}</footer>
+        return <footer role="contentinfo" className={regionClass} style={region.style}>{children}</footer>
       case 'sidebar':
-        return <aside role="complementary">{children}</aside>
+        return <aside role="complementary" className={regionClass} style={region.style}>{children}</aside>
       default:
         return <>{children}</>
     }
@@ -201,21 +219,7 @@ function OverlaysRenderer({
 export function ChromeRenderer({ siteChrome, pageChrome, position, hideChrome, currentPageSlug }: ChromeRendererProps): React.ReactNode {
   const { portalTarget } = useContainer()
   const { siteContainer } = useSiteContainer()
-
-  // Get intro context for chrome visibility
-  const intro = useIntro()
-
-  // Subscribe reactively to chromeVisible so re-renders happen when intro
-  // calls setChromeVisible(true). A one-shot .getState() read won't trigger updates.
-  const subscribeNoop = () => () => {}
-  const chromeVisible = useSyncExternalStore(
-    intro?.store.subscribe ?? subscribeNoop,
-    () => intro?.store.getState().chromeVisible ?? true,
-    () => true,
-  )
-
-  // Check if intro is hiding chrome
-  const introHidesChrome = !!(intro?.pattern?.hideChrome && !chromeVisible)
+  const { introHidesChrome } = useChromeVisibility()
 
   // For header/footer, hide if intro is hiding chrome
   if (introHidesChrome && (position === 'header' || position === 'footer')) {
@@ -260,8 +264,18 @@ export function ChromeRenderer({ siteChrome, pageChrome, position, hideChrome, c
   }
 
   switch (position) {
-    case 'header':
-      return renderRegion(getRegion('header'), 'header')
+    case 'header': {
+      const content = renderRegion(getRegion('header'), 'header')
+      if (!content) return null
+
+      // Portal header to site container to escape ScrollSmoother's CSS transform
+      // context. Without this, position:fixed navbars are trapped inside
+      // #smooth-content's transform and scroll with the page.
+      // React portals preserve context (TransitionProvider, etc.) so
+      // TransitionLink in nav still works.
+      const target = portalTarget || siteContainer
+      return target ? createPortal(content, target) : content
+    }
 
     case 'footer':
       return renderRegion(getRegion('footer'), 'footer')

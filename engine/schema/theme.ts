@@ -20,18 +20,35 @@ export interface ScrollbarConfig {
 }
 
 /**
+ * Lenis-specific scroll configuration.
+ * Only used when provider is 'lenis'.
+ */
+export interface LenisConfig {
+  /** Scroll animation duration in seconds (default: 0.8) */
+  duration?: number
+  /** Touch scroll sensitivity multiplier (default: 1.5) */
+  touchMultiplier?: number
+  /** Wheel scroll sensitivity multiplier (default: 1) */
+  wheelMultiplier?: number
+}
+
+/**
  * Smooth scroll configuration.
- * Uses GSAP ScrollSmoother for butter-smooth scrolling.
+ * Supports GSAP ScrollSmoother or Lenis as the scroll engine.
  */
 export interface SmoothScrollConfig {
   /** Enable smooth scrolling (default: true) */
   enabled?: boolean
+  /** Scroll engine provider (default: 'gsap') */
+  provider?: 'gsap' | 'lenis'
   /** Smoothing intensity for desktop (default: 1.2) */
   smooth?: number
   /** Smoothing intensity for Mac trackpads (default: 0.5) */
   smoothMac?: number
   /** Enable ScrollTrigger effects like parallax (default: true) */
   effects?: boolean
+  /** Lenis-specific configuration (ignored when provider is 'gsap') */
+  lenis?: LenisConfig
 }
 
 /** Font provider for dynamic loading. */
@@ -64,6 +81,17 @@ export interface SectionTransitionConfig {
 }
 
 /**
+ * Site container configuration.
+ * Constrains the entire site canvas to a centered column on ultrawide monitors.
+ */
+export interface ContainerConfig {
+  /** Maximum width of site content (CSS value, e.g., '1440px') */
+  maxWidth?: string
+  /** Background color for the area outside the container */
+  outerBackground?: string
+}
+
+/**
  * Theme schema for site-wide visual tokens.
  * Injected as CSS variables at the root level.
  */
@@ -76,4 +104,6 @@ export interface ThemeSchema {
   typography?: TypographyConfig
   /** Section transition styling */
   sectionTransition?: SectionTransitionConfig
+  /** Site container max-width and outer background */
+  container?: ContainerConfig
 }

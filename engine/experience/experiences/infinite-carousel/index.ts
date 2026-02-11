@@ -5,6 +5,7 @@
 
 import { createStore } from 'zustand'
 import type { Experience, InfiniteCarouselState } from '../types'
+import { InfiniteCarouselController } from '../InfiniteCarouselController'
 import { meta } from './meta'
 
 export const infiniteCarouselExperience: Experience = {
@@ -61,6 +62,7 @@ export const infiniteCarouselExperience: Experience = {
 
   presentation: {
     model: 'infinite-carousel',
+    ownsPageScroll: true,
     visibility: {
       maxVisible: 2,
       overlap: 0.5,
@@ -110,6 +112,9 @@ export const infiniteCarouselExperience: Experience = {
   constraints: {
     fullViewportSections: true,
   },
+
+  // Runtime controller for momentum physics and section transforms
+  controller: InfiniteCarouselController,
 
   hideChrome: ['footer'],
 }

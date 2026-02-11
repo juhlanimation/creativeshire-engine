@@ -211,3 +211,16 @@ Browser automation captures **screenshots** (static snapshots). It cannot percei
    2. Report results to user
    3. Ask if they want to proceed
    ```
+
+7. **CSS variables must be in SSR HTML:** Set theme CSS variables as inline styles on the React element (not via hooks) so they're present in server-rendered HTML — zero FOUC. Only use hooks (`useLayoutEffect`) for variables that must be on `document.documentElement`. See `SiteRenderer.tsx` `buildThemeStyle()` + `useThemeVariables` for the reference pattern.
+
+8. **Use container query units (`cqw`/`cqh`), not viewport units (`vw`/`vh`):** Widgets and sections size relative to the site container, not the viewport. The site container may be narrower than the viewport (max-width on ultrawide) or embedded in an iframe. `cqw`/`cqh` respect the actual container; `vw`/`vh` don't.
+
+   | ❌ Viewport units | ✅ Container query units |
+   |---|---|
+   | `font-size: 6vw` | `font-size: 6cqw` |
+   | `width: 50vw` | `width: 50cqw` |
+   | `padding: 2vh 3vw` | `padding: 2cqh 3cqw` |
+   | `height: 100vh` | `height: 100cqh` (or `100dvh` for fullscreen sections) |
+
+   **Exceptions:** `dvh` is acceptable for full-viewport section heights. `100vw` in overlay positioning calcs is intentional (fixed-position overlays are viewport-relative).

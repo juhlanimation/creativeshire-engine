@@ -3,6 +3,7 @@
  * Chrome provides persistent UI outside page content - regions and overlays.
  */
 
+import type { CSSProperties } from 'react'
 import type { WidgetSchema } from './widget'
 import type { BehaviourConfig } from './experience'
 import type { SerializableValue } from './types'
@@ -122,6 +123,10 @@ export interface RegionSchema {
   component?: string
   /** Props to pass to component (component-based approach) */
   props?: Record<string, SerializableValue>
+  /** Inline styles for the semantic wrapper element (e.g., backgroundColor for edge-to-edge) */
+  style?: CSSProperties
+  /** Whether region content is constrained to --site-max-width (opt-in) */
+  constrained?: boolean
   /** Behaviour configuration for animation */
   behaviour?: BehaviourConfig
   /** Additional behaviour options */

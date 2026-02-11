@@ -122,7 +122,7 @@ export const DEFAULT_PRICING_STYLES: PricingTextStyles = {
   },
   sectionTitle: {
     fontFamily: 'var(--font-title, Inter, system-ui, sans-serif)',
-    fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+    fontSize: 'clamp(2rem, 5cqw, 3.5rem)',
     fontWeight: 700,
     color: 'var(--text-primary, #000)',
     textAlign: 'center'

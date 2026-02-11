@@ -3,6 +3,9 @@
 /**
  * NavigationInitializer - initializes section navigation based on experience config.
  * Renders nothing - just sets up event listeners via hooks.
+ *
+ * Self-contained: reads experience config and store from useExperience().
+ * Discovers section count from DOM (presentation wrapper > [data-section-id]).
  */
 
 import { useEffect } from 'react'
@@ -11,30 +14,32 @@ import type {
   NavigationConfig,
   NavigableExperienceState,
 } from '../experiences/types'
+import { useExperience } from '../experiences/ExperienceProvider'
 import { useContainer } from '../../interface/ContainerContext'
 import { useWheelNavigation } from './useWheelNavigation'
 import { useKeyboardNavigation } from './useKeyboardNavigation'
 import { useSwipeNavigation } from './useSwipeNavigation'
 
-export interface NavigationInitializerProps {
-  store: StoreApi<NavigableExperienceState>
-  config: NavigationConfig
-  /** Total sections on the page (set on mount) */
-  totalSections: number
-}
+export function NavigationInitializer(): null {
+  const { experience, store: baseStore } = useExperience()
+  const store = baseStore as StoreApi<NavigableExperienceState>
+  const config = experience.navigation!
 
-export function NavigationInitializer({
-  store,
-  config,
-  totalSections,
-}: NavigationInitializerProps): null {
   // Get container context for contained mode support
   const { mode: containerMode, containerRef } = useContainer()
 
-  // Initialize total sections count on mount
+  // Discover section count from DOM and set on store
   useEffect(() => {
+    const wrapper = document.querySelector<HTMLElement>('.presentation-wrapper')
+    if (!wrapper) return
+
+    const sections = wrapper.querySelectorAll('[data-section-id]')
+    const totalSections = sections.length
     store.setState({ totalSections })
-  }, [store, totalSections])
+  }, [store])
+
+  // Read totalSections from store for hash navigation
+  const totalSections = store.getState().totalSections
 
   // Initialize hash-based navigation
   useEffect(() => {
@@ -42,12 +47,13 @@ export function NavigationInitializer({
 
     const hash = window.location.hash.slice(1)
     if (hash) {
+      const current = store.getState().totalSections
       const index = parseInt(hash, 10)
-      if (!isNaN(index) && index >= 0 && index < totalSections) {
+      if (!isNaN(index) && index >= 0 && index < current) {
         store.setState({ activeSection: index })
       }
     }
-  }, [config.history.restoreFromHash, store, totalSections])
+  }, [config.history.restoreFromHash, store])
 
   // Update hash when activeSection changes
   useEffect(() => {

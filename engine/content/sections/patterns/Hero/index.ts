@@ -126,6 +126,10 @@ export function createHeroSection(props: HeroProps): SectionSchema {
       direction: 'column',
       align: 'start'
     },
+    style: {
+      maxWidth: 'none',
+      ...props.style,
+    },
     widgets
   }
 }

@@ -8,6 +8,17 @@
  */
 
 // =============================================================================
+// Editor Hints
+// =============================================================================
+
+/**
+ * Visibility hint for platform editors.
+ * - 'structural': implementation detail, hidden from content editors by default.
+ * - 'content': user-facing, always shown (same as omitting editorHint).
+ */
+export type EditorHint = 'structural' | 'content'
+
+// =============================================================================
 // Validation
 // =============================================================================
 
@@ -80,6 +91,13 @@ interface BaseSettingConfig {
    * Structural props (variant, objectFit, as) typically aren't.
    */
   bindable?: boolean
+
+  /**
+   * Visibility hint for platform editors.
+   * - 'structural': implementation detail (id, layout, className). Hidden from content editors.
+   * - 'content' or omitted: user-facing. Always shown.
+   */
+  editorHint?: EditorHint
 
   /** Validation rules */
   validation?: SettingValidation

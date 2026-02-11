@@ -12,6 +12,8 @@
   display: block;
   max-width: 100%;
   height: auto;
+  object-fit: cover;
+  object-position: center;
   transition: none; /* Animations handled by drivers, not CSS transitions */
 }
 

@@ -22,6 +22,7 @@ export const overlayMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Component name to render for this overlay',
       validation: { maxLength: 200 },
+      editorHint: 'structural',
       group: 'Component',
     },
 
@@ -37,6 +38,7 @@ export const overlayMeta = defineMeta<Record<string, unknown>>({
         { value: 'bottom-left', label: 'Bottom Left' },
         { value: 'bottom-right', label: 'Bottom Right' },
       ],
+      editorHint: 'structural',
       group: 'Layout',
     },
 
@@ -47,6 +49,7 @@ export const overlayMeta = defineMeta<Record<string, unknown>>({
       default: null,
       description: 'Condition for showing/hiding the overlay',
       component: 'TriggerEditor',
+      editorHint: 'structural',
       group: 'Trigger',
     },
 
@@ -57,6 +60,7 @@ export const overlayMeta = defineMeta<Record<string, unknown>>({
       default: null,
       description: 'Behaviour configuration for overlay animation',
       component: 'BehaviourPicker',
+      editorHint: 'structural',
       group: 'Animation',
     },
 
@@ -67,6 +71,7 @@ export const overlayMeta = defineMeta<Record<string, unknown>>({
       default: [],
       description: 'Pages where this overlay should be hidden',
       component: 'PageSelector',
+      editorHint: 'structural',
       group: 'Visibility',
     },
   },

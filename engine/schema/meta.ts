@@ -86,6 +86,16 @@ export interface ComponentMeta<T = unknown> {
     message: string
     alternative?: string
   }
+
+  /**
+   * Base fields this component controls (i.e., depends on for its design).
+   * Platform hides these from content editors because changing them
+   * would break the component's design contract.
+   *
+   * Example: a Hero pattern that owns ['layout', 'behaviour', 'className']
+   * prevents editors from changing flex direction or animation on that section.
+   */
+  ownedFields?: string[]
 }
 
 // =============================================================================

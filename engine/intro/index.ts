@@ -17,9 +17,11 @@ export type {
   IntroCategory,
 } from './types'
 
-// Provider and context
+// Provider, context, and content gate
 export { IntroProvider } from './IntroProvider'
 export type { IntroProviderProps } from './IntroProvider'
+export { IntroContentGate } from './IntroContentGate'
+export type { IntroContentGateProps } from './IntroContentGate'
 export { IntroTriggerInitializer } from './IntroTriggerInitializer'
 export type { IntroTriggerInitializerProps } from './IntroTriggerInitializer'
 export { IntroContext, useIntro, useIntroRequired } from './IntroContext'

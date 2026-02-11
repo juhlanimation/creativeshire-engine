@@ -63,8 +63,10 @@ export type {
   ThemeSchema,
   ScrollbarConfig,
   SmoothScrollConfig,
+  LenisConfig,
   TypographyConfig,
   SectionTransitionConfig,
+  ContainerConfig,
   FontProvider,
 } from './theme'
 
@@ -85,6 +87,7 @@ export {
 
 // Settings types
 export type {
+  EditorHint,
   SettingType,
   SettingConfig,
   SettingValue,

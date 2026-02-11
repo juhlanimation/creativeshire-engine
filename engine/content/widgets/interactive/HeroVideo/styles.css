@@ -6,7 +6,7 @@
 }
 
 .hero-video__video {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -16,7 +16,7 @@
 }
 
 .hero-video__overlay {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -37,11 +37,16 @@
   opacity: 1;
 }
 
+.hero-video__overlay--external-reveal {
+  opacity: var(--intro-complete, 0);
+  transition: none;
+}
+
 .hero-video__title {
   font-family: var(--font-title, system-ui, sans-serif);
-  font-size: clamp(4rem, 20vw, 20rem);
+  font-size: clamp(4rem, 20cqw, 20rem);
   font-weight: 700;
-  line-height: 0.85;
+  line-height: 1;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   margin: 0;
@@ -50,15 +55,15 @@
 
 .hero-video__tagline {
   font-family: var(--font-inter), system-ui, sans-serif;
-  font-size: clamp(0.75rem, 2vw, 1.5rem);
-  font-weight: 300;
+  font-size: clamp(0.75rem, 2cqw, 1.5rem);
+  font-weight: 400;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   margin-top: 1rem;
 }
 
 .hero-video__scroll-indicator {
-  position: fixed;
+  position: absolute;
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
@@ -73,9 +78,15 @@
   opacity: 1;
 }
 
+.hero-video__scroll-indicator--external-reveal {
+  opacity: var(--intro-complete, 0);
+  transition: none;
+}
+
 .hero-video__scroll-text {
-  font-size: 0.625rem;
-  letter-spacing: 0.3em;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 

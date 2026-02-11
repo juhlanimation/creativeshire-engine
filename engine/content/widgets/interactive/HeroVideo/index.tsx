@@ -34,15 +34,17 @@ export default function HeroVideo({
   title,
   tagline,
   scrollIndicatorText = '(SCROLL)',
+  externalReveal = false,
   className,
   'data-behaviour': dataBehaviour,
 }: HeroVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const [showText, setShowText] = useState(textRevealTime === 0)
+  const [showText, setShowText] = useState(!externalReveal && textRevealTime === 0)
 
-  // Text reveal: watch video currentTime against textRevealTime
+  // Text reveal: skip JS timer when externally revealed (CSS variable controls it)
   useEffect(() => {
+    if (externalReveal) return
     if (textRevealTime === 0) {
       setShowText(true)
       return
@@ -60,7 +62,7 @@ export default function HeroVideo({
 
     video.addEventListener('timeupdate', handleTimeUpdate)
     return () => video.removeEventListener('timeupdate', handleTimeUpdate)
-  }, [textRevealTime])
+  }, [textRevealTime, externalReveal])
 
   // Custom loop point: restart from loopStartTime when video ends
   useEffect(() => {
@@ -124,13 +126,19 @@ export default function HeroVideo({
       />
 
       {/* Text overlay with timed reveal */}
-      <div className={`hero-video__overlay ${showText ? 'hero-video__overlay--visible' : ''}`}>
+      <div className={externalReveal
+        ? 'hero-video__overlay hero-video__overlay--external-reveal'
+        : `hero-video__overlay ${showText ? 'hero-video__overlay--visible' : ''}`
+      }>
         <h1 className="hero-video__title">{title}</h1>
         {tagline && <p className="hero-video__tagline">{tagline}</p>}
       </div>
 
       {/* Scroll indicator with responsive display */}
-      <div className={`hero-video__scroll-indicator ${showText ? 'hero-video__scroll-indicator--visible' : ''}`}>
+      <div className={externalReveal
+        ? 'hero-video__scroll-indicator hero-video__scroll-indicator--external-reveal'
+        : `hero-video__scroll-indicator ${showText ? 'hero-video__scroll-indicator--visible' : ''}`
+      }>
         {scrollIndicatorText && (
           <span className="hero-video__scroll-text">{scrollIndicatorText}</span>
         )}

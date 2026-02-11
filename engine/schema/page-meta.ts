@@ -22,6 +22,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'URL path for the page (e.g., "/", "/about", "/work/project-1")',
       validation: { required: true, maxLength: 200, pattern: '^(\\/|[a-z0-9][a-z0-9\\-\\/]*)$', message: 'Slug must start with / or use lowercase letters, numbers, and hyphens' },
+      editorHint: 'structural',
       group: 'Route',
     },
 
@@ -48,6 +49,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Canonical URL to prevent duplicate content issues',
       validation: { maxLength: 2048, pattern: '^(https?:\\/\\/|\\/|#|mailto:)', message: 'Must be a valid URL, path, or anchor' },
+      editorHint: 'structural',
       group: 'SEO',
     },
 
@@ -81,6 +83,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Open Graph canonical URL',
       validation: { maxLength: 2048, pattern: '^(https?:\\/\\/|\\/|#|mailto:)', message: 'Must be a valid URL, path, or anchor' },
+      editorHint: 'structural',
       group: 'Open Graph',
     },
 
@@ -111,6 +114,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       label: 'Allow Indexing',
       default: true,
       description: 'Allow search engines to index this page',
+      editorHint: 'structural',
       group: 'Robots',
     },
     'head.robotsFollow': {
@@ -118,6 +122,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       label: 'Allow Link Following',
       default: true,
       description: 'Allow search engines to follow links on this page',
+      editorHint: 'structural',
       group: 'Robots',
     },
 
@@ -127,6 +132,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       label: 'Theme Color',
       default: '',
       description: 'Browser theme color for mobile address bar',
+      editorHint: 'structural',
       group: 'Browser',
     },
     'head.viewport': {
@@ -136,6 +142,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       description: 'Viewport meta tag value',
       validation: { maxLength: 100 },
       advanced: true,
+      editorHint: 'structural',
       group: 'Browser',
     },
     'head.icons.icon': {
@@ -163,6 +170,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
         { value: 'inherit', label: 'Inherit from Site' },
         { value: 'hidden', label: 'Hidden' },
       ],
+      editorHint: 'structural',
       group: 'Chrome Overrides',
     },
     'chrome.regions.footer': {
@@ -174,6 +182,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
         { value: 'inherit', label: 'Inherit from Site' },
         { value: 'hidden', label: 'Hidden' },
       ],
+      editorHint: 'structural',
       group: 'Chrome Overrides',
     },
   },

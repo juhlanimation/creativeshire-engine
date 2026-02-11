@@ -20,5 +20,29 @@ export const meta = defineBehaviourMeta<CoverProgressSettings>({
       default: '',
       validation: { maxLength: 64 },
     },
+    propagateContentEdge: {
+      type: 'text',
+      label: 'Content Edge CSS Variable',
+      default: '',
+      validation: { maxLength: 64 },
+    },
+    targetSelector: {
+      type: 'text',
+      label: 'Target Element Selector',
+      default: '',
+      validation: { maxLength: 128 },
+    },
+    targetTop: {
+      type: 'range',
+      label: 'Target Top (fallback)',
+      default: 0,
+      validation: { min: 0, max: 1, step: 0.01 },
+    },
+    targetBottom: {
+      type: 'range',
+      label: 'Target Bottom (fallback)',
+      default: 1,
+      validation: { min: 0, max: 1, step: 0.01 },
+    },
   },
 })

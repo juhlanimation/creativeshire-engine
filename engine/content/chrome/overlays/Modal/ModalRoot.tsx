@@ -21,7 +21,7 @@ import {
   registerAction,
   unregisterAction,
 } from '../../../../experience/actions'
-import { VideoPlayer } from '../../../widgets/interactive'
+import VideoPlayer from '../../../widgets/interactive/VideoPlayer'
 
 /**
  * Payload for open-video-modal action.

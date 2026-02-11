@@ -11,6 +11,7 @@ export const meta = defineSectionMeta<ProjectCompareProps>({
   icon: 'compare',
   tags: ['project', 'video', 'compare', 'before-after', 'breakdown'],
   component: false,
+  ownedFields: ['layout', 'behaviour', 'behaviourOptions', 'className'],
 
   settings: {
     logo: {

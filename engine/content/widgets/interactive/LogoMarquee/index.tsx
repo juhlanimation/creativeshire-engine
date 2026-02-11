@@ -11,7 +11,7 @@
 'use client'
 
 import type { LogoMarqueeProps, LogoItem } from './types'
-import { WidgetRenderer } from '../../../../renderer'
+import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
 import './styles.css'
 
 /**

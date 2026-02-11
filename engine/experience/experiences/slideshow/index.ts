@@ -5,6 +5,7 @@
 
 import { createStore } from 'zustand'
 import type { Experience, NavigableExperienceState } from '../types'
+import { NavigationInitializer } from '../../navigation/NavigationInitializer'
 import { meta } from './meta'
 
 export const slideshowExperience: Experience = {
@@ -52,6 +53,7 @@ export const slideshowExperience: Experience = {
   // Presentation config - uses scroll-snap for crisp section stops
   presentation: {
     model: 'slideshow',
+    ownsPageScroll: true,
     visibility: {
       maxVisible: 1,  // Used by indicators
       overlap: 0,
@@ -113,6 +115,9 @@ export const slideshowExperience: Experience = {
   constraints: {
     fullViewportSections: true,
   },
+
+  // Runtime controller for navigation input handling
+  controller: NavigationInitializer,
 
   // Hide footer in slideshow mode (full-screen sections don't need it)
   hideChrome: ['footer'],

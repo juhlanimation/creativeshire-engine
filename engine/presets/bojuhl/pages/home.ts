@@ -19,7 +19,7 @@ import type { HeroTextStyles } from '../../../content/sections/patterns/Hero/typ
 export const bojuhlHeroStyles: HeroTextStyles = {
   intro: {
     fontFamily: 'var(--font-paragraph, Plus Jakarta Sans, system-ui, sans-serif)',
-    fontSize: 'clamp(0.875rem, 0.125rem + 1vw, 1rem)',
+    fontSize: 'clamp(0.875rem, 0.125rem + 1cqw, 1rem)',
     fontWeight: 500,
     letterSpacing: '0.05em',
     color: 'white',
@@ -27,7 +27,7 @@ export const bojuhlHeroStyles: HeroTextStyles = {
   },
   roleTitle: {
     fontFamily: 'var(--font-title, Inter, system-ui, sans-serif)',
-    fontSize: 'clamp(2rem, 6vw, 6rem)',
+    fontSize: 'clamp(2rem, 6cqw, 6rem)',
     fontWeight: 900,
     lineHeight: 0.95,
     letterSpacing: '0.025em',
@@ -55,6 +55,9 @@ const heroSection: SectionSchema = {
     type: 'stack',
     direction: 'column',
     align: 'start'
+  },
+  style: {
+    maxWidth: 'none',
   },
   widgets: [
     {
@@ -127,6 +130,7 @@ const heroSection: SectionSchema = {
 const aboutSection: SectionSchema = {
   id: 'about',
   label: 'About',
+  constrained: true,
   layout: {
     type: 'stack',
     direction: 'column',
@@ -273,6 +277,7 @@ const aboutSection: SectionSchema = {
 const featuredProjectsSection: SectionSchema = {
   id: 'projects',
   label: 'Featured Projects',
+  constrained: true,
   layout: {
     type: 'stack',
     direction: 'column',
@@ -383,6 +388,7 @@ const featuredProjectsSection: SectionSchema = {
 const otherProjectsSection: SectionSchema = {
   id: 'other-projects',
   label: 'Other Projects',
+  constrained: true,
   layout: {
     type: 'stack',
     direction: 'column',

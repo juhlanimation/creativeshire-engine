@@ -22,6 +22,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Unique identifier for anchor linking',
       validation: { required: true, maxLength: 100 },
+      editorHint: 'structural',
       group: 'Identity',
     },
     label: {
@@ -30,6 +31,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Human-readable display name for the UI hierarchy',
       validation: { maxLength: 100 },
+      editorHint: 'content',
       group: 'Identity',
     },
     patternId: {
@@ -39,6 +41,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       description: 'Pattern that created this section (read-only context)',
       advanced: true,
       validation: { maxLength: 100 },
+      editorHint: 'structural',
       group: 'Identity',
     },
 
@@ -53,6 +56,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
         { value: 'grid', label: 'Grid' },
         { value: 'stack', label: 'Stack' },
       ],
+      editorHint: 'structural',
       group: 'Layout',
     },
     'layout.direction': {
@@ -64,6 +68,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
         { value: 'row', label: 'Row' },
         { value: 'column', label: 'Column' },
       ],
+      editorHint: 'structural',
       group: 'Layout',
     },
     'layout.align': {
@@ -77,6 +82,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
         { value: 'end', label: 'End' },
         { value: 'stretch', label: 'Stretch' },
       ],
+      editorHint: 'structural',
       group: 'Layout',
     },
     'layout.justify': {
@@ -91,6 +97,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
         { value: 'between', label: 'Space Between' },
         { value: 'around', label: 'Space Around' },
       ],
+      editorHint: 'structural',
       group: 'Layout',
     },
     'layout.gap': {
@@ -99,6 +106,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       default: 0,
       description: 'Gap between items',
       validation: { min: 0, max: 500 },
+      editorHint: 'structural',
       group: 'Layout',
     },
     'layout.columns': {
@@ -110,6 +118,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       max: 12,
       step: 1,
       condition: "layout.type === 'grid'",
+      editorHint: 'structural',
       group: 'Layout',
     },
     'layout.rows': {
@@ -121,6 +130,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       max: 12,
       step: 1,
       condition: "layout.type === 'grid'",
+      editorHint: 'structural',
       group: 'Layout',
     },
 
@@ -131,6 +141,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       default: null,
       description: 'Behaviour configuration for section animation',
       component: 'BehaviourPicker',
+      editorHint: 'structural',
       group: 'Animation',
     },
     behaviourOptions: {
@@ -139,6 +150,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       default: null,
       description: 'Additional behaviour options',
       component: 'BehaviourOptions',
+      editorHint: 'structural',
       group: 'Animation',
     },
 
@@ -150,6 +162,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       description: 'Additional CSS class names',
       advanced: true,
       validation: { maxLength: 200 },
+      editorHint: 'structural',
       group: 'Advanced',
     },
   },

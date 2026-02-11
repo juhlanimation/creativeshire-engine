@@ -134,7 +134,7 @@ export function createProjectGallerySection(props: ProjectGalleryProps): Section
     style: {
       backgroundColor: props.backgroundColor ?? '#C03540',
       color: props.textColor === 'dark' ? '#000' : '#fff',
-      minHeight: '100vh',
+      minHeight: '100dvh',
       padding: '2rem',
     },
     className: 'project-gallery',

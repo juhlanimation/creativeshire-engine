@@ -21,8 +21,9 @@ describe('Experience Settings', () => {
     const violations: string[] = []
 
     for (const exp of experiences) {
-      // Skip 'simple' - intentionally has no settings (bare fallback)
-      if (exp.id === 'simple') continue
+      // Skip experiences that intentionally have no settings
+      if (exp.id === 'simple') continue       // bare fallback
+      if (exp.id === 'cover-scroll') continue // no configurable options
 
       if (!exp.settings || Object.keys(exp.settings).length === 0) {
         violations.push(`Experience "${exp.id}" missing settings`)

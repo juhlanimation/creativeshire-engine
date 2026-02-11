@@ -22,6 +22,7 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Unique identifier for the region',
       validation: { maxLength: 100 },
+      editorHint: 'structural',
       group: 'Common',
     },
     'style.backgroundColor': {
@@ -45,6 +46,7 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Maximum region content width',
       validation: { maxLength: 200 },
+      editorHint: 'structural',
       group: 'Common',
     },
     className: {
@@ -54,6 +56,7 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
       description: 'Additional CSS class names',
       validation: { maxLength: 200 },
       advanced: true,
+      editorHint: 'structural',
       group: 'Common',
     },
 
@@ -63,6 +66,7 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Sticky',
       default: true,
       description: 'Keep header fixed at top of viewport',
+      editorHint: 'structural',
       group: 'Header',
     },
     transparent: {
@@ -70,6 +74,7 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Transparent',
       default: false,
       description: 'Start with transparent background (e.g., over hero)',
+      editorHint: 'structural',
       group: 'Header',
     },
     'style.height': {
@@ -78,6 +83,7 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Header height (e.g., "64px", "4rem")',
       validation: { maxLength: 200 },
+      editorHint: 'structural',
       group: 'Header',
     },
 
@@ -88,6 +94,7 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Footer minimum height',
       validation: { maxLength: 200 },
+      editorHint: 'structural',
       group: 'Footer',
     },
 
@@ -101,6 +108,7 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
         { value: 'left', label: 'Left' },
         { value: 'right', label: 'Right' },
       ],
+      editorHint: 'structural',
       group: 'Sidebar',
     },
     'style.width': {
@@ -109,6 +117,7 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Sidebar width (e.g., "280px", "20rem")',
       validation: { maxLength: 200 },
+      editorHint: 'structural',
       group: 'Sidebar',
     },
     collapsible: {
@@ -116,6 +125,7 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Collapsible',
       default: false,
       description: 'Allow sidebar to collapse on smaller screens',
+      editorHint: 'structural',
       group: 'Sidebar',
     },
   },

@@ -129,19 +129,17 @@ export function PresentationWrapper({
     })
   }, [config?.model])
 
-  // If no config, just render children without wrapper
-  if (!config) {
-    return <>{children}</>
-  }
-
   // Get phase for infinite-carousel (defaults to 'ready' if not present)
-  const phase = hasInfiniteCarouselState(state) ? state.phase : undefined
+  const phase = config && hasInfiniteCarouselState(state) ? state.phase : undefined
 
+  // Always render a stable wrapper div to prevent Fragment→div structural change
+  // when experience loads asynchronously (which unmounts/remounts all children,
+  // destroying DOM elements that intro triggers are listening to).
   return (
     <div
       className="presentation-wrapper"
-      style={combinedStyles}
-      data-presentation={config.model}
+      style={config ? combinedStyles : undefined}
+      data-presentation={config?.model}
       data-phase={phase}
     >
       {children}

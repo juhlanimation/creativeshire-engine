@@ -22,6 +22,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Unique identifier for the overlay',
       validation: { maxLength: 100 },
+      editorHint: 'structural',
       group: 'Identity',
     },
     type: {
@@ -30,6 +31,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Overlay type identifier',
       validation: { maxLength: 100 },
+      editorHint: 'structural',
       group: 'Identity',
     },
 
@@ -39,6 +41,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Backdrop',
       default: false,
       description: 'Show a backdrop behind the overlay',
+      editorHint: 'structural',
       group: 'Appearance',
     },
     closeButton: {
@@ -46,6 +49,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Close Button',
       default: true,
       description: 'Show a close button',
+      editorHint: 'structural',
       group: 'Appearance',
     },
     closeOnBackdrop: {
@@ -53,6 +57,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Close on Backdrop',
       default: true,
       description: 'Close the overlay when clicking the backdrop',
+      editorHint: 'structural',
       group: 'Appearance',
     },
     closeOnEsc: {
@@ -60,6 +65,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       label: 'Close on Escape',
       default: true,
       description: 'Close the overlay when pressing Escape',
+      editorHint: 'structural',
       group: 'Appearance',
     },
 
@@ -76,6 +82,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
         { value: 'wipe', label: 'Wipe' },
         { value: 'expand', label: 'Expand' },
       ],
+      editorHint: 'structural',
       group: 'Animation',
     },
     'animation.duration': {
@@ -86,6 +93,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       min: 0,
       max: 2000,
       step: 50,
+      editorHint: 'structural',
       group: 'Animation',
     },
     'animation.easing': {
@@ -94,6 +102,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       default: 'ease-out',
       description: 'Animation easing function (e.g., "ease-out", "cubic-bezier(...)")',
       validation: { maxLength: 200 },
+      editorHint: 'structural',
       group: 'Animation',
     },
 
@@ -104,6 +113,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Overlay width',
       validation: { maxLength: 200 },
+      editorHint: 'structural',
       group: 'Style',
     },
     'style.maxWidth': {
@@ -112,6 +122,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Maximum overlay width',
       validation: { maxLength: 200 },
+      editorHint: 'structural',
       group: 'Style',
     },
     'style.maxHeight': {
@@ -120,6 +131,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Maximum overlay height',
       validation: { maxLength: 200 },
+      editorHint: 'structural',
       group: 'Style',
     },
     'style.padding': {
@@ -128,6 +140,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Overlay padding',
       validation: { min: 0, max: 500 },
+      editorHint: 'structural',
       group: 'Style',
     },
     'style.borderRadius': {
@@ -136,6 +149,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Overlay border radius (e.g., "8px", "0.5rem")',
       validation: { maxLength: 200 },
+      editorHint: 'structural',
       group: 'Style',
     },
     'style.backgroundColor': {
@@ -152,6 +166,7 @@ export const overlayBaseMeta = defineMeta<Record<string, unknown>>({
       description: 'Additional CSS class names',
       validation: { maxLength: 200 },
       advanced: true,
+      editorHint: 'structural',
       group: 'Style',
     },
   },

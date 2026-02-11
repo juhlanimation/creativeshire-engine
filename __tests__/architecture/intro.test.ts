@@ -701,8 +701,14 @@ describe('Intro Cross-Validation', () => {
       const content = await readFile(rendererPath)
 
       expect(content, 'SiteRenderer should import IntroProvider').toContain('IntroProvider')
-      expect(content, 'SiteRenderer should import getIntroPattern').toContain('getIntroPattern')
       expect(content, 'SiteRenderer should import ensureIntroPatternsRegistered').toContain('ensureIntroPatternsRegistered')
+    })
+
+    it('useResolvedIntro hook imports getIntroPattern', async () => {
+      const hookPath = path.join(ENGINE, 'renderer', 'hooks', 'useResolvedIntro.ts')
+      const content = await readFile(hookPath)
+
+      expect(content, 'useResolvedIntro should import getIntroPattern').toContain('getIntroPattern')
     })
 
     it('SiteRenderer uses IntroProvider in render tree', async () => {
