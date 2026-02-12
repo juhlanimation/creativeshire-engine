@@ -7,7 +7,7 @@
  * Features:
  * - Fixed full-viewport video with custom loop point (loopStartTime)
  * - Timed text overlay reveal (textRevealTime) via video timeupdate
- * - Auto-pause when hero is not visible (IntersectionObserver)
+ * - Auto-pause when hero is scrolled past (scroll-position check)
  * - Responsive scroll indicator (text on desktop, arrow on touch)
  *
  * Cover progress tracking is handled externally by the scroll/cover-progress behaviour.
@@ -15,7 +15,7 @@
  * Why interactive (not pattern):
  * - Local state (showText)
  * - Video element refs and event handlers
- * - IntersectionObserver for visibility-based pause
+ * - Scroll-position-based pause (pinned sections portal to fixed layer)
  * - Multiple effects (timeupdate, ended, visibility)
  */
 
@@ -39,7 +39,6 @@ export default function HeroVideo({
   'data-behaviour': dataBehaviour,
 }: HeroVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
   const [showText, setShowText] = useState(!externalReveal && textRevealTime === 0)
 
   // Text reveal: skip JS timer when externally revealed (CSS variable controls it)
@@ -80,27 +79,38 @@ export default function HeroVideo({
     return () => video.removeEventListener('ended', handleEnded)
   }, [loopStartTime])
 
-  // Auto-pause when hero is not visible (scrolled past)
+  // Auto-pause when hero is scrolled past (pinned sections use portals,
+  // so IntersectionObserver can't detect when they're covered)
   useEffect(() => {
-    const container = containerRef.current
     const video = videoRef.current
-    if (!container || !video) return
+    if (!video) return
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          video.play().catch(() => {
-            // Autoplay may be blocked - silent fail
-          })
-        } else {
-          video.pause()
-        }
-      },
-      { threshold: 0 }
-    )
+    let rafId: number | null = null
 
-    observer.observe(container)
-    return () => observer.disconnect()
+    const checkVisibility = () => {
+      rafId = null
+      const isVisible = window.scrollY <= window.innerHeight
+      if (isVisible) {
+        video.play().catch(() => {})
+      } else {
+        video.pause()
+      }
+    }
+
+    const onScroll = () => {
+      if (rafId === null) {
+        rafId = requestAnimationFrame(checkVisibility)
+      }
+    }
+
+    // Initial check
+    checkVisibility()
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (rafId !== null) cancelAnimationFrame(rafId)
+    }
   }, [])
 
   const containerClasses = [
@@ -110,7 +120,6 @@ export default function HeroVideo({
 
   return (
     <div
-      ref={containerRef}
       className={containerClasses}
       data-behaviour={dataBehaviour}
     >

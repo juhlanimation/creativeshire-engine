@@ -35,19 +35,16 @@ export const cinematicPortfolioExperience: Experience = {
     { type: 'cursor', target: ['cursorX', 'cursorY'] },
   ],
 
-  behaviourDefaults: {
-    // Section defaults
-    section: 'none',
-    About: 'scroll/fade',
+  sectionInjections: {
+    About: { behaviour: 'scroll/fade' },
+  },
 
-    // Widget defaults
+  widgetBehaviourDefaults: {
     HeroTitle: 'scroll/color-shift',
     ScrollIndicator: 'scroll/progress',
     VideoThumbnail: 'hover/scale',
     ProjectCard: 'hover/scale',
     LogoMarquee: 'animation/marquee',
-
-    // Chrome widget defaults
     FloatingContact: 'hover/reveal',
   },
 }

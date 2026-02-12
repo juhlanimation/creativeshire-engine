@@ -1,0 +1,552 @@
+'use client'
+
+/**
+ * DevToolsPanel - unified tabbed dev tools panel.
+ * Consolidates experience, intro, transition, and preset switchers.
+ *
+ * Two modes:
+ * 1. Minimized bar — row of icon buttons at bottom-right
+ * 2. Expanded panel — tab bar + item list + optional settings
+ *
+ * Only renders in development mode, not in iframes.
+ */
+
+import { useState, useCallback, useMemo, useSyncExternalStore, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
+import { useStore } from 'zustand'
+import { useSiteContainer } from '../../SiteContainerContext'
+import { TAB_CONFIGS } from './tabs'
+import { SettingsEditor } from './SettingsEditor'
+import { devSettingsStore, useDevExperienceSettings } from '../devSettingsStore'
+import { getBehaviour, getAllBehaviourMetas } from '../../../experience/behaviours'
+import { getExperience, useExperience } from '../../../experience'
+import { capitalize } from '../../utils'
+import type { SectionSchema } from '../../../schema'
+import type { DevToolsTabConfig } from './types'
+import './styles.css'
+
+// SSR-safe subscription
+const subscribeNoop = () => () => {}
+
+/** Look up experience definition for sectionInjections. Returns null if not found. */
+function getExperienceForSectionInjections(id: string) {
+  return getExperience(id) ?? null
+}
+
+interface DevToolsPanelProps {
+  /** Current IDs from schema, keyed by tab id */
+  currentIds: Record<string, string>
+  /** Page sections for extracting behaviour settings */
+  sections?: SectionSchema[]
+}
+
+interface PanelState {
+  expanded: boolean
+  activeTabId: string
+  showSettings: string | null // item id showing settings
+}
+
+export function DevToolsPanel({ currentIds, sections }: DevToolsPanelProps) {
+  const shouldShow = useSyncExternalStore(
+    subscribeNoop,
+    () => process.env.NODE_ENV === 'development'
+      && typeof window !== 'undefined'
+      && window.self === window.top,
+    () => false,
+  )
+
+  const { siteContainer } = useSiteContainer()
+
+  if (!shouldShow || !siteContainer) return null
+
+  return createPortal(
+    <DevToolsPanelInner currentIds={currentIds} sections={sections} />,
+    siteContainer,
+  )
+}
+
+function DevToolsPanelInner({ currentIds, sections }: DevToolsPanelProps) {
+  // Merged experience from context (includes preset sectionInjections)
+  const { experience: contextExperience } = useExperience()
+
+  const [state, setState] = useState<PanelState>({
+    expanded: false,
+    activeTabId: 'experience',
+    showSettings: null,
+  })
+
+  // Read overrides once on mount (not reactive — tabs handle their own reactivity)
+  const [overrides, setOverrides] = useState<Record<string, string | null>>(() => {
+    const result: Record<string, string | null> = {}
+    for (const tab of TAB_CONFIGS) {
+      result[tab.id] = tab.getOverride()
+    }
+    return result
+  })
+
+  const activeTab = useMemo(
+    () => TAB_CONFIGS.find((t) => t.id === state.activeTabId) ?? TAB_CONFIGS[0],
+    [state.activeTabId],
+  )
+
+  const items = useMemo(() => activeTab.getItems(), [activeTab])
+
+  const activeOverride = overrides[activeTab.id]
+  const currentId = currentIds[activeTab.id] ?? ''
+  const activeId = activeOverride ?? currentId
+
+  // Dev settings for live editing
+  const devExperienceSettings = useDevExperienceSettings() ?? {}
+
+  // Build experience settings values (defaults + dev overrides)
+  const experienceSettingsValues = useMemo(() => {
+    const item = items.find((i) => i.id === activeId)
+    if (!item?.settings) return {}
+    const defaults: Record<string, unknown> = {}
+    for (const [key, config] of Object.entries(item.settings) as [string, { default: unknown } | undefined][]) {
+      if (config) defaults[key] = config.default
+    }
+    return { ...defaults, ...devExperienceSettings }
+  }, [items, activeId, devExperienceSettings])
+
+  // Check if any section behaviour overrides exist (for reset button)
+  const hasSectionBehaviourOverrides = useStore(
+    devSettingsStore,
+    (s) => Object.keys(s.sectionBehaviours).length > 0 || Object.keys(s.sectionPinned).length > 0,
+  )
+
+  const handleExpand = useCallback((tabId: string) => {
+    setState((s) => ({
+      ...s,
+      expanded: true,
+      activeTabId: tabId,
+      showSettings: null,
+    }))
+  }, [])
+
+  const handleMinimize = useCallback(() => {
+    setState((s) => ({ ...s, expanded: false, showSettings: null }))
+  }, [])
+
+  const handleTabSwitch = useCallback((tabId: string) => {
+    setState((s) => ({ ...s, activeTabId: tabId, showSettings: null }))
+  }, [])
+
+  const handleSelect = useCallback((tab: DevToolsTabConfig, id: string | null) => {
+    // Update local override state
+    setOverrides((prev) => ({ ...prev, [tab.id]: id }))
+    // Apply the override (live or reload)
+    tab.setOverride(id)
+    if (tab.mode === 'live') {
+      setState((s) => ({ ...s, showSettings: null }))
+    }
+    // For reload mode, the page will reload so no need to update state
+  }, [])
+
+  const handleToggleSettings = useCallback((itemId: string) => {
+    setState((s) => ({
+      ...s,
+      showSettings: s.showSettings === itemId ? null : itemId,
+    }))
+  }, [])
+
+  if (!state.expanded) {
+    return (
+      <MinimizedBar
+        overrides={overrides}
+        onExpand={handleExpand}
+      />
+    )
+  }
+
+  // Find the item with settings currently being shown
+  const settingsItem = state.showSettings
+    ? items.find((i) => i.id === state.showSettings)
+    : null
+
+  return (
+    <div
+      className="dt-panel"
+      style={{ '--dt-accent': activeTab.color } as React.CSSProperties}
+    >
+      {/* Tab bar */}
+      <div className="dt-panel__tabs">
+        {TAB_CONFIGS.map((tab) => (
+          <button
+            key={tab.id}
+            className={`dt-panel__tab ${tab.id === state.activeTabId ? 'dt-panel__tab--active' : ''}`}
+            onClick={() => handleTabSwitch(tab.id)}
+            title={tab.label}
+            style={tab.id === state.activeTabId ? { '--dt-tab-color': tab.color } as React.CSSProperties : undefined}
+          >
+            <span className="dt-panel__tab-icon">{tab.icon}</span>
+            {overrides[tab.id] && <span className="dt-panel__tab-dot" style={{ background: `rgb(${tab.color})` }} />}
+          </button>
+        ))}
+        <button
+          className="dt-panel__minimize"
+          onClick={handleMinimize}
+          title="Minimize"
+        >
+          _
+        </button>
+      </div>
+
+      {/* Header */}
+      <div className="dt-panel__header">
+        <span>{activeTab.headerTitle}</span>
+        {activeOverride && (
+          <button
+            className="dt-panel__reset"
+            onClick={() => handleSelect(activeTab, null)}
+            title="Reset to schema default"
+          >
+            Reset
+          </button>
+        )}
+        {state.activeTabId === 'experience' && Object.keys(devExperienceSettings).length > 0 && (
+          <button
+            className="dt-panel__reset"
+            onClick={() => devSettingsStore.getState().resetExperienceSettings()}
+            title="Reset setting overrides"
+          >
+            Reset Settings
+          </button>
+        )}
+        {state.activeTabId === 'experience' && hasSectionBehaviourOverrides && (
+          <button
+            className="dt-panel__reset"
+            onClick={() => devSettingsStore.getState().resetSectionBehaviours()}
+            title="Reset section behaviour assignments"
+          >
+            Reset Behaviours
+          </button>
+        )}
+      </div>
+
+      {/* Item list */}
+      <div className="dt-panel__items">
+        {/* "None" option for tabs that support it */}
+        {activeTab.allowNone && (
+          <ItemButton
+            id="none"
+            name={activeTab.noneLabel ?? 'None'}
+            description={activeTab.noneDescription}
+            isActive={activeId === 'none'}
+            isDefault={currentId === 'none' && !activeOverride}
+            onSelect={() => handleSelect(activeTab, 'none')}
+          />
+        )}
+
+        {items.map((item) => (
+          <ItemButton
+            key={item.id}
+            id={item.id}
+            name={item.name}
+            description={item.description}
+            isActive={item.id === activeId}
+            isDefault={item.id === currentId && !activeOverride}
+            hasSettings={
+              state.activeTabId !== 'experience'
+              && !!item.settings && Object.keys(item.settings).length > 0
+            }
+            showingSettings={state.showSettings === item.id}
+            onSelect={() => handleSelect(activeTab, item.id)}
+            onToggleSettings={() => handleToggleSettings(item.id)}
+          />
+        ))}
+      </div>
+
+      {/* Experience tab: always show settings for the active experience */}
+      {state.activeTabId === 'experience' && (() => {
+        const activeItem = items.find((i) => i.id === activeId)
+        const hasExpSettings = activeItem?.settings && Object.keys(activeItem.settings).length > 0
+        // Use merged experience from context (includes preset sectionInjections)
+        // Falls back to registry lookup if context doesn't match active selection
+        const activeExperience = contextExperience.id === activeId
+          ? contextExperience
+          : getExperienceForSectionInjections(activeId)
+        return (
+          <>
+            {hasExpSettings && (
+              <SettingsEditor
+                settings={activeItem!.settings!}
+                values={experienceSettingsValues}
+                onChange={(key, value) => devSettingsStore.getState().setExperienceSetting(key, value)}
+                header="Experience Settings"
+              />
+            )}
+            {sections && sections.length > 0 && (
+              <SectionBehaviourAssigner
+                sections={sections}
+                experience={activeExperience}
+              />
+            )}
+          </>
+        )
+      })()}
+
+      {/* Non-experience tab settings (gear toggle, read-only — future work) */}
+      {state.activeTabId !== 'experience' && settingsItem?.settings && Object.keys(settingsItem.settings).length > 0 && (
+        <SettingsEditor
+          settings={settingsItem.settings}
+          values={Object.fromEntries(
+            Object.entries(settingsItem.settings).map(([k, v]) => [k, v?.default])
+          )}
+          onChange={() => {}}
+          header="Settings"
+        />
+      )}
+
+      {/* Footer */}
+      {activeTab.footerMessage && (
+        <div className="dt-panel__footer">
+          {activeTab.footerMessage}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// =============================================================================
+// MinimizedBar
+// =============================================================================
+
+interface MinimizedBarProps {
+  overrides: Record<string, string | null>
+  onExpand: (tabId: string) => void
+}
+
+function MinimizedBar({ overrides, onExpand }: MinimizedBarProps) {
+  return (
+    <div className="dt-bar">
+      {TAB_CONFIGS.map((tab) => (
+        <button
+          key={tab.id}
+          className="dt-bar__btn"
+          onClick={() => onExpand(tab.id)}
+          title={tab.label}
+        >
+          <span className="dt-bar__icon">{tab.icon}</span>
+          {overrides[tab.id] && (
+            <span className="dt-bar__dot" style={{ background: `rgb(${tab.color})` }} />
+          )}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+// =============================================================================
+// SectionBehaviourAssigner
+// =============================================================================
+
+/** All registered behaviour metas (computed once). */
+const allBehaviourMetas = getAllBehaviourMetas()
+
+interface SectionBehaviourAssignerProps {
+  sections: SectionSchema[]
+  experience: ReturnType<typeof getExperienceForSectionInjections>
+}
+
+/**
+ * Shows all sections with a behaviour dropdown and per-section settings.
+ * Lets users assign any registered behaviour to any section.
+ */
+function SectionBehaviourAssigner({ sections, experience }: SectionBehaviourAssignerProps) {
+  return (
+    <div className="dt-settings" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+      <div className="dt-settings__header">Section Behaviours</div>
+      {sections.map((section) => (
+        <SectionBehaviourRow
+          key={section.id}
+          section={section}
+          experience={experience}
+        />
+      ))}
+    </div>
+  )
+}
+
+interface SectionBehaviourRowProps {
+  section: SectionSchema
+  experience: ReturnType<typeof getExperienceForSectionInjections>
+}
+
+/**
+ * Single section row: label, behaviour dropdown, and settings editor.
+ */
+function SectionBehaviourRow({ section, experience }: SectionBehaviourRowProps) {
+  // Resolve injection from experience sectionInjections
+  const injection = useMemo(() => {
+    if (!experience?.sectionInjections) return {}
+    return experience.sectionInjections[section.id]
+      ?? experience.sectionInjections[capitalize(section.id)]
+      ?? experience.sectionInjections['*']
+      ?? {}
+  }, [section.id, experience])
+
+  const schemaBehaviourId = injection.behaviour ?? null
+
+  // Dev override from store
+  const devOverride = useStore(
+    devSettingsStore,
+    (s) => s.sectionBehaviours[section.id],
+  )
+  const devOptions = useStore(
+    devSettingsStore,
+    (s) => s.sectionBehaviourOptions[section.id],
+  )
+  const devPinned = useStore(
+    devSettingsStore,
+    (s) => s.sectionPinned[section.id] !== undefined ? s.sectionPinned[section.id] : undefined,
+  )
+
+  // Active behaviour: dev override → schema → 'none'
+  const activeBehaviourId = devOverride ?? schemaBehaviourId ?? 'none'
+
+  // Resolve the active behaviour definition for settings
+  const behaviour = useMemo(() => {
+    if (!activeBehaviourId || activeBehaviourId === 'none') return null
+    return getBehaviour(activeBehaviourId)
+  }, [activeBehaviourId])
+
+  // Build settings values (defaults + dev per-section options)
+  const settingsValues = useMemo(() => {
+    if (!behaviour?.settings) return {}
+    const defaults: Record<string, unknown> = {}
+    for (const [key, config] of Object.entries(behaviour.settings) as [string, { default: unknown } | undefined][]) {
+      if (config) defaults[key] = config.default
+    }
+    // Schema options from injection
+    const schemaOpts = injection.behaviourOptions ?? {}
+    return { ...defaults, ...schemaOpts, ...(devOptions ?? {}) }
+  }, [behaviour?.settings, injection.behaviourOptions, devOptions])
+
+  const hasSettings = behaviour?.settings && Object.keys(behaviour.settings).length > 0
+
+  return (
+    <div style={{ padding: '6px 12px 2px' }}>
+      {/* Section label */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+        <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: 11, fontWeight: 500 }}>
+          {section.id}
+        </span>
+        {section.layout?.pattern && (
+          <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10 }}>
+            ({section.layout.pattern})
+          </span>
+        )}
+      </div>
+
+      {/* Behaviour dropdown */}
+      <select
+        value={activeBehaviourId}
+        onChange={(e) => {
+          const val = e.target.value
+          if (val === (schemaBehaviourId ?? 'none')) {
+            // Reset to schema default — remove dev override
+            devSettingsStore.getState().setSectionBehaviour(section.id, null)
+          } else {
+            devSettingsStore.getState().setSectionBehaviour(section.id, val)
+          }
+        }}
+        className="dt-settings__select"
+        style={{ width: '100%', maxWidth: 'none', marginBottom: 4 }}
+      >
+        <option value="none">None</option>
+        {allBehaviourMetas.map((meta) => (
+          <option key={meta.id} value={meta.id}>
+            {meta.name} ({meta.id})
+          </option>
+        ))}
+      </select>
+
+      {/* Pinned toggle */}
+      <label style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>
+        <input
+          type="checkbox"
+          checked={devPinned ?? injection.pinned ?? false}
+          onChange={(e) => {
+            const checked = e.target.checked
+            const defaultPinned = injection.pinned ?? false
+            if (checked === defaultPinned) {
+              devSettingsStore.getState().setSectionPinned(section.id, null)
+            } else {
+              devSettingsStore.getState().setSectionPinned(section.id, checked)
+            }
+          }}
+          style={{ margin: 0 }}
+        />
+        Pinned
+        {injection.pinned && <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10 }}>(default: on)</span>}
+      </label>
+
+      {/* Per-section behaviour settings */}
+      {hasSettings && (
+        <SettingsEditor
+          settings={behaviour!.settings!}
+          values={settingsValues}
+          onChange={(key, value) =>
+            devSettingsStore.getState().setSectionBehaviourOption(section.id, key, value)
+          }
+        />
+      )}
+    </div>
+  )
+}
+
+// =============================================================================
+// ItemButton
+// =============================================================================
+
+interface ItemButtonProps {
+  id: string
+  name: string
+  description?: string
+  isActive: boolean
+  isDefault: boolean
+  hasSettings?: boolean
+  showingSettings?: boolean
+  onSelect: () => void
+  onToggleSettings?: () => void
+}
+
+function ItemButton({
+  name,
+  description,
+  isActive,
+  isDefault,
+  hasSettings,
+  showingSettings,
+  onSelect,
+  onToggleSettings,
+}: ItemButtonProps): ReactNode {
+  return (
+    <div className={`dt-item ${isActive ? 'dt-item--active' : ''}`}>
+      <button
+        className="dt-item__main"
+        onClick={onSelect}
+      >
+        <span className="dt-item__name">{name}</span>
+        {description && <span className="dt-item__desc">{description}</span>}
+        {isDefault && <span className="dt-item__default">default</span>}
+      </button>
+      {hasSettings && isActive && (
+        <button
+          className={`dt-item__gear ${showingSettings ? 'dt-item__gear--active' : ''}`}
+          onClick={(e) => {
+            e.stopPropagation()
+            onToggleSettings?.()
+          }}
+          title="Settings"
+        >
+          &#9881;
+        </button>
+      )}
+    </div>
+  )
+}
+
+// Re-export types for external use
+export type { DevToolsPanelProps }

@@ -24,6 +24,9 @@ export {
   getExperienceIds,
   getAllExperiences,
   getAllExperienceMetas,
+  DEV_EXPERIENCE_PARAM,
+  getExperienceOverride,
+  setExperienceOverride,
   type ExperienceMeta,
 } from './registry'
 
@@ -89,6 +92,7 @@ export type {
   Experience,
   ExperienceContextValue,
   ExperienceProviderProps,
+  SectionInjection,
   PresentationModel,
   PresentationConfig,
   NavigationInput,

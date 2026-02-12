@@ -15,7 +15,7 @@ export const meta = defineSectionMeta<OtherProjectsProps>({
   icon: 'gallery',
   tags: ['portfolio', 'projects', 'gallery', 'horizontal'],
   component: false, // Factory function
-  ownedFields: ['layout', 'behaviour', 'behaviourOptions', 'className'],
+  ownedFields: ['layout', 'className'],
 
   settings: {
     heading: {

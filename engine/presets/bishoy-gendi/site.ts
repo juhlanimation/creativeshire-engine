@@ -17,6 +17,9 @@ import type { IntroConfig } from '../../intro/types'
  */
 export const experienceConfig: PresetExperienceConfig = {
   id: 'infinite-carousel',
+  sectionInjections: {
+    showreel: { pinned: true },
+  },
 }
 
 /**

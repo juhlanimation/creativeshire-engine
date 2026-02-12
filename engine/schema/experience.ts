@@ -64,10 +64,13 @@ export type BehaviourConfig =
 /**
  * Experience configuration for a site.
  * References an experience by ID. Behaviour defaults live in the Experience definition.
+ * `sectionInjections` allows the preset/schema to override per-section L2 config.
  */
 export interface ExperienceConfig {
   /** Experience ID (e.g., 'stacking', 'cinematic-portfolio') */
   id: string
   /** Experience-specific settings from CMS */
   settings?: Record<string, unknown>
+  /** Per-section L2 overrides (pinned, behaviour, behaviourOptions). Keys are section IDs. */
+  sectionInjections?: Record<string, import('../experience/experiences/types').SectionInjection>
 }

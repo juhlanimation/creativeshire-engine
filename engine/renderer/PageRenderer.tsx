@@ -34,6 +34,7 @@ export function PageRenderer({ page }: PageRendererProps) {
           key={section.id}
           section={section}
           index={index}
+          totalSections={visibleSections.length}
         />
       ))}
     </main>

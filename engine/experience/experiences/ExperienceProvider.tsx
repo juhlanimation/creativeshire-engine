@@ -5,7 +5,7 @@
  * Experience Layer (L2) - provides state for behaviours and drivers.
  */
 
-import { createContext, useContext, type ReactNode } from 'react'
+import { createContext, useContext, useMemo, type ReactNode } from 'react'
 import type { ExperienceContextValue, ExperienceProviderProps } from './types'
 
 /**
@@ -36,10 +36,15 @@ export function useExperience(): ExperienceContextValue {
 export function ExperienceProvider({
   experience,
   store,
+  settings,
   children,
 }: ExperienceProviderProps): ReactNode {
+  const value = useMemo(
+    () => ({ experience, store, settings: settings ?? {} }),
+    [experience, store, settings],
+  )
   return (
-    <ExperienceContext.Provider value={{ experience, store }}>
+    <ExperienceContext.Provider value={value}>
       {children}
     </ExperienceContext.Provider>
   )

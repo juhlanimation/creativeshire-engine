@@ -33,7 +33,6 @@ const showreelSection: SectionSchema = {
     height: '100dvh',
   },
   className: 'section-showreel',
-  pinned: true,
   widgets: [
     {
       id: 'showreel-video',

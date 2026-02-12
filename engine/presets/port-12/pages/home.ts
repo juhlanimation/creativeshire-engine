@@ -23,15 +23,6 @@ const heroSection: SectionSchema = {
   label: 'Hero',
   layout: { type: 'stack', direction: 'column' },
   style: { height: '100dvh', position: 'relative', overflow: 'hidden' },
-  pinned: true,
-  behaviour: {
-    id: 'scroll/cover-progress',
-    options: {
-      propagateToRoot: '--hero-cover-progress',
-      propagateContentEdge: '--hero-content-edge',
-      targetSelector: '.hero-video__title',
-    },
-  },
   widgets: [
     {
       id: 'hero-video',
@@ -112,7 +103,7 @@ function createPlanCardWidgets(planKey: string) {
   return {
     id: `plan-${planKey}`,
     type: 'Flex' as const,
-    props: { direction: 'column' as const, align: 'center' as const, gap: '0.5rem' },
+    props: { direction: 'column' as const, align: 'center' as const, gap: '0' },
     className: 'plan-card',
     widgets: [
       { id: `${planKey}-illustration`, type: 'Image' as const, props: { src: `{{ ${p}.illustration }}`, alt: `{{ ${p}.name }} illustration`, decorative: true }, className: 'plan-card__illustration' },
@@ -165,7 +156,7 @@ const medlemskabSection: SectionSchema = {
     {
       id: 'pricing-contact',
       type: 'Flex',
-      props: { direction: 'column', align: 'center', gap: '0.5rem' },
+      props: { direction: 'column', align: 'center', gap: '0' },
       className: 'pricing-contact',
       widgets: [
         { id: 'contact-illustration', type: 'Image', props: { src: '{{ content.contact.illustration }}', alt: 'Kontakt', decorative: true }, className: 'pricing-contact__illustration' },

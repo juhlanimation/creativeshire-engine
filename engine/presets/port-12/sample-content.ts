@@ -103,7 +103,7 @@ export const port12SampleContent = {
 
   footer: {
     brandName: 'PORT12',
-    copyright: '© 2025 PORT12. Alle rettigheder forbeholdt.',
+    copyright: 'Copyright © All rights reserved.',
     navLinks: [
       { href: '#om', label: 'OM PORT12' },
       { href: '#medlemmer', label: 'MEDLEMMER' },

@@ -169,7 +169,7 @@ function validateSettingConstraints(content: string, context: string): string[] 
 
   // Types that don't need constraints
   const SKIP_TYPES = [
-    'toggle', 'select', 'range', 'image', 'video', 'icon', 'color', 'alignment', 'custom', 'boolean',
+    'toggle', 'select', 'range', 'image', 'video', 'icon', 'color', 'alignment', 'element-ref', 'custom', 'boolean',
   ]
 
   // Now walk through settingsBlock at depth 0 to find top-level keys

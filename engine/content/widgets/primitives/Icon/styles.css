@@ -24,6 +24,10 @@
 .icon-widget svg {
   width: 100%;
   height: 100%;
+}
+
+/* Only apply fill when SVG doesn't specify its own (preserves stroke-based icons) */
+.icon-widget svg:not([fill]) {
   fill: currentColor;
 }
 

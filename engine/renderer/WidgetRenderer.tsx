@@ -43,7 +43,7 @@ function resolveWidgetBehaviour(
   }
 
   // Check experience defaults by widget type (e.g., 'HeroTitle', 'ProjectCard')
-  return experience.behaviourDefaults[widget.type] ?? null
+  return experience.widgetBehaviourDefaults?.[widget.type] ?? null
 }
 
 /**

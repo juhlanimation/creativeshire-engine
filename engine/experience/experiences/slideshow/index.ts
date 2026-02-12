@@ -46,8 +46,8 @@ export const slideshowExperience: Experience = {
 
   triggers: [],  // Navigation handled by NavigationInitializer now
 
-  behaviourDefaults: {
-    section: 'slide/item',
+  sectionInjections: {
+    '*': { behaviour: 'slide/item' },
   },
 
   // Presentation config - uses scroll-snap for crisp section stops

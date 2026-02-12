@@ -27,9 +27,7 @@ export const simpleExperience: Experience = {
     })),
   triggers: [],
 
-  behaviourDefaults: {
-    section: 'none',
-  },
+  sectionInjections: {},
 
   // Bare mode: ignore ALL behaviours including schema-level ones
   bareMode: true,

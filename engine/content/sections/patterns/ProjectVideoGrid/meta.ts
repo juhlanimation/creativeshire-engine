@@ -15,7 +15,7 @@ export const meta = defineSectionMeta<ProjectVideoGridProps>({
   icon: 'grid',
   tags: ['project', 'video', 'grid', 'gallery'],
   component: false,
-  ownedFields: ['layout', 'behaviour', 'behaviourOptions', 'className'],
+  ownedFields: ['layout', 'className'],
 
   settings: {
     logo: {

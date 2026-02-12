@@ -101,14 +101,17 @@ export interface ExperienceTriggerConfig {
 }
 
 /**
- * Behaviour defaults by section pattern or widget type.
- * Keys are pattern/type names, values are behaviour IDs.
+ * Per-section L2 injection from the experience layer.
+ * Replaces pinned/behaviour/behaviourOptions on SectionSchema.
+ * Keys in the Record are section IDs; '*' is the fallback.
  */
-export interface BehaviourDefaults {
-  /** Default behaviour for all sections (fallback) */
-  section?: string
-  /** Default behaviour per section pattern or widget type */
-  [typeOrPattern: string]: string | undefined
+export interface SectionInjection {
+  /** Whether this section is pinned (sticky in cover-scroll) */
+  pinned?: boolean
+  /** Behaviour ID to apply */
+  behaviour?: string
+  /** Options passed to the behaviour */
+  behaviourOptions?: Record<string, unknown>
 }
 
 /**
@@ -176,6 +179,10 @@ export interface PresentationConfig {
   /** Whether this presentation model takes over page-level scrolling.
    *  When true, SmoothScrollProvider is disabled regardless of theme config. */
   ownsPageScroll?: boolean
+
+  /** Override the theme's smooth scroll config for this experience.
+   *  Merged on top of theme.smoothScroll — e.g., force Lenis for CSS sticky compatibility. */
+  smoothScrollOverride?: import('../../schema').SmoothScrollConfig
 
   /** Section visibility behavior */
   visibility: {
@@ -360,7 +367,7 @@ export interface ExperienceActions {
 /**
  * Experience definition.
  * Bundles state provider + behaviour defaults.
- * Chrome structure stays in Preset; chrome behaviours come from behaviourDefaults.
+ * Chrome structure stays in Preset; chrome behaviours come from widgetBehaviourDefaults.
  *
  * For structural experiences (slideshow, gallery), use:
  * - pageWrapper: wrap entire page in a behaviour
@@ -397,10 +404,12 @@ export interface Experience {
   /** Triggers that update store state */
   triggers: ExperienceTriggerConfig[]
 
-  // Behaviour defaults
+  // Section injections (L2 → L1 dependency injection)
 
-  /** Default behaviours by section pattern or widget type */
-  behaviourDefaults: BehaviourDefaults
+  /** Per-section L2 config. Keys are section IDs, '*' = fallback. */
+  sectionInjections: Record<string, SectionInjection>
+  /** Default behaviours by widget type (e.g., { HeroTitle: 'scroll/color-shift' }) */
+  widgetBehaviourDefaults?: Record<string, string>
 
   // Structural configuration (optional - for experiences like slideshow)
 

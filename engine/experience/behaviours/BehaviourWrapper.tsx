@@ -25,6 +25,7 @@ import {
   type CSSProperties,
 } from 'react'
 import { resolveBehaviour } from './resolve'
+import { useDevBehaviourOptions } from '../../renderer/dev/devSettingsStore'
 import { getDriver, releaseDriver } from '../drivers/getDriver'
 import { useContainer } from '../../interface/ContainerContext'
 import { useIntro } from '../../intro'
@@ -143,6 +144,15 @@ export function BehaviourWrapper({
     return resolveBehaviour(behaviourId)
   }, [behaviourId])
 
+  // Dev-only: merge settings overrides from DevToolsPanel
+  // Returns undefined in production (tree-shaken by NODE_ENV check)
+  const devBehaviourOverrides = useDevBehaviourOptions(behaviourId)
+
+  const mergedOptions = useMemo(
+    () => devBehaviourOverrides ? { ...options, ...devBehaviourOverrides } : options,
+    [options, devBehaviourOverrides],
+  )
+
   // Determine if this behaviour needs scroll driver
   const usesScrollDriver = useMemo(() => {
     return behaviour ? needsScrollDriver(behaviour) : false
@@ -163,14 +173,14 @@ export function BehaviourWrapper({
     // Register element with driver
     // Pass visibilityGetter for sections to use store-based visibility (from useIntersection)
     // instead of duplicate IntersectionObserver tracking
-    driver.register(id, element, behaviour, options ?? {}, visibilityGetter)
+    driver.register(id, element, behaviour, mergedOptions ?? {}, visibilityGetter)
 
     // Cleanup: unregister from driver and release reference
     return () => {
       driver.unregister(id)
       releaseDriver(container)
     }
-  }, [behaviour, usesScrollDriver, id, options, mode, containerRef, visibilityGetter])
+  }, [behaviour, usesScrollDriver, id, mergedOptions, mode, containerRef, visibilityGetter])
 
   // Event handlers
   const handleMouseEnter = useCallback(() => setIsHovered(true), [])
@@ -207,7 +217,7 @@ export function BehaviourWrapper({
     }
 
     // Compute CSS variables
-    const cssVars = behaviour.compute(state, options) as CSSVariables
+    const cssVars = behaviour.compute(state, mergedOptions) as CSSVariables
 
     // Convert to CSSProperties
     const varsStyle: CSSProperties = {}
@@ -217,7 +227,7 @@ export function BehaviourWrapper({
     })
 
     return { ...style, ...varsStyle }
-  }, [behaviour, usesScrollDriver, isHovered, isPressed, prefersReducedMotion, initialState, options, style, introContext])
+  }, [behaviour, usesScrollDriver, isHovered, isPressed, prefersReducedMotion, initialState, mergedOptions, style, introContext])
 
   // No behaviour - just render children
   if (!behaviour) {

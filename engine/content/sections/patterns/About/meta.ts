@@ -15,7 +15,7 @@ export const meta = defineSectionMeta<AboutProps>({
   icon: 'about',
   tags: ['about', 'bio', 'profile', 'marquee'],
   component: false, // Factory function
-  ownedFields: ['layout', 'behaviour', 'behaviourOptions', 'className'],
+  ownedFields: ['layout', 'className'],
 
   settings: {
     bioParagraphs: {

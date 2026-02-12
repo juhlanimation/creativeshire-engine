@@ -26,12 +26,16 @@ export {
   infiniteCarouselExperience,
   PresentationWrapper,
   InfiniteCarouselController,
+  DEV_EXPERIENCE_PARAM,
+  getExperienceOverride,
+  setExperienceOverride,
 } from './experiences'
 export type { ExperienceMeta } from './experiences'
 export type {
   Experience,
   ExperienceContextValue,
   ExperienceProviderProps,
+  SectionInjection,
   PresentationModel,
   PresentationConfig,
   PresentationWrapperProps,
@@ -158,5 +162,4 @@ export type {
   InfiniteCarouselState,
   NavigationState,
   ExperienceTriggerConfig,
-  BehaviourDefaults,
 } from './types'

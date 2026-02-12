@@ -15,7 +15,7 @@ export const meta = defineSectionMeta<ProjectExpandProps>({
   icon: 'expand',
   tags: ['project', 'video', 'gallery', 'expand', 'thumbnail', 'portfolio'],
   component: false, // Factory function
-  ownedFields: ['layout', 'behaviour', 'behaviourOptions', 'className'],
+  ownedFields: ['layout', 'className'],
 
   settings: {
     logo: {

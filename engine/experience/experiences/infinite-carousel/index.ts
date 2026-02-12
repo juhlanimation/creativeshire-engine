@@ -56,9 +56,7 @@ export const infiniteCarouselExperience: Experience = {
 
   triggers: [],  // MomentumDriver handles all input
 
-  behaviourDefaults: {
-    section: 'none',  // Sections positioned via CSS from driver
-  },
+  sectionInjections: {},
 
   presentation: {
     model: 'infinite-carousel',

@@ -135,19 +135,28 @@ body:has(.presentation-wrapper[data-presentation='infinite-carousel']):not(:has(
 
 /* ============================================================================
  * Cover Scroll Mode
- * Pinned section portals to a fixed backdrop layer (outside ScrollSmoother).
- * Remaining sections scroll over it with elevated z-index.
+ * Pinned sections use position:sticky to stick at viewport top.
+ * Non-pinned sections scroll over them with higher z-index.
+ * Ascending --section-z values ensure proper stacking order.
+ * Requires Lenis (not GSAP ScrollSmoother) — sticky breaks in transforms.
  * ============================================================================ */
 
-/* Non-pinned sections sit above the pinned backdrop.
- * z-index set directly on wrapper (not via --section-z) because
- * contain:layout on [data-section-id] creates isolated stacking contexts. */
-.presentation-wrapper[data-presentation='cover-scroll'] [data-section-index]:not([data-section-pinned]) {
-  z-index: 10;
+/* Pinned sections: stick at top, z-index from --section-z */
+.presentation-wrapper[data-presentation='cover-scroll'] [data-section-pinned] {
+  position: sticky;
+  top: 0;
+  z-index: var(--section-z, 1);
 }
 
-/* Cover-scroll: content area must be transparent so the pinned backdrop
-   (hero) shows through the spacer area. Sections set their own backgrounds. */
-[data-site-content]:has(.presentation-wrapper[data-presentation='cover-scroll']) {
+/* Non-pinned sections: relative positioning for z-index stacking */
+.presentation-wrapper[data-presentation='cover-scroll'] [data-section-index]:not([data-section-pinned]) {
+  position: relative;
+  z-index: var(--section-z, 1);
+}
+
+/* Content area transparent so sticky sections show through.
+ * Uses :has([data-section-pinned]) — works with any experience that has pinned sections.
+ * This also fixes the "blank hero with simple experience" issue. */
+[data-site-content]:has([data-section-pinned]) {
   background: transparent;
 }

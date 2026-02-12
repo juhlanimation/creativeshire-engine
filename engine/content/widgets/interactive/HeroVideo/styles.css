@@ -38,7 +38,7 @@
 }
 
 .hero-video__overlay--external-reveal {
-  opacity: var(--intro-complete, 0);
+  opacity: var(--intro-complete, 1);
   transition: none;
 }
 
@@ -79,7 +79,7 @@
 }
 
 .hero-video__scroll-indicator--external-reveal {
-  opacity: var(--intro-complete, 0);
+  opacity: var(--intro-complete, 1);
   transition: none;
 }
 

@@ -45,10 +45,14 @@ export function IntroTriggerInitializer({
     pattern.triggers.some((t) => t.type === type)
 
   // Video time trigger
+  // Selector priority: settings.source (element-ref picker) → trigger options → fallback
   const videoTrigger = pattern.triggers.find((t) => t.type === 'video-time')
+  const videoSelector =
+    (settings?.source as string) ??
+    (videoTrigger?.options?.selector as string) ??
+    '[data-intro-video]'
   useVideoTime(store, {
-    selector:
-      (videoTrigger?.options?.selector as string) ?? '[data-intro-video]',
+    selector: videoSelector,
     targetTime: (settings?.targetTime as number) ?? 3,
     onTargetReached: hasTrigger('video-time') ? triggerReveal : undefined,
   })

@@ -5,8 +5,6 @@
 
 import type { CSSProperties } from 'react'
 import type { WidgetSchema } from './widget'
-import type { BehaviourConfig } from './experience'
-import type { SerializableValue } from './types'
 
 /**
  * Layout configuration for a section.
@@ -46,14 +44,8 @@ export interface SectionSchema {
   style?: CSSProperties
   /** CSS class names */
   className?: string
-  /** Behaviour configuration for animation */
-  behaviour?: BehaviourConfig
-  /** Additional behaviour options */
-  behaviourOptions?: Record<string, SerializableValue>
   /** Whether section content is constrained to --site-max-width (opt-in) */
   constrained?: boolean
   /** Widgets contained in this section */
   widgets: WidgetSchema[]
-  /** Whether this section stays visible (pinned) while the next section scrolls over it */
-  pinned?: boolean
 }

@@ -7,12 +7,61 @@
 }
 
 /* =============================================================================
- * VIEWPORT OVERLAY (fullpage mode)
- * Portaled to foreground layer — outside CSS containment.
- * position:fixed works here (no container-type/contain/transform ancestors).
+ * VIDEO LAYER (standard mode — position:fixed)
+ * Covers the viewport directly. Works because section containment is removed
+ * and no transform is applied to non-scroll-behaviour sections.
  * ============================================================================= */
 
-/* Fullscreen overlay container — hidden by default, fades in when active */
+.team-showcase__video-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+.team-showcase__video-layer--active {
+  opacity: 1;
+}
+
+/* Elevate the parent section wrapper when video is active.
+ * Presentation modes (cover-scroll) set position+z-index on [data-section-id],
+ * creating stacking contexts that trap position:fixed. When the video is active,
+ * the section must sit above sibling sections so the fixed video covers them.
+ *
+ * transition-delay keeps z-index elevated during the 500ms video fade-out.
+ * Without it, the wrapper drops to z-index:10 the instant --active is removed,
+ * and the fading video gets clipped behind subsequent sections. */
+[data-section-id]:has(.team-showcase__video-layer) {
+  transition: z-index 0s 500ms;
+}
+
+[data-section-id]:has(.team-showcase__video-layer--active) {
+  z-index: 50 !important;
+  transition: z-index 0s 0s;
+}
+
+.team-showcase__video-layer .team-showcase__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+.team-showcase__video-layer .team-showcase__video--active {
+  opacity: 1;
+}
+
+/* =============================================================================
+ * VIEWPORT OVERLAY (GSAP ScrollSmoother fallback)
+ * Portaled to foreground layer — outside #smooth-content's transform.
+ * Only used when GSAP ScrollSmoother is active.
+ * ============================================================================= */
+
 .team-showcase__viewport-overlay {
   position: fixed;
   inset: 0;
@@ -25,7 +74,6 @@
   opacity: 1;
 }
 
-/* Videos inside viewport overlay — fullscreen, stacked */
 .team-showcase__viewport-videos {
   position: absolute;
   inset: 0;
@@ -46,8 +94,7 @@
 }
 
 /* Display names inside viewport overlay — centered, blend for contrast.
- * Preset styles override font-size, padding, etc. via
- * .team-showcase__overlay-names selectors. */
+ * Preset styles override font-size, padding, etc. */
 .team-showcase__overlay-names {
   position: absolute;
   inset: 0;
@@ -60,45 +107,13 @@
 }
 
 /* =============================================================================
- * INLINE FALLBACK (contained mode / SSR)
- * When viewport portal is unavailable, video covers the section only.
- * ============================================================================= */
-
-.team-showcase__video-layer {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 500ms ease;
-}
-
-.team-showcase__video-layer--active {
-  opacity: 1;
-}
-
-.team-showcase__video-layer .team-showcase__video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 500ms ease;
-}
-
-.team-showcase__video-layer .team-showcase__video--active {
-  opacity: 1;
-}
-
-/* =============================================================================
  * NAMES (shared base styles)
- * In-section names handle interaction. Overlay names are display-only.
+ * In-section names handle interaction. Overlay names are display-only (GSAP).
  * ============================================================================= */
 
 .team-showcase__names {
   position: relative;
-  z-index: 1;
+  z-index: 51;
   display: flex;
   flex-direction: column;
   mix-blend-mode: difference;

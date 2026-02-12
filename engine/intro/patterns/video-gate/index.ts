@@ -13,9 +13,8 @@ export const videoGatePattern: IntroPattern = {
   triggers: [
     {
       type: 'video-time',
-      options: {
-        selector: '[data-intro-video]',
-      },
+      // Selector resolved from settings.source (element-ref picker).
+      // Fallback to [data-intro-video] when source is not configured.
     },
   ],
 

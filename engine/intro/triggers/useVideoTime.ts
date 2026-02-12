@@ -19,6 +19,8 @@ export interface UseVideoTimeOptions {
   targetTime: number
   /** Callback when target time is reached */
   onTargetReached?: () => void
+  /** Max time in ms to wait for the video element before auto-triggering (default: 5000) */
+  timeout?: number
 }
 
 /**
@@ -28,7 +30,7 @@ export function useVideoTime(
   store: StoreApi<IntroStore>,
   options: UseVideoTimeOptions
 ): void {
-  const { selector = '[data-intro-video]', targetTime, onTargetReached } = options
+  const { selector = '[data-intro-video]', targetTime, onTargetReached, timeout = 5000 } = options
   const hasTriggered = useRef(false)
 
   useEffect(() => {
@@ -36,6 +38,7 @@ export function useVideoTime(
 
     let rafId: number | null = null
     let retryTimer: ReturnType<typeof setInterval> | null = null
+    let failsafeTimer: ReturnType<typeof setTimeout> | null = null
     let currentVideo: HTMLVideoElement | null = null
 
     const updateTime = () => {
@@ -81,6 +84,12 @@ export function useVideoTime(
         }
       }
 
+      // Video found — cancel failsafe timeout
+      if (failsafeTimer) {
+        clearTimeout(failsafeTimer)
+        failsafeTimer = null
+      }
+
       currentVideo = video
       video.addEventListener('play', handlePlay)
       video.addEventListener('timeupdate', handleTimeUpdate)
@@ -109,15 +118,29 @@ export function useVideoTime(
       attachToVideo(video)
     } else {
       startRetry()
+
+      // Failsafe: if the video element is never found, auto-trigger to avoid
+      // permanently locking the page (e.g., preset without [data-intro-video])
+      failsafeTimer = setTimeout(() => {
+        if (!hasTriggered.current) {
+          hasTriggered.current = true
+          if (retryTimer) {
+            clearInterval(retryTimer)
+            retryTimer = null
+          }
+          onTargetReached?.()
+        }
+      }, timeout)
     }
 
     return () => {
       if (rafId !== null) cancelAnimationFrame(rafId)
       if (retryTimer) clearInterval(retryTimer)
+      if (failsafeTimer) clearTimeout(failsafeTimer)
       if (currentVideo) {
         currentVideo.removeEventListener('play', handlePlay)
         currentVideo.removeEventListener('timeupdate', handleTimeUpdate)
       }
     }
-  }, [store, selector, targetTime, onTargetReached])
+  }, [store, selector, targetTime, onTargetReached, timeout])
 }

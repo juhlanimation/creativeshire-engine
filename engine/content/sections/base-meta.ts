@@ -9,7 +9,7 @@ import { defineMeta } from '../../schema/meta'
 export const sectionBaseMeta = defineMeta<Record<string, unknown>>({
   id: 'SectionBase',
   name: 'Section',
-  description: 'Base section fields: layout, behaviour, and style',
+  description: 'Base section fields: layout and style',
   category: 'section',
   icon: 'section',
   tags: ['section', 'layout', 'base'],
@@ -103,17 +103,6 @@ export const sectionBaseMeta = defineMeta<Record<string, unknown>>({
       condition: "layout.type === 'grid'",
       editorHint: 'structural',
       group: 'Layout',
-    },
-
-    // ── Behaviour ──────────────────────────────────────────────────────────
-    behaviour: {
-      type: 'custom',
-      label: 'Animation',
-      default: null,
-      description: 'Behaviour configuration for scroll/visibility animation',
-      component: 'BehaviourPicker',
-      editorHint: 'structural',
-      group: 'Behaviour',
     },
 
     // ── Style ──────────────────────────────────────────────────────────────

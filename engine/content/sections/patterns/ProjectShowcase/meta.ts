@@ -15,7 +15,7 @@ export const meta = defineSectionMeta<ProjectShowcaseProps>({
   icon: 'video',
   tags: ['project', 'video', 'showcase', 'single'],
   component: false,
-  ownedFields: ['layout', 'behaviour', 'behaviourOptions', 'className'],
+  ownedFields: ['layout', 'className'],
 
   settings: {
     logo: {

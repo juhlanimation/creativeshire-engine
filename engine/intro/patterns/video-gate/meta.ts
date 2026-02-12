@@ -6,6 +6,8 @@ import type { SettingsConfig } from '../../../schema/settings'
 import { defineIntroPatternMeta } from '../../registry'
 
 export interface VideoGateSettings {
+  /** CSS selector for the video element (resolved from element-ref picker) */
+  source: string | null
   /** Target video time to trigger reveal (seconds) */
   targetTime: number
   /** Frames per second for precision */
@@ -22,6 +24,13 @@ export const meta = defineIntroPatternMeta<VideoGateSettings>({
   tags: ['video', 'gate', 'lock', 'playback'],
   category: 'gate',
   settings: {
+    source: {
+      type: 'element-ref',
+      label: 'Video Source',
+      description: 'Widget containing the video element to track',
+      element: 'video',
+      default: null,
+    },
     targetTime: {
       type: 'number',
       label: 'Target Time',

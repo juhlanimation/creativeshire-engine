@@ -9,7 +9,7 @@ export const meta = defineExperienceMeta({
   id: 'cover-scroll',
   name: 'Cover Scroll',
   description:
-    'First section stays fixed as backdrop while remaining sections scroll over it. Ideal for video heroes with content overlay.',
+    'Pinned sections stick at the viewport top while remaining sections scroll over them. Mark any section as pinned for the cover effect.',
   icon: 'layers',
   tags: ['scroll-driven', 'cover', 'hero', 'backdrop'],
   category: 'scroll-driven',

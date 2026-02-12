@@ -166,7 +166,7 @@ header[role="banner"] > * {
 /* Hide on mobile and touch devices */
 @media (max-width: 767px) {
   .port12-navbar {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -228,22 +228,40 @@ header[role="banner"] > * {
 }
 
 /* ── Om Section ──────────────────────────────────────────────── */
-/* Mobile: flex column with gap, matching px-6 sm:px-12 md:px-20 py-16 md:py-24 gap-8 md:gap-24 */
+/* .section prefix targets inner <section> only — className applies to BOTH
+   wrapper <div data-section-id> and inner <section class="section">.
+   Without the prefix, padding would double up. */
 .section-om {
   position: relative;
   overflow: hidden;
+}
+
+/* Wrapper-level top spacing: accounts for the reference site's pt-5 wrapper + Logo
+   component above Om that the engine handles via the chrome header region instead.
+   Targets wrapper [data-section-id] only — not the inner <section>. */
+[data-section-id="om"] {
+  padding-top: 3rem;
+}
+
+@media (min-width: 768px) {
+  [data-section-id="om"] {
+    padding-top: 4rem;
+  }
+}
+
+.section.section-om {
   padding: 4rem 1.5rem;
   gap: 2rem;
 }
 
 @media (min-width: 640px) {
-  .section-om {
+  .section.section-om {
     padding: 4rem 3rem;
   }
 }
 
 @media (min-width: 768px) {
-  .section-om {
+  .section.section-om {
     padding: 6rem 5rem;
     gap: 6rem;
   }
@@ -302,7 +320,8 @@ header[role="banner"] > * {
 
 /* Desktop scattered layout (lg+) — all sizes in cqw for container-relative scaling */
 @container site-content (min-width: 1024px) {
-  .section-om {
+  /* Height only on inner <section>, not wrapper — wrapper must be free to grow with padding */
+  .section.section-om {
     height: 74cqw;
     padding: 0;
   }
@@ -376,7 +395,6 @@ header[role="banner"] > * {
 .section-medlemmer {
   position: relative;
   overflow: hidden;
-  min-height: 100dvh;
 }
 
 /* TeamShowcase fills the section */
@@ -441,8 +459,8 @@ header[role="banner"] > * {
 /* md breakpoint (768px) */
 @media (min-width: 768px) {
   .section-medlemmer .team-showcase__names {
-    padding-top: 0;
-    padding-bottom: 0;
+    padding-top: 6rem;
+    padding-bottom: 6rem;
   }
 
   .section-medlemmer .team-showcase__name {
@@ -458,6 +476,11 @@ header[role="banner"] > * {
 
 /* lg breakpoint (1024px) */
 @media (min-width: 1024px) {
+  .section-medlemmer .team-showcase__names {
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+  }
+
   .section-medlemmer .team-showcase__name {
     font-size: 4.5rem;
     line-height: 1;
@@ -488,114 +511,22 @@ header[role="banner"] > * {
   }
 }
 
-/* ── Medlemmer Overlay Names (viewport portal) ─────────────────
-   Display-only names portaled to the foreground layer for fullscreen video.
-   Must match in-section name styles exactly (same font, padding, responsive). */
-.team-showcase__overlay-names {
-  padding-top: 4rem;
-  padding-bottom: 4rem;
-}
-
-.team-showcase__overlay-names .team-showcase__label {
-  font-family: var(--font-plus-jakarta), system-ui, sans-serif;
-  font-size: 1rem;
-  font-weight: 900;
-  letter-spacing: 0.1em;
-  margin-bottom: 0.5rem;
-}
-
-.team-showcase__overlay-names .team-showcase__name {
-  font-family: var(--font-inter), system-ui, sans-serif;
-  font-size: 12vw;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: -0.025em;
-  line-height: 0.9;
-  margin: 0;
-}
-
-.team-showcase__overlay-names .team-showcase__name + .team-showcase__name {
-  margin-top: 1rem;
-}
-
-.team-showcase__overlay-names .team-showcase__label,
-.team-showcase__overlay-names .team-showcase__name {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-}
-
-@media (min-width: 640px) {
-  .team-showcase__overlay-names .team-showcase__name {
-    font-size: 10vw;
-  }
-
-  .team-showcase__overlay-names .team-showcase__label,
-  .team-showcase__overlay-names .team-showcase__name {
-    padding-left: 3rem;
-    padding-right: 3rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .team-showcase__overlay-names {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-
-  .team-showcase__overlay-names .team-showcase__name {
-    font-size: 8vw;
-  }
-
-  .team-showcase__overlay-names .team-showcase__label,
-  .team-showcase__overlay-names .team-showcase__name {
-    padding-left: 6rem;
-    padding-right: 6rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .team-showcase__overlay-names .team-showcase__name {
-    font-size: 4.5rem;
-    line-height: 1;
-    white-space: nowrap;
-  }
-
-  .team-showcase__overlay-names .team-showcase__name + .team-showcase__name {
-    margin-top: 0;
-  }
-
-  .team-showcase__overlay-names .team-showcase__label,
-  .team-showcase__overlay-names .team-showcase__name {
-    padding-left: 8rem;
-    padding-right: 8rem;
-  }
-}
-
-@media (min-width: 1280px) {
-  .team-showcase__overlay-names .team-showcase__name {
-    font-size: 6rem;
-  }
-
-  .team-showcase__overlay-names .team-showcase__label,
-  .team-showcase__overlay-names .team-showcase__name {
-    padding-left: 12rem;
-    padding-right: 12rem;
-  }
-}
-
 /* ── Medlemskab Section ──────────────────────────────────────── */
-.section-medlemskab {
+/* .section prefix targets inner <section> only — className applies to BOTH
+   wrapper <div data-section-id> and inner <section class="section">.
+   Without the prefix, padding would double up. */
+.section.section-medlemskab {
   padding: 0 1.5rem 4rem;
 }
 
 @media (min-width: 640px) {
-  .section-medlemskab {
+  .section.section-medlemskab {
     padding: 0 3rem 4rem;
   }
 }
 
 @media (min-width: 768px) {
-  .section-medlemskab {
+  .section.section-medlemskab {
     padding: 0 5rem 4rem;
   }
 }
@@ -629,11 +560,13 @@ header[role="banner"] > * {
   width: 12rem;
   height: 12rem;
   object-fit: contain;
+  margin-bottom: 1rem;
 }
 
 .plan-card__name {
   font-family: var(--font-inter), system-ui, sans-serif;
   font-size: 2.25rem;
+  line-height: 2.5rem;
   font-weight: 900;
   letter-spacing: -0.025em;
   color: var(--port12-fg);
@@ -643,6 +576,7 @@ header[role="banner"] > * {
 .plan-card__price {
   font-family: var(--font-plus-jakarta), system-ui, sans-serif;
   font-size: 1.125rem;
+  line-height: 1.75rem;
   font-weight: 600;
   margin-top: 0.25rem;
 }
@@ -651,7 +585,7 @@ header[role="banner"] > * {
   font-family: var(--font-plus-jakarta), system-ui, sans-serif;
   font-size: 0.625rem;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   opacity: 0.6;
 }
 
@@ -661,8 +595,8 @@ header[role="banner"] > * {
   line-height: 1.625;
   white-space: pre-line;
   opacity: 0.8;
-  max-width: 20rem;
-  margin: 0.75rem auto 1rem;
+  margin-top: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .plan-card__divider {
@@ -680,13 +614,11 @@ header[role="banner"] > * {
 }
 
 .plan-card__features {
-  width: 100%;
-  max-width: 16rem;
-  margin: 0 auto;
+  width: auto;
 }
 
 .plan-card__feature {
-  width: 100%;
+  width: auto;
 }
 
 .plan-card__feature-icon {
@@ -700,7 +632,8 @@ header[role="banner"] > * {
   font-size: 0.6875rem;
   text-align: left;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.025em;
+  line-height: 1.25;
 }
 
 /* ── Pricing Contact ─────────────────────────────────────────── */
@@ -726,6 +659,7 @@ header[role="banner"] > * {
 .pricing-contact__title {
   font-family: var(--font-inter), system-ui, sans-serif;
   font-size: 1.875rem;
+  line-height: 2.25rem;
   font-weight: 900;
   letter-spacing: -0.025em;
   margin: 0;
@@ -751,6 +685,8 @@ header[role="banner"] > * {
   position: relative;
   z-index: 10;
   background-color: var(--port12-fg);
+  color: white;
+  min-height: 10dvh;
   padding: 1.5rem 2rem;
   width: 100%;
   gap: 2rem !important;
@@ -780,6 +716,7 @@ header[role="banner"] > * {
 .port12-footer__logo {
   font-family: "BBH Sans Hegarty", system-ui, sans-serif;
   font-size: 2.25rem;
+  line-height: 2.5rem;
   font-weight: 700;
   color: white;
   letter-spacing: 0.05em;
@@ -789,6 +726,7 @@ header[role="banner"] > * {
 @media (min-width: 768px) {
   .port12-footer__logo {
     font-size: 3rem;
+    line-height: 1;
   }
 }
 
@@ -796,7 +734,7 @@ header[role="banner"] > * {
   font-family: var(--font-plus-jakarta), system-ui, sans-serif;
   font-size: 0.625rem;
   color: white;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.025em;
 }
 
 @media (min-width: 768px) {
@@ -820,6 +758,22 @@ header[role="banner"] > * {
     order: 3;
     align-items: flex-end !important;
   }
+}
+
+.port12-footer__contact-item {
+  font-family: var(--font-plus-jakarta), system-ui, sans-serif;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: white;
+  text-decoration: none;
+}
+
+a.port12-footer__contact-item {
+  transition: opacity 0.15s;
+}
+
+a.port12-footer__contact-item:hover {
+  opacity: 0.7;
 }
 
 @media (min-width: 1024px) {

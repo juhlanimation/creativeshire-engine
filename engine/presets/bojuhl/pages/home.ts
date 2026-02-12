@@ -139,7 +139,6 @@ const aboutSection: SectionSchema = {
   style: {
     backgroundColor: 'rgb(0, 0, 0)'
   },
-  behaviour: 'scroll/fade',
   widgets: [
     // Mobile background
     {

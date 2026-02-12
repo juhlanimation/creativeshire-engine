@@ -10,10 +10,9 @@
  * - Registers scroll-based behaviours with ScrollDriver for 60fps updates
  * - Computes CSS variables for interaction-based behaviours
  *
- * Pinned sections (section.pinned = true):
- * Portal visual content to a fixed backdrop layer outside ScrollSmoother's
- * transform context. A transparent spacer stays in the scroll flow for
- * IntersectionObserver tracking and BehaviourWrapper scroll measurement.
+ * Pinned sections (via sectionInjections):
+ * For cover-scroll experience, CSS position:sticky pins sections at the viewport top.
+ * The experience layer injects pinned/behaviour via sectionInjections.
  */
 
 import { useRef, useMemo, useCallback } from 'react'
@@ -23,49 +22,18 @@ import { WidgetRenderer } from './WidgetRenderer'
 import { BehaviourWrapper } from '../experience/behaviours'
 import { SectionLifecycleProvider } from '../experience/lifecycle'
 import { useExperience, useSmoothScrollContainer } from '../experience'
-import { usePinnedBackdrop } from './PinnedBackdropContext'
-import { PinnedSection } from './PinnedSection'
+// PinnedBackdrop infrastructure preserved for potential future use
+// import { usePinnedBackdrop } from './PinnedBackdropContext'
+import { useDevSectionBehaviour, useDevSectionBehaviourOptions, useDevSectionPinned } from './dev/devSettingsStore'
 import { capitalize } from './utils'
 import type { SectionSchema } from '../schema'
-import type { Experience } from '../experience'
 import type { NavigableExperienceState } from '../experience/experiences/types'
 
 interface SectionRendererProps {
   section: SectionSchema
   index: number
-}
-
-/**
- * Resolves behaviour for a section.
- * Priority: bareMode → explicit schema → experience defaults by section ID → experience section fallback.
- */
-function resolveSectionBehaviour(
-  section: SectionSchema,
-  experience: Experience
-): string | null {
-  // Bare mode: ignore ALL behaviours (for testing/preview)
-  if (experience.bareMode) {
-    return 'none'
-  }
-
-  // Explicit behaviour in schema takes priority
-  if (section.behaviour) {
-    return typeof section.behaviour === 'string'
-      ? section.behaviour
-      : section.behaviour.id ?? null
-  }
-
-  // Check experience defaults by section ID (try both exact and capitalized)
-  // e.g., 'about' or 'About' for section id='about'
-  const byExactId = experience.behaviourDefaults[section.id]
-  if (byExactId) return byExactId
-
-  const capitalizedId = capitalize(section.id)
-  const byCapitalizedId = experience.behaviourDefaults[capitalizedId]
-  if (byCapitalizedId) return byCapitalizedId
-
-  // Fall back to generic section default
-  return experience.behaviourDefaults.section ?? null
+  /** Total number of sections on the page (for z-index assignment) */
+  totalSections: number
 }
 
 /**
@@ -73,10 +41,9 @@ function resolveSectionBehaviour(
  * Visibility tracking is automatic via useIntersection trigger.
  * Behaviour application is handled by BehaviourWrapper (resolveBehaviour pattern).
  */
-export function SectionRenderer({ section, index }: SectionRendererProps) {
+export function SectionRenderer({ section, index, totalSections }: SectionRendererProps) {
   const ref = useRef<HTMLDivElement>(null)
   const { experience, store } = useExperience()
-  const { backdropTarget } = usePinnedBackdrop()
 
   // Check if experience has navigation (slideshow, etc.)
   // Subscribe to active section if navigable experience
@@ -97,20 +64,27 @@ export function SectionRenderer({ section, index }: SectionRendererProps) {
     enabled: smoothScrollEnabled,
   })
 
-  // Resolve behaviour from explicit schema or experience defaults
-  const behaviourId = resolveSectionBehaviour(section, experience)
+  const devBehaviourId = useDevSectionBehaviour(section.id)
+  const devSectionOptions = useDevSectionBehaviourOptions(section.id)
+  const devPinned = useDevSectionPinned(section.id)
 
-  // Extract behaviour options if provided as object (memoized for stability)
-  const schemaBehaviourOptions = typeof section.behaviour === 'object'
-    ? section.behaviour.options
-    : undefined
+  // Resolve injection: exact ID → capitalized ID → '*' fallback
+  const injection = experience.sectionInjections[section.id]
+    ?? experience.sectionInjections[capitalize(section.id)]
+    ?? experience.sectionInjections['*']
+    ?? {}
+
+  const behaviourId = experience.bareMode ? 'none'
+    : (devBehaviourId ?? injection.behaviour ?? null)
+  const isPinned = experience.bareMode ? false
+    : (devPinned ?? injection.pinned ?? false)
 
   // Memoize merged options to prevent BehaviourWrapper re-registration on every render
-  // Unstable options reference causes useEffect dependency to trigger repeatedly
   const behaviourOptions = useMemo(() => ({
-    ...schemaBehaviourOptions,
-    sectionIndex: index
-  }), [schemaBehaviourOptions, index])
+    ...injection.behaviourOptions,
+    ...(devSectionOptions ?? {}),
+    sectionIndex: index,
+  }), [injection.behaviourOptions, devSectionOptions, index])
 
   // Read visibility once (no subscription) - ScrollDriver reads via visibilityGetter at 60fps
   // useStore subscription here caused ~21 wasted React re-renders per section during scroll
@@ -142,31 +116,24 @@ export function SectionRenderer({ section, index }: SectionRendererProps) {
     </Section>
   )
 
-  // ── Pinned section portal ──────────────────────────────────────────
-  if (section.pinned && backdropTarget) {
-    return (
-      <PinnedSection
-        sectionId={section.id}
-        index={index}
-        isActive={isActive}
-        sectionHeight={section.style?.height ?? '100dvh'}
-        behaviourId={behaviourId}
-        behaviourOptions={behaviourOptions}
-        initialVisibility={initialVisibility}
-        visibilityGetter={visibilityGetter}
-        backdropTarget={backdropTarget}
-        content={content}
-        sectionRef={ref}
-      />
-    )
-  }
+  // ── Pinned section handling ──────────────────────────────────────
+  // Cover-scroll: CSS position:sticky handles pinning (rendered inline below).
+  // All other experiences: pinned: true is ignored — sections render normally.
+  // The portal-to-backdrop approach (PinnedSection) is no longer used.
+  const isCoverScroll = experience.presentation?.model === 'cover-scroll'
 
   // ── Normal section rendering ───────────────────────────────────────
 
-  // Inherit background from section to prevent white flash during fade
-  const wrapperStyle = section.style?.backgroundColor
-    ? { backgroundColor: section.style.backgroundColor }
-    : undefined
+  // Inherit background from section to prevent white flash during fade.
+  // For cover-scroll, assign ascending z-indexes so later sections stack on top.
+  const wrapperStyle: React.CSSProperties | undefined = isCoverScroll
+    ? {
+        ...(section.style?.backgroundColor ? { backgroundColor: section.style.backgroundColor } : undefined),
+        '--section-z': index + 1,
+      } as React.CSSProperties
+    : section.style?.backgroundColor
+      ? { backgroundColor: section.style.backgroundColor }
+      : undefined
 
   // Pass section className to wrapper for responsive visibility (e.g., display:none)
   const wrapperClassName = section.className
@@ -209,7 +176,7 @@ export function SectionRenderer({ section, index }: SectionRendererProps) {
       data-section-index={index}
       data-active={isActive}
       data-slideshow={isSlideshow}
-      data-section-pinned={section.pinned || undefined}
+      data-section-pinned={isPinned || undefined}
       style={wrapperStyle}
       className={wrapperClassName}
     >

@@ -9,9 +9,13 @@
  */
 
 .section {
-  /* Animation CSS variables with fallbacks */
-  transform: translateY(var(--section-y, 0));
-  z-index: var(--section-z, 0);
+  /* No transform here — position:fixed works inside sections.
+   * Scroll behaviours apply transform via [data-behaviour^="scroll/"] > .section */
+  /* Default auto — NOT 0. z-index:0 on a positioned element creates a stacking
+   * context that traps position:fixed children. auto avoids this so fixed elements
+   * (e.g. TeamShowcase video) can escape and cover the viewport. Behaviours that
+   * need stacking control set --section-z explicitly. */
+  z-index: var(--section-z, auto);
   opacity: var(--section-opacity, 1);
 
   /* Transition from theme - defaults to none if not set */
@@ -32,8 +36,11 @@
   max-width: var(--site-max-width, none);
 }
 
-/* Scroll-driven behaviours bypass CSS transition - driver handles updates directly */
+/* Scroll-driven behaviours: transform only applied here (not on all sections)
+ * so that non-scroll sections don't create containing blocks that trap position:fixed.
+ * Also bypasses CSS transition — driver handles updates directly. */
 [data-behaviour^="scroll/"] > .section {
+  transform: translateY(var(--section-y, 0));
   transition: none;
   will-change: opacity, transform;
 }
@@ -43,11 +50,6 @@
   .section {
     transition: none;
   }
-}
-
-/* Layout containment for section wrappers - prevents cross-section layout thrashing */
-[data-section-id] {
-  contain: layout style;
 }
 
 /* Layout type: flex */

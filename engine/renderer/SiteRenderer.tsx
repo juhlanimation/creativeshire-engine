@@ -134,7 +134,7 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
 
   // Resolve experience, intro, and transition via hooks
   const {
-    experience, store, schemaExperienceId,
+    experience, store, schemaExperienceId, settings,
     beforeChrome, afterChrome, overlayChrome,
   } = useResolvedExperience(site, page)
 
@@ -155,9 +155,12 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
 
   // Smooth scrolling: disabled when experience owns page scroll (e.g., slideshow, carousel).
   // bareMode disables behaviours, not theme-level smooth scrolling.
+  // smoothScrollOverride lets experiences force a provider (e.g., cover-scroll → Lenis for CSS sticky).
   const smoothScrollConfig = experience.presentation?.ownsPageScroll
     ? { ...site.theme?.smoothScroll, enabled: false }
-    : site.theme?.smoothScroll
+    : experience.presentation?.smoothScrollOverride
+      ? { ...site.theme?.smoothScroll, ...experience.presentation.smoothScrollOverride }
+      : site.theme?.smoothScroll
 
   // In fullpage mode, we set the breakpoint attribute here
   // In contained mode, ContainerProvider sets it on the container element
@@ -211,7 +214,7 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
         overlayComponent={introOverlayComponent}
         overlayProps={introOverlayProps}
       >
-        <ExperienceProvider experience={experience} store={store}>
+        <ExperienceProvider experience={experience} store={store} settings={settings}>
           <TransitionProvider config={pageTransitionConfig}>
             <TriggerInitializer>
             {/* Backdrop for pinned sections — outside ScrollSmoother to avoid transforms.
@@ -289,6 +292,7 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
                   schemaIntroId={schemaIntroId}
                   schemaTransitionId={schemaTransitionId}
                   presetId={presetId ?? site.id}
+                  sections={page.sections}
                 />
               </PageTransitionProvider>
               </IntroContentGate>

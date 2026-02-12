@@ -152,3 +152,37 @@ export function getAllExperiences(): Experience[] {
     .filter((entry): entry is { type: 'loaded'; experience: Experience } => entry.type === 'loaded')
     .map((entry) => entry.experience)
 }
+
+// =============================================================================
+// URL Override Helpers (Dev Mode)
+// =============================================================================
+
+/** Query param name for experience override */
+export const DEV_EXPERIENCE_PARAM = '_experience'
+
+/**
+ * Get current experience override from URL.
+ */
+export function getExperienceOverride(): string | null {
+  if (typeof window === 'undefined') return null
+  const params = new URLSearchParams(window.location.search)
+  return params.get(DEV_EXPERIENCE_PARAM)
+}
+
+/**
+ * Set experience override in URL without full page reload.
+ */
+export function setExperienceOverride(id: string | null): void {
+  if (typeof window === 'undefined') return
+
+  const url = new URL(window.location.href)
+  if (id) {
+    url.searchParams.set(DEV_EXPERIENCE_PARAM, id)
+  } else {
+    url.searchParams.delete(DEV_EXPERIENCE_PARAM)
+  }
+
+  // Update URL without reload, then trigger re-render via custom event
+  window.history.replaceState({}, '', url.toString())
+  window.dispatchEvent(new CustomEvent('experienceOverrideChange', { detail: id }))
+}

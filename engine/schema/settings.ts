@@ -195,6 +195,14 @@ interface AlignmentSetting extends BaseSettingConfig {
   choices?: SettingChoice[]
 }
 
+/** Element reference picker — CMS shows widget/element picker, resolves to CSS selector */
+interface ElementRefSetting extends BaseSettingConfig {
+  type: 'element-ref'
+  default: string | null
+  /** DOM element type to filter candidates (e.g., 'video', 'img', '*' for any) */
+  element: string
+}
+
 /** Platform-defined custom control */
 interface CustomSetting extends BaseSettingConfig {
   type: 'custom'
@@ -224,6 +232,7 @@ export type SettingConfig =
   | IconSetting
   | SpacingSetting
   | AlignmentSetting
+  | ElementRefSetting
   | CustomSetting
 
 /**
