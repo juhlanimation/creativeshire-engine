@@ -20,9 +20,10 @@ import { SettingsEditor } from './SettingsEditor'
 import { devSettingsStore, useDevExperienceSettings } from '../devSettingsStore'
 import { getBehaviour, getAllBehaviourMetas } from '../../../experience/behaviours'
 import { getExperience, useExperience } from '../../../experience'
+import { useIntro } from '../../../intro'
 import type { BehaviourAssignment } from '../../../experience/experiences/types'
 import { capitalize } from '../../utils'
-import type { SectionSchema } from '../../../schema'
+import type { SectionSchema, WidgetSchema } from '../../../schema'
 import type { DevToolsTabConfig } from './types'
 import './styles.css'
 
@@ -115,6 +116,15 @@ function DevToolsPanelInner({ currentIds, sections }: DevToolsPanelProps) {
     devSettingsStore,
     (s) => Object.keys(s.sectionBehaviourAssignments).length > 0 || Object.keys(s.sectionPinned).length > 0,
   )
+
+  // Check if any widget behaviour overrides exist (for reset button)
+  const hasWidgetBehaviourOverrides = useStore(
+    devSettingsStore,
+    (s) => Object.keys(s.widgetBehaviourAssignments).length > 0,
+  )
+
+  // Get intro context for display
+  const introContext = useIntro()
 
   const handleExpand = useCallback((tabId: string) => {
     setState((s) => ({
@@ -220,7 +230,16 @@ function DevToolsPanelInner({ currentIds, sections }: DevToolsPanelProps) {
             onClick={() => devSettingsStore.getState().resetSectionBehaviours()}
             title="Reset section behaviour assignments"
           >
-            Reset Behaviours
+            Reset Sec. Behaviours
+          </button>
+        )}
+        {state.activeTabId === 'experience' && hasWidgetBehaviourOverrides && (
+          <button
+            className="dt-panel__reset"
+            onClick={() => devSettingsStore.getState().resetWidgetBehaviours()}
+            title="Reset widget behaviour assignments"
+          >
+            Reset Wgt. Behaviours
           </button>
         )}
       </div>
@@ -282,6 +301,15 @@ function DevToolsPanelInner({ currentIds, sections }: DevToolsPanelProps) {
                 sections={sections}
                 experience={activeExperience}
               />
+            )}
+            {sections && sections.length > 0 && (
+              <WidgetBehaviourAssigner
+                sections={sections}
+                experience={activeExperience}
+              />
+            )}
+            {introContext && (
+              <IntroInfoDisplay config={introContext.config} />
             )}
           </>
         )
@@ -541,6 +569,219 @@ function SectionBehaviourRow({ section, experience }: SectionBehaviourRowProps) 
           </label>
         )
       })()}
+    </div>
+  )
+}
+
+// =============================================================================
+// WidgetBehaviourAssigner
+// =============================================================================
+
+/** Collect unique widget types from sections (recursive). */
+function collectWidgetTypes(sections: SectionSchema[]): string[] {
+  const types = new Set<string>()
+  function walk(widgets?: WidgetSchema[]) {
+    if (!widgets) return
+    for (const w of widgets) {
+      types.add(w.type)
+      if (w.widgets) walk(w.widgets)
+    }
+  }
+  for (const section of sections) {
+    walk(section.widgets)
+  }
+  return Array.from(types).sort()
+}
+
+interface WidgetBehaviourAssignerProps {
+  sections: SectionSchema[]
+  experience: ReturnType<typeof getExperienceForSectionBehaviours>
+}
+
+function WidgetBehaviourAssigner({ sections, experience }: WidgetBehaviourAssignerProps) {
+  const widgetTypes = useMemo(() => collectWidgetTypes(sections), [sections])
+  // Only show if experience has widget behaviours OR types exist in page
+  const hasAny = (experience?.widgetBehaviours && Object.keys(experience.widgetBehaviours).length > 0) || widgetTypes.length > 0
+
+  if (!hasAny) return null
+
+  return (
+    <div className="dt-settings" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+      <div className="dt-settings__header">Widget Behaviours</div>
+      {widgetTypes.map((type) => (
+        <WidgetBehaviourRow
+          key={type}
+          widgetType={type}
+          experience={experience}
+        />
+      ))}
+    </div>
+  )
+}
+
+interface WidgetBehaviourRowProps {
+  widgetType: string
+  experience: ReturnType<typeof getExperienceForSectionBehaviours>
+}
+
+function WidgetBehaviourRow({ widgetType, experience }: WidgetBehaviourRowProps) {
+  const schemaBehaviours = useMemo(() => {
+    return experience?.widgetBehaviours?.[widgetType] ?? []
+  }, [widgetType, experience])
+
+  const devAssignments = useStore(
+    devSettingsStore,
+    (s) => s.widgetBehaviourAssignments[widgetType],
+  )
+
+  const activeAssignments = devAssignments ?? schemaBehaviours
+
+  const handleAdd = useCallback((behaviourId: string) => {
+    const next = [...activeAssignments, { behaviour: behaviourId }]
+    devSettingsStore.getState().setWidgetBehaviourAssignments(widgetType, next)
+  }, [activeAssignments, widgetType])
+
+  const handleRemove = useCallback((idx: number) => {
+    const next = activeAssignments.filter((_, i) => i !== idx)
+    devSettingsStore.getState().setWidgetBehaviourAssignments(
+      widgetType,
+      next.length > 0 ? next : null,
+    )
+  }, [activeAssignments, widgetType])
+
+  const handleChange = useCallback((idx: number, behaviourId: string) => {
+    const next = activeAssignments.map((a, i) =>
+      i === idx ? { ...a, behaviour: behaviourId, options: undefined } : a,
+    )
+    devSettingsStore.getState().setWidgetBehaviourAssignments(widgetType, next)
+  }, [activeAssignments, widgetType])
+
+  const handleOptionChange = useCallback((idx: number, key: string, value: unknown) => {
+    const next = activeAssignments.map((a, i) =>
+      i === idx ? { ...a, options: { ...a.options, [key]: value } } : a,
+    )
+    devSettingsStore.getState().setWidgetBehaviourAssignments(widgetType, next)
+  }, [activeAssignments, widgetType])
+
+  // Skip widget types with no behaviours and no dev overrides (less noise)
+  if (schemaBehaviours.length === 0 && !devAssignments) return null
+
+  return (
+    <div style={{ padding: '6px 12px 2px' }}>
+      <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 11, fontWeight: 500, marginBottom: 4 }}>
+        {widgetType}
+      </div>
+
+      {activeAssignments.map((assignment, i) => {
+        const behaviour = getBehaviour(assignment.behaviour)
+        const hasSettings = behaviour?.settings && Object.keys(behaviour.settings).length > 0
+        return (
+          <div key={`${assignment.behaviour}-${i}`} style={{ marginBottom: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <select
+                value={assignment.behaviour}
+                onChange={(e) => handleChange(i, e.target.value)}
+                className="dt-settings__select"
+                style={{ flex: 1, maxWidth: 'none' }}
+              >
+                {allBehaviourMetas.map((meta) => (
+                  <option key={meta.id} value={meta.id}>
+                    {meta.name} ({meta.id})
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={() => handleRemove(i)}
+                style={{
+                  color: 'rgba(255,255,255,0.5)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: 14,
+                  padding: '0 4px',
+                  lineHeight: 1,
+                }}
+                title="Remove behaviour"
+              >
+                &times;
+              </button>
+            </div>
+            {hasSettings && (
+              <SettingsEditor
+                settings={behaviour!.settings!}
+                values={{
+                  ...Object.fromEntries(
+                    Object.entries(behaviour!.settings!).map(([k, v]) => [k, (v as { default: unknown })?.default])
+                  ),
+                  ...(assignment.options ?? {}),
+                }}
+                onChange={(key, value) => handleOptionChange(i, key, value)}
+              />
+            )}
+          </div>
+        )
+      })}
+
+      {activeAssignments.length === 0 && (
+        <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 10, marginBottom: 4 }}>
+          No behaviours assigned
+        </div>
+      )}
+
+      <button
+        onClick={() => handleAdd(allBehaviourMetas[0]?.id ?? 'visibility/fade-in')}
+        style={{
+          color: 'rgba(255,255,255,0.5)',
+          background: 'none',
+          border: '1px dashed rgba(255,255,255,0.2)',
+          borderRadius: 4,
+          cursor: 'pointer',
+          fontSize: 11,
+          padding: '2px 8px',
+          width: '100%',
+          marginBottom: 4,
+        }}
+      >
+        + Add Behaviour
+      </button>
+    </div>
+  )
+}
+
+// =============================================================================
+// IntroInfoDisplay
+// =============================================================================
+
+interface IntroInfoDisplayProps {
+  config: import('../../../intro/types').IntroConfig
+}
+
+function IntroInfoDisplay({ config }: IntroInfoDisplayProps) {
+  return (
+    <div className="dt-settings" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+      <div className="dt-settings__header">Intro</div>
+      <div style={{ padding: '4px 12px', fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>
+        <div style={{ marginBottom: 2 }}>
+          <span style={{ color: 'rgba(255,255,255,0.5)' }}>Pattern: </span>
+          <span style={{ color: 'rgba(255,255,255,0.9)' }}>{config.pattern}</span>
+        </div>
+        {config.overlay && (
+          <div style={{ marginBottom: 2 }}>
+            <span style={{ color: 'rgba(255,255,255,0.5)' }}>Overlay: </span>
+            <span style={{ color: 'rgba(255,255,255,0.9)' }}>{config.overlay.component}</span>
+          </div>
+        )}
+        {config.settings && Object.keys(config.settings).length > 0 && (
+          <div style={{ marginTop: 4 }}>
+            {Object.entries(config.settings).map(([key, value]) => (
+              <div key={key} style={{ marginBottom: 1 }}>
+                <span style={{ color: 'rgba(255,255,255,0.4)' }}>{key}: </span>
+                <span style={{ color: 'rgba(255,255,255,0.7)' }}>{JSON.stringify(value)}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

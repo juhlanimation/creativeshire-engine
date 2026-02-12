@@ -16,25 +16,23 @@ interface DevSettingsState {
   experienceSettings: Record<string, unknown>
   /** Behaviour-level option overrides: { [behaviourId]: { [optionKey]: value } } */
   behaviourSettings: Record<string, Record<string, unknown>>
-  /** Section behaviour assignment overrides: sectionId → behaviourId */
-  sectionBehaviours: Record<string, string>
-  /** Per-section behaviour options: sectionId → { optionKey: value } */
-  sectionBehaviourOptions: Record<string, Record<string, unknown>>
   /** Section pinned overrides: sectionId → boolean */
   sectionPinned: Record<string, boolean>
   /** Section behaviour assignment overrides (multi-behaviour): sectionId → BehaviourAssignment[] */
   sectionBehaviourAssignments: Record<string, BehaviourAssignment[]>
+  /** Widget behaviour assignment overrides: widgetType → BehaviourAssignment[] */
+  widgetBehaviourAssignments: Record<string, BehaviourAssignment[]>
 
   // Actions
   setExperienceSetting: (key: string, value: unknown) => void
   setBehaviourSetting: (behaviourId: string, key: string, value: unknown) => void
-  setSectionBehaviour: (sectionId: string, behaviourId: string | null) => void
-  setSectionBehaviourOption: (sectionId: string, key: string, value: unknown) => void
   setSectionPinned: (sectionId: string, pinned: boolean | null) => void
   setSectionBehaviourAssignments: (sectionId: string, assignments: BehaviourAssignment[] | null) => void
+  setWidgetBehaviourAssignments: (widgetType: string, assignments: BehaviourAssignment[] | null) => void
   resetExperienceSettings: () => void
   resetBehaviourSettings: (behaviourId?: string) => void
   resetSectionBehaviours: () => void
+  resetWidgetBehaviours: () => void
   resetAll: () => void
 }
 
@@ -45,10 +43,9 @@ interface DevSettingsState {
 export const devSettingsStore = createStore<DevSettingsState>((set) => ({
   experienceSettings: {},
   behaviourSettings: {},
-  sectionBehaviours: {},
-  sectionBehaviourOptions: {},
   sectionPinned: {},
   sectionBehaviourAssignments: {},
+  widgetBehaviourAssignments: {},
 
   setExperienceSetting: (key, value) =>
     set((state) => ({
@@ -61,37 +58,6 @@ export const devSettingsStore = createStore<DevSettingsState>((set) => ({
         ...state.behaviourSettings,
         [behaviourId]: {
           ...state.behaviourSettings[behaviourId],
-          [key]: value,
-        },
-      },
-    })),
-
-  setSectionBehaviour: (sectionId, behaviourId) =>
-    set((state) => {
-      if (behaviourId === null) {
-        const next = { ...state.sectionBehaviours }
-        delete next[sectionId]
-        // Also clear section options when removing assignment
-        const nextOpts = { ...state.sectionBehaviourOptions }
-        delete nextOpts[sectionId]
-        return { sectionBehaviours: next, sectionBehaviourOptions: nextOpts }
-      }
-      return {
-        sectionBehaviours: { ...state.sectionBehaviours, [sectionId]: behaviourId },
-        // Clear options when switching behaviours
-        sectionBehaviourOptions: {
-          ...state.sectionBehaviourOptions,
-          [sectionId]: {},
-        },
-      }
-    }),
-
-  setSectionBehaviourOption: (sectionId, key, value) =>
-    set((state) => ({
-      sectionBehaviourOptions: {
-        ...state.sectionBehaviourOptions,
-        [sectionId]: {
-          ...state.sectionBehaviourOptions[sectionId],
           [key]: value,
         },
       },
@@ -124,6 +90,21 @@ export const devSettingsStore = createStore<DevSettingsState>((set) => ({
       }
     }),
 
+  setWidgetBehaviourAssignments: (widgetType, assignments) =>
+    set((state) => {
+      if (assignments === null) {
+        const next = { ...state.widgetBehaviourAssignments }
+        delete next[widgetType]
+        return { widgetBehaviourAssignments: next }
+      }
+      return {
+        widgetBehaviourAssignments: {
+          ...state.widgetBehaviourAssignments,
+          [widgetType]: assignments,
+        },
+      }
+    }),
+
   resetExperienceSettings: () => set({ experienceSettings: {} }),
 
   resetBehaviourSettings: (behaviourId) =>
@@ -135,15 +116,17 @@ export const devSettingsStore = createStore<DevSettingsState>((set) => ({
     }),
 
   resetSectionBehaviours: () =>
-    set({ sectionBehaviours: {}, sectionBehaviourOptions: {}, sectionPinned: {}, sectionBehaviourAssignments: {} }),
+    set({ sectionPinned: {}, sectionBehaviourAssignments: {} }),
+
+  resetWidgetBehaviours: () =>
+    set({ widgetBehaviourAssignments: {} }),
 
   resetAll: () => set({
     experienceSettings: {},
     behaviourSettings: {},
-    sectionBehaviours: {},
-    sectionBehaviourOptions: {},
     sectionPinned: {},
     sectionBehaviourAssignments: {},
+    widgetBehaviourAssignments: {},
   }),
 }))
 
@@ -186,34 +169,6 @@ export function useDevBehaviourOptions(
 }
 
 /**
- * Subscribe to the dev behaviour override for a specific section.
- * Returns the overridden behaviour ID, or undefined if none set.
- */
-export function useDevSectionBehaviour(
-  sectionId: string,
-): string | undefined {
-  if (process.env.NODE_ENV !== 'development') return undefined
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  return useStore(devSettingsStore, (s) =>
-    s.sectionBehaviours[sectionId],
-  )
-}
-
-/**
- * Subscribe to per-section behaviour option overrides.
- * Returns the options record, or undefined if none set.
- */
-export function useDevSectionBehaviourOptions(
-  sectionId: string,
-): Record<string, unknown> | undefined {
-  if (process.env.NODE_ENV !== 'development') return undefined
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  return useStore(devSettingsStore, (s) =>
-    s.sectionBehaviourOptions[sectionId],
-  )
-}
-
-/**
  * Subscribe to the dev pinned override for a specific section.
  * Returns the overridden pinned state, or undefined if none set.
  */
@@ -238,6 +193,20 @@ export function useDevSectionBehaviourAssignments(
   // eslint-disable-next-line react-hooks/rules-of-hooks
   return useStore(devSettingsStore, (s) =>
     s.sectionBehaviourAssignments[sectionId],
+  )
+}
+
+/**
+ * Subscribe to widget behaviour assignment overrides for a specific widget type.
+ * Returns the assignments array, or undefined if none set.
+ */
+export function useDevWidgetBehaviourAssignments(
+  widgetType: string,
+): BehaviourAssignment[] | undefined {
+  if (process.env.NODE_ENV !== 'development') return undefined
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  return useStore(devSettingsStore, (s) =>
+    s.widgetBehaviourAssignments[widgetType],
   )
 }
 

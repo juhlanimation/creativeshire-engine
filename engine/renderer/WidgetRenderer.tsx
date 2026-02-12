@@ -20,6 +20,7 @@ import { BehaviourWrapper } from '../experience/behaviours'
 import { useExperience, type Experience } from '../experience'
 import type { BehaviourAssignment } from '../experience/experiences/types'
 import { executeAction } from '../experience/actions'
+import { useDevWidgetBehaviourAssignments } from './dev/devSettingsStore'
 import { ErrorBoundary } from './ErrorBoundary'
 import { capitalize } from './utils'
 import type { WidgetRendererProps } from './types'
@@ -86,12 +87,15 @@ export function WidgetRenderer({
 }: WidgetRendererProps): ReactNode {
   const { experience } = useExperience()
 
+  // Dev override for widget-type behaviours
+  const devAssignments = useDevWidgetBehaviourAssignments(widget.type)
+
   // Look up widget component from registry
   // Registry returns stable component references, not new components
   const Component = getWidget(widget.type)
 
-  // Resolve behaviours from explicit schema or experience defaults
-  const behaviourAssignments = resolveWidgetBehaviours(widget, experience)
+  // Resolve behaviours: dev override → explicit schema → experience defaults
+  const behaviourAssignments = devAssignments ?? resolveWidgetBehaviours(widget, experience)
 
   // Wire schema.on events to action registry
   // Maps { click: 'action-id' } → { onClick: (payload) => executeAction('action-id', payload) }
