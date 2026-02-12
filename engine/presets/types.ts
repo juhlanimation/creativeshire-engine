@@ -85,8 +85,8 @@ export type ContentPreprocessor = (content: Record<string, unknown>) => Record<s
 export interface PresetExperienceConfig {
   /** Experience identifier (e.g., 'stacking', 'cinematic-portfolio') */
   id: string
-  /** Per-section L2 overrides (pinned, behaviour, behaviourOptions). Keys are section IDs. */
-  sectionInjections?: Record<string, import('../experience/experiences/types').SectionInjection>
+  /** Per-section behaviour overrides. Keys are section IDs. */
+  sectionBehaviours?: Record<string, import('../experience/experiences/types').BehaviourAssignment[]>
 }
 
 /**

@@ -95,7 +95,6 @@ export type {
   Experience,
   ExperienceContextValue,
   ExperienceProviderProps,
-  SectionInjection,
   BehaviourAssignment,
   PresentationModel,
   PresentationConfig,
@@ -106,9 +105,6 @@ export type {
   PageTransitionConfig,
   TransitionTask,
   ExperienceActions,
-  PageWrapper,
   ExperienceChrome,
   ExperienceConstraints,
 } from './types'
-
-export { normalizeBehaviours, normalizeWidgetBehaviours } from './types'

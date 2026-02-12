@@ -10,9 +10,9 @@
  * - Registers scroll-based behaviours with ScrollDriver for 60fps updates
  * - Computes CSS variables for interaction-based behaviours
  *
- * Pinned sections (via sectionInjections):
+ * Pinned sections (via sectionBehaviours):
  * For cover-scroll experience, CSS position:sticky pins sections at the viewport top.
- * The experience layer injects pinned/behaviour via sectionInjections.
+ * The experience layer assigns pinned/behaviour via sectionBehaviours.
  */
 
 import { useRef, useMemo, useCallback, type ReactNode } from 'react'
@@ -27,7 +27,7 @@ import { useExperience, useSmoothScrollContainer } from '../experience'
 import { useDevSectionBehaviourAssignments, useDevSectionPinned } from './dev/devSettingsStore'
 import { capitalize } from './utils'
 import type { SectionSchema } from '../schema'
-import { normalizeBehaviours, type BehaviourAssignment } from '../experience/experiences/types'
+import type { BehaviourAssignment } from '../experience/experiences/types'
 import type { NavigableExperienceState } from '../experience/experiences/types'
 
 interface SectionRendererProps {
@@ -68,21 +68,21 @@ export function SectionRenderer({ section, index, totalSections }: SectionRender
   const devAssignments = useDevSectionBehaviourAssignments(section.id)
   const devPinned = useDevSectionPinned(section.id)
 
-  // Resolve injection: exact ID → capitalized ID → '*' fallback
-  const injection = experience.sectionInjections[section.id]
-    ?? experience.sectionInjections[capitalize(section.id)]
-    ?? experience.sectionInjections['*']
-    ?? {}
+  // Resolve section behaviours: exact ID → capitalized ID → '*' fallback
+  const sectionAssignments = experience.sectionBehaviours[section.id]
+    ?? experience.sectionBehaviours[capitalize(section.id)]
+    ?? experience.sectionBehaviours['*']
+    ?? []
 
   const isPinned = experience.bareMode ? false
-    : (devPinned ?? injection.pinned ?? false)
+    : (devPinned ?? sectionAssignments.some(a => a.pinned) ?? false)
 
-  // Resolve behaviour assignments: bareMode → dev override → injection → empty
+  // Resolve behaviour assignments: bareMode → dev override → sectionBehaviours → empty
   const assignments: BehaviourAssignment[] = useMemo(() => {
     if (experience.bareMode) return []
     if (devAssignments && devAssignments.length > 0) return devAssignments
-    return normalizeBehaviours(injection)
-  }, [experience.bareMode, devAssignments, injection])
+    return sectionAssignments
+  }, [experience.bareMode, devAssignments, sectionAssignments])
 
   // Read visibility once (no subscription) - ScrollDriver reads via visibilityGetter at 60fps
   // useStore subscription here caused ~21 wasted React re-renders per section during scroll

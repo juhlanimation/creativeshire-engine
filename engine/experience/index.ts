@@ -35,7 +35,6 @@ export type {
   Experience,
   ExperienceContextValue,
   ExperienceProviderProps,
-  SectionInjection,
   BehaviourAssignment,
   PresentationModel,
   PresentationConfig,
@@ -46,12 +45,11 @@ export type {
   PageTransitionConfig,
   TransitionTask,
   ExperienceActions,
-  PageWrapper,
   ExperienceChrome,
   ExperienceConstraints,
 } from './experiences'
 
-export { normalizeBehaviours, normalizeWidgetBehaviours, createExperienceStore } from './experiences'
+export { createExperienceStore } from './experiences'
 
 // Triggers (write browser events to store)
 export {

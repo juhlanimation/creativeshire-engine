@@ -5,7 +5,7 @@
  *
  * No model name checks. Reads the experience definition and renders:
  * - Controllers (from experience.controller)
- * - Presentation wrapper + page wrapper
+ * - Presentation wrapper with optional constraint styles
  *
  * Experience chrome (before/after/overlay) stays in SiteRenderer because
  * ExperienceChromeRenderer imports chrome/registry which creates a circular
@@ -17,12 +17,11 @@
 import { useMemo, type ReactNode, type CSSProperties } from 'react'
 import { useExperience } from './experiences/ExperienceProvider'
 import { PresentationWrapper } from './experiences/PresentationWrapper'
-import { BehaviourWrapper } from './behaviours'
-import type { Experience, ExperienceConstraints } from './experiences/types'
+import type { ExperienceConstraints } from './experiences/types'
 
 /**
  * Generates CSS properties from experience constraints.
- * Applied to the page wrapper container.
+ * Applied to a constraint wrapper div when present.
  */
 function getConstraintStyles(constraints?: ExperienceConstraints): CSSProperties | undefined {
   if (!constraints) return undefined
@@ -40,39 +39,6 @@ function getConstraintStyles(constraints?: ExperienceConstraints): CSSProperties
   return Object.keys(styles).length > 0 ? (styles as CSSProperties) : undefined
 }
 
-/**
- * Wraps content with experience pageWrapper if defined.
- */
-function PageWrapperRenderer({
-  experience,
-  children,
-}: {
-  experience: Experience
-  children: ReactNode
-}) {
-  const constraintStyles = useMemo(
-    () => getConstraintStyles(experience.constraints),
-    [experience.constraints]
-  )
-
-  if (!experience.pageWrapper) {
-    if (constraintStyles) {
-      return <div style={constraintStyles}>{children}</div>
-    }
-    return <>{children}</>
-  }
-
-  return (
-    <BehaviourWrapper
-      behaviourId={experience.pageWrapper.behaviourId}
-      options={experience.pageWrapper.options}
-      style={constraintStyles}
-    >
-      {children}
-    </BehaviourWrapper>
-  )
-}
-
 interface ExperienceChoreographerProps {
   children: ReactNode
 }
@@ -88,6 +54,16 @@ export function ExperienceChoreographer({ children }: ExperienceChoreographerPro
       : [experience.controller]
   }, [experience.controller])
 
+  const constraintStyles = useMemo(
+    () => getConstraintStyles(experience.constraints),
+    [experience.constraints]
+  )
+
+  // Wrap with constraint div only when constraints produce styles
+  const content = constraintStyles
+    ? <div style={constraintStyles}>{children}</div>
+    : children
+
   return (
     <>
       {/* Controllers from experience definition */}
@@ -95,11 +71,9 @@ export function ExperienceChoreographer({ children }: ExperienceChoreographerPro
         <Controller key={i} />
       ))}
 
-      {/* Presentation wrapper + page wrapper + page content */}
+      {/* Presentation wrapper + page content */}
       <PresentationWrapper config={experience.presentation} store={store}>
-        <PageWrapperRenderer experience={experience}>
-          {children}
-        </PageWrapperRenderer>
+        {content}
       </PresentationWrapper>
     </>
   )

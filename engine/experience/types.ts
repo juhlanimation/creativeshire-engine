@@ -9,7 +9,6 @@ import type { Experience, ExperienceState } from './experiences/types'
 export type {
   Experience,
   ExperienceState,
-  SectionInjection,
   BehaviourAssignment,
   // State types
   NavigableExperienceState,
@@ -26,7 +25,6 @@ export type {
   ExperienceActions,
 } from './experiences/types'
 
-export { normalizeBehaviours, normalizeWidgetBehaviours } from './experiences/types'
 export { createExperienceStore } from './experiences/createExperienceStore'
 
 /**

@@ -22,7 +22,7 @@ export const coverScrollExperience: Experience = {
   tags: ['scroll-driven', 'cover', 'hero', 'backdrop'],
   category: 'scroll-driven',
 
-  sectionInjections: {},
+  sectionBehaviours: {},
 
   presentation: {
     model: 'cover-scroll',

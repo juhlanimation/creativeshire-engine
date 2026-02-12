@@ -16,7 +16,7 @@ export const infiniteCarouselExperience: Experience = {
   tags: ['carousel', 'infinite', 'momentum', 'physics', 'scroll'],
   category: 'physics',
 
-  sectionInjections: {},
+  sectionBehaviours: {},
 
   presentation: {
     model: 'infinite-carousel',
@@ -62,8 +62,7 @@ export const infiniteCarouselExperience: Experience = {
     },
   },
 
-  // No pageWrapper - the presentation wrapper handles layout
-  // pageWrapper: undefined,
+  // Presentation wrapper handles layout — no extra wrapper needed
 
   experienceChrome: [],
 

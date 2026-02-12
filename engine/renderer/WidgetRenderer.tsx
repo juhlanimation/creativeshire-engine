@@ -18,7 +18,7 @@ import type { WidgetSchema } from '../schema'
 import { getWidget } from '../content/widgets/registry'
 import { BehaviourWrapper } from '../experience/behaviours'
 import { useExperience, type Experience } from '../experience'
-import { normalizeWidgetBehaviours, type BehaviourAssignment } from '../experience/experiences/types'
+import type { BehaviourAssignment } from '../experience/experiences/types'
 import { executeAction } from '../experience/actions'
 import { ErrorBoundary } from './ErrorBoundary'
 import { capitalize } from './utils'
@@ -42,7 +42,7 @@ function resolveWidgetBehaviours(
     }
     return []
   }
-  return normalizeWidgetBehaviours(experience.widgetBehaviourDefaults?.[widget.type])
+  return experience.widgetBehaviours?.[widget.type] ?? []
 }
 
 /**

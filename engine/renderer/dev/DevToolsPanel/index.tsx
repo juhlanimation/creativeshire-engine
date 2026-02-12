@@ -20,7 +20,7 @@ import { SettingsEditor } from './SettingsEditor'
 import { devSettingsStore, useDevExperienceSettings } from '../devSettingsStore'
 import { getBehaviour, getAllBehaviourMetas } from '../../../experience/behaviours'
 import { getExperience, useExperience } from '../../../experience'
-import { normalizeBehaviours, type BehaviourAssignment } from '../../../experience/experiences/types'
+import type { BehaviourAssignment } from '../../../experience/experiences/types'
 import { capitalize } from '../../utils'
 import type { SectionSchema } from '../../../schema'
 import type { DevToolsTabConfig } from './types'
@@ -29,8 +29,8 @@ import './styles.css'
 // SSR-safe subscription
 const subscribeNoop = () => () => {}
 
-/** Look up experience definition for sectionInjections. Returns null if not found. */
-function getExperienceForSectionInjections(id: string) {
+/** Look up experience definition for sectionBehaviours. Returns null if not found. */
+function getExperienceForSectionBehaviours(id: string) {
   return getExperience(id) ?? null
 }
 
@@ -67,7 +67,7 @@ export function DevToolsPanel({ currentIds, sections }: DevToolsPanelProps) {
 }
 
 function DevToolsPanelInner({ currentIds, sections }: DevToolsPanelProps) {
-  // Merged experience from context (includes preset sectionInjections)
+  // Merged experience from context (includes preset sectionBehaviours)
   const { experience: contextExperience } = useExperience()
 
   const [state, setState] = useState<PanelState>({
@@ -262,11 +262,11 @@ function DevToolsPanelInner({ currentIds, sections }: DevToolsPanelProps) {
       {state.activeTabId === 'experience' && (() => {
         const activeItem = items.find((i) => i.id === activeId)
         const hasExpSettings = activeItem?.settings && Object.keys(activeItem.settings).length > 0
-        // Use merged experience from context (includes preset sectionInjections)
+        // Use merged experience from context (includes preset sectionBehaviours)
         // Falls back to registry lookup if context doesn't match active selection
         const activeExperience = contextExperience.id === activeId
           ? contextExperience
-          : getExperienceForSectionInjections(activeId)
+          : getExperienceForSectionBehaviours(activeId)
         return (
           <>
             {hasExpSettings && (
@@ -347,7 +347,7 @@ const allBehaviourMetas = getAllBehaviourMetas()
 
 interface SectionBehaviourAssignerProps {
   sections: SectionSchema[]
-  experience: ReturnType<typeof getExperienceForSectionInjections>
+  experience: ReturnType<typeof getExperienceForSectionBehaviours>
 }
 
 /**
@@ -371,27 +371,21 @@ function SectionBehaviourAssigner({ sections, experience }: SectionBehaviourAssi
 
 interface SectionBehaviourRowProps {
   section: SectionSchema
-  experience: ReturnType<typeof getExperienceForSectionInjections>
+  experience: ReturnType<typeof getExperienceForSectionBehaviours>
 }
 
 /**
  * Single section row: label, multi-behaviour list, and settings editors.
  */
 function SectionBehaviourRow({ section, experience }: SectionBehaviourRowProps) {
-  // Resolve injection from experience sectionInjections
-  const injection = useMemo(() => {
-    if (!experience?.sectionInjections) return {}
-    return experience.sectionInjections[section.id]
-      ?? experience.sectionInjections[capitalize(section.id)]
-      ?? experience.sectionInjections['*']
-      ?? {}
+  // Resolve assignments from experience sectionBehaviours
+  const schemaBehaviours = useMemo(() => {
+    if (!experience?.sectionBehaviours) return []
+    return experience.sectionBehaviours[section.id]
+      ?? experience.sectionBehaviours[capitalize(section.id)]
+      ?? experience.sectionBehaviours['*']
+      ?? []
   }, [section.id, experience])
-
-  // Schema behaviours (normalized from injection)
-  const schemaBehaviours = useMemo(
-    () => normalizeBehaviours(injection),
-    [injection],
-  )
 
   // Dev override from store (new multi-behaviour)
   const devAssignments = useStore(
@@ -525,24 +519,28 @@ function SectionBehaviourRow({ section, experience }: SectionBehaviourRowProps) 
       </button>
 
       {/* Pinned toggle */}
-      <label style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>
-        <input
-          type="checkbox"
-          checked={devPinned ?? injection.pinned ?? false}
-          onChange={(e) => {
-            const checked = e.target.checked
-            const defaultPinned = injection.pinned ?? false
-            if (checked === defaultPinned) {
-              devSettingsStore.getState().setSectionPinned(section.id, null)
-            } else {
-              devSettingsStore.getState().setSectionPinned(section.id, checked)
-            }
-          }}
-          style={{ margin: 0 }}
-        />
-        Pinned
-        {injection.pinned && <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10 }}>(default: on)</span>}
-      </label>
+      {(() => {
+        const defaultPinned = schemaBehaviours.some(a => a.pinned)
+        return (
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>
+            <input
+              type="checkbox"
+              checked={devPinned ?? defaultPinned}
+              onChange={(e) => {
+                const checked = e.target.checked
+                if (checked === defaultPinned) {
+                  devSettingsStore.getState().setSectionPinned(section.id, null)
+                } else {
+                  devSettingsStore.getState().setSectionPinned(section.id, checked)
+                }
+              }}
+              style={{ margin: 0 }}
+            />
+            Pinned
+            {defaultPinned && <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10 }}>(default: on)</span>}
+          </label>
+        )
+      })()}
     </div>
   )
 }

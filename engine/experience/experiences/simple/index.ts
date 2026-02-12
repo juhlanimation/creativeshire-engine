@@ -13,7 +13,7 @@ export const simpleExperience: Experience = {
   tags: ['simple', 'static', 'testing'],
   category: 'simple',
 
-  sectionInjections: {},
+  sectionBehaviours: {},
 
   // Bare mode: ignore ALL behaviours including schema-level ones
   bareMode: true,

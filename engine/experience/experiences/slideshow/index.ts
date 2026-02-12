@@ -16,8 +16,8 @@ export const slideshowExperience: Experience = {
   tags: ['slides', 'fullscreen', 'navigation', 'presentation'],
   category: 'presentation',
 
-  sectionInjections: {
-    '*': { behaviour: 'slide/item' },
+  sectionBehaviours: {
+    '*': [{ behaviour: 'slide/item' }],
   },
 
   // Presentation config - uses scroll-snap for crisp section stops
@@ -66,8 +66,7 @@ export const slideshowExperience: Experience = {
     },
   },
 
-  // No pageWrapper needed - scroll-snap + ScrollSmoother handles everything
-  // pageWrapper: undefined
+  // Scroll-snap + ScrollSmoother handles layout — no extra wrapper needed
 
   // Slide indicators show active section (based on scroll position)
   experienceChrome: [

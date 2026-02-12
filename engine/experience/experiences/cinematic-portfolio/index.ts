@@ -17,17 +17,17 @@ export const cinematicPortfolioExperience: Experience = {
   tags: ['portfolio', 'cinematic', 'scroll-driven', 'hover', 'parallax'],
   category: 'scroll-driven',
 
-  sectionInjections: {
-    About: { behaviour: 'scroll/fade' },
+  sectionBehaviours: {
+    About: [{ behaviour: 'scroll/fade' }],
   },
 
-  widgetBehaviourDefaults: {
-    HeroTitle: 'scroll/color-shift',
-    ScrollIndicator: 'scroll/progress',
-    VideoThumbnail: 'hover/scale',
-    ProjectCard: 'hover/scale',
-    LogoMarquee: 'animation/marquee',
-    FloatingContact: 'hover/reveal',
+  widgetBehaviours: {
+    HeroTitle: [{ behaviour: 'scroll/color-shift' }],
+    ScrollIndicator: [{ behaviour: 'scroll/progress' }],
+    VideoThumbnail: [{ behaviour: 'hover/scale' }],
+    ProjectCard: [{ behaviour: 'hover/scale' }],
+    LogoMarquee: [{ behaviour: 'animation/marquee' }],
+    FloatingContact: [{ behaviour: 'hover/reveal' }],
   },
 }
 

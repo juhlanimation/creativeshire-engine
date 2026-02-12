@@ -11,16 +11,16 @@ import type { IntroConfig } from '../../intro/types'
 /** Cover scroll — hero stays fixed, content scrolls over it */
 export const experienceConfig: PresetExperienceConfig | undefined = {
   id: 'cover-scroll',
-  sectionInjections: {
-    hero: {
-      pinned: true,
+  sectionBehaviours: {
+    hero: [{
       behaviour: 'scroll/cover-progress',
-      behaviourOptions: {
+      options: {
         propagateToRoot: '--hero-cover-progress',
         propagateContentEdge: '--hero-content-edge',
         targetSelector: '.hero-video__title',
       },
-    },
+      pinned: true,
+    }],
   },
 }
 

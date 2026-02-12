@@ -89,70 +89,15 @@ export interface InfiniteCarouselState extends NavigableExperienceState {
 
 /**
  * A single behaviour assignment with per-behaviour options.
- * Used in the behaviours[] array for multi-behaviour support.
+ * Used in sectionBehaviours and widgetBehaviours arrays.
  */
 export interface BehaviourAssignment {
   /** Behaviour ID (e.g., 'scroll/fade', 'visibility/fade-in') */
   behaviour: string
   /** Options passed to this behaviour's compute function */
   options?: Record<string, unknown>
-}
-
-/**
- * Per-section L2 injection from the experience layer.
- * Replaces pinned/behaviour/behaviourOptions on SectionSchema.
- * Keys in the Record are section IDs; '*' is the fallback.
- */
-export interface SectionInjection {
-  /** Whether this section is pinned (sticky in cover-scroll) */
+  /** Section-level trait: CSS position:sticky pinning */
   pinned?: boolean
-
-  // Legacy single-behaviour fields (kept for backward compatibility)
-  /** Behaviour ID to apply */
-  behaviour?: string
-  /** Options passed to the behaviour */
-  behaviourOptions?: Record<string, unknown>
-
-  // Multi-behaviour support
-  /** Array of behaviour assignments. When present, takes precedence over legacy `behaviour` field. */
-  behaviours?: BehaviourAssignment[]
-}
-
-/**
- * Normalizes a SectionInjection into an array of BehaviourAssignments.
- * If `behaviours` array is present, returns it. Otherwise converts legacy fields.
- */
-export function normalizeBehaviours(injection: SectionInjection): BehaviourAssignment[] {
-  if (injection.behaviours && injection.behaviours.length > 0) {
-    return injection.behaviours
-  }
-  if (injection.behaviour) {
-    return [{ behaviour: injection.behaviour, options: injection.behaviourOptions }]
-  }
-  return []
-}
-
-/**
- * Normalizes widget behaviour defaults into an array of BehaviourAssignments.
- * Accepts legacy string format or new array format.
- */
-export function normalizeWidgetBehaviours(
-  value: string | BehaviourAssignment[] | undefined,
-): BehaviourAssignment[] {
-  if (!value) return []
-  if (typeof value === 'string') return [{ behaviour: value }]
-  return value
-}
-
-/**
- * Page wrapper configuration for structural experiences.
- * Allows experiences like "slideshow" to wrap the entire page.
- */
-export interface PageWrapper {
-  /** Behaviour ID to wrap the page with (e.g., 'slide/container') */
-  behaviourId: string
-  /** Options passed to the behaviour */
-  options?: Record<string, unknown>
 }
 
 /**
@@ -400,7 +345,6 @@ export interface ExperienceActions {
  * The engine auto-derives the store from the presentation model.
  *
  * For structural experiences (slideshow, gallery), use:
- * - pageWrapper: wrap entire page in a behaviour
  * - experienceChrome: add navigation, indicators
  * - constraints: enforce structural rules
  * - presentation: control visual arrangement
@@ -425,17 +369,15 @@ export interface Experience {
   /** Configurable settings for this experience */
   settings?: SettingsConfig<unknown>
 
-  // Section injections (L2 → L1 dependency injection)
+  // Behaviour assignments
 
-  /** Per-section L2 config. Keys are section IDs, '*' = fallback. */
-  sectionInjections: Record<string, SectionInjection>
-  /** Default behaviours by widget type. Accepts single ID (legacy) or array. */
-  widgetBehaviourDefaults?: Record<string, string | BehaviourAssignment[]>
+  /** Per-section behaviour assignments. Keys are section IDs, '*' = fallback. */
+  sectionBehaviours: Record<string, BehaviourAssignment[]>
+  /** Default behaviours by widget type. Keys are widget type names. */
+  widgetBehaviours?: Record<string, BehaviourAssignment[]>
 
   // Structural configuration (optional - for experiences like slideshow)
 
-  /** Page-level behaviour wrapper (e.g., slide container) */
-  pageWrapper?: PageWrapper
   /** Experience-owned UI elements (navigation, indicators) */
   experienceChrome?: ExperienceChrome[]
   /** Structural constraints the experience imposes */
