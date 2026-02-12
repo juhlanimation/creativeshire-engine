@@ -9,7 +9,6 @@ import type { Experience, ExperienceState } from './experiences/types'
 export type {
   Experience,
   ExperienceState,
-  ExperienceTriggerConfig,
   SectionInjection,
   BehaviourAssignment,
   // State types
@@ -28,6 +27,7 @@ export type {
 } from './experiences/types'
 
 export { normalizeBehaviours, normalizeWidgetBehaviours } from './experiences/types'
+export { createExperienceStore } from './experiences/createExperienceStore'
 
 /**
  * Context value distributed by ExperienceProvider.

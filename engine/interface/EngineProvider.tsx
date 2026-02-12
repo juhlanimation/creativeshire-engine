@@ -9,6 +9,7 @@ import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'r
 import { useStore, type StoreApi } from 'zustand'
 import { createEngineStore, createSnapshot } from './EngineStore'
 import { ExperienceProvider, getExperience, simpleExperience, ensureExperiencesRegistered } from '../experience'
+import { createExperienceStore } from '../experience/experiences/createExperienceStore'
 
 // Ensure all experiences are registered before any lookups
 ensureExperiencesRegistered()
@@ -80,7 +81,7 @@ export function EngineProvider({ input, children }: EngineProviderProps) {
     return simpleExperience
   }, [experienceId])
 
-  const experienceStore = useMemo(() => resolvedExperience.createStore(), [resolvedExperience])
+  const experienceStore = useMemo(() => createExperienceStore(resolvedExperience), [resolvedExperience])
 
   // Mark ready after initial render
   useEffect(() => {

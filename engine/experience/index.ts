@@ -51,7 +51,7 @@ export type {
   ExperienceConstraints,
 } from './experiences'
 
-export { normalizeBehaviours, normalizeWidgetBehaviours } from './experiences'
+export { normalizeBehaviours, normalizeWidgetBehaviours, createExperienceStore } from './experiences'
 
 // Triggers (write browser events to store)
 export {
@@ -164,5 +164,4 @@ export type {
   NavigableExperienceState,
   InfiniteCarouselState,
   NavigationState,
-  ExperienceTriggerConfig,
 } from './types'

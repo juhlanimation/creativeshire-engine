@@ -16,6 +16,7 @@ import type { Experience, ExperienceChrome, ExperienceState, SectionInjection } 
 import { getExperienceOverride } from '../../experience'
 import { useDevOverride } from './useDevOverride'
 import { useDevExperienceSettings } from '../dev/devSettingsStore'
+import { createExperienceStore } from '../../experience/experiences/createExperienceStore'
 import type { SiteSchema, PageSchema } from '../../schema'
 
 export interface ResolvedExperience {
@@ -87,7 +88,7 @@ export function useResolvedExperience(site: SiteSchema, page: PageSchema): Resol
   }, [experience, site.experience?.sectionInjections, page.experience?.sectionInjections])
 
   // Create store for this render (memoized to avoid recreating on every render)
-  const store = useMemo(() => mergedExperience.createStore(), [mergedExperience])
+  const store = useMemo(() => createExperienceStore(mergedExperience), [mergedExperience])
 
   // Resolve experience settings: defaults from definition → schema overrides → dev overrides
   const resolvedSettings = useMemo(() => {

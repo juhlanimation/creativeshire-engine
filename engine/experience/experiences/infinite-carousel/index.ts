@@ -3,8 +3,7 @@
  * Sections scroll continuously with snap-to-section behavior.
  */
 
-import { createStore } from 'zustand'
-import type { Experience, InfiniteCarouselState } from '../types'
+import type { Experience } from '../types'
 import { InfiniteCarouselController } from '../InfiniteCarouselController'
 import { meta } from './meta'
 
@@ -16,45 +15,6 @@ export const infiniteCarouselExperience: Experience = {
   icon: 'scroll',
   tags: ['carousel', 'infinite', 'momentum', 'physics', 'scroll'],
   category: 'physics',
-
-  provides: [
-    'scrollProgress', 'velocity', 'activeSection', 'previousSection',
-    'totalSections', 'isSnapping', 'snapTarget', 'phase', 'hasLooped',
-    'isTransitioning', 'transitionProgress', 'transitionDirection', 'clipProgress',
-    'pinnedSections',
-  ],
-
-  createStore: () =>
-    createStore<InfiniteCarouselState>(() => ({
-      // Base ExperienceState
-      scrollProgress: 0,
-      viewportHeight: typeof window !== 'undefined' ? window.innerHeight : 0,
-      isScrolling: false,
-      prefersReducedMotion: false,
-      sectionVisibilities: {},
-      cursorX: 0,
-      cursorY: 0,
-      // NavigationState
-      activeSection: 0,
-      previousSection: 0,
-      totalSections: 0,
-      isTransitioning: false,
-      transitionProgress: 0,
-      transitionDirection: null,
-      lastInputType: null,
-      isLocked: false,
-      // InfiniteCarouselState specific
-      velocity: 0,
-      snapTarget: -1,
-      isSnapping: false,
-      phase: 'intro',
-      hasLooped: false,
-      sectionIds: [],
-      clipProgress: 0,
-      pinnedSections: [],
-    })),
-
-  triggers: [],  // MomentumDriver handles all input
 
   sectionInjections: {},
 

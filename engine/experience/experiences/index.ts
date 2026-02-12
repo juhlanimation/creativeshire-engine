@@ -87,6 +87,9 @@ export type { PresentationWrapperProps } from './PresentationWrapper'
 // Infinite carousel controller (initializes MomentumDriver, positions sections)
 export { InfiniteCarouselController } from './InfiniteCarouselController'
 
+// Auto-derived store
+export { createExperienceStore } from './createExperienceStore'
+
 // Types
 export type {
   Experience,

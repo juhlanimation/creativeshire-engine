@@ -3,8 +3,7 @@
  * No animations. Sections stack vertically. For testing layout.
  */
 
-import { createStore } from 'zustand'
-import type { Experience, ExperienceState } from '../types'
+import type { Experience } from '../types'
 
 export const simpleExperience: Experience = {
   id: 'simple',
@@ -13,19 +12,6 @@ export const simpleExperience: Experience = {
   icon: 'layout',
   tags: ['simple', 'static', 'testing'],
   category: 'simple',
-
-  provides: [],
-  createStore: () =>
-    createStore<ExperienceState>(() => ({
-      scrollProgress: 0,
-      viewportHeight: 0,
-      isScrolling: false,
-      prefersReducedMotion: false,
-      sectionVisibilities: {},
-      cursorX: 0,
-      cursorY: 0,
-    })),
-  triggers: [],
 
   sectionInjections: {},
 

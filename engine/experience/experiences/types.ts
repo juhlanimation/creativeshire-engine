@@ -5,7 +5,6 @@
  */
 
 import type { ComponentType } from 'react'
-import type { StoreApi } from 'zustand'
 import type { SerializableValue } from '../../schema/types'
 import type { SettingsConfig } from '../../schema/settings'
 import type { ExperienceCategory } from './registry'
@@ -86,18 +85,6 @@ export interface InfiniteCarouselState extends NavigableExperienceState {
   clipProgress: number
   /** Indices of sections marked as pinned (stay visible behind next section) */
   pinnedSections: number[]
-}
-
-/**
- * Configuration for a trigger that updates store state.
- */
-export interface ExperienceTriggerConfig {
-  /** Trigger type identifier (e.g., 'scroll-progress', 'intersection') */
-  type: string
-  /** Store field(s) to update */
-  target: string | string[]
-  /** Trigger-specific options */
-  options?: Record<string, unknown>
 }
 
 /**
@@ -409,8 +396,8 @@ export interface ExperienceActions {
 
 /**
  * Experience definition.
- * Bundles state provider + behaviour defaults.
- * Chrome structure stays in Preset; chrome behaviours come from widgetBehaviourDefaults.
+ * A pattern: curated collection of behaviours + structural config.
+ * The engine auto-derives the store from the presentation model.
  *
  * For structural experiences (slideshow, gallery), use:
  * - pageWrapper: wrap entire page in a behaviour
@@ -437,15 +424,6 @@ export interface Experience {
   category?: ExperienceCategory
   /** Configurable settings for this experience */
   settings?: SettingsConfig<unknown>
-
-  // State provider
-
-  /** State fields the experience's store exposes */
-  provides: string[]
-  /** Function to create the Zustand store for this experience */
-  createStore: () => StoreApi<ExperienceState>
-  /** Triggers that update store state */
-  triggers: ExperienceTriggerConfig[]
 
   // Section injections (L2 → L1 dependency injection)
 

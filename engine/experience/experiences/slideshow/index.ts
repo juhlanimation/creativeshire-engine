@@ -3,8 +3,7 @@
  * Sections become slides. One visible at a time.
  */
 
-import { createStore } from 'zustand'
-import type { Experience, NavigableExperienceState } from '../types'
+import type { Experience } from '../types'
 import { NavigationInitializer } from '../../navigation/NavigationInitializer'
 import { meta } from './meta'
 
@@ -16,35 +15,6 @@ export const slideshowExperience: Experience = {
   icon: 'presentation',
   tags: ['slides', 'fullscreen', 'navigation', 'presentation'],
   category: 'presentation',
-
-  provides: [
-    'activeSection', 'previousSection', 'totalSections',
-    'isTransitioning', 'transitionProgress', 'transitionDirection',
-    'lastInputType', 'isLocked',
-  ],
-
-  createStore: () =>
-    createStore<NavigableExperienceState>(() => ({
-      // Base ExperienceState
-      scrollProgress: 0,
-      viewportHeight: 0,
-      isScrolling: false,
-      prefersReducedMotion: false,
-      sectionVisibilities: {},
-      cursorX: 0,
-      cursorY: 0,
-      // Navigation state
-      activeSection: 0,
-      previousSection: 0,
-      totalSections: 0,
-      isTransitioning: false,
-      transitionProgress: 0,
-      transitionDirection: null,
-      lastInputType: null,
-      isLocked: false,
-    })),
-
-  triggers: [],  // Navigation handled by NavigationInitializer now
 
   sectionInjections: {
     '*': { behaviour: 'slide/item' },
