@@ -19,7 +19,7 @@
 import './styles.css'
 import type { SitePreset } from '../types'
 import { registerPreset, type PresetMeta } from '../registry'
-import { experienceConfig, introConfig } from './site'
+import { experienceConfig } from './site'
 import { chromeConfig } from './chrome'
 import { homePageTemplate } from './pages'
 import { bishoyGendiContentContract } from './content-contract'
@@ -56,7 +56,6 @@ export const bishoyGendiPreset: SitePreset = {
       paragraph: 'var(--font-plus-jakarta), system-ui, -apple-system, sans-serif',
     },
   },
-  intro: introConfig,
   experience: experienceConfig,
   chrome: chromeConfig,
   pages: {

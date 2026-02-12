@@ -72,7 +72,7 @@ export function useResolvedExperience(site: SiteSchema, page: PageSchema): Resol
   // Use sync experience if available, then async, then fallback to simple
   const experience = syncExperience ?? asyncExperience ?? simpleExperience
 
-  // Merge preset sectionBehaviours on top of experience defaults
+  // Merge preset overrides on top of experience defaults
   // Priority: page config > site config > experience definition
   // With arrays, preset REPLACES (not merges) the experience default for that section
   const mergedExperience = useMemo(() => {
@@ -80,13 +80,25 @@ export function useResolvedExperience(site: SiteSchema, page: PageSchema): Resol
       ...(site.experience?.sectionBehaviours ?? {}),
       ...(page.experience?.sectionBehaviours ?? {}),
     }
-    if (!Object.keys(presetBehaviours).length) return experience
-    const merged = { ...experience.sectionBehaviours }
-    for (const [key, assignments] of Object.entries(presetBehaviours)) {
-      merged[key] = assignments
+    // Merge intro: preset intro overrides experience default
+    const introOverride = page.experience?.intro ?? site.experience?.intro
+    const needsBehaviourMerge = Object.keys(presetBehaviours).length > 0
+    const needsIntroMerge = introOverride !== undefined
+
+    if (!needsBehaviourMerge && !needsIntroMerge) return experience
+
+    const merged = needsBehaviourMerge ? { ...experience.sectionBehaviours } : experience.sectionBehaviours
+    if (needsBehaviourMerge) {
+      for (const [key, assignments] of Object.entries(presetBehaviours)) {
+        (merged as Record<string, BehaviourAssignment[]>)[key] = assignments
+      }
     }
-    return { ...experience, sectionBehaviours: merged }
-  }, [experience, site.experience?.sectionBehaviours, page.experience?.sectionBehaviours])
+    return {
+      ...experience,
+      ...(needsBehaviourMerge && { sectionBehaviours: merged }),
+      ...(needsIntroMerge && { intro: introOverride }),
+    }
+  }, [experience, site.experience?.sectionBehaviours, page.experience?.sectionBehaviours, site.experience?.intro, page.experience?.intro])
 
   // Create store for this render (memoized to avoid recreating on every render)
   const store = useMemo(() => createExperienceStore(mergedExperience), [mergedExperience])

@@ -1,5 +1,5 @@
 /**
- * Intro types - state, config, and pattern definitions.
+ * Intro types - state, config, and action definitions.
  * Intro sequences run before Experience takes over.
  */
 
@@ -69,20 +69,6 @@ export interface IntroConfig {
 }
 
 // =============================================================================
-// Triggers
-// =============================================================================
-
-/**
- * Trigger configuration for intro patterns.
- */
-export interface IntroTriggerConfig {
-  /** Trigger type */
-  type: 'video-time' | 'timer' | 'scroll' | 'visibility' | 'sequence'
-  /** Trigger-specific options */
-  options?: Record<string, unknown>
-}
-
-// =============================================================================
 // Sequence Step Configuration
 // =============================================================================
 
@@ -104,38 +90,6 @@ export interface SequenceStepConfig {
 }
 
 // =============================================================================
-// Pattern Meta (CMS listing)
-// =============================================================================
-
-/** Intro pattern category for CMS organization */
-export type IntroCategory = 'gate' | 'reveal' | 'sequence'
-
-/**
- * Intro pattern metadata for CMS listing.
- * Contains only the fields needed for discovery/display.
- */
-export interface IntroPatternMeta<T = unknown> {
-  /** Unique identifier */
-  id: string
-  /** Human-readable name */
-  name: string
-  /** Description */
-  description: string
-  /** Icon identifier for CMS UI */
-  icon?: string
-  /** Searchable tags */
-  tags?: string[]
-  /** Category for grouping in CMS */
-  category?: IntroCategory
-  /** CMS-configurable settings */
-  settings?: SettingsConfig<T>
-  /** Preview image URL */
-  preview?: string
-  /** Documentation URL */
-  docs?: string
-}
-
-// =============================================================================
 // Compiled Intro Meta (CMS listing for full intro configs)
 // =============================================================================
 
@@ -153,28 +107,9 @@ export interface IntroMeta {
   /** Icon identifier for CMS UI */
   icon?: string
   /** Category for grouping in CMS */
-  category?: IntroCategory
+  category?: 'gate' | 'reveal' | 'sequence'
   /** CMS-configurable settings for this intro */
   settings?: SettingsConfig<Record<string, unknown>>
-}
-
-// =============================================================================
-// Patterns
-// =============================================================================
-
-/**
- * Intro pattern definition.
- * Extends meta with runtime fields.
- */
-export interface IntroPattern extends IntroPatternMeta {
-  /** What triggers completion */
-  triggers: IntroTriggerConfig[]
-
-  /** Reveal animation duration (ms) */
-  revealDuration: number
-
-  /** Whether to hide chrome during intro */
-  hideChrome: boolean
 }
 
 // =============================================================================

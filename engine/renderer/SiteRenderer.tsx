@@ -56,16 +56,12 @@ import { ensurePresetsRegistered } from '../presets'
 import {
   IntroProvider,
   IntroContentGate,
-  ensureIntroPatternsRegistered,
 } from '../intro'
-import { ensureIntrosRegistered } from '../intro/intros'
 import { ensureChromeRegistered } from '../content/chrome/registry'
 
-// Ensure all experiences, presets, intro patterns, transitions, and chrome are registered before any lookups
+// Ensure all experiences, presets, transitions, and chrome are registered before any lookups
 ensureExperiencesRegistered()
 ensurePresetsRegistered()
-ensureIntroPatternsRegistered()
-ensureIntrosRegistered()
 ensurePageTransitionsRegistered()
 ensureChromeRegistered()
 
@@ -139,11 +135,10 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
   } = useResolvedExperience(site, page)
 
   const {
-    introConfig, introPattern,
+    introConfig,
     overlayComponent: introOverlayComponent,
     overlayProps: introOverlayProps,
-    schemaIntroId,
-  } = useResolvedIntro(site, page)
+  } = useResolvedIntro(site, page, experience)
 
   const {
     pageTransitionConfig,
@@ -209,8 +204,7 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
     <ThemeProvider theme={site.theme}>
       <ScrollLockProvider>
       <IntroProvider
-        pattern={introPattern ?? null}
-        settings={introConfig?.settings}
+        config={introConfig}
         overlayComponent={introOverlayComponent}
         overlayProps={introOverlayProps}
       >
@@ -289,7 +283,6 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
                 {/* Dev-mode switchers (only in development AND not in iframe) */}
                 <DevToolsContainer
                   schemaExperienceId={schemaExperienceId}
-                  schemaIntroId={schemaIntroId}
                   schemaTransitionId={schemaTransitionId}
                   presetId={presetId ?? site.id}
                   sections={page.sections}

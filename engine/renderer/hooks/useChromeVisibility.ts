@@ -23,7 +23,9 @@ export function useChromeVisibility(): { introHidesChrome: boolean } {
     () => intro?.store.getState().chromeVisible ?? true,
   )
 
-  const introHidesChrome = !!(intro?.pattern?.hideChrome && !chromeVisible)
+  // hideChrome is true for all patterns except 'scroll-reveal'
+  const hideChrome = intro?.config ? intro.config.pattern !== 'scroll-reveal' : false
+  const introHidesChrome = !!(hideChrome && !chromeVisible)
 
   return { introHidesChrome }
 }

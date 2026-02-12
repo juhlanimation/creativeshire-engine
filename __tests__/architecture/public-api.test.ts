@@ -64,9 +64,9 @@ import {
 
 // Intro barrel
 import {
-  getIntroPatternIds,
-  getAllIntroPatternMetas,
-  getIntroPattern,
+  getIntroOverride,
+  setIntroOverride,
+  DEV_INTRO_PARAM,
 } from '../../engine/intro'
 
 // Validation barrel
@@ -382,34 +382,17 @@ describe('Public API Validation', () => {
     })
   })
 
-  describe('Intro registry accessible via barrel', () => {
-    it('getIntroPatternIds returns IDs', () => {
-      const ids = getIntroPatternIds()
-      expect(ids.length, 'getIntroPatternIds() should return entries').toBeGreaterThan(0)
+  describe('Intro dev override accessible via barrel', () => {
+    it('getIntroOverride is a function', () => {
+      expect(typeof getIntroOverride).toBe('function')
     })
 
-    it('getAllIntroPatternMetas returns metadata', () => {
-      const metas = getAllIntroPatternMetas()
-      expect(metas.length, 'getAllIntroPatternMetas() should return entries').toBeGreaterThan(0)
-
-      for (const meta of metas) {
-        expect(meta.id, 'Intro pattern meta missing id').toBeTruthy()
-        expect(meta.name, `Intro pattern "${meta.id}" missing name`).toBeTruthy()
-      }
+    it('setIntroOverride is a function', () => {
+      expect(typeof setIntroOverride).toBe('function')
     })
 
-    it('getIntroPattern returns entries for all registered IDs', () => {
-      const ids = getIntroPatternIds()
-      const violations: string[] = []
-
-      for (const id of ids) {
-        const pattern = getIntroPattern(id)
-        if (!pattern) {
-          violations.push(`getIntroPattern("${id}") returned undefined`)
-        }
-      }
-
-      expect(violations, `Missing intro patterns:\n${violations.join('\n')}`).toHaveLength(0)
+    it('DEV_INTRO_PARAM is defined', () => {
+      expect(DEV_INTRO_PARAM).toBe('_intro')
     })
   })
 

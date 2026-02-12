@@ -11,7 +11,6 @@ import type { SectionSchema } from '../../schema'
 
 interface DevToolsContainerProps {
   schemaExperienceId: string
-  schemaIntroId: string
   schemaTransitionId: string
   presetId: string
   sections?: SectionSchema[]
@@ -19,17 +18,15 @@ interface DevToolsContainerProps {
 
 export function DevToolsContainer({
   schemaExperienceId,
-  schemaIntroId,
   schemaTransitionId,
   presetId,
   sections,
 }: DevToolsContainerProps): ReactNode {
   const currentIds = useMemo(() => ({
     experience: schemaExperienceId,
-    intro: schemaIntroId,
     transition: schemaTransitionId,
     preset: presetId,
-  }), [schemaExperienceId, schemaIntroId, schemaTransitionId, presetId])
+  }), [schemaExperienceId, schemaTransitionId, presetId])
 
   return <DevToolsPanel currentIds={currentIds} sections={sections} />
 }

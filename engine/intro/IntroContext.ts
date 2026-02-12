@@ -6,7 +6,7 @@
 
 import { createContext, useContext } from 'react'
 import type { StoreApi } from 'zustand'
-import type { IntroState, IntroActions, IntroPattern } from './types'
+import type { IntroState, IntroActions, IntroConfig } from './types'
 
 /**
  * Combined store type with state and actions.
@@ -17,8 +17,8 @@ export type IntroStore = IntroState & IntroActions
  * Context value provided by IntroProvider.
  */
 export interface IntroContextValue {
-  /** The intro pattern being used */
-  pattern: IntroPattern
+  /** The intro config being used */
+  config: IntroConfig
   /** Zustand store for intro state */
   store: StoreApi<IntroStore>
 }

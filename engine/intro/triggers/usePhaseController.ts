@@ -10,13 +10,12 @@
 import { useEffect, useRef, useCallback } from 'react'
 import type { StoreApi } from 'zustand'
 import type { IntroStore } from '../IntroContext'
-import type { IntroPattern } from '../types'
 
 export interface UsePhaseControllerOptions {
-  /** The intro pattern being used */
-  pattern: IntroPattern
-  /** Pattern settings (overrides pattern defaults) */
-  settings?: Record<string, unknown>
+  /** Reveal animation duration (ms) */
+  revealDuration: number
+  /** Whether the intro has a blocking gate (video-time, timer, sequence) */
+  hasBlockingGate: boolean
 }
 
 /**
@@ -27,12 +26,8 @@ export function usePhaseController(
   store: StoreApi<IntroStore>,
   options: UsePhaseControllerOptions
 ): { triggerReveal: () => void } {
-  const { pattern, settings } = options
+  const { revealDuration, hasBlockingGate } = options
   const isRevealing = useRef(false)
-
-  // Get reveal duration from settings or pattern default
-  const revealDuration =
-    (settings?.revealDuration as number) ?? pattern.revealDuration
 
   /**
    * Trigger the reveal phase.
@@ -76,14 +71,9 @@ export function usePhaseController(
     requestAnimationFrame(animateReveal)
   }, [store, revealDuration])
 
-  // Auto-complete if no triggers (scroll-reveal with visibility trigger)
+  // Auto-complete if no blocking gate (e.g., scroll-reveal with visibility trigger)
   useEffect(() => {
-    // If pattern has no blocking triggers, start reveal immediately
-    const hasBlockingTrigger = pattern.triggers.some(
-      (t) => t.type === 'video-time' || t.type === 'timer' || t.type === 'sequence'
-    )
-
-    if (!hasBlockingTrigger) {
+    if (!hasBlockingGate) {
       // Small delay to allow initial render
       const timeout = setTimeout(() => {
         triggerReveal()
@@ -91,7 +81,7 @@ export function usePhaseController(
 
       return () => clearTimeout(timeout)
     }
-  }, [pattern.triggers, triggerReveal])
+  }, [hasBlockingGate, triggerReveal])
 
   return { triggerReveal }
 }

@@ -1,6 +1,6 @@
 /**
  * Tab configurations for the DevToolsPanel.
- * Each tab maps to a registry (experience, intro, transition, preset).
+ * Each tab maps to a registry (experience, transition, preset).
  */
 
 import {
@@ -8,11 +8,6 @@ import {
   getExperienceOverride,
   setExperienceOverride,
 } from '../../../experience'
-import {
-  getAllRegisteredIntroMetas,
-  getIntroOverride,
-  setIntroOverride,
-} from '../../../intro/registry'
 import {
   getAllRegisteredTransitionMetas,
   getTransitionOverride,
@@ -43,27 +38,6 @@ export const TAB_CONFIGS: DevToolsTabConfig[] = [
     })),
     getOverride: getExperienceOverride,
     setOverride: setExperienceOverride,
-  },
-  {
-    id: 'intro',
-    label: 'Intro',
-    icon: '\uD83C\uDFAD',
-    color: '16,185,129',
-    headerTitle: 'Switch Intro',
-    urlParam: '_intro',
-    mode: 'reload',
-    allowNone: true,
-    noneLabel: 'No Intro',
-    noneDescription: 'Disable intro sequence',
-    footerMessage: 'Switching intros reloads the page',
-    getItems: () => getAllRegisteredIntroMetas().map((m): DevToolsItem => ({
-      id: m.id,
-      name: m.name,
-      description: m.description,
-      settings: m.settings as DevToolsItem['settings'],
-    })),
-    getOverride: getIntroOverride,
-    setOverride: setIntroOverride,
   },
   {
     id: 'transition',

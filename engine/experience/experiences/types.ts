@@ -7,6 +7,7 @@
 import type { ComponentType } from 'react'
 import type { SerializableValue } from '../../schema/types'
 import type { SettingsConfig } from '../../schema/settings'
+import type { IntroConfig } from '../../intro/types'
 import type { ExperienceCategory } from './registry'
 
 // =============================================================================
@@ -375,6 +376,12 @@ export interface Experience {
   sectionBehaviours: Record<string, BehaviourAssignment[]>
   /** Default behaviours by widget type. Keys are widget type names. */
   widgetBehaviours?: Record<string, BehaviourAssignment[]>
+
+  // Intro sequence (optional — runs before experience is interactive)
+
+  /** Intro configuration — gate, overlay, and reveal settings.
+   *  Preset or schema can override the experience default. */
+  intro?: IntroConfig
 
   // Structural configuration (optional - for experiences like slideshow)
 

@@ -1,27 +1,20 @@
 /**
  * Intro Module Architecture Tests
  *
- * Validates the intro module structure and registration:
+ * Validates the intro module structure:
  * - Folder structure follows conventions
- * - Patterns are registered
  * - Types are exported correctly
  * - Triggers follow hook naming convention
+ * - Dev override functions are exported
  */
 
-import { describe, it, expect, beforeAll } from 'vitest'
-import { getFiles, getFolders, readFile, relativePath, fileExists } from './helpers'
+import { describe, it, expect } from 'vitest'
+import { getFiles, readFile, relativePath, fileExists } from './helpers'
 import path from 'path'
 
 const ENGINE = path.join(process.cwd(), 'engine')
 
 describe('Intro Sequence-Timed Pattern', () => {
-  it('sequence-timed pattern folder exists with index.ts + meta.ts', async () => {
-    const patternPath = path.join(ENGINE, 'intro', 'patterns', 'sequence-timed')
-    expect(await fileExists(patternPath), 'sequence-timed folder should exist').toBe(true)
-    expect(await fileExists(path.join(patternPath, 'index.ts')), 'index.ts should exist').toBe(true)
-    expect(await fileExists(path.join(patternPath, 'meta.ts')), 'meta.ts should exist').toBe(true)
-  })
-
   it('useSequence trigger file exists', async () => {
     const triggerPath = path.join(ENGINE, 'intro', 'triggers', 'useSequence.ts')
     expect(await fileExists(triggerPath), 'useSequence.ts should exist').toBe(true)
@@ -77,13 +70,6 @@ describe('Intro Sequence-Timed Pattern', () => {
     expect(content).toContain("'intro/step'")
   })
 
-  it('sequence-timed pattern is registered', async () => {
-    const { ensureIntroPatternsRegistered, getIntroPatternIds } = await import('../../engine/intro')
-    ensureIntroPatternsRegistered()
-    const patternIds = getIntroPatternIds()
-    expect(patternIds).toContain('sequence-timed')
-  })
-
   it('SequenceStepConfig type is exported from intro barrel', async () => {
     const indexPath = path.join(ENGINE, 'intro', 'index.ts')
     const content = await readFile(indexPath)
@@ -126,94 +112,10 @@ describe('Intro Module Structure', () => {
       expect(missing, `Missing required files:\n${missing.join('\n')}`).toHaveLength(0)
     })
 
-    it('intro/patterns/ folder exists', async () => {
-      const patternsPath = path.join(ENGINE, 'intro', 'patterns')
-      const exists = await fileExists(patternsPath)
-      expect(exists, 'engine/intro/patterns/ folder should exist').toBe(true)
-    })
-
     it('intro/triggers/ folder exists', async () => {
       const triggersPath = path.join(ENGINE, 'intro', 'triggers')
       const exists = await fileExists(triggersPath)
       expect(exists, 'engine/intro/triggers/ folder should exist').toBe(true)
-    })
-  })
-
-  describe('Pattern structure', () => {
-    const EXPECTED_PATTERNS = ['video-gate', 'timed', 'scroll-reveal', 'sequence-timed']
-
-    it('all expected pattern folders exist', async () => {
-      const missing: string[] = []
-
-      for (const pattern of EXPECTED_PATTERNS) {
-        const patternPath = path.join(ENGINE, 'intro', 'patterns', pattern)
-        if (!(await fileExists(patternPath))) {
-          missing.push(`intro/patterns/${pattern}`)
-        }
-      }
-
-      expect(missing, `Missing pattern folders:\n${missing.join('\n')}`).toHaveLength(0)
-    })
-
-    it('each pattern folder has index.ts', async () => {
-      const folders = await getFolders('intro/patterns/*')
-      const missing: string[] = []
-
-      for (const folder of folders) {
-        const indexPath = path.join(folder, 'index.ts')
-        if (!(await fileExists(indexPath))) {
-          missing.push(`${relativePath(folder)}/index.ts`)
-        }
-      }
-
-      expect(missing, `Pattern folders missing index.ts:\n${missing.join('\n')}`).toHaveLength(0)
-    })
-
-    it('each pattern folder has meta.ts', async () => {
-      const folders = await getFolders('intro/patterns/*')
-      const missing: string[] = []
-
-      for (const folder of folders) {
-        const metaPath = path.join(folder, 'meta.ts')
-        if (!(await fileExists(metaPath))) {
-          missing.push(`${relativePath(folder)}/meta.ts`)
-        }
-      }
-
-      expect(missing, `Pattern folders missing meta.ts:\n${missing.join('\n')}`).toHaveLength(0)
-    })
-
-    it('pattern folders are kebab-case', async () => {
-      const folders = await getFolders('intro/patterns/*')
-      const violations: string[] = []
-
-      for (const folder of folders) {
-        const name = path.basename(folder)
-        // kebab-case: lowercase letters, numbers, hyphens only
-        if (!/^[a-z][a-z0-9-]*$/.test(name)) {
-          violations.push(`${relativePath(folder)}: "${name}" is not kebab-case`)
-        }
-      }
-
-      expect(violations, `Non-kebab-case pattern folders:\n${violations.join('\n')}`).toHaveLength(0)
-    })
-
-    it('patterns/index.ts exports all patterns', async () => {
-      const indexPath = path.join(ENGINE, 'intro', 'patterns', 'index.ts')
-      const content = await readFile(indexPath)
-
-      const missingExports: string[] = []
-      for (const pattern of EXPECTED_PATTERNS) {
-        // Convert kebab-case to pattern name (video-gate -> videoGatePattern)
-        const camelCase = pattern.replace(/-([a-z])/g, (_, c) => c.toUpperCase())
-        const exportName = `${camelCase}Pattern`
-
-        if (!content.includes(exportName)) {
-          missingExports.push(exportName)
-        }
-      }
-
-      expect(missingExports, `Missing exports in patterns/index.ts:\n${missingExports.join('\n')}`).toHaveLength(0)
     })
   })
 
@@ -266,10 +168,9 @@ describe('Intro Module Structure', () => {
         'IntroPhase',
         'IntroState',
         'IntroConfig',
-        'IntroPatternMeta',
-        'IntroPattern',
-        'IntroTriggerConfig',
+        'IntroMeta',
         'IntroActions',
+        'SequenceStepConfig',
       ]
 
       const missing: string[] = []
@@ -302,17 +203,14 @@ describe('Intro Module Structure', () => {
       expect(missing, `Missing exports in intro/index.ts:\n${missing.join('\n')}`).toHaveLength(0)
     })
 
-    it('index.ts exports registry functions', async () => {
+    it('index.ts exports dev override functions', async () => {
       const indexPath = path.join(ENGINE, 'intro', 'index.ts')
       const content = await readFile(indexPath)
 
       const requiredExports = [
-        'registerIntroPattern',
-        'getIntroPattern',
-        'getIntroPatternIds',
-        'getAllIntroPatterns',
-        'defineIntroPatternMeta',
-        'getAllIntroPatternMetas',
+        'getIntroOverride',
+        'setIntroOverride',
+        'DEV_INTRO_PARAM',
       ]
 
       const missing: string[] = []
@@ -322,269 +220,8 @@ describe('Intro Module Structure', () => {
         }
       }
 
-      expect(missing, `Missing registry exports in intro/index.ts:\n${missing.join('\n')}`).toHaveLength(0)
+      expect(missing, `Missing dev override exports in intro/index.ts:\n${missing.join('\n')}`).toHaveLength(0)
     })
-
-    it('index.ts exports lazy loading functions', async () => {
-      const indexPath = path.join(ENGINE, 'intro', 'index.ts')
-      const content = await readFile(indexPath)
-
-      const requiredExports = [
-        'registerLazyIntroPattern',
-        'getIntroPatternAsync',
-        'preloadIntroPattern',
-      ]
-
-      const missing: string[] = []
-      for (const exp of requiredExports) {
-        if (!content.includes(exp)) {
-          missing.push(exp)
-        }
-      }
-
-      expect(missing, `Missing lazy loading exports in intro/index.ts:\n${missing.join('\n')}`).toHaveLength(0)
-    })
-  })
-})
-
-describe('Intro Pattern Registration', () => {
-  let patternIds: string[]
-
-  beforeAll(async () => {
-    // Import and ensure patterns are registered
-    const { ensureIntroPatternsRegistered, getIntroPatternIds } = await import('../../engine/intro')
-    ensureIntroPatternsRegistered()
-    patternIds = getIntroPatternIds()
-  })
-
-  it('all expected patterns are registered', () => {
-    const expected = ['video-gate', 'timed', 'scroll-reveal', 'sequence-timed']
-    const missing = expected.filter(id => !patternIds.includes(id))
-
-    expect(missing, `Unregistered patterns:\n${missing.join('\n')}`).toHaveLength(0)
-  })
-
-  it('registered patterns have required fields', async () => {
-    const { getIntroPatternAsync, getIntroPatternIds } = await import('../../engine/intro')
-    const ids = getIntroPatternIds()
-    const violations: string[] = []
-
-    for (const id of ids) {
-      const pattern = await getIntroPatternAsync(id)
-      if (!pattern) {
-        violations.push(`Pattern "${id}" could not be loaded`)
-        continue
-      }
-      if (!pattern.id) {
-        violations.push(`Pattern missing id`)
-      }
-      if (!pattern.name) {
-        violations.push(`Pattern "${pattern.id}" missing name`)
-      }
-      if (!pattern.description) {
-        violations.push(`Pattern "${pattern.id}" missing description`)
-      }
-      if (!pattern.triggers || pattern.triggers.length === 0) {
-        violations.push(`Pattern "${pattern.id}" missing triggers`)
-      }
-      if (typeof pattern.revealDuration !== 'number') {
-        violations.push(`Pattern "${pattern.id}" missing revealDuration`)
-      }
-      if (typeof pattern.hideChrome !== 'boolean') {
-        violations.push(`Pattern "${pattern.id}" missing hideChrome`)
-      }
-    }
-
-    expect(violations, `Invalid patterns:\n${violations.join('\n')}`).toHaveLength(0)
-  })
-
-  it('patterns have settings defined', async () => {
-    const { getIntroPatternAsync, getIntroPatternIds } = await import('../../engine/intro')
-    const ids = getIntroPatternIds()
-    const violations: string[] = []
-
-    for (const id of ids) {
-      const pattern = await getIntroPatternAsync(id)
-      if (!pattern) {
-        violations.push(`Pattern "${id}" could not be loaded`)
-        continue
-      }
-      if (!pattern.settings) {
-        violations.push(`Pattern "${pattern.id}" missing settings`)
-      }
-    }
-
-    expect(violations, `Patterns missing settings:\n${violations.join('\n')}`).toHaveLength(0)
-  })
-
-  it('pattern IDs match folder names', async () => {
-    const { getIntroPatternIds } = await import('../../engine/intro')
-    const ids = getIntroPatternIds()
-    const folders = await getFolders('intro/patterns/*')
-    const folderNames = new Set(folders.map(f => path.basename(f)))
-
-    const violations: string[] = []
-
-    for (const id of ids) {
-      if (!folderNames.has(id)) {
-        violations.push(`Pattern "${id}" has no matching folder`)
-      }
-    }
-
-    expect(violations, `Pattern ID/folder mismatches:\n${violations.join('\n')}`).toHaveLength(0)
-  })
-})
-
-describe('Intro Pattern Meta Files', () => {
-  it('all pattern meta.ts files use "export const meta"', async () => {
-    const metaFiles = await getFiles('intro/patterns/*/meta.ts')
-    const violations: string[] = []
-
-    for (const file of metaFiles) {
-      const content = await readFile(file)
-
-      if (!content.includes('export const meta')) {
-        violations.push(`${relativePath(file)}: must use "export const meta"`)
-      }
-    }
-
-    expect(violations, `Meta files not using standard export:\n${violations.join('\n')}`).toHaveLength(0)
-  })
-
-  it('all pattern meta.ts files use defineIntroPatternMeta()', async () => {
-    const metaFiles = await getFiles('intro/patterns/*/meta.ts')
-    const violations: string[] = []
-
-    for (const file of metaFiles) {
-      const content = await readFile(file)
-
-      if (!content.includes('defineIntroPatternMeta')) {
-        violations.push(`${relativePath(file)}: must use defineIntroPatternMeta()`)
-      }
-    }
-
-    expect(violations, `Meta files not using define helper:\n${violations.join('\n')}`).toHaveLength(0)
-  })
-
-  it('meta contains required fields: id, name, description, settings', async () => {
-    const metaFiles = await getFiles('intro/patterns/*/meta.ts')
-    const violations: string[] = []
-
-    for (const file of metaFiles) {
-      const content = await readFile(file)
-      const rel = relativePath(file)
-
-      if (!content.includes('id:')) violations.push(`${rel}: missing id`)
-      if (!content.includes('name:')) violations.push(`${rel}: missing name`)
-      if (!content.includes('description:')) violations.push(`${rel}: missing description`)
-      if (!content.includes('settings:')) violations.push(`${rel}: missing settings`)
-    }
-
-    expect(violations, `Meta files missing required fields:\n${violations.join('\n')}`).toHaveLength(0)
-  })
-
-  it('settings configs have type, label, and default', async () => {
-    const metaFiles = await getFiles('intro/patterns/*/meta.ts')
-    const violations: string[] = []
-
-    for (const file of metaFiles) {
-      const content = await readFile(file)
-
-      // Basic validation that settings have required structure
-      // Look for setting definitions
-      const settingMatches = content.match(/\w+:\s*\{[^}]*type:/g)
-
-      if (settingMatches) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        for (const _ of settingMatches) {
-          // Check for label and default in the broader context
-          if (!content.includes('label:')) {
-            violations.push(`${relativePath(file)}: settings missing label`)
-            break
-          }
-          if (!content.includes('default:')) {
-            violations.push(`${relativePath(file)}: settings missing default`)
-            break
-          }
-        }
-      }
-    }
-
-    expect(violations, `Settings missing required fields:\n${violations.join('\n')}`).toHaveLength(0)
-  })
-
-  it('pattern settings match meta settings (no drift)', async () => {
-    const metaModules = await Promise.all([
-      import('../../engine/intro/patterns/video-gate/meta'),
-      import('../../engine/intro/patterns/timed/meta'),
-      import('../../engine/intro/patterns/scroll-reveal/meta'),
-      import('../../engine/intro/patterns/sequence-timed/meta'),
-    ])
-
-    const { getIntroPatternAsync, ensureIntroPatternsRegistered } = await import('../../engine/intro')
-    ensureIntroPatternsRegistered()
-    const violations: string[] = []
-
-    for (const metaMod of metaModules) {
-      const meta = metaMod.meta
-      const pattern = await getIntroPatternAsync(meta.id)
-
-      if (!pattern) {
-        violations.push(`Pattern "${meta.id}" not found in registry`)
-        continue
-      }
-
-      if (pattern.settings !== meta.settings) {
-        const patternKeys = pattern.settings ? Object.keys(pattern.settings).sort().join(',') : 'none'
-        const metaKeys = meta.settings ? Object.keys(meta.settings).sort().join(',') : 'none'
-
-        if (patternKeys !== metaKeys) {
-          violations.push(
-            `${meta.id}: settings mismatch - pattern has [${patternKeys}], meta has [${metaKeys}]`
-          )
-        }
-      }
-    }
-
-    expect(violations, `Settings drift detected:\n${violations.join('\n')}`).toHaveLength(0)
-  })
-
-  it('getAllIntroPatternMetas() returns all registered patterns', async () => {
-    const { getAllIntroPatternMetas, ensureIntroPatternsRegistered } = await import('../../engine/intro')
-    ensureIntroPatternsRegistered()
-    const metas = getAllIntroPatternMetas()
-
-    const expectedIds = ['video-gate', 'timed', 'scroll-reveal', 'sequence-timed']
-    const metaIds = metas.map(m => m.id)
-    const missing = expectedIds.filter(id => !metaIds.includes(id))
-
-    expect(missing, `Missing from getAllIntroPatternMetas():\n${missing.join('\n')}`).toHaveLength(0)
-
-    // Each meta should have required fields
-    const violations: string[] = []
-    for (const meta of metas) {
-      if (!meta.id) violations.push('Meta missing id')
-      if (!meta.name) violations.push(`Meta "${meta.id}" missing name`)
-      if (!meta.description) violations.push(`Meta "${meta.id}" missing description`)
-      if (!meta.settings) violations.push(`Meta "${meta.id}" missing settings`)
-    }
-
-    expect(violations, `Invalid metas:\n${violations.join('\n')}`).toHaveLength(0)
-  })
-
-  it('all pattern metas have icon, tags, and category', async () => {
-    const { getAllIntroPatternMetas, ensureIntroPatternsRegistered } = await import('../../engine/intro')
-    ensureIntroPatternsRegistered()
-    const metas = getAllIntroPatternMetas()
-    const violations: string[] = []
-
-    for (const meta of metas) {
-      if (!meta.icon) violations.push(`Meta "${meta.id}" missing icon`)
-      if (!meta.tags || meta.tags.length === 0) violations.push(`Meta "${meta.id}" missing tags`)
-      if (!meta.category) violations.push(`Meta "${meta.id}" missing category`)
-    }
-
-    expect(violations, `Intro metas missing fields:\n${violations.join('\n')}`).toHaveLength(0)
   })
 })
 
@@ -701,14 +338,13 @@ describe('Intro Cross-Validation', () => {
       const content = await readFile(rendererPath)
 
       expect(content, 'SiteRenderer should import IntroProvider').toContain('IntroProvider')
-      expect(content, 'SiteRenderer should import ensureIntroPatternsRegistered').toContain('ensureIntroPatternsRegistered')
     })
 
-    it('useResolvedIntro hook imports getIntroPattern', async () => {
+    it('useResolvedIntro hook imports Experience type', async () => {
       const hookPath = path.join(ENGINE, 'renderer', 'hooks', 'useResolvedIntro.ts')
       const content = await readFile(hookPath)
 
-      expect(content, 'useResolvedIntro should import getIntroPattern').toContain('getIntroPattern')
+      expect(content, 'useResolvedIntro should import Experience type').toContain("from '../../experience/experiences/types'")
     })
 
     it('SiteRenderer uses IntroProvider in render tree', async () => {

@@ -15,7 +15,7 @@
 
 import type { SitePreset } from '../types'
 import { registerPreset, type PresetMeta } from '../registry'
-import { experienceConfig, introConfig } from './site'
+import { experienceConfig } from './site'
 import { footerConfig, floatingContactConfig, cursorLabelWatchConfig, cursorLabelEnterConfig } from './chrome'
 import { homePageTemplate } from './pages'
 import { bojuhlContentContract } from './content-contract'
@@ -34,7 +34,6 @@ export const bojuhlMeta: PresetMeta = {
  * Includes hero, about, featured projects, and other projects sections.
  */
 export const bojuhlPreset: SitePreset = {
-  intro: introConfig,
   theme: {
     scrollbar: {
       width: 6,

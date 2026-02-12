@@ -9,12 +9,8 @@ export type {
   IntroState,
   IntroConfig,
   IntroMeta,
-  IntroPatternMeta,
-  IntroPattern,
-  IntroTriggerConfig,
   IntroActions,
   SequenceStepConfig,
-  IntroCategory,
 } from './types'
 
 // Provider, context, and content gate
@@ -27,39 +23,12 @@ export type { IntroTriggerInitializerProps } from './IntroTriggerInitializer'
 export { IntroContext, useIntro, useIntroRequired } from './IntroContext'
 export type { IntroContextValue, IntroStore } from './IntroContext'
 
-// Registry (pattern registry)
+// Dev override helpers
 export {
-  registerIntroPattern,
-  registerLazyIntroPattern,
-  getIntroPattern,
-  getIntroPatternAsync,
-  preloadIntroPattern,
-  getIntroPatternIds,
-  getAllIntroPatterns,
-  defineIntroPatternMeta,
-  getAllIntroPatternMetas,
   getIntroOverride,
   setIntroOverride,
   DEV_INTRO_PARAM,
-  // Compiled intro registry
-  registerIntro,
-  getRegisteredIntro,
-  getRegisteredIntroMeta,
-  getAllRegisteredIntroMetas,
-  findIntroIdByConfig,
 } from './registry'
-
-// Patterns
-export {
-  videoGatePattern,
-  timedPattern,
-  scrollRevealPattern,
-  sequenceTimedPattern,
-  ensureIntroPatternsRegistered,
-} from './patterns'
-
-// Compiled intros
-export { ensureIntrosRegistered } from './intros'
 
 // Triggers
 export {

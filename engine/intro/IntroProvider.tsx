@@ -19,13 +19,11 @@ import { createStore, type StoreApi } from 'zustand'
 import { useScrollLock } from '../experience/drivers/ScrollLockContext'
 import { IntroContext, type IntroStore } from './IntroContext'
 import { IntroTriggerInitializer } from './IntroTriggerInitializer'
-import type { IntroPattern, IntroPhase, IntroState } from './types'
+import type { IntroConfig, IntroPhase, IntroState } from './types'
 
 export interface IntroProviderProps {
-  /** Intro pattern to use (null for no intro) */
-  pattern: IntroPattern | null
-  /** Pattern-specific settings */
-  settings?: Record<string, unknown>
+  /** Intro config to use (null for no intro) */
+  config: IntroConfig | null
   /** Resolved overlay React component (from chrome registry) */
   overlayComponent?: ComponentType<Record<string, unknown>> | null
   /** Props for the overlay component */
@@ -33,6 +31,38 @@ export interface IntroProviderProps {
   /** Children to render */
   children: ReactNode
 }
+
+// =============================================================================
+// Config → Runtime Derivation
+// =============================================================================
+
+/** Gate type for trigger wiring */
+type GateType = 'video-time' | 'timer' | 'sequence' | 'none'
+
+/** Derive gate type from IntroConfig.pattern */
+function resolveGateType(pattern: string): GateType {
+  switch (pattern) {
+    case 'video-gate': return 'video-time'
+    case 'timed': return 'timer'
+    case 'sequence-timed': return 'sequence'
+    default: return 'none'
+  }
+}
+
+/** Derive default revealDuration from pattern type */
+function resolveRevealDuration(pattern: string, settings?: Record<string, unknown>): number {
+  if (typeof settings?.revealDuration === 'number') return settings.revealDuration
+  return pattern === 'scroll-reveal' ? 600 : 800
+}
+
+/** Derive hideChrome from pattern type */
+function resolveHideChrome(pattern: string): boolean {
+  return pattern !== 'scroll-reveal'
+}
+
+// =============================================================================
+// Store
+// =============================================================================
 
 /**
  * Default intro state.
@@ -51,12 +81,13 @@ const DEFAULT_STATE: IntroState = {
 
 /**
  * Create intro store with actions.
+ * @param config - The intro config (null = no intro)
  * @param lockScroll - Whether to lock scroll during intro (default: true)
  */
-function createIntroStore(pattern: IntroPattern | null, lockScroll = true): StoreApi<IntroStore> {
-  // If no pattern, start in ready state (no intro)
-  const initialState: IntroState = pattern
-    ? { ...DEFAULT_STATE, chromeVisible: !pattern.hideChrome, isScrollLocked: lockScroll }
+function createIntroStore(config: IntroConfig | null, lockScroll = true): StoreApi<IntroStore> {
+  // If no config, start in ready state (no intro)
+  const initialState: IntroState = config
+    ? { ...DEFAULT_STATE, chromeVisible: !resolveHideChrome(config.pattern), isScrollLocked: lockScroll }
     : {
         ...DEFAULT_STATE,
         phase: 'ready',
@@ -111,22 +142,25 @@ function createIntroStore(pattern: IntroPattern | null, lockScroll = true): Stor
   }))
 }
 
+// =============================================================================
+// Provider
+// =============================================================================
+
 /**
  * IntroProvider component.
  * Manages intro state, scroll locking, overlay rendering, and content gating.
  */
 export function IntroProvider({
-  pattern,
-  settings,
+  config,
   overlayComponent: OverlayComponent,
   overlayProps,
   children,
 }: IntroProviderProps): ReactNode {
   // Resolve lockScroll setting (default: true)
-  const lockScroll = (settings?.lockScroll as boolean) ?? true
+  const lockScroll = (config?.settings?.lockScroll as boolean) ?? true
 
   // Create store (memoized)
-  const store = useMemo(() => createIntroStore(pattern, lockScroll), [pattern, lockScroll])
+  const store = useMemo(() => createIntroStore(config, lockScroll), [config, lockScroll])
 
   // Delegate scroll locking to generic ScrollLockContext.
   // IntroProvider still owns its isScrollLocked state — it just calls
@@ -157,10 +191,15 @@ export function IntroProvider({
     }
   }, [store, scrollLock])
 
-  const contextValue = useMemo(() => ({ pattern, store }), [pattern, store])
+  // Memo the context value. When config is non-null (the only case where
+  // we provide the context), IntroConfig is guaranteed.
+  const contextValue = useMemo(
+    () => config ? { config, store } : null,
+    [config, store],
+  )
 
-  // If no pattern, render children directly (no context overhead)
-  if (!pattern) {
+  // If no config, render children directly (no context overhead)
+  if (!config || !contextValue) {
     return <>{children}</>
   }
 
@@ -171,9 +210,10 @@ export function IntroProvider({
         <OverlayComponent {...(overlayProps ?? {})} />
       )}
       <IntroTriggerInitializer
-        pattern={pattern}
+        gate={resolveGateType(config.pattern)}
+        revealDuration={resolveRevealDuration(config.pattern, config.settings)}
         store={store}
-        settings={settings}
+        settings={config.settings}
       >
         {children}
       </IntroTriggerInitializer>

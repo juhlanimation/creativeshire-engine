@@ -87,6 +87,8 @@ export interface PresetExperienceConfig {
   id: string
   /** Per-section behaviour overrides. Keys are section IDs. */
   sectionBehaviours?: Record<string, import('../experience/experiences/types').BehaviourAssignment[]>
+  /** Intro configuration (overrides experience default) */
+  intro?: IntroConfig
 }
 
 /**
@@ -146,8 +148,6 @@ export interface PresetChromeConfig {
 export interface SitePreset {
   /** Theme configuration (scrollbar, smooth scroll, colors) */
   theme?: ThemeSchema
-  /** Intro sequence configuration (runs before experience) */
-  intro?: IntroConfig
   /** Experience configuration (references an Experience by ID) */
   experience?: PresetExperienceConfig
   /** Page transition configuration */

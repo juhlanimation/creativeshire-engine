@@ -6,7 +6,7 @@
 import './styles.css'
 import type { SitePreset } from '../types'
 import { registerPreset, type PresetMeta } from '../registry'
-import { experienceConfig, introConfig } from './site'
+import { experienceConfig } from './site'
 import { chromeConfig } from './chrome'
 import { homePageTemplate } from './pages'
 import { port12ContentContract } from './content-contract'
@@ -35,7 +35,6 @@ export const port12Preset: SitePreset = {
       outerBackground: '#000000',
     },
   },
-  intro: introConfig,
   experience: experienceConfig,
   chrome: chromeConfig,
   pages: {
