@@ -5,6 +5,7 @@
  */
 
 import { createStore, useStore } from 'zustand'
+import type { BehaviourAssignment } from '../../experience/experiences/types'
 
 // =============================================================================
 // Types
@@ -21,6 +22,8 @@ interface DevSettingsState {
   sectionBehaviourOptions: Record<string, Record<string, unknown>>
   /** Section pinned overrides: sectionId → boolean */
   sectionPinned: Record<string, boolean>
+  /** Section behaviour assignment overrides (multi-behaviour): sectionId → BehaviourAssignment[] */
+  sectionBehaviourAssignments: Record<string, BehaviourAssignment[]>
 
   // Actions
   setExperienceSetting: (key: string, value: unknown) => void
@@ -28,6 +31,7 @@ interface DevSettingsState {
   setSectionBehaviour: (sectionId: string, behaviourId: string | null) => void
   setSectionBehaviourOption: (sectionId: string, key: string, value: unknown) => void
   setSectionPinned: (sectionId: string, pinned: boolean | null) => void
+  setSectionBehaviourAssignments: (sectionId: string, assignments: BehaviourAssignment[] | null) => void
   resetExperienceSettings: () => void
   resetBehaviourSettings: (behaviourId?: string) => void
   resetSectionBehaviours: () => void
@@ -44,6 +48,7 @@ export const devSettingsStore = createStore<DevSettingsState>((set) => ({
   sectionBehaviours: {},
   sectionBehaviourOptions: {},
   sectionPinned: {},
+  sectionBehaviourAssignments: {},
 
   setExperienceSetting: (key, value) =>
     set((state) => ({
@@ -104,6 +109,21 @@ export const devSettingsStore = createStore<DevSettingsState>((set) => ({
       }
     }),
 
+  setSectionBehaviourAssignments: (sectionId, assignments) =>
+    set((state) => {
+      if (assignments === null) {
+        const next = { ...state.sectionBehaviourAssignments }
+        delete next[sectionId]
+        return { sectionBehaviourAssignments: next }
+      }
+      return {
+        sectionBehaviourAssignments: {
+          ...state.sectionBehaviourAssignments,
+          [sectionId]: assignments,
+        },
+      }
+    }),
+
   resetExperienceSettings: () => set({ experienceSettings: {} }),
 
   resetBehaviourSettings: (behaviourId) =>
@@ -115,7 +135,7 @@ export const devSettingsStore = createStore<DevSettingsState>((set) => ({
     }),
 
   resetSectionBehaviours: () =>
-    set({ sectionBehaviours: {}, sectionBehaviourOptions: {}, sectionPinned: {} }),
+    set({ sectionBehaviours: {}, sectionBehaviourOptions: {}, sectionPinned: {}, sectionBehaviourAssignments: {} }),
 
   resetAll: () => set({
     experienceSettings: {},
@@ -123,6 +143,7 @@ export const devSettingsStore = createStore<DevSettingsState>((set) => ({
     sectionBehaviours: {},
     sectionBehaviourOptions: {},
     sectionPinned: {},
+    sectionBehaviourAssignments: {},
   }),
 }))
 
@@ -203,6 +224,20 @@ export function useDevSectionPinned(
   // eslint-disable-next-line react-hooks/rules-of-hooks
   return useStore(devSettingsStore, (s) =>
     s.sectionPinned[sectionId] !== undefined ? s.sectionPinned[sectionId] : undefined,
+  )
+}
+
+/**
+ * Subscribe to multi-behaviour assignment overrides for a specific section.
+ * Returns the assignments array, or undefined if none set.
+ */
+export function useDevSectionBehaviourAssignments(
+  sectionId: string,
+): BehaviourAssignment[] | undefined {
+  if (process.env.NODE_ENV !== 'development') return undefined
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  return useStore(devSettingsStore, (s) =>
+    s.sectionBehaviourAssignments[sectionId],
   )
 }
 

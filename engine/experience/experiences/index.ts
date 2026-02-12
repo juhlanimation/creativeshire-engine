@@ -93,6 +93,7 @@ export type {
   ExperienceContextValue,
   ExperienceProviderProps,
   SectionInjection,
+  BehaviourAssignment,
   PresentationModel,
   PresentationConfig,
   NavigationInput,
@@ -106,3 +107,5 @@ export type {
   ExperienceChrome,
   ExperienceConstraints,
 } from './types'
+
+export { normalizeBehaviours, normalizeWidgetBehaviours } from './types'

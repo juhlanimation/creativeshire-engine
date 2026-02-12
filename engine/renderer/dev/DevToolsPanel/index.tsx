@@ -20,6 +20,7 @@ import { SettingsEditor } from './SettingsEditor'
 import { devSettingsStore, useDevExperienceSettings } from '../devSettingsStore'
 import { getBehaviour, getAllBehaviourMetas } from '../../../experience/behaviours'
 import { getExperience, useExperience } from '../../../experience'
+import { normalizeBehaviours, type BehaviourAssignment } from '../../../experience/experiences/types'
 import { capitalize } from '../../utils'
 import type { SectionSchema } from '../../../schema'
 import type { DevToolsTabConfig } from './types'
@@ -112,7 +113,7 @@ function DevToolsPanelInner({ currentIds, sections }: DevToolsPanelProps) {
   // Check if any section behaviour overrides exist (for reset button)
   const hasSectionBehaviourOverrides = useStore(
     devSettingsStore,
-    (s) => Object.keys(s.sectionBehaviours).length > 0 || Object.keys(s.sectionPinned).length > 0,
+    (s) => Object.keys(s.sectionBehaviourAssignments).length > 0 || Object.keys(s.sectionPinned).length > 0,
   )
 
   const handleExpand = useCallback((tabId: string) => {
@@ -374,7 +375,7 @@ interface SectionBehaviourRowProps {
 }
 
 /**
- * Single section row: label, behaviour dropdown, and settings editor.
+ * Single section row: label, multi-behaviour list, and settings editors.
  */
 function SectionBehaviourRow({ section, experience }: SectionBehaviourRowProps) {
   // Resolve injection from experience sectionInjections
@@ -386,44 +387,52 @@ function SectionBehaviourRow({ section, experience }: SectionBehaviourRowProps) 
       ?? {}
   }, [section.id, experience])
 
-  const schemaBehaviourId = injection.behaviour ?? null
-
-  // Dev override from store
-  const devOverride = useStore(
-    devSettingsStore,
-    (s) => s.sectionBehaviours[section.id],
+  // Schema behaviours (normalized from injection)
+  const schemaBehaviours = useMemo(
+    () => normalizeBehaviours(injection),
+    [injection],
   )
-  const devOptions = useStore(
+
+  // Dev override from store (new multi-behaviour)
+  const devAssignments = useStore(
     devSettingsStore,
-    (s) => s.sectionBehaviourOptions[section.id],
+    (s) => s.sectionBehaviourAssignments[section.id],
   )
   const devPinned = useStore(
     devSettingsStore,
     (s) => s.sectionPinned[section.id] !== undefined ? s.sectionPinned[section.id] : undefined,
   )
 
-  // Active behaviour: dev override → schema → 'none'
-  const activeBehaviourId = devOverride ?? schemaBehaviourId ?? 'none'
+  // Active assignments: dev override → schema
+  const activeAssignments = devAssignments ?? schemaBehaviours
 
-  // Resolve the active behaviour definition for settings
-  const behaviour = useMemo(() => {
-    if (!activeBehaviourId || activeBehaviourId === 'none') return null
-    return getBehaviour(activeBehaviourId)
-  }, [activeBehaviourId])
+  const handleAdd = useCallback((behaviourId: string) => {
+    const next = [...activeAssignments, { behaviour: behaviourId }]
+    devSettingsStore.getState().setSectionBehaviourAssignments(section.id, next)
+  }, [activeAssignments, section.id])
 
-  // Build settings values (defaults + dev per-section options)
-  const settingsValues = useMemo(() => {
-    if (!behaviour?.settings) return {}
-    const defaults: Record<string, unknown> = {}
-    for (const [key, config] of Object.entries(behaviour.settings) as [string, { default: unknown } | undefined][]) {
-      if (config) defaults[key] = config.default
-    }
-    // Schema options from injection
-    const schemaOpts = injection.behaviourOptions ?? {}
-    return { ...defaults, ...schemaOpts, ...(devOptions ?? {}) }
-  }, [behaviour?.settings, injection.behaviourOptions, devOptions])
+  const handleRemove = useCallback((idx: number) => {
+    const next = activeAssignments.filter((_, i) => i !== idx)
+    // If empty after removing, clear the override to fall back to schema
+    devSettingsStore.getState().setSectionBehaviourAssignments(
+      section.id,
+      next.length > 0 ? next : null,
+    )
+  }, [activeAssignments, section.id])
 
-  const hasSettings = behaviour?.settings && Object.keys(behaviour.settings).length > 0
+  const handleChange = useCallback((idx: number, behaviourId: string) => {
+    const next = activeAssignments.map((a, i) =>
+      i === idx ? { ...a, behaviour: behaviourId, options: undefined } : a,
+    )
+    devSettingsStore.getState().setSectionBehaviourAssignments(section.id, next)
+  }, [activeAssignments, section.id])
+
+  const handleOptionChange = useCallback((idx: number, key: string, value: unknown) => {
+    const next = activeAssignments.map((a, i) =>
+      i === idx ? { ...a, options: { ...a.options, [key]: value } } : a,
+    )
+    devSettingsStore.getState().setSectionBehaviourAssignments(section.id, next)
+  }, [activeAssignments, section.id])
 
   return (
     <div style={{ padding: '6px 12px 2px' }}>
@@ -439,28 +448,81 @@ function SectionBehaviourRow({ section, experience }: SectionBehaviourRowProps) 
         )}
       </div>
 
-      {/* Behaviour dropdown */}
-      <select
-        value={activeBehaviourId}
-        onChange={(e) => {
-          const val = e.target.value
-          if (val === (schemaBehaviourId ?? 'none')) {
-            // Reset to schema default — remove dev override
-            devSettingsStore.getState().setSectionBehaviour(section.id, null)
-          } else {
-            devSettingsStore.getState().setSectionBehaviour(section.id, val)
-          }
+      {/* Assigned behaviours list */}
+      {activeAssignments.map((assignment, i) => {
+        const behaviour = getBehaviour(assignment.behaviour)
+        const hasSettings = behaviour?.settings && Object.keys(behaviour.settings).length > 0
+        return (
+          <div key={`${assignment.behaviour}-${i}`} style={{ marginBottom: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <select
+                value={assignment.behaviour}
+                onChange={(e) => handleChange(i, e.target.value)}
+                className="dt-settings__select"
+                style={{ flex: 1, maxWidth: 'none' }}
+              >
+                {allBehaviourMetas.map((meta) => (
+                  <option key={meta.id} value={meta.id}>
+                    {meta.name} ({meta.id})
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={() => handleRemove(i)}
+                style={{
+                  color: 'rgba(255,255,255,0.5)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: 14,
+                  padding: '0 4px',
+                  lineHeight: 1,
+                }}
+                title="Remove behaviour"
+              >
+                &times;
+              </button>
+            </div>
+            {hasSettings && (
+              <SettingsEditor
+                settings={behaviour!.settings!}
+                values={{
+                  ...Object.fromEntries(
+                    Object.entries(behaviour!.settings!).map(([k, v]) => [k, (v as { default: unknown })?.default])
+                  ),
+                  ...(assignment.options ?? {}),
+                }}
+                onChange={(key, value) => handleOptionChange(i, key, value)}
+              />
+            )}
+          </div>
+        )
+      })}
+
+      {/* No behaviours indicator */}
+      {activeAssignments.length === 0 && (
+        <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 10, marginBottom: 4 }}>
+          No behaviours assigned
+        </div>
+      )}
+
+      {/* Add behaviour button */}
+      <button
+        onClick={() => handleAdd(allBehaviourMetas[0]?.id ?? 'visibility/fade-in')}
+        style={{
+          color: 'rgba(255,255,255,0.5)',
+          background: 'none',
+          border: '1px dashed rgba(255,255,255,0.2)',
+          borderRadius: 4,
+          cursor: 'pointer',
+          fontSize: 11,
+          padding: '2px 8px',
+          width: '100%',
+          marginBottom: 4,
         }}
-        className="dt-settings__select"
-        style={{ width: '100%', maxWidth: 'none', marginBottom: 4 }}
       >
-        <option value="none">None</option>
-        {allBehaviourMetas.map((meta) => (
-          <option key={meta.id} value={meta.id}>
-            {meta.name} ({meta.id})
-          </option>
-        ))}
-      </select>
+        + Add Behaviour
+      </button>
 
       {/* Pinned toggle */}
       <label style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>
@@ -481,17 +543,6 @@ function SectionBehaviourRow({ section, experience }: SectionBehaviourRowProps) 
         Pinned
         {injection.pinned && <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10 }}>(default: on)</span>}
       </label>
-
-      {/* Per-section behaviour settings */}
-      {hasSettings && (
-        <SettingsEditor
-          settings={behaviour!.settings!}
-          values={settingsValues}
-          onChange={(key, value) =>
-            devSettingsStore.getState().setSectionBehaviourOption(section.id, key, value)
-          }
-        />
-      )}
     </div>
   )
 }

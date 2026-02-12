@@ -11,6 +11,7 @@ export type {
   ExperienceState,
   ExperienceTriggerConfig,
   SectionInjection,
+  BehaviourAssignment,
   // State types
   NavigableExperienceState,
   InfiniteCarouselState,
@@ -25,6 +26,8 @@ export type {
   TransitionTask,
   ExperienceActions,
 } from './experiences/types'
+
+export { normalizeBehaviours, normalizeWidgetBehaviours } from './experiences/types'
 
 /**
  * Context value distributed by ExperienceProvider.

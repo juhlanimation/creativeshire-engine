@@ -101,6 +101,17 @@ export interface ExperienceTriggerConfig {
 }
 
 /**
+ * A single behaviour assignment with per-behaviour options.
+ * Used in the behaviours[] array for multi-behaviour support.
+ */
+export interface BehaviourAssignment {
+  /** Behaviour ID (e.g., 'scroll/fade', 'visibility/fade-in') */
+  behaviour: string
+  /** Options passed to this behaviour's compute function */
+  options?: Record<string, unknown>
+}
+
+/**
  * Per-section L2 injection from the experience layer.
  * Replaces pinned/behaviour/behaviourOptions on SectionSchema.
  * Keys in the Record are section IDs; '*' is the fallback.
@@ -108,10 +119,42 @@ export interface ExperienceTriggerConfig {
 export interface SectionInjection {
   /** Whether this section is pinned (sticky in cover-scroll) */
   pinned?: boolean
+
+  // Legacy single-behaviour fields (kept for backward compatibility)
   /** Behaviour ID to apply */
   behaviour?: string
   /** Options passed to the behaviour */
   behaviourOptions?: Record<string, unknown>
+
+  // Multi-behaviour support
+  /** Array of behaviour assignments. When present, takes precedence over legacy `behaviour` field. */
+  behaviours?: BehaviourAssignment[]
+}
+
+/**
+ * Normalizes a SectionInjection into an array of BehaviourAssignments.
+ * If `behaviours` array is present, returns it. Otherwise converts legacy fields.
+ */
+export function normalizeBehaviours(injection: SectionInjection): BehaviourAssignment[] {
+  if (injection.behaviours && injection.behaviours.length > 0) {
+    return injection.behaviours
+  }
+  if (injection.behaviour) {
+    return [{ behaviour: injection.behaviour, options: injection.behaviourOptions }]
+  }
+  return []
+}
+
+/**
+ * Normalizes widget behaviour defaults into an array of BehaviourAssignments.
+ * Accepts legacy string format or new array format.
+ */
+export function normalizeWidgetBehaviours(
+  value: string | BehaviourAssignment[] | undefined,
+): BehaviourAssignment[] {
+  if (!value) return []
+  if (typeof value === 'string') return [{ behaviour: value }]
+  return value
 }
 
 /**
@@ -408,8 +451,8 @@ export interface Experience {
 
   /** Per-section L2 config. Keys are section IDs, '*' = fallback. */
   sectionInjections: Record<string, SectionInjection>
-  /** Default behaviours by widget type (e.g., { HeroTitle: 'scroll/color-shift' }) */
-  widgetBehaviourDefaults?: Record<string, string>
+  /** Default behaviours by widget type. Accepts single ID (legacy) or array. */
+  widgetBehaviourDefaults?: Record<string, string | BehaviourAssignment[]>
 
   // Structural configuration (optional - for experiences like slideshow)
 

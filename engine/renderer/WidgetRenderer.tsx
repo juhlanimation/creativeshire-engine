@@ -14,46 +14,35 @@
  */
 
 import { useMemo, type ReactNode } from 'react'
-import type { WidgetSchema, BehaviourConfig } from '../schema'
+import type { WidgetSchema } from '../schema'
 import { getWidget } from '../content/widgets/registry'
 import { BehaviourWrapper } from '../experience/behaviours'
 import { useExperience, type Experience } from '../experience'
+import { normalizeWidgetBehaviours, type BehaviourAssignment } from '../experience/experiences/types'
 import { executeAction } from '../experience/actions'
 import { ErrorBoundary } from './ErrorBoundary'
 import { capitalize } from './utils'
 import type { WidgetRendererProps } from './types'
 
 /**
- * Resolves behaviour for a widget.
+ * Resolves behaviours for a widget as an array of assignments.
  * Priority: bareMode → explicit schema → experience defaults by widget type.
  */
-function resolveWidgetBehaviour(
+function resolveWidgetBehaviours(
   widget: WidgetSchema,
-  experience: Experience
-): string | null {
-  // Bare mode: ignore ALL behaviours (for testing/preview)
-  if (experience.bareMode) {
-    return null
-  }
-
-  // Explicit behaviour in schema takes priority
+  experience: Experience,
+): BehaviourAssignment[] {
+  if (experience.bareMode) return []
   if (widget.behaviour) {
-    if (typeof widget.behaviour === 'string') return widget.behaviour
-    return widget.behaviour.id ?? null
+    if (typeof widget.behaviour === 'string') {
+      return [{ behaviour: widget.behaviour }]
+    }
+    if (widget.behaviour.id) {
+      return [{ behaviour: widget.behaviour.id, options: widget.behaviour.options }]
+    }
+    return []
   }
-
-  // Check experience defaults by widget type (e.g., 'HeroTitle', 'ProjectCard')
-  return experience.widgetBehaviourDefaults?.[widget.type] ?? null
-}
-
-/**
- * Extract behaviour options from behaviour config.
- */
-function extractBehaviourOptions(
-  behaviour?: BehaviourConfig
-): Record<string, unknown> | undefined {
-  if (!behaviour || typeof behaviour === 'string') return undefined
-  return behaviour.options
+  return normalizeWidgetBehaviours(experience.widgetBehaviourDefaults?.[widget.type])
 }
 
 /**
@@ -101,9 +90,8 @@ export function WidgetRenderer({
   // Registry returns stable component references, not new components
   const Component = getWidget(widget.type)
 
-  // Resolve behaviour from explicit schema or experience defaults
-  const behaviourId = resolveWidgetBehaviour(widget, experience)
-  const behaviourOptions = extractBehaviourOptions(widget.behaviour)
+  // Resolve behaviours from explicit schema or experience defaults
+  const behaviourAssignments = resolveWidgetBehaviours(widget, experience)
 
   // Wire schema.on events to action registry
   // Maps { click: 'action-id' } → { onClick: (payload) => executeAction('action-id', payload) }
@@ -161,11 +149,21 @@ export function WidgetRenderer({
     </ErrorBoundary>
   )
 
-  // Wrap with BehaviourWrapper for animation support
-  return (
-    <BehaviourWrapper behaviourId={behaviourId} options={behaviourOptions}>
-      {rendered}
-    </BehaviourWrapper>
+  // Wrap with nested BehaviourWrappers for multi-behaviour support
+  if (behaviourAssignments.length === 0) {
+    return rendered
+  }
+
+  return behaviourAssignments.reduceRight<ReactNode>(
+    (children, assignment) => (
+      <BehaviourWrapper
+        behaviourId={assignment.behaviour}
+        options={assignment.options}
+      >
+        {children}
+      </BehaviourWrapper>
+    ),
+    rendered,
   )
 }
 

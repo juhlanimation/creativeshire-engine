@@ -15,7 +15,7 @@
  * The experience layer injects pinned/behaviour via sectionInjections.
  */
 
-import { useRef, useMemo, useCallback } from 'react'
+import { useRef, useMemo, useCallback, type ReactNode } from 'react'
 import { useStore } from 'zustand'
 import Section from '../content/sections'
 import { WidgetRenderer } from './WidgetRenderer'
@@ -24,9 +24,10 @@ import { SectionLifecycleProvider } from '../experience/lifecycle'
 import { useExperience, useSmoothScrollContainer } from '../experience'
 // PinnedBackdrop infrastructure preserved for potential future use
 // import { usePinnedBackdrop } from './PinnedBackdropContext'
-import { useDevSectionBehaviour, useDevSectionBehaviourOptions, useDevSectionPinned } from './dev/devSettingsStore'
+import { useDevSectionBehaviourAssignments, useDevSectionPinned } from './dev/devSettingsStore'
 import { capitalize } from './utils'
 import type { SectionSchema } from '../schema'
+import { normalizeBehaviours, type BehaviourAssignment } from '../experience/experiences/types'
 import type { NavigableExperienceState } from '../experience/experiences/types'
 
 interface SectionRendererProps {
@@ -64,8 +65,7 @@ export function SectionRenderer({ section, index, totalSections }: SectionRender
     enabled: smoothScrollEnabled,
   })
 
-  const devBehaviourId = useDevSectionBehaviour(section.id)
-  const devSectionOptions = useDevSectionBehaviourOptions(section.id)
+  const devAssignments = useDevSectionBehaviourAssignments(section.id)
   const devPinned = useDevSectionPinned(section.id)
 
   // Resolve injection: exact ID → capitalized ID → '*' fallback
@@ -74,17 +74,15 @@ export function SectionRenderer({ section, index, totalSections }: SectionRender
     ?? experience.sectionInjections['*']
     ?? {}
 
-  const behaviourId = experience.bareMode ? 'none'
-    : (devBehaviourId ?? injection.behaviour ?? null)
   const isPinned = experience.bareMode ? false
     : (devPinned ?? injection.pinned ?? false)
 
-  // Memoize merged options to prevent BehaviourWrapper re-registration on every render
-  const behaviourOptions = useMemo(() => ({
-    ...injection.behaviourOptions,
-    ...(devSectionOptions ?? {}),
-    sectionIndex: index,
-  }), [injection.behaviourOptions, devSectionOptions, index])
+  // Resolve behaviour assignments: bareMode → dev override → injection → empty
+  const assignments: BehaviourAssignment[] = useMemo(() => {
+    if (experience.bareMode) return []
+    if (devAssignments && devAssignments.length > 0) return devAssignments
+    return normalizeBehaviours(injection)
+  }, [experience.bareMode, devAssignments, injection])
 
   // Read visibility once (no subscription) - ScrollDriver reads via visibilityGetter at 60fps
   // useStore subscription here caused ~21 wasted React re-renders per section during scroll
@@ -143,19 +141,23 @@ export function SectionRenderer({ section, index, totalSections }: SectionRender
   // - Registers scroll-based behaviours with ScrollDriver for 60fps
   // - Computes CSS variables for non-scroll behaviours
 
-  // Conditionally wrap with lifecycle provider for navigable experiences
-  // visibilityGetter provides store-based visibility to ScrollDriver,
-  // eliminating duplicate IntersectionObserver tracking (fixes flickering)
-  const behaviourContent = (
-    <BehaviourWrapper
-      behaviourId={behaviourId}
-      options={behaviourOptions}
-      initialState={{ sectionVisibility: initialVisibility, sectionIndex: index }}
-      visibilityGetter={visibilityGetter}
-    >
-      {content}
-    </BehaviourWrapper>
-  )
+  // Multi-behaviour: nest wrappers via reduceRight.
+  // First assignment is outermost (gets visibilityGetter), last is innermost.
+  const behaviourContent = assignments.length === 0
+    ? content
+    : assignments.reduceRight<ReactNode>(
+        (children, assignment, i) => (
+          <BehaviourWrapper
+            behaviourId={assignment.behaviour}
+            options={{ ...assignment.options, sectionIndex: index }}
+            initialState={{ sectionVisibility: initialVisibility, sectionIndex: index }}
+            visibilityGetter={i === 0 ? visibilityGetter : undefined}
+          >
+            {children}
+          </BehaviourWrapper>
+        ),
+        content,
+      )
 
   const wrappedContent = hasNavigation ? (
     <SectionLifecycleProvider
