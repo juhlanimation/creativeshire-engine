@@ -1,0 +1,71 @@
+/**
+ * Storybook Font Loading
+ *
+ * Loads web fonts via @fontsource and sets CSS variables
+ * that match Next.js font loading in app/layout.tsx.
+ *
+ * In the app, next/font/google sets --font-inter and --font-plus-jakarta
+ * on <body>. Here we replicate that for Storybook.
+ */
+
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/inter/800.css";
+@import "@fontsource/inter/900.css";
+@import "@fontsource-variable/plus-jakarta-sans";
+@import "@fontsource/bbh-sans-hegarty/400.css";
+
+/* Editorial theme */
+@import "@fontsource/instrument-serif/400.css";
+@import "@fontsource/dm-sans/400.css";
+@import "@fontsource/dm-sans/500.css";
+@import "@fontsource/dm-sans/600.css";
+@import "@fontsource/dm-sans/700.css";
+
+/* Neon theme */
+@import "@fontsource/syne/400.css";
+@import "@fontsource/syne/500.css";
+@import "@fontsource/syne/600.css";
+@import "@fontsource/syne/700.css";
+@import "@fontsource/syne/800.css";
+@import "@fontsource/space-grotesk/400.css";
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/600.css";
+@import "@fontsource/space-grotesk/700.css";
+
+/* Earthy theme */
+@import "@fontsource/manrope/400.css";
+@import "@fontsource/manrope/500.css";
+@import "@fontsource/manrope/600.css";
+@import "@fontsource/manrope/700.css";
+@import "@fontsource/manrope/800.css";
+
+/* Monochrome theme */
+@import "@fontsource/archivo/400.css";
+@import "@fontsource/archivo/500.css";
+@import "@fontsource/archivo/600.css";
+@import "@fontsource/archivo/700.css";
+@import "@fontsource/archivo/800.css";
+@import "@fontsource/archivo/900.css";
+
+/* Crossroad theme */
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/700.css";
+@import "@fontsource/jetbrains-mono/800.css";
+@import "@fontsource/noto-sans-mono/400.css";
+@import "@fontsource/noto-sans-mono/700.css";
+
+:root {
+  --font-inter: "Inter", system-ui, -apple-system, sans-serif;
+  --font-plus-jakarta: "Plus Jakarta Sans Variable", system-ui, -apple-system, sans-serif;
+  --font-instrument-serif: "Instrument Serif", Georgia, serif;
+  --font-dm-sans: "DM Sans", system-ui, -apple-system, sans-serif;
+  --font-syne: "Syne", system-ui, -apple-system, sans-serif;
+  --font-space-grotesk: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  --font-manrope: "Manrope", system-ui, -apple-system, sans-serif;
+  --font-archivo: "Archivo", system-ui, -apple-system, sans-serif;
+  --font-jetbrains-mono: "JetBrains Mono", monospace;
+  --font-noto-sans-mono: "Noto Sans Mono", monospace;
+}

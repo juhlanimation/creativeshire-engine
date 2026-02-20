@@ -1,0 +1,37 @@
+/**
+ * Storybook Global Reset
+ * Minimal resets matching app/globals.css for consistent rendering.
+ * Excludes Tailwind and Next.js-specific styles.
+ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Match dark theme by default — prevents grey flash between story switches.
+     The EngineDecorator overrides this via useLayoutEffect for the active palette. */
+  background-color: #0a0a0a;
+  color: #f0f0f0;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+}
+
+img, video {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
