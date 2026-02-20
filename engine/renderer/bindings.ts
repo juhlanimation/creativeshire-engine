@@ -296,8 +296,12 @@ export function resolveBindings<T>(
     const result: Record<string, unknown> = {}
 
     for (const [key, propValue] of Object.entries(value as Record<string, unknown>)) {
-      // Skip __repeat prop as it's handled separately by expandRepeater
-      if (key === '__repeat') {
+      // Skip __repeat and condition — handled by expandRepeater/processWidgets.
+      // Resolving condition here would break nested conditional widgets: the
+      // parent's resolveBindings deep-resolves child conditions into plain
+      // strings, then evaluateCondition treats them as "unresolved" and hides
+      // the widget.
+      if (key === '__repeat' || key === 'condition') {
         result[key] = propValue
       } else {
         result[key] = resolveBindings(propValue, content, item)

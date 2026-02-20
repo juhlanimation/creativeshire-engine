@@ -15,7 +15,6 @@ import {
 import type { Experience, ExperienceChrome, ExperienceState, BehaviourAssignment } from '../../experience/experiences/types'
 import { getExperienceOverride } from '../../experience'
 import { useDevOverride } from './useDevOverride'
-import { useDevExperienceSettings } from '../dev/devSettingsStore'
 import { createExperienceStore } from '../../experience/experiences/createExperienceStore'
 import type { SiteSchema, PageSchema } from '../../schema'
 
@@ -24,8 +23,6 @@ export interface ResolvedExperience {
   store: StoreApi<ExperienceState>
   /** Schema-level experience ID (before dev override), for DevToolsContainer display */
   schemaExperienceId: string
-  /** Merged experience settings (defaults + schema + dev overrides) */
-  settings: Record<string, unknown>
   beforeChrome: ExperienceChrome[]
   afterChrome: ExperienceChrome[]
   overlayChrome: ExperienceChrome[]
@@ -34,7 +31,6 @@ export interface ResolvedExperience {
 export function useResolvedExperience(site: SiteSchema, page: PageSchema): ResolvedExperience {
   // Dev override (reactive — listens for live switching)
   const devOverride = useDevOverride(getExperienceOverride, 'experienceOverrideChange')
-  const devExperienceSettings = useDevExperienceSettings()
 
   // Resolve experience ID: dev override > page config > site config > fallback
   const schemaExperienceId = page.experience?.id ?? site.experience?.id ?? 'simple'
@@ -101,27 +97,12 @@ export function useResolvedExperience(site: SiteSchema, page: PageSchema): Resol
   }, [experience, site.experience?.sectionBehaviours, page.experience?.sectionBehaviours, site.experience?.intro, page.experience?.intro])
 
   // Create store for this render (memoized to avoid recreating on every render)
-  const store = useMemo(() => createExperienceStore(mergedExperience), [mergedExperience])
-
-  // Resolve experience settings: defaults from definition → schema overrides → dev overrides
-  const resolvedSettings = useMemo(() => {
-    // Start with defaults from experience definition
-    const defaults: Record<string, unknown> = {}
-    if (mergedExperience.settings) {
-      for (const [key, config] of Object.entries(mergedExperience.settings) as [string, { default: unknown } | undefined][]) {
-        if (config) defaults[key] = config.default
-      }
-    }
-
-    // Merge schema-level settings (site → page override)
-    const schemaSettings = {
-      ...(site.experience?.settings ?? {}),
-      ...(page.experience?.settings ?? {}),
-    }
-
-    // Merge dev overrides (only in development)
-    return { ...defaults, ...schemaSettings, ...(devExperienceSettings ?? {}) }
-  }, [mergedExperience.settings, site.experience?.settings, page.experience?.settings, devExperienceSettings])
+  const store = useMemo(
+    () => createExperienceStore(mergedExperience),
+    // Store shape only changes when presentation model changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [mergedExperience.presentation?.model],
+  )
 
   // Filter experience chrome by position for rendering at correct locations
   const beforeChrome = useMemo(
@@ -141,7 +122,6 @@ export function useResolvedExperience(site: SiteSchema, page: PageSchema): Resol
     experience: mergedExperience,
     store,
     schemaExperienceId,
-    settings: resolvedSettings,
     beforeChrome,
     afterChrome,
     overlayChrome,

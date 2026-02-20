@@ -6,7 +6,7 @@
  */
 
 import type { ComponentType } from 'react'
-import { getIntroOverride } from '../../intro'
+import { getIntroOverride, getIntroSequence } from '../../intro'
 import type { IntroConfig } from '../../intro'
 import type { Experience } from '../../experience/experiences/types'
 import { getChromeComponent } from '../../content/chrome/registry'
@@ -28,10 +28,12 @@ export function useResolvedIntro(
   const introOverrideId = useDevOverride(getIntroOverride)
 
   // Resolve intro config:
-  // Priority: _intro=none → page.intro → site.intro → experience.intro
+  // Priority: _intro=none → _intro=<sequence-id> → page.intro → site.intro → experience.intro
   let introConfig: IntroConfig | null
   if (introOverrideId === 'none') {
     introConfig = null
+  } else if (introOverrideId) {
+    introConfig = getIntroSequence(introOverrideId) ?? null
   } else {
     introConfig = page.intro === 'disabled'
       ? null

@@ -8,81 +8,124 @@
  * - Effects (fade, transform, mask, etc.)
  * - Presentation (slideshow, carousel containers)
  * - Widget styles (primitives, layout, interactive, patterns)
- * - Chrome styles (regions, overlays)
+ * - Chrome styles (patterns, overlays)
  * - Renderer styles (chrome, base, scrollbar)
  *
  * Site-scoped styles (base.css, scrollbar.css) use [data-site-renderer]
  * to target only the rendered site, not the platform.
  *
  * Does NOT include preset-specific styles - those are bundled with each preset.
+ *
+ * CSS Cascade Layers (sub-layers of parent `engine` layer):
+ *   engine.resets < engine.effects < engine.widgets < engine.sections < engine.chrome < engine.renderer
  */
+
+@layer resets, effects, widgets, sections, chrome, renderer;
+
+/* =============================================================================
+ * RESETS - Lowest priority, easily overridden by widgets/sections
+ * ============================================================================= */
+@import './renderer/resets.css' layer(resets);
 
 /* =============================================================================
  * CONTAINER QUERIES - Responsive breakpoints for iframe/contained mode
  * ============================================================================= */
-@import './styles/container-queries.css';
+@import './styles/container-queries.css' layer(renderer);
 
 /* =============================================================================
  * EXPERIENCE
  * ============================================================================= */
 
 /* Effects - visual animations (fade, scale, slide, mask, etc.) */
-@import './experience/effects/index.css';
+@import './experience/effects/index.css' layer(effects);
 
 /* Presentation - experience containers (slideshow, carousel) */
-@import './experience/experiences/presentation.css';
+@import './experience/experiences/presentation.css' layer(effects);
+
+/* Page transitions - fade-to-black navigation transitions */
+@import './experience/navigation/page-transition.css' layer(effects);
 
 /* =============================================================================
  * CONTENT - Widgets
  * ============================================================================= */
 
 /* Primitives */
-@import './content/widgets/primitives/Text/styles.css';
-@import './content/widgets/primitives/Image/styles.css';
-@import './content/widgets/primitives/Icon/styles.css';
-@import './content/widgets/primitives/Button/styles.css';
-@import './content/widgets/primitives/Link/styles.css';
+@import './content/widgets/primitives/Text/styles.css' layer(widgets);
+@import './content/widgets/primitives/Image/styles.css' layer(widgets);
+@import './content/widgets/primitives/Icon/styles.css' layer(widgets);
+@import './content/widgets/primitives/Button/styles.css' layer(widgets);
+@import './content/widgets/primitives/Link/styles.css' layer(widgets);
 
 /* Layout */
-@import './content/widgets/layout/Stack/styles.css';
-@import './content/widgets/layout/Flex/styles.css';
-@import './content/widgets/layout/Grid/styles.css';
-@import './content/widgets/layout/Split/styles.css';
-@import './content/widgets/layout/Container/styles.css';
-@import './content/widgets/layout/Box/styles.css';
+@import './content/widgets/layout/Stack/styles.css' layer(widgets);
+@import './content/widgets/layout/Flex/styles.css' layer(widgets);
+@import './content/widgets/layout/Grid/styles.css' layer(widgets);
+@import './content/widgets/layout/Split/styles.css' layer(widgets);
+@import './content/widgets/layout/Container/styles.css' layer(widgets);
+@import './content/widgets/layout/Box/styles.css' layer(widgets);
+@import './content/widgets/layout/Marquee/styles.css' layer(widgets);
 
-/* Patterns */
-@import './content/widgets/patterns/styles/project-card.css';
-@import './content/widgets/patterns/styles/logo-link.css';
+/* Patterns (colocated with sections) */
+@import './content/sections/patterns/ProjectFeatured/components/ProjectCard/styles.css' layer(widgets);
 
 /* Interactive */
-@import './content/widgets/interactive/Video/styles.css';
-@import './content/widgets/interactive/VideoPlayer/styles.css';
-@import './content/widgets/interactive/ContactPrompt/styles.css';
-@import './content/widgets/interactive/ExpandableGalleryRow/styles.css';
-@import './content/widgets/interactive/GalleryThumbnail/styles.css';
+@import './content/widgets/interactive/Video/styles.css' layer(widgets);
+@import './content/widgets/interactive/VideoPlayer/styles.css' layer(widgets);
+@import './content/widgets/interactive/EmailCopy/styles.css' layer(widgets);
+@import './content/widgets/repeaters/ExpandRowImageRepeater/ExpandRowThumbnail/styles.css' layer(widgets);
+@import './content/widgets/repeaters/ExpandRowImageRepeater/styles.css' layer(widgets);
+
+/* Scoped widgets (colocated with section patterns) */
+@import './content/sections/patterns/AboutBio/components/MarqueeImageRepeater/styles.css' layer(widgets);
+@import './content/sections/patterns/ProjectCompare/components/VideoCompare/styles.css' layer(widgets);
+@import './content/sections/patterns/ProjectGallery/components/FlexGalleryCardRepeater/styles.css' layer(widgets);
+@import './content/sections/patterns/ProjectGallery/components/FlexGalleryCardRepeater/SelectorCard/styles.css' layer(widgets);
+@import './content/sections/patterns/ProjectShowcase/components/FlexButtonRepeater/IndexNav/styles.css' layer(widgets);
+@import './content/sections/patterns/ProjectTabs/components/TabbedContent/styles.css' layer(widgets);
+@import './content/sections/patterns/TeamShowcase/components/StackVideoShowcase/styles.css' layer(widgets);
 
 /* =============================================================================
  * CONTENT - Sections
  * ============================================================================= */
-@import './content/sections/styles.css';
+@import './content/sections/styles.css' layer(sections);
+
+/* Section Patterns */
+@import './content/sections/patterns/HeroVideo/styles.css' layer(sections);
+@import './content/sections/patterns/HeroTitle/styles.css' layer(sections);
+@import './content/sections/patterns/AboutBio/styles.css' layer(sections);
+@import './content/sections/patterns/ProjectFeatured/styles.css' layer(sections);
+@import './content/sections/patterns/ProjectStrip/styles.css' layer(sections);
+@import './content/sections/patterns/ProjectGallery/styles.css' layer(sections);
+@import './content/sections/patterns/TeamShowcase/styles.css' layer(sections);
+@import './content/sections/patterns/ContentPricing/styles.css' layer(sections);
+@import './content/sections/patterns/ProjectShowcase/styles.css' layer(sections);
+@import './content/sections/patterns/ProjectCompare/styles.css' layer(sections);
+@import './content/sections/patterns/ProjectVideoGrid/styles.css' layer(sections);
+@import './content/sections/patterns/ProjectTabs/styles.css' layer(sections);
+@import './content/sections/patterns/ProjectExpand/styles.css' layer(sections);
+@import './content/sections/patterns/AboutCollage/styles.css' layer(sections);
 
 /* =============================================================================
  * CONTENT - Chrome
  * ============================================================================= */
 
-/* Regions */
-@import './content/chrome/regions/Footer/styles.css';
+/* Patterns */
+@import './content/chrome/patterns/FixedNav/styles.css' layer(chrome);
+@import './content/chrome/patterns/MinimalNav/styles.css' layer(chrome);
+@import './content/chrome/patterns/ContactFooter/styles.css' layer(chrome);
+@import './content/chrome/patterns/BrandFooter/styles.css' layer(chrome);
+@import './content/chrome/patterns/ScrollRevealBrand/styles.css' layer(chrome);
 
 /* Overlays */
-@import './content/chrome/overlays/Modal/styles.css';
-@import './content/chrome/overlays/CursorLabel/styles.css';
-@import './content/chrome/overlays/NavTimeline/styles.css';
-@import './content/chrome/overlays/SlideIndicators/styles.css';
+@import './content/chrome/overlays/Modal/styles.css' layer(chrome);
+@import './content/chrome/overlays/CursorLabel/styles.css' layer(chrome);
+@import './content/chrome/overlays/NavTimeline/styles.css' layer(chrome);
+@import './content/chrome/overlays/SlideIndicators/styles.css' layer(chrome);
+@import './content/chrome/overlays/FixedCard/styles.css' layer(chrome);
 
 /* =============================================================================
  * RENDERER
  * ============================================================================= */
-@import './renderer/chrome.css';
-@import './renderer/base.css';
-@import './renderer/scrollbar.css';
+@import './renderer/chrome.css' layer(renderer);
+@import './renderer/base.css' layer(renderer);
+@import './renderer/scrollbar.css' layer(renderer);

@@ -1,0 +1,39 @@
+/**
+ * Site reset styles — lowest priority in cascade.
+ * These establish baseline behavior that widgets/sections can override.
+ *
+ * Imported into @layer resets (the first sub-layer) so ANY widget or
+ * section rule can re-apply specific colors/decorations.
+ */
+
+/* Difference blend needs white foreground for maximum contrast.
+   Any themed color (e.g. --text-primary: #27272A) produces muddy results.
+   Override palette CSS variables at the blend mode boundary so all descendant
+   primitives (Text, Link, Button) resolve to white automatically.
+   No !important needed — variables set on the element override inherited values. */
+[style*="mix-blend-mode: difference"] {
+  color: white;
+  border-color: white;
+  --text-primary: white;
+  --text-secondary: white;
+  --color-link: white;
+  --accent: white;
+  --interaction: white;
+  --color-primary: white;
+  --color-primary-contrast: white;
+  --color-secondary: white;
+  --color-secondary-contrast: white;
+  --color-focus: white;
+}
+
+/* Links inherit color from parent (widgets re-apply link colors) */
+[data-site-renderer] a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+/* Contained mode — same reset */
+[data-engine-container] a {
+  color: inherit;
+  text-decoration: inherit;
+}

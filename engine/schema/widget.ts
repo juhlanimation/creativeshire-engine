@@ -5,6 +5,7 @@
 
 import type { CSSProperties } from 'react'
 import type { BehaviourConfig } from './experience'
+import type { DecoratorRef } from '../content/decorators/types'
 import type { SerializableValue } from './types'
 
 /**
@@ -12,15 +13,30 @@ import type { SerializableValue } from './types'
  * Widgets hold content (text, images, video) and render once.
  */
 /**
- * Event to action mapping.
- * Maps DOM events to action IDs that are executed by the action registry.
+ * Action binding — either a plain action ID string or an object with params.
+ * Object form allows CMS to inject/override payload fields from the schema.
  *
  * @example
  * ```typescript
- * { click: 'open-video-modal', hover: 'show-preview' }
+ * 'modal.open'
+ * { action: 'modal.open', params: { animationType: 'expand' } }
  * ```
  */
-export type WidgetEventMap = Record<string, string>
+export type ActionBinding = string | { action: string; params?: Record<string, SerializableValue> }
+
+/**
+ * Event to action mapping.
+ * Maps DOM events to action bindings that are executed by the action registry.
+ * Supports single binding or array for multiple responses per event.
+ *
+ * @example
+ * ```typescript
+ * { click: 'modal.open' }
+ * { click: { action: 'modal.open', params: { animationType: 'expand' } } }
+ * { mouseenter: ['cursorLabel.show', 'emphasis.highlight'] }
+ * ```
+ */
+export type WidgetEventMap = Record<string, ActionBinding | ActionBinding[]>
 
 export interface WidgetSchema {
   /** Unique identifier for the widget */
@@ -33,8 +49,12 @@ export interface WidgetSchema {
   style?: CSSProperties
   /** CSS class names */
   className?: string
-  /** Behaviour configuration for animation */
+  /** Behaviour configuration for animation (singular, legacy) */
   behaviour?: BehaviourConfig
+  /** Behaviour configurations for animation (array, preferred) */
+  behaviours?: BehaviourConfig[]
+  /** Decorators applied to this widget. Resolved at render time into on + behaviours. */
+  decorators?: DecoratorRef[]
   /** Nested widgets (for layout widgets) */
   widgets?: WidgetSchema[]
   /**
@@ -44,7 +64,7 @@ export interface WidgetSchema {
    *
    * @example
    * ```typescript
-   * { on: { click: 'open-video-modal' } }
+   * { on: { click: 'modal.open' } }
    * ```
    */
   on?: WidgetEventMap

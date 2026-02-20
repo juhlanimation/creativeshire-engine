@@ -21,16 +21,11 @@ html:has([data-site-renderer]) {
  * Site-level typography defaults
  * ============================================================================= */
 
-/* Font smoothing for crisp text */
+/* Font smoothing for crisp text + theme font inheritance */
 [data-site-renderer] {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-/* Links inherit color from parent (site controls link colors) */
-[data-site-renderer] a {
-  color: inherit;
-  text-decoration: inherit;
+  font-family: var(--font-paragraph, system-ui, sans-serif);
 }
 
 /* =============================================================================
@@ -55,7 +50,7 @@ html:has([data-site-renderer]) {
  *
  * [data-viewport-layer="background"] — z-index: 0. Fullscreen portal target
  *   for content that needs to sit between the page bg and site content
- *   (e.g., TeamShowcase video). Transparent sections reveal this layer.
+ *   (e.g., StackVideoShowcase video). Transparent sections reveal this layer.
  *
  * [data-site-renderer] — z-index: 1, bg: transparent. Container query root.
  *   Sections own their backgrounds — transparent sections show the layer below.
@@ -138,12 +133,8 @@ html:has([data-site-renderer]) {
 [data-engine-container] {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-paragraph, system-ui, sans-serif);
   scroll-behavior: smooth;
-}
-
-[data-engine-container] a {
-  color: inherit;
-  text-decoration: inherit;
 }
 
 [data-engine-container] img,
@@ -158,6 +149,13 @@ html:has([data-site-renderer]) {
   margin-left: auto;
   margin-right: auto;
   background-color: var(--site-outer-bg, transparent);
+}
+
+/* Contained: clip all visual overflow to container boundary.
+   container-type positions fixed descendants (contain: layout) but doesn't clip them.
+   clip-path: inset(0) ensures overlays never visually escape the container. */
+[data-container-mode="contained"] {
+  clip-path: inset(0);
 }
 
 /* Contained: container handles constraints, don't force viewport height */

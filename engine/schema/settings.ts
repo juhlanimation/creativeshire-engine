@@ -99,6 +99,15 @@ interface BaseSettingConfig {
    */
   editorHint?: EditorHint
 
+  /**
+   * Whether this setting is hidden from the CMS editor by default.
+   * Hidden settings are engine-controlled — the preset wires them,
+   * CMS users don't see or edit them.
+   * Can be overridden per-preset via ContentContract.settingOverrides.
+   * Default: false (visible).
+   */
+  hidden?: boolean
+
   /** Validation rules */
   validation?: SettingValidation
 }
@@ -117,6 +126,12 @@ interface ToggleSetting extends BaseSettingConfig {
 interface TextSetting extends BaseSettingConfig {
   type: 'text'
   default: string
+  /**
+   * Suggested values shown as a dropdown in Storybook / autocomplete in CMS.
+   * Supports `{section}` template — expanded to actual section IDs at render time.
+   * Example: `['--{section}-cover-progress']` → `['--hero-cover-progress', '--about-cover-progress']`
+   */
+  suggestions?: string[]
 }
 
 /** Multi-line text input */
@@ -295,4 +310,27 @@ export type SettingDefaultType<T extends SettingType> = Extract<
  */
 export function defineSetting<T extends SettingConfig>(setting: T): T {
   return setting
+}
+
+// =============================================================================
+// Defaults Extraction
+// =============================================================================
+
+/**
+ * Extract default values from a SettingsConfig map.
+ * Returns { propName: defaultValue } for each setting that has a default.
+ *
+ * Used by meta-registry to pre-compute widget defaults at module load time,
+ * so WidgetRenderer can merge them with zero per-render cost.
+ */
+export function extractDefaults(
+  settings: Record<string, SettingConfig>
+): Record<string, unknown> {
+  const defaults: Record<string, unknown> = {}
+  for (const [key, config] of Object.entries(settings)) {
+    if (config && config.default !== undefined) {
+      defaults[key] = config.default
+    }
+  }
+  return defaults
 }

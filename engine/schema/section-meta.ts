@@ -4,7 +4,7 @@
  */
 
 import { defineMeta } from './meta'
-import type { SettingsGroup } from './settings'
+import type { SettingConfig, SettingsGroup } from './settings'
 
 export const sectionMeta = defineMeta<Record<string, unknown>>({
   id: 'Section',
@@ -45,7 +45,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       group: 'Identity',
     },
 
-    // ── Layout ─────────────────────────────────────────────────────────────
+    // ── Section (layout) ────────────────────────────────────────────────
     'layout.type': {
       type: 'select',
       label: 'Layout Type',
@@ -57,7 +57,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
         { value: 'stack', label: 'Stack' },
       ],
       editorHint: 'structural',
-      group: 'Layout',
+      group: 'Section',
     },
     'layout.direction': {
       type: 'select',
@@ -69,7 +69,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
         { value: 'column', label: 'Column' },
       ],
       editorHint: 'structural',
-      group: 'Layout',
+      group: 'Section',
     },
     'layout.align': {
       type: 'select',
@@ -83,7 +83,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
         { value: 'stretch', label: 'Stretch' },
       ],
       editorHint: 'structural',
-      group: 'Layout',
+      group: 'Section',
     },
     'layout.justify': {
       type: 'select',
@@ -98,16 +98,57 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
         { value: 'around', label: 'Space Around' },
       ],
       editorHint: 'structural',
-      group: 'Layout',
+      group: 'Section',
     },
     'layout.gap': {
-      type: 'spacing',
+      type: 'select',
       label: 'Gap',
-      default: 0,
-      description: 'Gap between items',
-      validation: { min: 0, max: 500 },
+      default: 'none',
+      description: 'Gap between items (layout preset or raw CSS)',
+      choices: [
+        { value: 'none', label: 'None' },
+        { value: 'tight', label: 'Tight' },
+        { value: 'normal', label: 'Normal' },
+        { value: 'loose', label: 'Loose' },
+      ],
       editorHint: 'structural',
-      group: 'Layout',
+      group: 'Section',
+    },
+    'layout.gapScale': {
+      type: 'number',
+      label: 'Gap Scale',
+      default: 1,
+      description: 'Multiplier for the gap value',
+      min: 0.25,
+      max: 10,
+      step: 0.25,
+      editorHint: 'structural',
+      group: 'Section',
+    },
+    'layout.padding': {
+      type: 'select',
+      label: 'Padding',
+      default: 'none',
+      description: 'Section padding (layout preset or raw CSS)',
+      choices: [
+        { value: 'none', label: 'None' },
+        { value: 'tight', label: 'Tight' },
+        { value: 'normal', label: 'Normal' },
+        { value: 'loose', label: 'Loose' },
+      ],
+      editorHint: 'structural',
+      group: 'Section',
+    },
+    'layout.paddingScale': {
+      type: 'number',
+      label: 'Padding Scale',
+      default: 1,
+      description: 'Multiplier for the padding value',
+      min: 0.25,
+      max: 10,
+      step: 0.25,
+      editorHint: 'structural',
+      group: 'Section',
     },
     'layout.columns': {
       type: 'number',
@@ -119,7 +160,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       step: 1,
       condition: "layout.type === 'grid'",
       editorHint: 'structural',
-      group: 'Layout',
+      group: 'Section',
     },
     'layout.rows': {
       type: 'number',
@@ -131,7 +172,7 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       step: 1,
       condition: "layout.type === 'grid'",
       editorHint: 'structural',
-      group: 'Layout',
+      group: 'Section',
     },
 
     // ── Animation ──────────────────────────────────────────────────────────
@@ -154,6 +195,56 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       group: 'Animation',
     },
 
+    // ── Section (container) ─────────────────────────────────────────────
+    paddingTop: {
+      type: 'range',
+      label: 'Padding Top',
+      default: 0,
+      min: 0,
+      max: 500,
+      step: 4,
+      group: 'Section',
+    },
+    paddingBottom: {
+      type: 'range',
+      label: 'Padding Bottom',
+      default: 0,
+      min: 0,
+      max: 500,
+      step: 4,
+      group: 'Section',
+    },
+    paddingLeft: {
+      type: 'range',
+      label: 'Padding Left',
+      default: 0,
+      min: 0,
+      max: 500,
+      step: 4,
+      group: 'Section',
+    },
+    paddingRight: {
+      type: 'range',
+      label: 'Padding Right',
+      default: 0,
+      min: 0,
+      max: 500,
+      step: 4,
+      group: 'Section',
+    },
+    sectionHeight: {
+      type: 'select',
+      label: 'Section Height',
+      default: 'auto',
+      description: 'Height constraint for the section',
+      choices: [
+        { value: 'auto', label: 'Auto' },
+        { value: 'viewport', label: 'Viewport (flexible)' },
+        { value: 'viewport-fixed', label: 'Viewport (locked)' },
+      ],
+      group: 'Section',
+    },
+
     // ── Advanced ───────────────────────────────────────────────────────────
     className: {
       type: 'text',
@@ -173,11 +264,181 @@ export function getSectionSettings() {
   return sectionMeta.settings!
 }
 
+/**
+ * Returns section-level container settings for Storybook/CMS merging.
+ * Includes both container-level fields (constrained, padding overrides, sectionHeight)
+ * and layout fields (type, direction, align, justify, gap, padding + scales).
+ */
+export function getSectionContainerSettings(): Record<string, SettingConfig> {
+  return {
+    // ── Section container ────────────────────────────────────────────────
+    constrained: {
+      type: 'toggle',
+      label: 'Constrained',
+      default: false,
+      description: 'Limit section width to --site-max-width',
+      group: 'Section',
+    },
+    paddingTop: {
+      type: 'range',
+      label: 'Padding Top',
+      default: 0,
+      min: 0,
+      max: 500,
+      step: 4,
+      group: 'Section',
+    },
+    paddingBottom: {
+      type: 'range',
+      label: 'Padding Bottom',
+      default: 0,
+      min: 0,
+      max: 500,
+      step: 4,
+      group: 'Section',
+    },
+    paddingLeft: {
+      type: 'range',
+      label: 'Padding Left',
+      default: 0,
+      min: 0,
+      max: 500,
+      step: 4,
+      group: 'Section',
+    },
+    paddingRight: {
+      type: 'range',
+      label: 'Padding Right',
+      default: 0,
+      min: 0,
+      max: 500,
+      step: 4,
+      group: 'Section',
+    },
+    sectionHeight: {
+      type: 'select',
+      label: 'Section Height',
+      default: 'auto',
+      description: 'Height constraint for the section',
+      choices: [
+        { value: 'auto', label: 'Auto' },
+        { value: 'viewport', label: 'Viewport (flexible)' },
+        { value: 'viewport-fixed', label: 'Viewport (locked)' },
+      ],
+      group: 'Section',
+    },
+
+    // ── Section layout (inner) ─────────────────────────────────────────
+    'layout.type': {
+      type: 'select',
+      label: 'Layout Type',
+      default: 'flex',
+      description: 'How widgets are arranged within the section',
+      choices: [
+        { value: 'flex', label: 'Flex' },
+        { value: 'grid', label: 'Grid' },
+        { value: 'stack', label: 'Stack' },
+      ],
+      advanced: true,
+      group: 'Section',
+    },
+    'layout.direction': {
+      type: 'select',
+      label: 'Direction',
+      default: 'column',
+      description: 'Flex direction (for flex/stack layouts)',
+      choices: [
+        { value: 'row', label: 'Row' },
+        { value: 'column', label: 'Column' },
+      ],
+      advanced: true,
+      group: 'Section',
+    },
+    'layout.align': {
+      type: 'select',
+      label: 'Align',
+      default: 'stretch',
+      description: 'Cross-axis alignment',
+      choices: [
+        { value: 'start', label: 'Start' },
+        { value: 'center', label: 'Center' },
+        { value: 'end', label: 'End' },
+        { value: 'stretch', label: 'Stretch' },
+      ],
+      advanced: true,
+      group: 'Section',
+    },
+    'layout.justify': {
+      type: 'select',
+      label: 'Justify',
+      default: 'start',
+      description: 'Main-axis distribution',
+      choices: [
+        { value: 'start', label: 'Start' },
+        { value: 'center', label: 'Center' },
+        { value: 'end', label: 'End' },
+        { value: 'between', label: 'Space Between' },
+        { value: 'around', label: 'Space Around' },
+      ],
+      advanced: true,
+      group: 'Section',
+    },
+    'layout.gap': {
+      type: 'select',
+      label: 'Gap',
+      default: 'none',
+      description: 'Gap between items (layout preset)',
+      choices: [
+        { value: 'none', label: 'None' },
+        { value: 'tight', label: 'Tight' },
+        { value: 'normal', label: 'Normal' },
+        { value: 'loose', label: 'Loose' },
+      ],
+      group: 'Section',
+    },
+    'layout.gapScale': {
+      type: 'number',
+      label: 'Gap Scale',
+      default: 1,
+      description: 'Multiplier for the gap value',
+      min: 0.25,
+      max: 10,
+      step: 0.25,
+      advanced: true,
+      group: 'Section',
+    },
+    'layout.padding': {
+      type: 'select',
+      label: 'Padding',
+      default: 'none',
+      description: 'Section padding (layout preset)',
+      choices: [
+        { value: 'none', label: 'None' },
+        { value: 'tight', label: 'Tight' },
+        { value: 'normal', label: 'Normal' },
+        { value: 'loose', label: 'Loose' },
+      ],
+      group: 'Section',
+    },
+    'layout.paddingScale': {
+      type: 'number',
+      label: 'Padding Scale',
+      default: 1,
+      description: 'Multiplier for the padding value',
+      min: 0.25,
+      max: 10,
+      step: 0.25,
+      advanced: true,
+      group: 'Section',
+    },
+  }
+}
+
 /** Returns group definitions for section settings. */
 export function getSectionGroups(): SettingsGroup[] {
   return [
     { id: 'Identity', label: 'Identity', icon: 'tag' },
-    { id: 'Layout', label: 'Layout', icon: 'layout' },
+    { id: 'Section', label: 'Section', icon: 'layout' },
     { id: 'Animation', label: 'Animation', icon: 'sparkle' },
     { id: 'Advanced', label: 'Advanced', icon: 'code' },
   ]

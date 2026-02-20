@@ -16,6 +16,8 @@ export type {
 
 // Widget types
 export type {
+  ActionBinding,
+  WidgetEventMap,
   WidgetSchema,
   WidgetType,
   WidgetTypeMap,
@@ -26,6 +28,9 @@ export type {
   GridWidgetProps,
 } from './widget'
 
+// Decorator types
+export type { DecoratorRef } from '../content/decorators/types'
+
 // Section types
 export type { SectionSchema, LayoutConfig } from './section'
 
@@ -33,6 +38,7 @@ export type { SectionSchema, LayoutConfig } from './section'
 export type {
   ChromeSchema,
   RegionSchema,
+  RegionLayout,
   OverlaySchema,
   PageChromeOverrides,
   TriggerCondition,
@@ -68,6 +74,7 @@ export type {
   SectionTransitionConfig,
   ContainerConfig,
   FontProvider,
+  ColorMode,
 } from './theme'
 
 // Shell types
@@ -98,14 +105,14 @@ export type {
 } from './settings'
 
 // Component meta types
-export type { ComponentCategory, ComponentMeta, MetaProps, SectionCategory, SectionMeta } from './meta'
-export { defineMeta, defineSectionMeta } from './meta'
+export type { ComponentCategory, ComponentMeta, MetaProps, SectionCategory, SectionMeta, RegionType, RegionMeta, ChromeSlot, ChromePatternMeta } from './meta'
+export { defineMeta, defineSectionMeta, defineRegionMeta, defineChromeMeta } from './meta'
 
 // Structural schema metas
 export { themeMeta, getThemeSettings, getThemeGroups } from './theme-meta'
 export { pageMeta, getPageSettings, getPageGroups } from './page-meta'
 export { siteMetadataMeta, getSiteMetadataSettings, getSiteMetadataGroups } from './site-meta'
-export { sectionMeta, getSectionSettings, getSectionGroups } from './section-meta'
+export { sectionMeta, getSectionSettings, getSectionContainerSettings, getSectionGroups } from './section-meta'
 export { regionMeta, getRegionSettings, getRegionGroups } from './region-meta'
 export { overlayMeta, getOverlaySettings, getOverlayGroups } from './overlay-meta'
 
@@ -119,3 +126,6 @@ export {
   mergeOverrides,
   extractOverrides,
 } from './utils'
+
+// Setting helpers
+export { textScaleSetting } from './settings-helpers'

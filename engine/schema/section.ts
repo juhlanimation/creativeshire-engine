@@ -5,6 +5,7 @@
 
 import type { CSSProperties } from 'react'
 import type { WidgetSchema } from './widget'
+import type { ColorMode } from './theme'
 
 /**
  * Layout configuration for a section.
@@ -21,6 +22,12 @@ export interface LayoutConfig {
   justify?: 'start' | 'center' | 'end' | 'between' | 'around'
   /** Gap between items */
   gap?: number | string
+  /** Multiplier for the gap value */
+  gapScale?: number
+  /** Container padding — supports layout preset names ('normal', 'tight', etc.) */
+  padding?: string
+  /** Multiplier for the padding value */
+  paddingScale?: number
   /** Grid columns (for grid layout) */
   columns?: number
   /** Grid rows (for grid layout) */
@@ -46,6 +53,18 @@ export interface SectionSchema {
   className?: string
   /** Whether section content is constrained to --site-max-width (opt-in) */
   constrained?: boolean
+  /** Per-section color mode override — resolves palette from the active theme */
+  colorMode?: ColorMode
+
+  /** Container padding overrides in px (CMS-editable, 0 = no override) */
+  paddingTop?: number
+  paddingBottom?: number
+  paddingLeft?: number
+  paddingRight?: number
+
+  /** Section height mode: auto (default), viewport (min-height), viewport-fixed (locked height) */
+  sectionHeight?: 'auto' | 'viewport' | 'viewport-fixed'
+
   /** Widgets contained in this section */
   widgets: WidgetSchema[]
 }

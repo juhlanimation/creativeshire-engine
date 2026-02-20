@@ -26,12 +26,107 @@ export const regionMeta = defineMeta<Record<string, unknown>>({
       group: 'Component',
     },
 
+    // ── Positioning ───────────────────────────────────────────────────────
+    overlay: {
+      type: 'toggle',
+      label: 'Overlay',
+      default: true,
+      description: 'Float on top of content (true) or take document flow space (false)',
+      group: 'Positioning',
+    },
+    direction: {
+      type: 'select',
+      label: 'Direction',
+      default: 'horizontal',
+      description: 'Layout direction. Vertical = sidebar-like',
+      choices: [
+        { value: 'horizontal', label: 'Horizontal' },
+        { value: 'vertical', label: 'Vertical' },
+      ],
+      group: 'Positioning',
+    },
+    collapsible: {
+      type: 'toggle',
+      label: 'Collapsible',
+      default: false,
+      description: 'Auto-hide on scroll down, show on scroll up',
+      group: 'Positioning',
+    },
+
+    // ── Layout ──────────────────────────────────────────────────────────
+    'layout.justify': {
+      type: 'select',
+      label: 'Justify',
+      default: '',
+      description: 'Horizontal placement of region content',
+      choices: [
+        { value: '', label: 'Default' },
+        { value: 'start', label: 'Start' },
+        { value: 'center', label: 'Center' },
+        { value: 'end', label: 'End' },
+        { value: 'between', label: 'Space Between' },
+        { value: 'around', label: 'Space Around' },
+      ],
+      group: 'Layout',
+    },
+    'layout.align': {
+      type: 'select',
+      label: 'Align',
+      default: '',
+      description: 'Vertical alignment of region content',
+      choices: [
+        { value: '', label: 'Default' },
+        { value: 'start', label: 'Start' },
+        { value: 'center', label: 'Center' },
+        { value: 'end', label: 'End' },
+        { value: 'stretch', label: 'Stretch' },
+      ],
+      group: 'Layout',
+    },
+    'layout.padding': {
+      type: 'text',
+      label: 'Content Padding',
+      default: '',
+      description: 'Padding inside the region layout wrapper',
+      validation: { maxLength: 200 },
+      group: 'Layout',
+    },
+    'layout.maxWidth': {
+      type: 'text',
+      label: 'Content Max Width',
+      default: '',
+      description: 'Maximum width of region content (e.g. var(--site-max-width))',
+      validation: { maxLength: 200 },
+      editorHint: 'structural',
+      group: 'Layout',
+    },
+    'layout.gap': {
+      type: 'text',
+      label: 'Content Gap',
+      default: '',
+      description: 'Gap between top-level widgets in the region',
+      validation: { maxLength: 200 },
+      group: 'Layout',
+    },
+
     // ── Style ─────────────────────────────────────────────────────────────
     constrained: {
       type: 'toggle',
       label: 'Constrain Width',
       default: false,
       description: 'Constrain region content to site max-width',
+      group: 'Style',
+    },
+    colorMode: {
+      type: 'select',
+      label: 'Color Mode',
+      default: '',
+      description: 'Force a color mode on this region, overriding the site-level palette',
+      choices: [
+        { value: '', label: 'Inherit' },
+        { value: 'dark', label: 'Dark' },
+        { value: 'light', label: 'Light' },
+      ],
       group: 'Style',
     },
     'style.backgroundColor': {
@@ -77,7 +172,7 @@ export const regionMeta = defineMeta<Record<string, unknown>>({
 
 /**
  * Returns settings config for a RegionSchema.
- * @param name - Region name (header/footer/sidebar) for platform context
+ * @param name - Region name (header/footer) for platform context
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- param reserved for future per-region settings
 export function getRegionSettings(_name?: string) {
@@ -88,6 +183,8 @@ export function getRegionSettings(_name?: string) {
 export function getRegionGroups(): SettingsGroup[] {
   return [
     { id: 'Component', label: 'Component', icon: 'component' },
+    { id: 'Positioning', label: 'Positioning', icon: 'layout' },
+    { id: 'Layout', label: 'Layout', icon: 'columns' },
     { id: 'Style', label: 'Style', icon: 'paintbrush' },
     { id: 'Animation', label: 'Animation', icon: 'sparkle' },
     { id: 'Visibility', label: 'Visibility', icon: 'eye' },

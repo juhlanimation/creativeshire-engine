@@ -15,6 +15,7 @@
 import { useEffect, useLayoutEffect } from 'react'
 import type { ThemeSchema, FontProvider } from '../../schema'
 import { useContainer } from '../../interface/ContainerContext'
+import { getTheme } from '../../themes/registry'
 
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
@@ -114,11 +115,24 @@ export function useThemeVariables(theme: ThemeSchema | undefined): void {
 
     const root = document.documentElement
 
+    // Resolve palette scrollbar colors as fallbacks
+    let paletteThumb: string | undefined
+    let paletteTrack: string | undefined
+    if (theme?.colorTheme) {
+      const themeDef = getTheme(theme.colorTheme)
+      if (themeDef) {
+        const colorMode = theme.colorMode ?? themeDef.defaultMode ?? 'dark'
+        const palette = themeDef[colorMode]
+        paletteThumb = palette.scrollbarThumb
+        paletteTrack = palette.scrollbarTrack
+      }
+    }
+
     // Scrollbar variables (html::-webkit-scrollbar can't inherit from children)
     const scrollbar = theme?.scrollbar
     root.style.setProperty('--scrollbar-width', `${scrollbar?.width ?? THEME_DEFAULTS.scrollbar.width}px`)
-    root.style.setProperty('--scrollbar-thumb', scrollbar?.thumb ?? THEME_DEFAULTS.scrollbar.thumb)
-    root.style.setProperty('--scrollbar-track', scrollbar?.track ?? THEME_DEFAULTS.scrollbar.track)
+    root.style.setProperty('--scrollbar-thumb', scrollbar?.thumb ?? paletteThumb ?? THEME_DEFAULTS.scrollbar.thumb)
+    root.style.setProperty('--scrollbar-track', scrollbar?.track ?? paletteTrack ?? THEME_DEFAULTS.scrollbar.track)
     root.style.setProperty('--scrollbar-thumb-dark', scrollbar?.thumbDark ?? THEME_DEFAULTS.scrollbar.thumbDark)
     root.style.setProperty('--scrollbar-track-dark', scrollbar?.trackDark ?? THEME_DEFAULTS.scrollbar.trackDark)
 
@@ -129,7 +143,7 @@ export function useThemeVariables(theme: ThemeSchema | undefined): void {
       root.style.removeProperty('--scrollbar-thumb-dark')
       root.style.removeProperty('--scrollbar-track-dark')
     }
-  }, [theme?.scrollbar, mode])
+  }, [theme?.scrollbar, theme?.colorTheme, theme?.colorMode, mode])
 
   // Font <link> injection — loads web font stylesheets for non-system fonts
   useEffect(() => {

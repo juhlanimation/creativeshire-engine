@@ -69,8 +69,6 @@ export type BehaviourConfig =
 export interface ExperienceConfig {
   /** Experience ID (e.g., 'stacking', 'cinematic-portfolio') */
   id: string
-  /** Experience-specific settings from CMS */
-  settings?: Record<string, unknown>
   /** Per-section behaviour overrides. Keys are section IDs. */
   sectionBehaviours?: Record<string, import('../experience/experiences/types').BehaviourAssignment[]>
 }

@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
-/* Engine core styles - widgets, effects, chrome */
-@import "../engine/styles.css";
+/* Engine core styles - widgets, effects, chrome, section patterns */
+@import "../engine/styles.css" layer(engine);
 
-/* Preset styles - bojuhl-specific section styling */
-@import "../engine/presets/bojuhl/styles/index.css";
+/* Declare layers AFTER engine → higher priority in cascade */
+@layer preset, cms;
 
 @source "../engine/**/*.tsx";
 @source "../app/**/*.tsx";
@@ -38,48 +38,43 @@
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  margin: 0;
-  padding: 0;
-}
+/* App-host element resets — in base layer so engine layer can override.
+   Without this, unlayered resets beat ALL layered CSS (including engine widgets). */
+@layer base {
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 0;
+  }
 
-/* Global resets for clean rendering */
-*, *::before, *::after {
-  box-sizing: border-box;
-}
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
 
-html {
-  scroll-behavior: smooth;
-}
+  html {
+    scroll-behavior: smooth;
+  }
 
-/* Remove default margin from common elements */
-h1, h2, h3, h4, h5, h6, p {
-  margin: 0;
-}
+  h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+  }
 
-/* Links inherit color */
-a {
-  color: inherit;
-}
+  img, video {
+    display: block;
+    max-width: 100%;
+  }
 
-/* Images display block */
-img, video {
-  display: block;
-  max-width: 100%;
-}
-
-/* Button resets */
-button {
-  border: none;
-  background: none;
-  padding: 0;
-  cursor: pointer;
-  font: inherit;
+  button {
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
+  }
 }
 
 /* Custom scrollbar styling - uses CSS variables from ThemeProvider */

@@ -15,6 +15,28 @@ export const themeMeta = defineMeta<Record<string, unknown>>({
   tags: ['theme', 'global', 'typography', 'scrollbar'],
 
   settings: {
+    // ── Colors ───────────────────────────────────────────────────────────
+    colorTheme: {
+      type: 'select',
+      label: 'Color Theme',
+      default: '',
+      description: 'Named color theme (palette populated dynamically from registered themes)',
+      choices: [],
+      group: 'Colors',
+    },
+    colorMode: {
+      type: 'select',
+      label: 'Color Mode',
+      default: '',
+      description: 'Light or dark (empty = theme default)',
+      choices: [
+        { value: '', label: 'Theme Default' },
+        { value: 'dark', label: 'Dark' },
+        { value: 'light', label: 'Light' },
+      ],
+      group: 'Colors',
+    },
+
     // ── Scrollbar ──────────────────────────────────────────────────────────
     'scrollbar.width': {
       type: 'number',
@@ -157,7 +179,15 @@ export const themeMeta = defineMeta<Record<string, unknown>>({
       type: 'custom',
       label: 'Title Font',
       default: '',
-      description: 'Font for titles and headings (--font-title)',
+      description: 'Font for display / brand text (--font-title)',
+      component: 'FontPicker',
+      group: 'Typography',
+    },
+    'typography.heading': {
+      type: 'custom',
+      label: 'Heading Font',
+      default: '',
+      description: 'Font for section headings h1–h3 (--font-heading)',
       component: 'FontPicker',
       group: 'Typography',
     },
@@ -225,6 +255,7 @@ export function getThemeSettings() {
 /** Returns group definitions for theme settings. */
 export function getThemeGroups(): SettingsGroup[] {
   return [
+    { id: 'Colors', label: 'Colors', icon: 'palette' },
     { id: 'Scrollbar', label: 'Scrollbar', icon: 'scroll' },
     { id: 'Smooth Scroll', label: 'Smooth Scroll', icon: 'mouse' },
     { id: 'Typography', label: 'Typography', icon: 'type' },

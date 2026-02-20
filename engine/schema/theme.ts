@@ -59,8 +59,10 @@ export type FontProvider = 'google' | 'bunny' | 'fontshare'
  * Maps semantic font roles to CSS variable names.
  */
 export interface TypographyConfig {
-  /** Font for titles/headings (maps to --font-title) */
+  /** Font for display / brand text (maps to --font-title) */
   title?: string
+  /** Font for section headings h1–h3 (maps to --font-heading) */
+  heading?: string
   /** Font for body/paragraph text (maps to --font-paragraph) */
   paragraph?: string
   /** Font for UI elements (maps to --font-ui) */
@@ -89,7 +91,14 @@ export interface ContainerConfig {
   maxWidth?: string
   /** Background color for the area outside the container */
   outerBackground?: string
+  /** Gap between sections — layout preset name, CSS string, or px number */
+  sectionGap?: string | number
+  /** Multiplier for the section gap value (e.g., 2 doubles the gap) */
+  sectionGapScale?: number
 }
+
+/** Color mode for named themes. */
+export type ColorMode = 'dark' | 'light'
 
 /**
  * Theme schema for site-wide visual tokens.
@@ -106,4 +115,8 @@ export interface ThemeSchema {
   sectionTransition?: SectionTransitionConfig
   /** Site container max-width and outer background */
   container?: ContainerConfig
+  /** Named color theme ID (references registered ThemeDefinition) */
+  colorTheme?: string
+  /** Color mode override (overrides theme's defaultMode) */
+  colorMode?: ColorMode
 }

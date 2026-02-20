@@ -112,21 +112,44 @@ export interface CustomTriggerCondition {
 }
 
 /**
- * Schema for a chrome region (header, footer, sidebar).
- * Regions occupy fixed screen positions.
- * Supports either widget-based or component-based definition.
+ * Layout configuration for a chrome region's content wrapper.
+ * The wrapper is always display:flex (row). Patterns organize freely inside.
+ */
+export interface RegionLayout {
+  /** Horizontal placement: 'start' | 'center' | 'end' | 'between' | 'around' */
+  justify?: string
+  /** Vertical alignment: 'start' | 'center' | 'end' | 'stretch' */
+  align?: string
+  /** CSS padding (e.g. '1.5rem 2rem') */
+  padding?: string
+  /** CSS max-width (e.g. 'var(--site-max-width)') */
+  maxWidth?: string
+  /** CSS gap between top-level widgets (e.g. '1rem') */
+  gap?: string
+}
+
+/**
+ * Schema for a chrome region (header, footer).
+ * Regions occupy fixed screen positions or document flow.
+ * Uses widget-based definition (factory functions → WidgetSchema).
  */
 export interface RegionSchema {
-  /** Widgets contained in this region (widget-based approach) */
+  /** Widgets contained in this region */
   widgets?: WidgetSchema[]
-  /** Component name to render (component-based approach) */
-  component?: string
-  /** Props to pass to component (component-based approach) */
-  props?: Record<string, SerializableValue>
   /** Inline styles for the semantic wrapper element (e.g., backgroundColor for edge-to-edge) */
   style?: CSSProperties
   /** Whether region content is constrained to --site-max-width (opt-in) */
   constrained?: boolean
+  /** Layout configuration for the region content wrapper */
+  layout?: RegionLayout
+  /** Floats on top of content (default: true for header, false for footer). */
+  overlay?: boolean
+  /** Layout direction (default: 'horizontal'). 'vertical' = sidebar-like. */
+  direction?: 'horizontal' | 'vertical'
+  /** Auto-hide on scroll down, show on scroll up. */
+  collapsible?: boolean
+  /** Force a color mode on this region, overriding the site-level palette. */
+  colorMode?: 'dark' | 'light'
   /** Behaviour configuration for animation */
   behaviour?: BehaviourConfig
   /** Additional behaviour options */
@@ -138,7 +161,8 @@ export interface RegionSchema {
 /**
  * Schema for a chrome overlay (cursor, loader, modal).
  * Overlays float above all content.
- * Supports either widget-based or component-based definition.
+ * Supports widget-based or component-based definition.
+ * Component-based is used for overlays needing React state (Modal, CursorLabel).
  */
 export interface OverlaySchema {
   /** Trigger condition for showing/hiding */
@@ -166,10 +190,11 @@ export interface ChromeSchema {
   regions: {
     header?: RegionSchema
     footer?: RegionSchema
-    sidebar?: RegionSchema
   }
   /** Overlay definitions - supports both standard and custom overlays */
   overlays?: Record<string, OverlaySchema>
+  /** Chrome widgets injected into section layouts. Keys: section ID or '*' for all. */
+  sectionChrome?: Record<string, WidgetSchema[]>
 }
 
 /**
@@ -181,11 +206,9 @@ export interface PageChromeOverrides {
   regions?: {
     header?: 'inherit' | 'hidden' | RegionSchema
     footer?: 'inherit' | 'hidden' | RegionSchema
-    sidebar?: 'inherit' | 'hidden' | RegionSchema
   }
   /** Overlay overrides */
   overlays?: {
-    cursor?: 'inherit' | 'hidden' | OverlaySchema
     loader?: 'inherit' | 'hidden' | OverlaySchema
     modal?: 'inherit' | 'hidden' | OverlaySchema
   }

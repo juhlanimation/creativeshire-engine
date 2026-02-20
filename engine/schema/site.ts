@@ -40,13 +40,13 @@ export interface SiteMetadata {
   ogImage?: string
 
   // Technical
-  /** Canonical domain (e.g., "bojuhl.com") */
+  /** Canonical domain (e.g., "example.com") */
   canonicalDomain?: string
   /** Search engine indexing directive */
   robots?: 'index' | 'noindex'
 
   // Social
-  /** Twitter/X handle (e.g., "@bojuhl") */
+  /** Twitter/X handle (e.g., "@username") */
   twitterHandle?: string
 }
 
