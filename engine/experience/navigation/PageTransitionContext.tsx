@@ -1,18 +1,18 @@
 'use client'
 
 /**
- * PageTransitionContext - shares exit timeline between TransitionLink and PageTransitionWrapper.
+ * PageTransitionContext - shares exit timeline between Link and PageTransitionWrapper.
  *
  * Components register exit animations on the shared timeline.
- * TransitionLink plays the timeline before navigation, waits for all tracks to complete.
+ * Link plays the timeline before navigation, waits for all tracks to complete.
  *
  * Flow:
  * 1. PageTransitionWrapper registers its exit track on mount
- * 2. User clicks TransitionLink
- * 3. TransitionLink calls getExitTimeline().play()
+ * 2. User clicks Link
+ * 3. Link calls getExitTimeline().play()
  * 4. All registered tracks execute in parallel
  * 5. Promise.all waits for ALL tracks to complete
- * 6. TransitionLink navigates to new page
+ * 6. Link navigates to new page
  * 7. New page mounts, entry animation plays
  */
 
@@ -24,7 +24,7 @@ import {
   useMemo,
   type ReactNode,
 } from 'react'
-import { EffectTimeline } from './EffectTimeline'
+import { EffectTimeline } from '../timeline/EffectTimeline'
 
 // =============================================================================
 // Types

@@ -33,8 +33,6 @@ export { createExperienceStore } from './experiences/createExperienceStore'
 export interface ExperienceContextValue {
   experience: Experience
   store: StoreApi<ExperienceState>
-  /** Merged experience settings (schema defaults + dev overrides) */
-  settings: Record<string, unknown>
 }
 
 /**
@@ -43,7 +41,5 @@ export interface ExperienceContextValue {
 export interface ExperienceProviderProps {
   experience: Experience
   store: StoreApi<ExperienceState>
-  /** Merged experience settings */
-  settings?: Record<string, unknown>
   children: React.ReactNode
 }

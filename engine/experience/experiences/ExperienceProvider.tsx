@@ -36,12 +36,11 @@ export function useExperience(): ExperienceContextValue {
 export function ExperienceProvider({
   experience,
   store,
-  settings,
   children,
 }: ExperienceProviderProps): ReactNode {
   const value = useMemo(
-    () => ({ experience, store, settings: settings ?? {} }),
-    [experience, store, settings],
+    () => ({ experience, store }),
+    [experience, store],
   )
   return (
     <ExperienceContext.Provider value={value}>

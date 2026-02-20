@@ -1,7 +1,5 @@
 'use client'
 
-import './presentation.css'
-
 /**
  * PresentationWrapper - applies presentation CSS variables from experience config.
  *

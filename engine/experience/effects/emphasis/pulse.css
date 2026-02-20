@@ -1,0 +1,25 @@
+/**
+ * Pulse Effect
+ *
+ * Pulsing opacity animation for active/playing indicators.
+ * Used by: SelectorCard playing dot
+ *
+ * Variables:
+ *   --pulse-duration: Pulse speed (default: 1.5s)
+ *   --pulse-easing: Timing function (default: ease-in-out)
+ */
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+[data-effect~="pulse"] {
+  animation: pulse var(--pulse-duration, 1.5s) var(--pulse-easing, ease-in-out) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-effect~="pulse"] {
+    animation: none;
+  }
+}

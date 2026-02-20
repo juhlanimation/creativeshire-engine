@@ -33,7 +33,7 @@ interface SectionHeightInfo {
 /**
  * Calculate section transforms based on scroll progress.
  * Each section is positioned relative to scroll progress.
- * Uses clip-path for wipe reveal effect (matching bishoy-gendi-portfolio).
+ * Uses clip-path for wipe reveal effect (matching prism preset reference).
  *
  * For sections > 100vh:
  * - First phase: translate up to reveal extra content (next section stays at 50vh)

@@ -9,7 +9,7 @@
  *
  * Uses the EffectTimeline system for reliable animation orchestration:
  * - Exit track registered on shared timeline
- * - TransitionLink plays timeline before navigation
+ * - Link plays timeline before navigation
  * - Uses animationend events for reliable completion detection
  *
  * @example
@@ -24,8 +24,7 @@
 
 import { type ReactNode, type CSSProperties, useRef, useEffect, useLayoutEffect } from 'react'
 import { usePageTransition } from './PageTransitionContext'
-import { animateElement } from './animateElement'
-import './page-transition.css'
+import { animateElement } from '../timeline/animateElement'
 
 // =============================================================================
 // Types
@@ -62,7 +61,7 @@ const TRACK_ID = 'page-fade-out'
  * Wraps page content with fade transition support.
  *
  * Entry: Automatically fades in via CSS animation on mount.
- * Exit: Registers track on exit timeline; plays when TransitionLink is clicked.
+ * Exit: Registers track on exit timeline; plays when Link is clicked.
  */
 export function PageTransitionWrapper({
   children,

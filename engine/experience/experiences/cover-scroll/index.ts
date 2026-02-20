@@ -10,11 +10,9 @@
  */
 
 import type { Experience } from '../types'
-import { meta } from './meta'
 
 export const coverScrollExperience: Experience = {
   id: 'cover-scroll',
-  settings: meta.settings,
   name: 'Cover Scroll',
   description:
     'Pinned sections stick at the viewport top while remaining sections scroll over them. Mark any section as pinned for the cover effect.',

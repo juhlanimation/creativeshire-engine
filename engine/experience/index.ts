@@ -88,6 +88,10 @@ export type {
   BoundaryDirection,
 } from './drivers'
 
+// Timeline (discrete animation orchestration)
+export { EffectTimeline, animateElement, prefersReducedMotion } from './timeline'
+export type { Track, SequentialTrack, AnimateElementOptions } from './timeline'
+
 // Navigation (page transitions, section navigation)
 export {
   TransitionProvider,

@@ -33,7 +33,7 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-/** Exponential easing — smooth deceleration, same as port-12 portfolio. */
+/** Exponential easing — smooth deceleration, same as loft preset reference. */
 const EXPONENTIAL_EASING = (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
 
 interface LenisSmoothScrollProviderProps {

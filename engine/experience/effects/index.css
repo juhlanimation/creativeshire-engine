@@ -5,23 +5,36 @@
  * Effects define HOW elements animate using CSS variables from behaviours.
  *
  * Structure (organized by MECHANISM):
- * - fade.css      — Opacity (single file at root)
- * - transform/    — Position, scale, rotation (slide, scale, rotate, flip)
+ * - color-shift/  — Color/blend transitions
+ * - emphasis/     — Attention/looping (spin, pulse, shake, bounce)
+ * - fade/         — Opacity-based animations
+ * - marquee/      — Infinite scroll animation
  * - mask/         — Clip-path based (wipe, reveal)
- * - emphasis/     — Attention/looping (pulse, shake, bounce) [future]
- * - page/         — Route transitions [future]
+ * - overlay/      — Background overlay darkening
+ * - reveal/       — Progressive clip-path reveals
+ * - transform/    — Position, scale, rotation (slide, scale)
  */
+
+/* =============================================================================
+ * COLOR SHIFT (Color/blend transitions)
+ * ============================================================================= */
+@import './color-shift/color-shift.css';
+
+/* =============================================================================
+ * EMPHASIS (Attention/looping animations)
+ * ============================================================================= */
+@import './emphasis/spin.css';
+@import './emphasis/pulse.css';
 
 /* =============================================================================
  * FADE (Opacity-based)
  * ============================================================================= */
-@import './fade.css';
+@import './fade/fade.css';
 
 /* =============================================================================
- * TRANSFORM (Position, scale, rotation)
+ * MARQUEE (Infinite scroll)
  * ============================================================================= */
-@import './transform/scale.css';
-@import './transform/slide.css';
+@import './marquee/marquee-scroll.css';
 
 /* =============================================================================
  * MASK (Clip-path based)
@@ -30,23 +43,22 @@
 @import './mask/reveal.css';
 
 /* =============================================================================
+ * OVERLAY (Background overlay)
+ * ============================================================================= */
+@import './overlay/overlay-darken.css';
+
+/* =============================================================================
  * REVEAL (Progressive clip-path reveals)
  * ============================================================================= */
 @import './reveal/index.css';
 
 /* =============================================================================
- * EMPHASIS (Attention/looping animations)
+ * TRANSFORM (Position, scale, rotation)
  * ============================================================================= */
-@import './emphasis/spin.css';
-
-/* =============================================================================
- * ROOT-LEVEL EFFECTS (Single-mechanism files)
- * ============================================================================= */
-@import './color-shift.css';
-@import './overlay-darken.css';
-@import './marquee-scroll.css';
+@import './transform/scale.css';
+@import './transform/slide.css';
 
 /* Widget-specific effects are colocated with their widgets (mechanism-based names):
- * - color-shift (ContactPrompt) → widgets/composite/ContactPrompt/styles.css
- * - flex-expand (GalleryThumbnail) → widgets/composite/GalleryThumbnail/styles.css
+ * - color-shift (EmailCopy) → widgets/interactive/EmailCopy/styles.css
+ * - flex-expand (ExpandRowThumbnail) → widgets/repeaters/ExpandRowImageRepeater/ExpandRowThumbnail/styles.css
  */

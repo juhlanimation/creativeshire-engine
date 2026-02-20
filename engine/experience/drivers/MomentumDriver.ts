@@ -25,7 +25,7 @@ import type { InfiniteCarouselState } from '../experiences/types'
 
 /**
  * Default configuration for momentum physics.
- * Values tuned from bishoy-gendi-portfolio reference implementation.
+ * Values tuned from prism preset reference implementation.
  */
 const DEFAULT_CONFIG: MomentumDriverConfig = {
   friction: 0.92,

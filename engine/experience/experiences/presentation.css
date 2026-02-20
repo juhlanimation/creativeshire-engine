@@ -23,7 +23,7 @@ body > [id^="S:"][hidden] {
   /* Layout from config */
   display: flex;
   flex-direction: column;
-  gap: var(--layout-gap, 0);
+  gap: var(--layout-gap, var(--site-section-gap, 0));
 }
 
 .presentation-wrapper[data-presentation='horizontal'] {

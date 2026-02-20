@@ -6,7 +6,6 @@
 
 import type { ComponentType } from 'react'
 import type { SerializableValue } from '../../schema/types'
-import type { SettingsConfig } from '../../schema/settings'
 import type { IntroConfig } from '../../intro/types'
 import type { ExperienceCategory } from './registry'
 
@@ -90,7 +89,7 @@ export interface InfiniteCarouselState extends NavigableExperienceState {
 
 /**
  * A single behaviour assignment with per-behaviour options.
- * Used in sectionBehaviours and widgetBehaviours arrays.
+ * Used in sectionBehaviours and chromeBehaviours arrays.
  */
 export interface BehaviourAssignment {
   /** Behaviour ID (e.g., 'scroll/fade', 'visibility/fade-in') */
@@ -367,15 +366,13 @@ export interface Experience {
   tags?: string[]
   /** Category for grouping in CMS */
   category?: ExperienceCategory
-  /** Configurable settings for this experience */
-  settings?: SettingsConfig<unknown>
 
   // Behaviour assignments
 
   /** Per-section behaviour assignments. Keys are section IDs, '*' = fallback. */
   sectionBehaviours: Record<string, BehaviourAssignment[]>
-  /** Default behaviours by widget type. Keys are widget type names. */
-  widgetBehaviours?: Record<string, BehaviourAssignment[]>
+  /** Per-chrome-region behaviour assignments. Keys are region IDs (header, footer). */
+  chromeBehaviours?: Record<string, BehaviourAssignment[]>
 
   // Intro sequence (optional — runs before experience is interactive)
 
@@ -404,7 +401,7 @@ export interface Experience {
    *  They read from useExperience() hook — no props needed. */
   controller?: ComponentType | ComponentType[]
 
-  /** Chrome items to hide by ID (regions: 'header', 'footer', 'sidebar'; overlays by key) */
+  /** Chrome items to hide by ID (regions: 'header', 'footer'; overlays by key) */
   hideChrome?: string[]
 
   /** Section IDs to hide from rendering */

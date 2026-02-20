@@ -38,12 +38,12 @@ export {
 
 // Internal utilities (for advanced use)
 export { TransitionStack, executeStack, createTask } from './TransitionStack'
-export { EffectTimeline, type Track } from './EffectTimeline'
+export { EffectTimeline, type Track } from '../timeline/EffectTimeline'
 export {
   animateElement,
   prefersReducedMotion,
   type AnimateElementOptions,
-} from './animateElement'
+} from '../timeline/animateElement'
 
 // Section navigation hooks
 export { useWheelNavigation, type WheelNavigationOptions } from './useWheelNavigation'

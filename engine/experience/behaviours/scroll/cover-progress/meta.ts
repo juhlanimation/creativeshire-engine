@@ -19,18 +19,21 @@ export const meta = defineBehaviourMeta<CoverProgressSettings>({
       label: 'Root CSS Variable',
       default: '',
       validation: { maxLength: 64 },
+      suggestions: ['--{section}-cover-progress'],
     },
     propagateContentEdge: {
       type: 'text',
       label: 'Content Edge CSS Variable',
       default: '',
       validation: { maxLength: 64 },
+      suggestions: ['--{section}-content-edge'],
     },
     targetSelector: {
       type: 'text',
       label: 'Target Element Selector',
       default: '',
       validation: { maxLength: 128 },
+      suggestions: ['#{section}-title', '[data-section-id="{section}"]'],
     },
     targetTop: {
       type: 'range',

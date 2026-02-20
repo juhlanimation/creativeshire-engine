@@ -5,11 +5,9 @@
 
 import type { Experience } from '../types'
 import { InfiniteCarouselController } from '../InfiniteCarouselController'
-import { meta } from './meta'
 
 export const infiniteCarouselExperience: Experience = {
   id: 'infinite-carousel',
-  settings: meta.settings,
   name: 'Infinite Carousel',
   description: 'Vertical infinite scroll with momentum physics and snap-to-section.',
   icon: 'scroll',

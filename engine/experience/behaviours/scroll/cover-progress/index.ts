@@ -23,7 +23,7 @@ export interface CoverProgressSettings {
   propagateToRoot: string
   /** CSS variable name for content edge position in px (e.g., '--hero-content-edge'). Empty = no propagation. */
   propagateContentEdge: string
-  /** CSS selector for the target element to measure coverage against (e.g., '.hero-video__title'). */
+  /** CSS selector for the target element to measure coverage against (e.g., '#hero-title'). */
   targetSelector: string
   /** Viewport fraction (0-1) for top of target zone. Fallback when no targetSelector. Default: 0 */
   targetTop: number
