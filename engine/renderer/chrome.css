@@ -11,20 +11,100 @@
  * Overlays must be portaled to the site container (not document.body) to maintain
  * container query context.
  *
- * Uses --overlay-position CSS variable to switch between fixed (fullpage)
- * and absolute (contained/preview) positioning.
+ * Uses --overlay-position CSS variable for positioning (fixed in both modes).
+ * In contained mode, container-type: inline-size on [data-site-renderer] implies
+ * contain: layout, which traps position:fixed. Overlay regions use a sticky
+ * zero-height anchor (.chrome-overlay-anchor) to stay pinned without pushing content.
  */
 
 /* Chrome region wrapper — full-width (like [data-section-id]).
-   Semantic wrappers (header, footer, aside) stay full-width for edge-to-edge backgrounds.
+   Semantic wrappers (header, footer) stay full-width for edge-to-edge backgrounds.
    region.style carries backgroundColor etc. via inline styles.
    When constrained, direct children (content widgets) get max-width from site theme. */
 
-/* Constrained chrome regions: opt-in max-width for direct children */
-.chrome-region--constrained > * {
-  max-width: var(--site-max-width, none);
-  margin-left: auto;
-  margin-right: auto;
+/* Region layout wrapper — always flex-row, styles set inline by ChromeRenderer */
+.chrome-region__layout {
+  display: flex;
+  width: 100%;
+}
+
+/* ── Full-width overlay region (fixed header/footer) ─────────── */
+/* Fullpage mode: position:fixed (portaled to foreground viewport layer,
+   outside CSS containment so fixed actually works).
+   Contained mode: position:sticky (stays in document flow, sticks to
+   scroll container viewport — no portal needed since ScrollSmoother
+   is disabled in contained mode).
+   pointer-events: none on the header, auto on children — prevents the
+   transparent header area from capturing events (click-through to content
+   below, and blend-mode hover only fires over actual widgets). */
+.chrome-header--overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.chrome-header--overlay > * {
+  pointer-events: auto;
+}
+
+/* ── Sticky anchor for overlay chrome in contained mode ──────── */
+/* Wraps overlay headers/footers in contained mode (rendered by ChromeRenderer).
+   height:0 + overflow:visible: doesn't push content down.
+   position:sticky + top:0: sticks to top of scroll viewport.
+   Children use relative/absolute positioning within the anchor. */
+.chrome-overlay-anchor {
+  position: sticky;
+  top: 0;
+  height: 0;
+  overflow: visible;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.chrome-overlay-anchor > * {
+  pointer-events: auto;
+}
+
+/* Full-width header overlay inside anchor: normal flow within the anchor.
+   The anchor handles stickiness; header fills it via width:100%. */
+.chrome-overlay-anchor .chrome-header--overlay {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  z-index: auto;
+}
+
+/* Corner-positioned overlay inside anchor: absolute within the sticky frame.
+   Position variant classes (top/right/bottom/left) resolve to the anchor box,
+   which is pinned to the top of the scroll viewport. */
+.chrome-overlay-anchor .chrome-overlay {
+  position: absolute;
+}
+
+/* Footer overlay pins to bottom */
+footer.chrome-header--overlay {
+  top: auto;
+  bottom: 0;
+}
+
+/* ── Vertical direction (sidebar-like) ───────────────────────── */
+.chrome-header--vertical {
+  flex-direction: column;
+  height: 100dvh;
+  width: auto;
+  right: auto;
+  bottom: 0;
+}
+
+/* ── Collapsible (scroll-direction aware) ────────────────────── */
+/* scroll/collapse behaviour sets --header-translate via CSS var */
+.chrome-header--collapsible {
+  transition: transform var(--duration-normal, 300ms) var(--ease-default, ease);
+  transform: translateY(var(--header-translate, 0));
 }
 
 /* Base overlay - shared properties */
@@ -35,32 +115,51 @@
 }
 
 /**
- * Color shift blend mode fix (ContactPrompt overlay).
+ * Blend mode — driven by widget's data-blend-mode attribute.
  * Mix-blend-mode must be on the stacking context (fixed + z-index element),
- * not a nested child. Chrome creates isolation when z-index is set.
+ * not a nested child — children can't blend through the overlay's stacking
+ * context to reach the page content below.
  *
- * Uses mechanism-based effect name (color-shift) per architecture spec.
+ * Applies to both:
+ * - .chrome-overlay (widget-based overlays — tight wrapper, :hover works)
+ * - .chrome-header--overlay (overlay regions like FloatingContact — full-width,
+ *   uses :has([data-hovered]) to sync with BehaviourWrapper React state)
  *
  * States:
  * - Default: mix-blend-mode: difference (adapts to background)
- * - Hovered: mix-blend-mode: normal (shows purple CTA color)
- * - Copied: mix-blend-mode: difference (via data-copy-state)
+ * - Hovered: mix-blend-mode: normal (shows hover color directly)
+ * - Copied: back to difference (via data-copy-state)
+ *
+ * Flash prevention:
+ * - .chrome-overlay uses CSS :hover (tight wrapper, minimal desync)
+ * - .chrome-header--overlay uses :has([data-hovered]) so blend mode and
+ *   --shift-color change in the same React render frame (no green flash)
+ * - The widget sets transition-duration: 0s on unhover so color snaps to
+ *   white in the same frame the blend mode reverts.
  */
-.chrome-overlay:has([data-effect="color-shift"]) {
+.chrome-overlay:has([data-blend-mode="difference"]),
+.chrome-header--overlay:has([data-blend-mode="difference"]) {
   mix-blend-mode: difference;
   color: white;
+  --text-primary: white;
+  --text-secondary: white;
+  --color-link: white;
+  --accent: white;
+  --interaction: white;
+  --color-primary: white;
+  --color-primary-contrast: white;
+  --color-secondary: white;
+  --color-secondary-contrast: white;
+  --color-focus: white;
 }
 
-/* Hover state: normal blend to show purple */
-/* Also set color directly to avoid flash of white before behaviour computes */
-/* data-hovered is on BehaviourWrapper parent, data-effect on ContactPrompt child */
-.chrome-overlay:has([data-hovered]) {
+.chrome-overlay:has([data-blend-mode="difference"]):hover,
+.chrome-header--overlay:has([data-blend-mode="difference"]):has([data-hovered]) {
   mix-blend-mode: normal;
-  color: var(--interaction, #9933FF);
 }
 
-/* Copied state: back to difference blend */
-.chrome-overlay:has([data-effect="color-shift"][data-copy-state]) {
+.chrome-overlay:has([data-blend-mode="difference"]):hover:has([data-copy-state]),
+.chrome-header--overlay:has([data-blend-mode="difference"]):has([data-hovered]):has([data-copy-state]) {
   mix-blend-mode: difference;
 }
 
@@ -68,67 +167,67 @@
    On ultrawide screens, overlays stay within the content area boundary.
    max() ensures minimum offset when viewport <= max-width. */
 .chrome-overlay--top-left {
-  top: 24px;
-  left: max(24px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 24px));
+  top: var(--spacing-lg, 24px);
+  left: max(var(--spacing-lg, 24px), calc((100vw - var(--site-max-width, 100vw)) / 2 + var(--spacing-lg, 24px)));
 }
 
 .chrome-overlay--top-right {
-  top: 24px;
-  right: max(24px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 24px));
+  top: var(--spacing-lg, 24px);
+  right: max(var(--spacing-lg, 24px), calc((100vw - var(--site-max-width, 100vw)) / 2 + var(--spacing-lg, 24px)));
 }
 
 .chrome-overlay--bottom-left {
-  bottom: 24px;
-  left: max(24px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 24px));
+  bottom: var(--spacing-lg, 24px);
+  left: max(var(--spacing-lg, 24px), calc((100vw - var(--site-max-width, 100vw)) / 2 + var(--spacing-lg, 24px)));
 }
 
 .chrome-overlay--bottom-right {
-  bottom: 24px;
-  right: max(24px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 24px));
+  bottom: var(--spacing-lg, 24px);
+  right: max(var(--spacing-lg, 24px), calc((100vw - var(--site-max-width, 100vw)) / 2 + var(--spacing-lg, 24px)));
 }
 
-/* Desktop: match bojuhl.com reference positioning */
+/* Desktop: increased offset for larger screens */
 @container site (min-width: 1024px) {
   .chrome-overlay--top-left {
-    top: 22px;
-    left: max(48px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 48px));
+    top: var(--spacing-lg, 22px);
+    left: max(var(--spacing-xl, 48px), calc((100vw - var(--site-max-width, 100vw)) / 2 + var(--spacing-xl, 48px)));
   }
 
   .chrome-overlay--top-right {
-    top: 22px;
-    right: max(48px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 48px));
+    top: var(--spacing-lg, 22px);
+    right: max(var(--spacing-xl, 48px), calc((100vw - var(--site-max-width, 100vw)) / 2 + var(--spacing-xl, 48px)));
   }
 
   .chrome-overlay--bottom-left {
-    bottom: 22px;
-    left: max(48px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 48px));
+    bottom: var(--spacing-lg, 22px);
+    left: max(var(--spacing-xl, 48px), calc((100vw - var(--site-max-width, 100vw)) / 2 + var(--spacing-xl, 48px)));
   }
 
   .chrome-overlay--bottom-right {
-    bottom: 22px;
-    right: max(48px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 48px));
+    bottom: var(--spacing-lg, 22px);
+    right: max(var(--spacing-xl, 48px), calc((100vw - var(--site-max-width, 100vw)) / 2 + var(--spacing-xl, 48px)));
   }
 }
 
 /* Fallback for browsers without container query support */
 :where([data-breakpoint="desktop"]) .chrome-overlay--top-left {
-  top: 22px;
-  left: max(48px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 48px));
+  top: var(--spacing-lg, 22px);
+  left: max(var(--spacing-xl, 48px), calc((100vw - var(--site-max-width, 100vw)) / 2 + var(--spacing-xl, 48px)));
 }
 
 :where([data-breakpoint="desktop"]) .chrome-overlay--top-right {
-  top: 22px;
-  right: max(48px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 48px));
+  top: var(--spacing-lg, 22px);
+  right: max(var(--spacing-xl, 48px), calc((100vw - var(--site-max-width, 100vw)) / 2 + var(--spacing-xl, 48px)));
 }
 
 :where([data-breakpoint="desktop"]) .chrome-overlay--bottom-left {
-  bottom: 22px;
-  left: max(48px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 48px));
+  bottom: var(--spacing-lg, 22px);
+  left: max(var(--spacing-xl, 48px), calc((100vw - var(--site-max-width, 100vw)) / 2 + var(--spacing-xl, 48px)));
 }
 
 :where([data-breakpoint="desktop"]) .chrome-overlay--bottom-right {
-  bottom: 22px;
-  right: max(48px, calc((100vw - var(--site-max-width, 100vw)) / 2 + 48px));
+  bottom: var(--spacing-lg, 22px);
+  right: max(var(--spacing-xl, 48px), calc((100vw - var(--site-max-width, 100vw)) / 2 + var(--spacing-xl, 48px)));
 }
 
 /* Mobile: hide overlays */

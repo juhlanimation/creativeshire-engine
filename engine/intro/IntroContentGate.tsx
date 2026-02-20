@@ -82,7 +82,7 @@ export function IntroContentGate({ settings, children }: IntroContentGateProps):
 
   // Build wrapper style:
   // - opacity for content gating (only when < 1 to avoid stacking context)
-  // - --intro-complete CSS variable bridge for L1 widgets (e.g., HeroVideo intro-gated text)
+  // - --intro-complete CSS variable bridge for L1 widgets (e.g., Hero title layout intro-gated text)
   //   Set here (not on siteContainer) so it's a direct ancestor — no inheritance chain issues.
   const gateStyle: CSSProperties | undefined = (() => {
     const s: Record<string, string | number> = {

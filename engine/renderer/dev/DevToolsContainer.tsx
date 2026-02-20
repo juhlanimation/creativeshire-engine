@@ -7,13 +7,14 @@
 
 import { useMemo, type ReactNode } from 'react'
 import { DevToolsPanel } from './DevToolsPanel'
-import type { SectionSchema } from '../../schema'
+import type { SectionSchema, ChromeSchema } from '../../schema'
 
 interface DevToolsContainerProps {
   schemaExperienceId: string
   schemaTransitionId: string
   presetId: string
   sections?: SectionSchema[]
+  siteChrome?: ChromeSchema
 }
 
 export function DevToolsContainer({
@@ -21,6 +22,7 @@ export function DevToolsContainer({
   schemaTransitionId,
   presetId,
   sections,
+  siteChrome,
 }: DevToolsContainerProps): ReactNode {
   const currentIds = useMemo(() => ({
     experience: schemaExperienceId,
@@ -28,5 +30,5 @@ export function DevToolsContainer({
     preset: presetId,
   }), [schemaExperienceId, schemaTransitionId, presetId])
 
-  return <DevToolsPanel currentIds={currentIds} sections={sections} />
+  return <DevToolsPanel currentIds={currentIds} sections={sections} siteChrome={siteChrome} />
 }

@@ -13,37 +13,78 @@
  * @see .claude/architecture/engine/components/renderer/renderer.spec.md
  */
 
-import { useMemo, type ReactNode } from 'react'
-import type { WidgetSchema } from '../schema'
+import { useMemo, useRef, useCallback, useEffect, type ReactNode } from 'react'
+import type { WidgetSchema, ActionBinding } from '../schema'
 import { getWidget } from '../content/widgets/registry'
+import { getWidgetMeta } from '../content/widgets/meta-registry'
 import { BehaviourWrapper } from '../experience/behaviours'
-import { useExperience, type Experience } from '../experience'
+import { useExperience } from '../experience'
 import type { BehaviourAssignment } from '../experience/experiences/types'
-import { executeAction } from '../experience/actions'
-import { useDevWidgetBehaviourAssignments } from './dev/devSettingsStore'
+import { executeAction } from '../content/actions'
+import { resolveDecorators } from '../content/decorators'
 import { ErrorBoundary } from './ErrorBoundary'
-import { capitalize } from './utils'
 import type { WidgetRendererProps } from './types'
 
 /**
+ * Execute an action binding, merging schema params with widget-provided payload.
+ * Merge order: schema params (lowest) → widget enrichment (highest) → element/event (always).
+ */
+function executeBinding(binding: ActionBinding, payload: Record<string, unknown>): void {
+  if (typeof binding === 'string') {
+    executeAction(binding, payload)
+  } else {
+    // Merge: schema params → widget payload (widget overrides schema)
+    const merged = binding.params
+      ? { ...binding.params, ...payload }
+      : payload
+    executeAction(binding.action, merged)
+  }
+}
+
+/**
+ * Convert a BehaviourConfig to a BehaviourAssignment.
+ */
+function toBehaviourAssignment(config: import('../schema/experience').BehaviourConfig): BehaviourAssignment | null {
+  if (typeof config === 'string') {
+    return { behaviour: config }
+  }
+  if (config.id) {
+    return { behaviour: config.id, options: config.options }
+  }
+  return null
+}
+
+/**
+ * Collect explicit behaviours from widget schema (both singular and array forms).
+ */
+function collectExplicitBehaviours(widget: WidgetSchema): import('../schema/experience').BehaviourConfig[] {
+  const result: import('../schema/experience').BehaviourConfig[] = []
+  // Array form takes precedence
+  if (widget.behaviours && widget.behaviours.length > 0) {
+    result.push(...widget.behaviours)
+  } else if (widget.behaviour) {
+    // Singular fallback
+    result.push(widget.behaviour)
+  }
+  return result
+}
+
+/**
  * Resolves behaviours for a widget as an array of assignments.
- * Priority: bareMode → explicit schema → experience defaults by widget type.
+ * Merges decorator-contributed behaviours with explicit schema-level behaviours.
  */
 function resolveWidgetBehaviours(
   widget: WidgetSchema,
-  experience: Experience,
+  bareMode: boolean,
+  resolvedBehaviours: import('../schema/experience').BehaviourConfig[],
 ): BehaviourAssignment[] {
-  if (experience.bareMode) return []
-  if (widget.behaviour) {
-    if (typeof widget.behaviour === 'string') {
-      return [{ behaviour: widget.behaviour }]
-    }
-    if (widget.behaviour.id) {
-      return [{ behaviour: widget.behaviour.id, options: widget.behaviour.options }]
-    }
-    return []
+  if (bareMode) return []
+  const assignments: BehaviourAssignment[] = []
+  for (const config of resolvedBehaviours) {
+    const assignment = toBehaviourAssignment(config)
+    if (assignment) assignments.push(assignment)
   }
-  return experience.widgetBehaviours?.[widget.type] ?? []
+  return assignments
 }
 
 /**
@@ -87,28 +128,103 @@ export function WidgetRenderer({
 }: WidgetRendererProps): ReactNode {
   const { experience } = useExperience()
 
-  // Dev override for widget-type behaviours
-  const devAssignments = useDevWidgetBehaviourAssignments(widget.type)
-
   // Look up widget component from registry
   // Registry returns stable component references, not new components
   const Component = getWidget(widget.type)
 
-  // Resolve behaviours: dev override → explicit schema → experience defaults
-  const behaviourAssignments = devAssignments ?? resolveWidgetBehaviours(widget, experience)
+  // Resolve decorators: merge decorator-contributed actions/behaviours with explicit schema values
+  // Fall back to meta.defaultDecorators when widget.decorators is absent.
+  // Explicit widget.decorators (even []) fully replaces defaults.
+  const meta = getWidgetMeta(widget.type)
+  const effectiveDecorators = widget.decorators ?? meta?.defaultDecorators
+  const explicitBehaviours = collectExplicitBehaviours(widget)
+  const resolved = resolveDecorators(effectiveDecorators, widget.on, explicitBehaviours)
+  const resolvedOn = resolved.on
 
-  // Wire schema.on events to action registry
-  // Maps { click: 'action-id' } → { onClick: (payload) => executeAction('action-id', payload) }
-  // NOTE: This hook must be called before any early returns (React rules of hooks)
-  const eventHandlers = useMemo(() => {
-    if (!widget.on) return {}
-    return Object.fromEntries(
-      Object.entries(widget.on).map(([event, actionId]) => [
-        `on${capitalize(event)}`, // click → onClick
-        (payload: unknown) => executeAction(actionId, payload),
-      ])
-    )
-  }, [widget.on])
+  // Resolve behaviours: explicit + decorator-contributed
+  const behaviourAssignments = resolveWidgetBehaviours(widget, experience.bareMode ?? false, resolved.behaviours)
+
+  // Ref to capture DOM element for action event listeners.
+  // All widgets use forwardRef, so this ref receives the widget's root DOM element.
+  const elementRef = useRef<HTMLElement>(null)
+
+  // Ref callback to capture the rendered element
+  const setElementRef = useCallback((node: HTMLElement | null) => {
+    (elementRef as React.MutableRefObject<HTMLElement | null>).current = node
+  }, [])
+
+  // Stable ref for resolved event map to avoid effect re-runs on object identity changes
+  const onMapRef = useRef(resolvedOn)
+  onMapRef.current = resolvedOn
+
+  // Track which events were handled by React prop handlers this cycle.
+  // Used to deduplicate: if a widget consumes onClick and calls it with a rich payload,
+  // the DOM listener fallback should not fire a second (generic) action.
+  const handledEventsRef = useRef<Set<string>>(new Set())
+
+  // Build React event handler props from widget.on.
+  // These are passed as component props (e.g. onClick, onMouseEnter).
+  // Widgets that accept these props (Video, ExpandRowImageRepeater) call them with
+  // rich payloads — the payload flows through to executeAction.
+  // Widgets that don't accept these props ignore them — the DOM listener fallback fires instead.
+  const actionHandlerProps = useMemo(() => {
+    if (!resolvedOn) return {}
+    const props: Record<string, (payload?: unknown) => void> = {}
+
+    for (const [event, bindingOrBindings] of Object.entries(resolvedOn)) {
+      const reactProp = `on${event[0].toUpperCase()}${event.slice(1)}`
+
+      props[reactProp] = (payload?: unknown) => {
+        handledEventsRef.current.add(event)
+        const bindings = Array.isArray(bindingOrBindings) ? bindingOrBindings : [bindingOrBindings]
+        const enriched = {
+          ...(payload && typeof payload === 'object' ? payload : {}),
+          element: elementRef.current,
+          event,
+        }
+        for (const binding of bindings) executeBinding(binding, enriched)
+      }
+    }
+
+    return props
+  }, [resolvedOn])
+
+  // Wire schema.on events to action registry via native DOM listeners (fallback).
+  // Attaches directly to the widget's root element via forwarded ref.
+  // Uses microtask deferral to deduplicate with React prop handlers above:
+  // - Native DOM listener fires first (capture/bubble reaches element before React's delegated handler)
+  // - Deferred via Promise.resolve() to run AFTER React's synchronous prop handler
+  // - If prop handler already fired (set flag), DOM listener skips
+  // - Supports arrays: { click: ['a.open', 'b.track'] } → both fire
+  useEffect(() => {
+    const el = elementRef.current
+    const onMap = onMapRef.current
+    if (!el || !onMap) return
+
+    const listeners: Array<[string, EventListener]> = []
+
+    for (const [event, bindingOrBindings] of Object.entries(onMap)) {
+      const handler = () => {
+        // Defer to microtask — React's prop handler runs synchronously first
+        Promise.resolve().then(() => {
+          if (handledEventsRef.current.has(event)) {
+            handledEventsRef.current.delete(event)
+            return // Prop handler already fired with rich payload
+          }
+          const bindings = Array.isArray(bindingOrBindings) ? bindingOrBindings : [bindingOrBindings]
+          for (const binding of bindings) executeBinding(binding, { element: el, event })
+        })
+      }
+      el.addEventListener(event, handler)
+      listeners.push([event, handler])
+    }
+
+    return () => {
+      for (const [event, handler] of listeners) {
+        el.removeEventListener(event, handler)
+      }
+    }
+  }, [resolvedOn])
 
   // Return error fallback for unknown widget types
   // NOTE: This check is placed AFTER hooks to satisfy React rules of hooks
@@ -124,10 +240,17 @@ export function WidgetRenderer({
       ))
     : undefined
 
-  // Prepare props - pass style, className, widgets, data attributes, and event handlers from schema
+  // Attach ref when we have event handlers (for DOM listener attachment)
+  const needsRef = !!resolvedOn
+
+  // Prepare props - schema props + action handlers
+  // Note: meta defaults are NOT merged here — they're for CMS UI only.
+  // Merging them would inject inline styles (e.g. flex-direction: row)
+  // that override CSS container queries and responsive rules.
   const componentProps = {
-    ...widget.props,
-    ...eventHandlers,
+    ...widget.props,                     // Schema props
+    ...actionHandlerProps,               // Action handler props (onClick, onMouseEnter, etc.)
+    ...(needsRef && { ref: setElementRef }),
     ...(widget.id && { id: widget.id }),
     ...(widget.style && { style: widget.style }),
     ...(widget.className && { className: widget.className }),

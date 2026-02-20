@@ -12,27 +12,23 @@ import type { BehaviourAssignment } from '../../experience/experiences/types'
 // =============================================================================
 
 interface DevSettingsState {
-  /** Experience-level setting overrides: { [settingKey]: value } */
-  experienceSettings: Record<string, unknown>
   /** Behaviour-level option overrides: { [behaviourId]: { [optionKey]: value } } */
   behaviourSettings: Record<string, Record<string, unknown>>
   /** Section pinned overrides: sectionId → boolean */
   sectionPinned: Record<string, boolean>
   /** Section behaviour assignment overrides (multi-behaviour): sectionId → BehaviourAssignment[] */
   sectionBehaviourAssignments: Record<string, BehaviourAssignment[]>
-  /** Widget behaviour assignment overrides: widgetType → BehaviourAssignment[] */
-  widgetBehaviourAssignments: Record<string, BehaviourAssignment[]>
+  /** Chrome behaviour assignment overrides: regionId → BehaviourAssignment[] */
+  chromeBehaviourAssignments: Record<string, BehaviourAssignment[]>
 
   // Actions
-  setExperienceSetting: (key: string, value: unknown) => void
   setBehaviourSetting: (behaviourId: string, key: string, value: unknown) => void
   setSectionPinned: (sectionId: string, pinned: boolean | null) => void
   setSectionBehaviourAssignments: (sectionId: string, assignments: BehaviourAssignment[] | null) => void
-  setWidgetBehaviourAssignments: (widgetType: string, assignments: BehaviourAssignment[] | null) => void
-  resetExperienceSettings: () => void
+  setChromeBehaviourAssignments: (regionId: string, assignments: BehaviourAssignment[] | null) => void
   resetBehaviourSettings: (behaviourId?: string) => void
   resetSectionBehaviours: () => void
-  resetWidgetBehaviours: () => void
+  resetChromeBehaviours: () => void
   resetAll: () => void
 }
 
@@ -41,16 +37,10 @@ interface DevSettingsState {
 // =============================================================================
 
 export const devSettingsStore = createStore<DevSettingsState>((set) => ({
-  experienceSettings: {},
   behaviourSettings: {},
   sectionPinned: {},
   sectionBehaviourAssignments: {},
-  widgetBehaviourAssignments: {},
-
-  setExperienceSetting: (key, value) =>
-    set((state) => ({
-      experienceSettings: { ...state.experienceSettings, [key]: value },
-    })),
+  chromeBehaviourAssignments: {},
 
   setBehaviourSetting: (behaviourId, key, value) =>
     set((state) => ({
@@ -90,22 +80,20 @@ export const devSettingsStore = createStore<DevSettingsState>((set) => ({
       }
     }),
 
-  setWidgetBehaviourAssignments: (widgetType, assignments) =>
+  setChromeBehaviourAssignments: (regionId, assignments) =>
     set((state) => {
       if (assignments === null) {
-        const next = { ...state.widgetBehaviourAssignments }
-        delete next[widgetType]
-        return { widgetBehaviourAssignments: next }
+        const next = { ...state.chromeBehaviourAssignments }
+        delete next[regionId]
+        return { chromeBehaviourAssignments: next }
       }
       return {
-        widgetBehaviourAssignments: {
-          ...state.widgetBehaviourAssignments,
-          [widgetType]: assignments,
+        chromeBehaviourAssignments: {
+          ...state.chromeBehaviourAssignments,
+          [regionId]: assignments,
         },
       }
     }),
-
-  resetExperienceSettings: () => set({ experienceSettings: {} }),
 
   resetBehaviourSettings: (behaviourId) =>
     set((state) => {
@@ -118,15 +106,14 @@ export const devSettingsStore = createStore<DevSettingsState>((set) => ({
   resetSectionBehaviours: () =>
     set({ sectionPinned: {}, sectionBehaviourAssignments: {} }),
 
-  resetWidgetBehaviours: () =>
-    set({ widgetBehaviourAssignments: {} }),
+  resetChromeBehaviours: () =>
+    set({ chromeBehaviourAssignments: {} }),
 
   resetAll: () => set({
-    experienceSettings: {},
     behaviourSettings: {},
     sectionPinned: {},
     sectionBehaviourAssignments: {},
-    widgetBehaviourAssignments: {},
+    chromeBehaviourAssignments: {},
   }),
 }))
 
@@ -142,16 +129,6 @@ export function useDevSettings(): DevSettingsState | undefined {
   if (process.env.NODE_ENV !== 'development') return undefined
   // eslint-disable-next-line react-hooks/rules-of-hooks
   return useStore(devSettingsStore)
-}
-
-/**
- * Subscribe to experience-level setting overrides only.
- * Returns undefined in production.
- */
-export function useDevExperienceSettings(): Record<string, unknown> | undefined {
-  if (process.env.NODE_ENV !== 'development') return undefined
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  return useStore(devSettingsStore, (s) => s.experienceSettings)
 }
 
 /**
@@ -197,16 +174,16 @@ export function useDevSectionBehaviourAssignments(
 }
 
 /**
- * Subscribe to widget behaviour assignment overrides for a specific widget type.
+ * Subscribe to chrome behaviour assignment overrides for a specific region.
  * Returns the assignments array, or undefined if none set.
  */
-export function useDevWidgetBehaviourAssignments(
-  widgetType: string,
+export function useDevChromeBehaviourAssignments(
+  regionId: string,
 ): BehaviourAssignment[] | undefined {
   if (process.env.NODE_ENV !== 'development') return undefined
   // eslint-disable-next-line react-hooks/rules-of-hooks
   return useStore(devSettingsStore, (s) =>
-    s.widgetBehaviourAssignments[widgetType],
+    s.chromeBehaviourAssignments[regionId],
   )
 }
 

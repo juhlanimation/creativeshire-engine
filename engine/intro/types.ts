@@ -73,6 +73,20 @@ export interface IntroConfig {
 // =============================================================================
 
 /**
+ * A timed setting change within an effect.
+ * At the specified time offset, the listed settings are applied to the parent effect.
+ * Optional transition duration controls how long the change takes.
+ */
+export interface EffectKeyframe {
+  /** Time offset from effect start (ms) */
+  at: number
+  /** Settings to apply at this keyframe */
+  settings: Record<string, unknown>
+  /** Transition duration — how long the change takes (ms). Instant if omitted. */
+  duration?: number
+}
+
+/**
  * Configuration for a single step in a sequence intro.
  */
 export interface SequenceStepConfig {
@@ -87,6 +101,10 @@ export interface SequenceStepConfig {
     setChromeVisible?: boolean
     setScrollLocked?: boolean
   }
+  /** Per-effect settings (displayed in timeline editor when selected) */
+  settings?: Record<string, unknown>
+  /** Timed setting changes within this effect */
+  keyframes?: EffectKeyframe[]
 }
 
 // =============================================================================
@@ -110,6 +128,22 @@ export interface IntroMeta {
   category?: 'gate' | 'reveal' | 'sequence'
   /** CMS-configurable settings for this intro */
   settings?: SettingsConfig<Record<string, unknown>>
+}
+
+// =============================================================================
+// Preset Intro Reference
+// =============================================================================
+
+/**
+ * Compact intro reference stored in presets.
+ * References a registered sequence by ID, with optional settings overrides.
+ * Resolved to a full IntroConfig at runtime via resolvePresetIntro().
+ */
+export interface PresetIntroConfig {
+  /** Reference to a registered intro sequence by ID */
+  sequence: string
+  /** Settings overrides (shallow-merged into base config.settings) */
+  settings?: Record<string, unknown>
 }
 
 // =============================================================================

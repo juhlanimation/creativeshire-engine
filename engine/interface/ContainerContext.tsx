@@ -94,8 +94,8 @@ export interface ContainerProviderProps {
  * - --carousel-position: absolute
  * - --carousel-left: 0
  * - --carousel-transform: none
- * - --modal-position: absolute (for modal/overlay positioning)
- * - --overlay-position: absolute (for chrome overlays)
+ * - --modal-position: fixed (contained by container-type → contain: layout, clipped by clip-path)
+ * - --overlay-position: fixed (contained by container-type: inline-size → contain: layout)
  */
 export function ContainerProvider({
   mode = 'fullpage',
@@ -137,8 +137,13 @@ export function ContainerProvider({
     container.style.setProperty('--carousel-transform', 'none')
 
     // Modal and overlay positioning for contained mode
-    container.style.setProperty('--modal-position', 'absolute')
-    container.style.setProperty('--overlay-position', 'absolute')
+    // Modals use position:fixed (like overlays), contained by container-type → contain: layout.
+    // clip-path: inset(0) on the container prevents visual escape.
+    container.style.setProperty('--modal-position', 'fixed')
+    // Overlays use position:fixed, which is contained by container-type: inline-size
+    // (implies contain: layout → creates containing block for fixed descendants).
+    // This keeps overlays fixed within the container viewport while scrolling.
+    container.style.setProperty('--overlay-position', 'fixed')
 
     // Mark container for CSS selectors
     container.setAttribute('data-container-mode', 'contained')

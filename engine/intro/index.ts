@@ -11,6 +11,7 @@ export type {
   IntroMeta,
   IntroActions,
   SequenceStepConfig,
+  PresetIntroConfig,
 } from './types'
 
 // Provider, context, and content gate
@@ -23,12 +24,21 @@ export type { IntroTriggerInitializerProps } from './IntroTriggerInitializer'
 export { IntroContext, useIntro, useIntroRequired } from './IntroContext'
 export type { IntroContextValue, IntroStore } from './IntroContext'
 
-// Dev override helpers
+// Registry (sequences + dev overrides)
 export {
+  registerIntroSequence,
+  getIntroSequence,
+  getIntroSequenceEntry,
+  getAllIntroSequenceMetas,
+  resolvePresetIntro,
   getIntroOverride,
   setIntroOverride,
   DEV_INTRO_PARAM,
 } from './registry'
+export type { RegisteredSequence } from './registry'
+
+// Ensure all built-in sequences are registered
+import './sequences'
 
 // Triggers
 export {

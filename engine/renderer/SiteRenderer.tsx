@@ -43,7 +43,9 @@ import { PinnedBackdropProvider, PinnedBackdropRegistrar } from './PinnedBackdro
 import { ViewportPortalProvider, ViewportPortalRegistrar } from './ViewportPortalContext'
 import { ThemeProvider } from './ThemeProvider'
 import { ExperienceChromeRenderer } from './ExperienceChromeRenderer'
+import { SectionChromeProvider } from './SectionChromeContext'
 import type { SiteSchema, PageSchema, ThemeSchema } from '../schema'
+import { toCssGap } from '../content/widgets/layout/utils'
 import { getBreakpointValue, type BreakpointValue } from '../config/breakpoints'
 import { useContainer } from '../interface/ContainerContext'
 import { THEME_DEFAULTS } from './hooks/useThemeVariables'
@@ -51,6 +53,7 @@ import { THEME_DEFAULTS } from './hooks/useThemeVariables'
 // Dev-only (tree-shaken in production)
 import { DevToolsContainer } from './dev/DevToolsContainer'
 import { ensurePresetsRegistered } from '../presets'
+import { ensureThemesRegistered, getTheme, paletteToCSS, typographyToCSS, tokensToCSS } from '../themes'
 
 // Intro system
 import {
@@ -64,6 +67,7 @@ ensureExperiencesRegistered()
 ensurePresetsRegistered()
 ensurePageTransitionsRegistered()
 ensureChromeRegistered()
+ensureThemesRegistered()
 
 /**
  * Build inline CSS variable styles from theme schema.
@@ -73,21 +77,50 @@ ensureChromeRegistered()
  * Variables that also need to be on document.documentElement (scrollbar, outer-bg)
  * are duplicated there by useThemeVariables at runtime.
  */
-function buildThemeStyle(theme?: ThemeSchema): React.CSSProperties {
+export function buildThemeStyle(theme?: ThemeSchema): React.CSSProperties {
   const d = THEME_DEFAULTS
-  const vars: Record<string, string> = {
-    '--font-title': theme?.typography?.title ?? d.typography.title,
-    '--font-paragraph': theme?.typography?.paragraph ?? d.typography.paragraph,
-    '--scrollbar-width': `${theme?.scrollbar?.width ?? d.scrollbar.width}px`,
-    '--scrollbar-thumb': theme?.scrollbar?.thumb ?? d.scrollbar.thumb,
-    '--scrollbar-track': theme?.scrollbar?.track ?? d.scrollbar.track,
-    '--scrollbar-thumb-dark': theme?.scrollbar?.thumbDark ?? d.scrollbar.thumbDark,
-    '--scrollbar-track-dark': theme?.scrollbar?.trackDark ?? d.scrollbar.trackDark,
+  const vars: Record<string, string> = {}
+
+  // Color theme palette (set first — structural vars override below)
+  if (theme?.colorTheme) {
+    const themeDef = getTheme(theme.colorTheme)
+    if (themeDef) {
+      const mode = theme.colorMode ?? themeDef.defaultMode ?? 'dark'
+      Object.assign(vars, paletteToCSS(themeDef[mode]) as Record<string, string>)
+      Object.assign(vars, typographyToCSS(themeDef.typography) as Record<string, string>)
+      Object.assign(vars, tokensToCSS(themeDef) as Record<string, string>)
+
+      // Expose both mode palettes so components can force a color mode
+      // (e.g. ContactFooter with colorMode: 'dark' uses var(--dark-bg)).
+      vars['--dark-bg'] = themeDef.dark.background
+      vars['--dark-text-primary'] = themeDef.dark.textPrimary
+      vars['--light-bg'] = themeDef.light.background
+      vars['--light-text-primary'] = themeDef.light.textPrimary
+    }
   }
+
+  // Preserve palette background as --theme-bg (immune to container.outerBackground override).
+  // Chrome patterns use this for backgrounds that must stay paired with --text-primary.
+  if (vars['--site-outer-bg']) vars['--theme-bg'] = vars['--site-outer-bg']
+
+  // Structural vars (override palette defaults when explicitly set)
+  vars['--font-title'] = theme?.typography?.title ?? vars['--font-title'] ?? d.typography.title
+  if (theme?.typography?.heading) vars['--font-heading'] = theme.typography.heading
+  vars['--font-paragraph'] = theme?.typography?.paragraph ?? vars['--font-paragraph'] ?? d.typography.paragraph
+  vars['--scrollbar-width'] = `${theme?.scrollbar?.width ?? d.scrollbar.width}px`
+  // Scrollbar colors: explicit preset value > palette value > THEME_DEFAULTS
+  vars['--scrollbar-thumb'] = theme?.scrollbar?.thumb ?? vars['--scrollbar-thumb'] ?? d.scrollbar.thumb
+  vars['--scrollbar-track'] = theme?.scrollbar?.track ?? vars['--scrollbar-track'] ?? d.scrollbar.track
+  vars['--scrollbar-thumb-dark'] = theme?.scrollbar?.thumbDark ?? vars['--scrollbar-thumb-dark'] ?? d.scrollbar.thumbDark
+  vars['--scrollbar-track-dark'] = theme?.scrollbar?.trackDark ?? vars['--scrollbar-track-dark'] ?? d.scrollbar.trackDark
 
   if (theme?.typography?.ui) vars['--font-ui'] = theme.typography.ui
   if (theme?.container?.maxWidth) vars['--site-max-width'] = theme.container.maxWidth
   if (theme?.container?.outerBackground) vars['--site-outer-bg'] = theme.container.outerBackground
+  if (theme?.container?.sectionGap != null) {
+    const gapValue = toCssGap(theme.container.sectionGap, theme.container.sectionGapScale)
+    if (gapValue) vars['--site-section-gap'] = gapValue
+  }
   if (theme?.sectionTransition?.fadeDuration) vars['--section-fade-duration'] = theme.sectionTransition.fadeDuration
   if (theme?.sectionTransition?.fadeEasing) vars['--section-fade-easing'] = theme.sectionTransition.fadeEasing
 
@@ -130,7 +163,7 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
 
   // Resolve experience, intro, and transition via hooks
   const {
-    experience, store, schemaExperienceId, settings,
+    experience, store, schemaExperienceId,
     beforeChrome, afterChrome, overlayChrome,
   } = useResolvedExperience(site, page)
 
@@ -208,7 +241,7 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
         overlayComponent={introOverlayComponent}
         overlayProps={introOverlayProps}
       >
-        <ExperienceProvider experience={experience} store={store} settings={settings}>
+        <ExperienceProvider experience={experience} store={store}>
           <TransitionProvider config={pageTransitionConfig}>
             <TriggerInitializer>
             {/* Backdrop for pinned sections — outside ScrollSmoother to avoid transforms.
@@ -222,10 +255,11 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
             {/* Smooth scroll wrapper for main content (disabled for slideshow) */}
             <SmoothScrollProvider config={smoothScrollConfig}>
               <div data-site-content>
+              <SectionChromeProvider sectionChrome={site.chrome?.sectionChrome}>
               {/* IntroContentGate inside #smooth-content: opacity wrapper doesn't
                   break ScrollSmoother's position:fixed #smooth-wrapper */}
               <IntroContentGate settings={introConfig?.settings}>
-              {/* PageTransitionProvider wraps ALL content so TransitionLink in chrome can access it */}
+              {/* PageTransitionProvider wraps ALL content so Link in chrome can access it */}
               <PageTransitionProvider
                 enabled={!!pageTransitionConfig}
                 duration={pageTransitionConfig?.defaultExitDuration ?? 600}
@@ -286,9 +320,11 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
                   schemaTransitionId={schemaTransitionId}
                   presetId={presetId ?? site.id}
                   sections={page.sections}
+                  siteChrome={site.chrome}
                 />
               </PageTransitionProvider>
               </IntroContentGate>
+              </SectionChromeProvider>
               </div>
             </SmoothScrollProvider>
             </TriggerInitializer>

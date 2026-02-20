@@ -12,7 +12,7 @@ import { useEffect, useRef } from 'react'
 import type { StoreApi } from 'zustand'
 import type { IntroStore } from '../IntroContext'
 import type { SequenceStepConfig } from '../types'
-import { EffectTimeline } from '../../experience/navigation/EffectTimeline'
+import { EffectTimeline } from '../../experience/timeline/EffectTimeline'
 
 export interface UseSequenceOptions {
   /** Step configurations defining the sequence */

@@ -1,6 +1,6 @@
 /**
  * DevToolsPanel styles.
- * Uses --dt-accent CSS variable (set as inline style from tab config).
+ * Uses --dt-accent CSS variable (set as inline style on panel root).
  * All accent-dependent styles reference rgba(var(--dt-accent), opacity).
  */
 
@@ -34,6 +34,7 @@
   transition: background 0.15s, border-color 0.15s;
   padding: 0;
   font-size: 14px;
+  text-decoration: none;
 }
 
 .dt-bar__btn:hover {
@@ -78,53 +79,20 @@
   color: #fff;
 }
 
-/* Tab bar */
+/* Prevent ANY horizontal scroll inside the panel */
+.dt-panel * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Header bar (title + minimize) */
 .dt-panel__tabs {
   display: flex;
   align-items: center;
   border-bottom: 1px solid rgba(var(--dt-accent), 0.2);
   padding: 2px 4px;
   gap: 2px;
-}
-
-.dt-panel__tab {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 32px;
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  padding: 0;
-  font-size: 14px;
-  transition: background 0.15s, color 0.15s;
-}
-
-.dt-panel__tab:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.dt-panel__tab--active {
-  background: rgba(var(--dt-tab-color, var(--dt-accent)), 0.2);
-  color: #fff;
-}
-
-.dt-panel__tab-icon {
-  line-height: 1;
-}
-
-.dt-panel__tab-dot {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .dt-panel__minimize {
@@ -150,39 +118,12 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
-/* Header */
-.dt-panel__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 12px;
-  border-bottom: 1px solid rgba(var(--dt-accent), 0.15);
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.dt-panel__reset {
-  padding: 3px 8px;
-  background: rgba(var(--dt-accent), 0.2);
-  border: none;
-  border-radius: 3px;
-  color: #fff;
-  font-size: 10px;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.dt-panel__reset:hover {
-  background: rgba(var(--dt-accent), 0.4);
-}
-
-/* Item list */
-.dt-panel__items {
+/* Scrollable body */
+.dt-panel__body {
   overflow-y: auto;
-  max-height: 50vh;
+  overflow-x: hidden;
+  flex: 1;
+  min-height: 0;
 }
 
 /* Footer */
@@ -193,86 +134,7 @@
   font-size: 10px;
   text-align: center;
   font-style: italic;
-}
-
-/* =============================================================================
-   Item Button
-   ============================================================================= */
-
-.dt-item {
-  display: flex;
-  align-items: stretch;
-  width: 100%;
-  transition: background 0.15s;
-}
-
-.dt-item:hover {
-  background: rgba(var(--dt-accent), 0.1);
-}
-
-.dt-item--active {
-  background: rgba(var(--dt-accent), 0.25);
-}
-
-.dt-item--active:hover {
-  background: rgba(var(--dt-accent), 0.35);
-}
-
-.dt-item__main {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-  flex: 1;
-  padding: 10px 12px;
-  background: transparent;
-  border: none;
-  color: #fff;
-  text-align: left;
-  cursor: pointer;
-}
-
-.dt-item__name {
-  font-weight: 500;
-}
-
-.dt-item__desc {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 10px;
-  line-height: 1.3;
-}
-
-.dt-item__default {
-  padding: 1px 4px;
-  background: rgba(var(--dt-accent), 0.3);
-  border-radius: 3px;
-  font-size: 9px;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.dt-item__gear {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  background: transparent;
-  border: none;
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.4);
-  cursor: pointer;
-  font-size: 14px;
-  padding: 0;
-  transition: color 0.15s, background 0.15s;
-}
-
-.dt-item__gear:hover {
-  color: rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.dt-item__gear--active {
-  color: rgb(var(--dt-accent));
-  background: rgba(var(--dt-accent), 0.1);
+  flex-shrink: 0;
 }
 
 /* =============================================================================
@@ -282,8 +144,7 @@
 .dt-settings {
   border-top: 1px solid rgba(var(--dt-accent), 0.15);
   padding: 8px 0;
-  max-height: 30vh;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .dt-settings__header {
@@ -299,8 +160,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 12px;
-  gap: 8px;
+  padding: 6px 12px;
+  gap: 12px;
+  min-width: 0;
 }
 
 .dt-settings__label {
@@ -309,7 +171,10 @@
   gap: 4px;
   color: rgba(255, 255, 255, 0.7);
   font-size: 11px;
-  flex-shrink: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dt-settings__hint {
@@ -318,6 +183,7 @@
   justify-content: center;
   width: 14px;
   height: 14px;
+  flex-shrink: 0;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 50%;
   font-size: 9px;
@@ -325,11 +191,24 @@
   cursor: help;
 }
 
+.dt-settings__hidden-badge {
+  padding: 0 4px;
+  background: rgba(255, 180, 60, 0.12);
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(255, 180, 60, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+}
+
 .dt-settings__control {
   display: flex;
   align-items: center;
   gap: 4px;
   min-width: 0;
+  flex-shrink: 0;
 }
 
 .dt-settings__checkbox {
@@ -339,13 +218,19 @@
 .dt-settings__input {
   width: 100%;
   max-width: 120px;
-  padding: 3px 6px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 3px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
   color: #fff;
   font-size: 11px;
   font-family: inherit;
+  outline: none;
+  transition: border-color 0.12s;
+}
+
+.dt-settings__input:focus {
+  border-color: rgba(var(--dt-accent), 0.5);
 }
 
 .dt-settings__input--number {
@@ -357,12 +242,14 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   max-width: 140px;
 }
 
 .dt-settings__range {
   flex: 1;
+  min-width: 0;
   accent-color: rgb(var(--dt-accent));
 }
 
@@ -372,30 +259,229 @@
   font-family: ui-monospace, monospace;
   min-width: 24px;
   text-align: right;
+  flex-shrink: 0;
 }
 
 .dt-settings__select {
-  padding: 3px 6px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 3px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
   color: #fff;
   font-size: 11px;
-  max-width: 120px;
+  min-width: 0;
+  outline: none;
+  transition: border-color 0.12s;
+}
+
+.dt-settings__select:focus {
+  border-color: rgba(var(--dt-accent), 0.5);
+}
+
+.dt-settings__select option {
+  background: #222;
+  color: #fff;
 }
 
 .dt-settings__color {
   width: 28px;
   height: 22px;
   padding: 1px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
   cursor: pointer;
 }
 
 .dt-settings__value {
   color: rgba(255, 255, 255, 0.5);
   font-size: 11px;
+  font-family: ui-monospace, monospace;
+}
+
+/* ── CMS visibility toggle ── */
+
+.dt-settings__visibility {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  padding: 0;
+  opacity: 0.5;
+  transition: opacity 0.12s, background 0.12s, border-color 0.12s;
+}
+
+.dt-settings__visibility:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.dt-settings__visibility[data-hidden] {
+  opacity: 0.35;
+}
+
+.dt-settings__visibility[data-hidden]:hover {
+  opacity: 0.8;
+  background: rgba(255, 180, 60, 0.08);
+  border-color: rgba(255, 180, 60, 0.2);
+}
+
+/* ── Advanced settings group ── */
+
+.dt-settings__advanced {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 4px;
+}
+
+.dt-settings__advanced-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: inherit;
+  transition: color 0.12s;
+}
+
+.dt-settings__advanced-toggle:hover {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.dt-settings__advanced-arrow {
+  display: inline-block;
+  font-size: 8px;
+  transition: transform 0.15s;
+}
+
+.dt-settings__advanced-arrow[data-open] {
+  transform: rotate(90deg);
+}
+
+.dt-settings__advanced-body {
+  padding-bottom: 4px;
+}
+
+/* ── Override indicators ── */
+
+.dt-settings__field[data-overridden] {
+  position: relative;
+  background: rgba(255, 160, 50, 0.04);
+}
+
+.dt-settings__override-dot {
+  position: absolute;
+  left: 0;
+  top: 2px;
+  bottom: 2px;
+  width: 3px;
+  background: rgba(255, 160, 50, 0.8);
+  border-radius: 0 2px 2px 0;
+}
+
+.dt-settings__reset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  background: rgba(255, 160, 50, 0.1);
+  border: 1px solid rgba(255, 160, 50, 0.25);
+  border-radius: 3px;
+  color: rgba(255, 160, 50, 0.8);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0;
+  transition: background 0.12s, color 0.12s;
+}
+
+.dt-settings__reset:hover {
+  background: rgba(255, 160, 50, 0.2);
+  color: rgba(255, 160, 50, 1);
+}
+
+/* =============================================================================
+   Collapsible Section
+   ============================================================================= */
+
+.dt-collapsible__toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 4px 12px 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+.dt-collapsible__toggle:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.dt-collapsible__arrow {
+  display: inline-block;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 10px;
+  transition: transform 0.15s;
+  flex-shrink: 0;
+}
+
+.dt-collapsible__arrow[data-open='true'] {
+  transform: rotate(90deg);
+}
+
+/* Row-level collapsible (section/chrome behaviour rows) */
+.dt-row-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 4px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+.dt-row-toggle:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.dt-row-toggle__label {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.dt-row-toggle__sub {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 10px;
+}
+
+.dt-row-toggle__count {
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 10px;
   font-family: ui-monospace, monospace;
 }

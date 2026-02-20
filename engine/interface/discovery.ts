@@ -3,7 +3,8 @@
  * Platform queries this to populate the "Add Section" dropdown.
  */
 
-import type { SectionSchema, SectionCategory, SettingConfig } from '../schema'
+import type { SectionSchema, SectionCategory, SettingConfig, ChromeSlot } from '../schema'
+import type { ContentContract } from '../presets/types'
 import { sectionRegistry, getAllSectionMetas } from '../content/sections/registry'
 
 // =============================================================================
@@ -181,4 +182,126 @@ export async function createSectionFromPattern<T extends object>(
     ...section,
     patternId,
   }
+}
+
+// =============================================================================
+// Chrome Pattern Discovery
+// =============================================================================
+
+import { chromePatternRegistry, getAllChromePatternMetas, getChromePatternsBySlot as getPatternsBySlot, getOverlayPatternMetas } from '../content/chrome/pattern-registry'
+import type { PresetRegionConfig, PresetOverlayConfig } from '../presets/types'
+
+/**
+ * Information about a chrome pattern's availability.
+ */
+export interface ChromePatternAvailability {
+  id: string
+  name: string
+  description: string
+  chromeSlot: ChromeSlot | null
+  canAdd: boolean
+  reason?: string
+  settings?: Record<string, SettingConfig>
+  icon?: string
+  tags?: string[]
+}
+
+/**
+ * Get patterns available for a specific slot.
+ */
+export function getAvailableChromePatterns(
+  slot: ChromeSlot,
+  currentSlotPatternId?: string
+): ChromePatternAvailability[] {
+  return getPatternsBySlot(slot).map((meta): ChromePatternAvailability => ({
+    id: meta.id,
+    name: meta.name,
+    description: meta.description,
+    chromeSlot: meta.chromeSlot,
+    canAdd: meta.id !== currentSlotPatternId,
+    reason: meta.id === currentSlotPatternId ? 'Already active in this slot' : undefined,
+    settings: meta.settings,
+    icon: meta.icon,
+    tags: meta.tags,
+  }))
+}
+
+/**
+ * Get chrome patterns grouped by slot (for authoring UI).
+ */
+export function getChromePatternsBySlotGrouped(): Record<ChromeSlot, ChromePatternAvailability[]> {
+  const slots: ChromeSlot[] = ['header', 'footer']
+  const result = {} as Record<ChromeSlot, ChromePatternAvailability[]>
+  for (const slot of slots) {
+    result[slot] = getAvailableChromePatterns(slot)
+  }
+  return result
+}
+
+/**
+ * Get available overlay patterns (chromeSlot === null).
+ */
+export function getAvailableOverlayPatterns(): ChromePatternAvailability[] {
+  return getOverlayPatternMetas().map((meta): ChromePatternAvailability => ({
+    id: meta.id,
+    name: meta.name,
+    description: meta.description,
+    chromeSlot: null,
+    canAdd: true,
+    settings: meta.settings,
+    icon: meta.icon,
+    tags: meta.tags,
+  }))
+}
+
+/**
+ * Create chrome config from a pattern with provided props.
+ */
+export async function createChromeFromPattern<T extends object>(
+  patternId: string,
+  props: T
+): Promise<PresetRegionConfig | PresetOverlayConfig> {
+  const entry = chromePatternRegistry[patternId]
+  if (!entry) {
+    throw new Error(`Unknown chrome pattern: ${patternId}`)
+  }
+  const factory = await entry.getFactory()
+  return factory(props)
+}
+
+// =============================================================================
+// Setting Visibility Resolution
+// =============================================================================
+
+/**
+ * Resolve whether a setting is hidden, respecting contract overrides.
+ * Priority: contract override > meta default > false (visible).
+ */
+export function isSettingHidden(
+  componentId: string,
+  settingKey: string,
+  settingConfig: SettingConfig,
+  contract?: ContentContract,
+): boolean {
+  const override = contract?.settingOverrides?.[componentId]?.[settingKey]
+  if (override !== undefined) return override
+  return settingConfig.hidden ?? false
+}
+
+/**
+ * Get resolved settings for a component, filtering hidden ones.
+ * Returns only settings visible to CMS users for the given contract.
+ */
+export function getVisibleSettings(
+  componentId: string,
+  settings: Record<string, SettingConfig>,
+  contract?: ContentContract,
+): Record<string, SettingConfig> {
+  const result: Record<string, SettingConfig> = {}
+  for (const [key, config] of Object.entries(settings)) {
+    if (!isSettingHidden(componentId, key, config, contract)) {
+      result[key] = config
+    }
+  }
+  return result
 }

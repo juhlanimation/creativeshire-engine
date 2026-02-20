@@ -25,6 +25,9 @@ import { useExperience, useSmoothScrollContainer } from '../experience'
 // PinnedBackdrop infrastructure preserved for potential future use
 // import { usePinnedBackdrop } from './PinnedBackdropContext'
 import { useDevSectionBehaviourAssignments, useDevSectionPinned } from './dev/devSettingsStore'
+import { useSectionChrome } from './SectionChromeContext'
+import { useThemeContext } from './ThemeProvider'
+import { getTheme, paletteToCSS } from '../themes'
 import { capitalize } from './utils'
 import type { SectionSchema } from '../schema'
 import type { BehaviourAssignment } from '../experience/experiences/types'
@@ -101,6 +104,16 @@ export function SectionRenderer({ section, index, totalSections }: SectionRender
     <WidgetRenderer key={widget.id ?? `widget-${i}`} widget={widget} index={i} />
   ))
 
+  // Inject section chrome widgets (e.g., section footers from chrome config)
+  const chromeWidgets = useSectionChrome(section.id)
+  const chromeRendered = chromeWidgets.map((widget, i) => (
+    <WidgetRenderer
+      key={`${section.id}-chrome-${widget.id ?? i}`}
+      widget={{ ...widget, id: `${section.id}-${widget.id ?? `chrome-${i}`}` }}
+      index={section.widgets.length + i}
+    />
+  ))
+
   const content = (
     <Section
       id={section.id}
@@ -108,9 +121,15 @@ export function SectionRenderer({ section, index, totalSections }: SectionRender
       style={section.style}
       className={section.className}
       constrained={section.constrained}
+      paddingTop={section.paddingTop}
+      paddingBottom={section.paddingBottom}
+      paddingLeft={section.paddingLeft}
+      paddingRight={section.paddingRight}
+      sectionHeight={section.sectionHeight}
       widgets={section.widgets}
     >
       {widgets}
+      {chromeRendered}
     </Section>
   )
 
@@ -122,15 +141,37 @@ export function SectionRenderer({ section, index, totalSections }: SectionRender
 
   // ── Normal section rendering ───────────────────────────────────────
 
+  // Per-section color palette: resolve from colorMode + active theme
+  const { colorTheme } = useThemeContext()
+  const sectionPaletteVars = useMemo(() => {
+    if (!section.colorMode || !colorTheme) return undefined
+    const themeDef = getTheme(colorTheme)
+    if (!themeDef) return undefined
+    const palette = themeDef[section.colorMode]
+    return {
+      ...paletteToCSS(palette),
+      // Paint section background directly from palette.
+      // paletteToCSS sets --site-outer-bg (variable) but not backgroundColor (property).
+      // Without this, the section wrapper stays transparent and the site-level
+      // background shows through — wrong color for sections with different colorMode.
+      ...(palette.background && { backgroundColor: palette.background }),
+    }
+  }, [section.colorMode, colorTheme])
+
   // Inherit background from section to prevent white flash during fade.
   // For cover-scroll, assign ascending z-indexes so later sections stack on top.
+  const bgStyle = section.style?.backgroundColor
+    ? { backgroundColor: section.style.backgroundColor }
+    : undefined
+
   const wrapperStyle: React.CSSProperties | undefined = isCoverScroll
     ? {
-        ...(section.style?.backgroundColor ? { backgroundColor: section.style.backgroundColor } : undefined),
+        ...sectionPaletteVars,
+        ...bgStyle,
         '--section-z': index + 1,
       } as React.CSSProperties
-    : section.style?.backgroundColor
-      ? { backgroundColor: section.style.backgroundColor }
+    : (sectionPaletteVars || bgStyle)
+      ? { ...sectionPaletteVars, ...bgStyle }
       : undefined
 
   // Pass section className to wrapper for responsive visibility (e.g., display:none)

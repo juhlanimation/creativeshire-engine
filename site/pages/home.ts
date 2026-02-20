@@ -5,14 +5,11 @@
 
 import type { PageSchema } from '../../engine/schema'
 import {
-  createHeroSection,
-  createAboutSection,
-  createFeaturedProjectsSection,
-  createOtherProjectsSection,
+  createHeroVideoSection,
+  createAboutBioSection,
+  createProjectFeaturedSection,
+  createProjectStripSection,
 } from '../../engine/content/sections/patterns'
-
-// Import preset styles
-import { bojuhlHeroStyles } from '../../engine/presets/bojuhl/pages'
 
 // Import content data
 import { featuredProjects, otherProjects } from '../data/projects'
@@ -35,15 +32,14 @@ export const homePage: PageSchema = {
     description: 'Executive Producer leading animated films and campaigns for Riot Games, Netflix, Supercell, Amazon, and LEGO.',
   },
   sections: [
-    createHeroSection({
+    createHeroVideoSection({
       introText: "I'm Bo Juhl",
       roles: ['EXECUTIVE PRODUCER', 'PRODUCER', 'EDITOR'],
       videoSrc: '/videos/frontpage/frontpage.webm',
       scrollIndicatorText: '(SCROLL)',
-      styles: bojuhlHeroStyles,
     }),
     {
-      ...createAboutSection({
+      ...createAboutBioSection({
         bioParagraphs,
         signature,
         photoSrc: profilePhoto.src,
@@ -52,19 +48,16 @@ export const homePage: PageSchema = {
       }),
       constrained: true,
     },
-    {
-      ...createFeaturedProjectsSection({
-        projects: featuredProjects,
-      }),
-      constrained: true,
-    },
-    {
-      ...createOtherProjectsSection({
-        heading: 'OTHER SELECTED PROJECTS',
-        yearRange: otherProjectsYearRange,
-        projects: otherProjects,
-      }),
-      constrained: true,
-    },
+    createProjectFeaturedSection({
+      projects: featuredProjects,
+      colorMode: 'light',
+    }),
+    createProjectStripSection({
+      colorMode: 'light',
+      heading: 'OTHER PROJECTS',
+      yearRange: otherProjectsYearRange,
+      projects: otherProjects,
+      galleryOn: { click: 'modal.open' },
+    }),
   ],
 }
