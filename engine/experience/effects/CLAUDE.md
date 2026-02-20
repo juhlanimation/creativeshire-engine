@@ -5,22 +5,31 @@
 Structure:
 ```
 effects/
-├── fade.css              # Opacity (fade-reveal, modal-fade, modal-backdrop, label-fade)
-├── transform/
-│   ├── scale.css         # Scale (scale-reveal, scale-hover, modal-scale)
-│   └── slide.css         # Slide/translate (text-reveal)
-├── mask/
-│   ├── wipe.css          # Clip-path wipe (modal-mask)
-│   └── reveal.css        # Clip-path reveal (mask-reveal)
-├── color-shift.css       # Color transitions
-├── overlay-darken.css    # Background overlay
-├── marquee-scroll.css    # Infinite scroll animation
-└── index.css             # Barrel imports
+├── color-shift/         # Color/blend transitions
+│   └── color-shift.css
+├── emphasis/            # Attention/looping (spin, pulse, shake, bounce)
+│   └── spin.css
+├── fade/                # Opacity-based animations
+│   └── fade.css
+├── marquee/             # Infinite scroll animation
+│   └── marquee-scroll.css
+├── mask/                # Clip-path based
+│   ├── wipe.css
+│   └── reveal.css
+├── overlay/             # Background overlay darkening
+│   └── overlay-darken.css
+├── reveal/              # Progressive clip-path reveals
+│   ├── clip-path.css
+│   └── index.css
+├── transform/           # Position, scale, rotation
+│   ├── scale.css
+│   └── slide.css
+└── index.css            # Barrel imports
 ```
 
 Widget-specific effects (colocated with widgets):
-- `color-shift` (ContactPrompt) → widgets/composite/ContactPrompt/styles.css
-- `flex-expand` (GalleryThumbnail) → widgets/composite/GalleryThumbnail/styles.css
+- `color-shift` (EmailCopy) → widgets/interactive/EmailCopy/styles.css
+- `flex-expand` (ExpandRowThumbnail) → widgets/repeaters/ExpandRowImageRepeater/ExpandRowThumbnail/styles.css
 
 Before creating:
 - Is this named by VISUAL MECHANISM (fade, mask, scale)?

@@ -54,6 +54,7 @@
 | [section.spec.md](components/content/section.spec.md) | Scrollable groups of widgets |
 | [section-pattern.spec.md](components/content/section-pattern.spec.md) | Factory functions that create section patterns |
 | [chrome.spec.md](components/content/chrome.spec.md) | Persistent UI (navigation, overlays) |
+| [action-system.spec.md](components/content/action-system.spec.md) | Widget event triggers, action dispatch, overlay activation |
 
 ### components/intro/ — Intro Layer Contracts
 

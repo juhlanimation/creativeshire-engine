@@ -130,10 +130,10 @@ async function getWidgetFolders(category: WidgetCategory): Promise<string[]> {
 }
 
 /**
- * Get all pattern folders
+ * Get all pattern folders (removed — patterns migrated to section-scoped components)
  */
 async function getPatternFolders(): Promise<string[]> {
-  return getFolders('content/widgets/patterns/*')
+  return []
 }
 
 /**

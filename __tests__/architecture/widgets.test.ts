@@ -4,7 +4,6 @@
  * Validates widget architecture rules:
  * - Primitives have no React state (useState/useReducer)
  * - Layout widgets use widgets array, not children
- * - Patterns are factory functions returning WidgetSchema
  * - Interactive widgets are React components with state
  * - Proper barrel exports
  */
@@ -114,43 +113,6 @@ describe('Widget Structure Validation', () => {
     })
   })
 
-  describe('Patterns (widget factories)', () => {
-    /**
-     * Patterns are factory functions that return WidgetSchema.
-     * They compose existing primitives and layouts into reusable structures.
-     * - Factory Pattern (index.ts) - NO CSS, returns WidgetSchema
-     */
-
-    it('patterns folder has index.ts barrel', async () => {
-      const indexFiles = await getFiles('content/widgets/patterns/index.ts')
-      expect(indexFiles.length, 'Missing patterns/index.ts').toBeGreaterThan(0)
-    })
-
-    it('factory patterns return WidgetSchema (not JSX)', async () => {
-      const files = await getFiles('content/widgets/patterns/**/index.ts')
-      const factoryFiles = files.filter(f =>
-        !f.endsWith('index.tsx') &&
-        !f.includes('.test.')
-      )
-
-      const violations: string[] = []
-
-      for (const file of factoryFiles) {
-        const content = await readFile(file)
-
-        // Factory patterns should have WidgetSchema return type or return objects with 'type' property
-        const hasWidgetSchema = content.includes('WidgetSchema') || content.includes("type:")
-        const hasJsx = /<[A-Z][a-zA-Z]*/.test(content) && !content.includes('// ')
-
-        if (hasJsx && !hasWidgetSchema) {
-          violations.push(`${relativePath(file)}: appears to have JSX in factory file`)
-        }
-      }
-
-      expect(violations, `Factory patterns with JSX (use interactive/ for React components):\\n${violations.join('\\n')}`).toHaveLength(0)
-    })
-  })
-
   describe('Interactive widgets', () => {
     /**
      * Interactive widgets are React components with internal state,
@@ -219,15 +181,10 @@ describe('Widget Structure Validation', () => {
     })
   })
 
-  describe('Chrome regions', () => {
+  describe('Chrome', () => {
     it('chrome folder has index.ts barrel', async () => {
       const indexFiles = await getFiles('content/chrome/index.ts')
       expect(indexFiles.length, 'Missing chrome/index.ts').toBeGreaterThan(0)
-    })
-
-    it('chrome regions folder exists', async () => {
-      const regionFiles = await getFiles('content/chrome/regions/**/*.tsx')
-      expect(regionFiles.length, 'No region files in chrome/regions/').toBeGreaterThan(0)
     })
   })
 })

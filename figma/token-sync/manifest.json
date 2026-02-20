@@ -1,0 +1,14 @@
+{
+  "name": "Creativeshire Token Sync",
+  "id": "creativeshire-token-sync",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": ["figma", "dev"],
+  "menu": [
+    { "name": "Run All", "command": "run-all" },
+    { "separator": true },
+    { "name": "Phase A: Variables", "command": "phase-a" },
+    { "name": "Phase B: Components", "command": "phase-b" },
+    { "name": "Theme Showcase", "command": "phase-c-theme" }
+  ]
+}

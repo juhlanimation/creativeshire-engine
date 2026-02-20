@@ -60,7 +60,7 @@ Based on the Bojuhl preset with all `__repeat` collections expanded:
 │          │   ├─ 🎬 hero-video [Video]                           │
 │          │   ├─ 📦 hero-content [Flex]                          │
 │          │   │   ├─ 📝 hero-intro [Text]                        │
-│          │   │   └─ ✨ hero-roles [HeroRoles]                   │
+│          │   │   └─ ✨ hero-roles [StackTextRepeater]                 │
 │          │   │       ├─ 📝 role-0 [Text]           ⋮⋮ drag      │
 │          │   │       │   └─ "MOTION DESIGNER"                   │
 │          │   │       ├─ 📝 role-1 [Text]           ⋮⋮ drag      │
@@ -81,7 +81,7 @@ Based on the Bojuhl preset with all `__repeat` collections expanded:
 │          │   │   └─ 📦 about-image-column [Box]                 │
 │          │   │       └─ 🖼️ about-image [Image]                  │
 │          │   ├─ 📦 about-gradient [Box]                         │
-│          │   └─ 🎠 about-logos [LogoMarquee]                    │
+│          │   └─ 🎠 about-logos [MarqueeImageRepeater]                    │
 │          │       ├─ 🖼️ logo-0 [Image]              ⋮⋮ drag      │
 │          │       │   └─ Nike                                    │
 │          │       ├─ 🖼️ logo-1 [Image]              ⋮⋮ drag      │
@@ -115,12 +115,12 @@ Based on the Bojuhl preset with all `__repeat` collections expanded:
 │              ├─ 📦 other-projects-header [Flex]                 │
 │              │   ├─ 📝 other-projects-heading [Text]            │
 │              │   └─ 📝 other-projects-year-range [Text]         │
-│              └─ 🎠 other-projects-gallery [ExpandableGalleryRow]│
-│                  ├─ 🎬 gallery-item-0 [GalleryThumbnail] ⋮⋮ drag│
+│              └─ 🎠 other-projects-gallery [ExpandRowImageRepeater]│
+│                  ├─ 🎬 gallery-item-0 [ExpandRowThumbnail] ⋮⋮ drag│
 │                  │   └─ 📋 Nike / 2024                          │
-│                  ├─ 🎬 gallery-item-1 [GalleryThumbnail] ⋮⋮ drag│
+│                  ├─ 🎬 gallery-item-1 [ExpandRowThumbnail] ⋮⋮ drag│
 │                  │   └─ 📋 Apple / 2023                         │
-│                  ├─ 🎬 gallery-item-2 [GalleryThumbnail] ⋮⋮ drag│
+│                  ├─ 🎬 gallery-item-2 [ExpandRowThumbnail] ⋮⋮ drag│
 │                  │   └─ 📋 Google / 2023                        │
 │                  └─ ➕ Add Project                               │
 │                                                                 │
@@ -150,10 +150,10 @@ Based on the Bojuhl preset with all `__repeat` collections expanded:
 | 📦 | Layout | Box, Flex, Stack, Grid, Container |
 | 📝 | Text | Text, headings, paragraphs |
 | 🖼️ | Image | Static images |
-| 🎬 | Video | Video, GalleryThumbnail |
+| 🎬 | Video | Video, ExpandRowThumbnail |
 | 🔗 | Link | Hyperlinks, buttons |
-| 🎠 | Carousel | LogoMarquee, ExpandableGalleryRow |
-| ✨ | Interactive | HeroRoles, ContactPrompt |
+| 🎠 | Carousel | MarqueeImageRepeater, ExpandRowImageRepeater |
+| ✨ | Interactive | StackTextRepeater, ContactPrompt |
 | 📋 | Info | Inline metadata preview |
 
 ### Indicators
@@ -231,8 +231,8 @@ When an item is selected in hierarchy, the Inspector shows its editable properti
 │  INSPECTOR: gallery-item-1              │
 ├─────────────────────────────────────────┤
 │                                         │
-│  Type: GalleryThumbnail                 │
-│  Parent: ExpandableGalleryRow           │
+│  Type: ExpandRowThumbnail                 │
+│  Parent: ExpandRowImageRepeater       │
 │  Index: 1 of 5           [⬆️] [⬇️] [🗑️] │
 │                                         │
 │  ─── Media ──────────────────────────   │
@@ -263,7 +263,7 @@ Collections use `__repeat` in schemas so items appear in hierarchy:
 ```typescript
 // Schema definition
 {
-  type: 'LogoMarquee',
+  type: 'MarqueeImageRepeater',
   props: { duration: 30 },
   widgets: [{
     __repeat: '{{ content.logos }}',
@@ -279,7 +279,7 @@ Collections use `__repeat` in schemas so items appear in hierarchy:
 
 ```
 // Resulting hierarchy
-└─ 🎠 LogoMarquee
+└─ 🎠 MarqueeImageRepeater
     ├─ 🖼️ logo-0 [Image]    ⋮⋮
     ├─ 🖼️ logo-1 [Image]    ⋮⋮
     └─ ➕ Add Logo

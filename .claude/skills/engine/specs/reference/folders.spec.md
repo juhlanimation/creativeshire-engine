@@ -50,14 +50,14 @@
 │   │   │   │       ├── types.ts
 │   │   │   │       └── meta.ts          # ComponentMeta for platform UI
 │   │   │   │
-│   │   │   ├── patterns/                # FACTORY FUNCTIONS → WidgetSchema
-│   │   │   │   └── {Name}/              # ProjectCard, LogoLink, etc.
-│   │   │   │       ├── index.ts         # create{Name}(props) -> WidgetSchema
+│   │   │   ├── repeaters/               # MULTI-SECTION REPEATERS
+│   │   │   │   └── {Name}/              # ExpandRowImageRepeater, etc.
+│   │   │   │       ├── index.tsx
 │   │   │   │       ├── types.ts
-│   │   │   │       └── meta.ts          # ComponentMeta (component: false)
+│   │   │   │       └── meta.ts
 │   │   │   │
 │   │   │   └── interactive/             # STATEFUL REACT COMPONENTS
-│   │   │       └── {Name}/              # Video, VideoPlayer, ContactPrompt, etc.
+│   │   │       └── {Name}/              # Video, VideoPlayer, EmailCopy
 │   │   │           ├── index.tsx        # React component with hooks/state
 │   │   │           ├── types.ts
 │   │   │           ├── meta.ts          # ComponentMeta (component: true)
@@ -73,9 +73,8 @@
 │   │   │           └── variants.ts
 │   │   │
 │   │   ├── chrome/
-│   │   │   ├── Chrome.tsx               # Chrome orchestrator
-│   │   │   ├── regions/                 # Header, Footer, Sidebar
-│   │   │   └── overlays/                # Cursor, Loader, ModalContainer
+│   │   │   ├── patterns/                # Chrome pattern factories (FixedNav, ContactFooter, etc.)
+│   │   │   └── overlays/                # Modal, CursorLabel, SlideIndicators, NavTimeline
 │   │   │
 │   │   └── registry.ts                  # Auto-discovery
 │   │
@@ -208,16 +207,16 @@ A preset **includes** a mode selection plus content structure.
 | Category | Location | Purpose | Output |
 |----------|----------|---------|--------|
 | **Primitives** | `widgets/primitives/` | Leaf nodes (Text, Image, Icon, Button, Link) | React component |
-| **Layout** | `widgets/layout/` | Containers (Flex, Grid, Stack, Split, etc.) | React component |
-| **Patterns** | `widgets/patterns/` | Factory functions (ProjectCard, LogoLink) | WidgetSchema |
-| **Interactive** | `widgets/interactive/` | Stateful components (Video, VideoPlayer, etc.) | React component |
+| **Layout** | `widgets/layout/` | Containers (Flex, Grid, Stack, Split, Marquee, etc.) | React component |
+| **Interactive** | `widgets/interactive/` | Stateful components (Video, VideoPlayer, EmailCopy) | React component |
+| **Repeaters** | `widgets/repeaters/` | Multi-section repeater components | React component |
 
 ### Pattern Levels
 
 | Level | Location | Returns | Used In |
 |-------|----------|---------|---------|
 | **Section Pattern** | `sections/patterns/` | `SectionSchema` | Page definition |
-| **Widget Pattern** | `widgets/patterns/` | `WidgetSchema` | Section content |
+| **Chrome Pattern** | `chrome/patterns/` | Region schema | Chrome configuration |
 
 ### ComponentMeta System
 
@@ -239,10 +238,10 @@ Every component folder has a `meta.ts` file that provides platform UI hints:
 |------------|----------|
 | Add a primitive widget | `engine/content/widgets/primitives/{Name}/` |
 | Add a layout widget | `engine/content/widgets/layout/{Name}/` |
-| Add a widget pattern | `engine/content/widgets/patterns/{Name}/` |
 | Add an interactive widget | `engine/content/widgets/interactive/{Name}/` |
+| Add a repeater widget | `engine/content/widgets/repeaters/{Name}/` |
 | Add a section pattern | `engine/content/sections/patterns/{Name}/` |
-| Add chrome region | `engine/content/chrome/regions/{Name}.tsx` |
+| Add chrome pattern | `engine/content/chrome/patterns/{Name}/` |
 | Add chrome overlay | `engine/content/chrome/overlays/{Name}.tsx` |
 | Add intro pattern | `engine/intro/patterns/{name}/` |
 | Add intro trigger | `engine/intro/triggers/use{Name}.ts` |

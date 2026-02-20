@@ -138,6 +138,39 @@ export default function {Name}(props: {Name}Props): JSX.Element
 | 18 | No CSS transitions in widget styles | `checkNoTransitions` | `.css` |
 | 19 | No calc() from CSS variables | `checkNoCalcFromVars` | `.css` |
 
+## Event Triggers & Action Dispatch
+
+Widgets can emit discrete events via the `on` field in their schema. These are wired to the action system (L1), separate from L2 behaviours.
+
+### Widget Meta: `triggers`
+
+Widget metas declare which DOM events the widget type can emit:
+
+```typescript
+// primitives/Link/meta.ts
+triggers: ['mouseenter', 'mouseleave', 'click']
+```
+
+### Widget Schema: `on`
+
+Widget instances wire events to action IDs:
+
+```typescript
+on: {
+  click: 'modal.open',
+  mouseenter: 'cursorLabelWatch.show',
+  mouseleave: 'cursorLabelWatch.hide',
+}
+// Array syntax for multiple actions:
+on: { click: ['modal.open', 'analytics.track'] }
+// Object form with schema params (payload overrides):
+on: { click: { action: 'modal.open', params: { animationType: 'expand' } } }
+```
+
+WidgetRenderer translates `on` entries to React event props and dispatches to the action registry. Each action payload includes the source DOM element and event name. Schema `params` are merged under widget-provided payload values.
+
+See: [action-system.spec.md](action-system.spec.md)
+
 ## CSS Variables
 
 > Widgets READ these (set by driver). Never SET them. Never CALCULATE from them.

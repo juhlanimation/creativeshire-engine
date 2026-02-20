@@ -34,6 +34,22 @@ Action triggers respond to intentional user events. They fire on discrete intera
 
 **Rule:** Use CSS pseudo-classes for self-contained effects. Use Action Triggers when state must persist or coordinate across elements.
 
+### L2 Triggers vs L1 Widget Actions
+
+L2 triggers (this spec) and L1 widget `on` actions are complementary systems:
+
+| L2 Triggers | L1 Widget `on` Actions |
+|-------------|----------------------|
+| Continuous (60fps) | Discrete (events) |
+| Write to Zustand store | Dispatch to action registry |
+| CSS variables (`--hover: 0\|1`) | Pub/sub handlers |
+| Drive GSAP / effects | Drive overlay activation |
+| BehaviourWrapper scope | WidgetRenderer scope |
+
+A single widget can have **both** a hover behaviour (L2 CSS variable) and a hover trigger (L1 action dispatch). No event interference.
+
+See: [action-system.spec.md](../content/action-system.spec.md)
+
 ## Concepts
 
 | Term | Definition |

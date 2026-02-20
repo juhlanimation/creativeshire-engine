@@ -2,10 +2,9 @@
  * ComponentMeta Validation Tests
  *
  * Validates that every component has a meta.ts file with proper structure:
- * - Every widget (primitive, layout, pattern, interactive) has meta.ts
+ * - Every widget (primitive, layout, interactive, repeater) has meta.ts
  * - Every section pattern has meta.ts
  * - Every chrome component has meta.ts
- * - Patterns have component: false
  * - Interactive/primitives/layouts have component: true
  * - The old composite/ folder no longer exists
  */
@@ -378,20 +377,6 @@ describe('ComponentMeta Validation', () => {
       expect(missing, `Layouts missing meta.ts:\n${missing.join('\n')}`).toHaveLength(0)
     })
 
-    it('every pattern widget has meta.ts', async () => {
-      const componentDirs = await getFiles('content/widgets/patterns/*/')
-      const missing: string[] = []
-
-      for (const dir of componentDirs) {
-        const metaPath = path.join(dir, 'meta.ts')
-        if (!(await fileExists(metaPath))) {
-          missing.push(relativePath(dir))
-        }
-      }
-
-      expect(missing, `Patterns missing meta.ts:\n${missing.join('\n')}`).toHaveLength(0)
-    })
-
     it('every interactive widget has meta.ts', async () => {
       const componentDirs = await getFiles('content/widgets/interactive/*/')
       const missing: string[] = []
@@ -405,23 +390,19 @@ describe('ComponentMeta Validation', () => {
 
       expect(missing, `Interactive widgets missing meta.ts:\n${missing.join('\n')}`).toHaveLength(0)
     })
-  })
 
-  describe('Pattern meta.ts validation', () => {
-    it('pattern widgets have component: false', async () => {
-      const metaFiles = await getFiles('content/widgets/patterns/*/meta.ts')
-      const violations: string[] = []
+    it('every repeater widget has meta.ts', async () => {
+      const componentDirs = await getFiles('content/widgets/repeaters/*/')
+      const missing: string[] = []
 
-      for (const file of metaFiles) {
-        const content = await readFile(file)
-
-        // Should have component: false since patterns are factory functions
-        if (!content.includes('component: false')) {
-          violations.push(relativePath(file))
+      for (const dir of componentDirs) {
+        const metaPath = path.join(dir, 'meta.ts')
+        if (!(await fileExists(metaPath))) {
+          missing.push(relativePath(dir))
         }
       }
 
-      expect(violations, `Patterns missing component: false:\n${violations.join('\n')}`).toHaveLength(0)
+      expect(missing, `Repeaters missing meta.ts:\n${missing.join('\n')}`).toHaveLength(0)
     })
   })
 
@@ -502,7 +483,7 @@ describe('ComponentMeta Validation', () => {
 
     it('sectionCategory is a valid value', async () => {
       const VALID_SECTION_CATEGORIES = [
-        'hero', 'about', 'project', 'contact', 'content', 'gallery'
+        'hero', 'about', 'project', 'team', 'contact', 'content', 'gallery'
       ]
 
       const metaFiles = await getFiles('content/sections/patterns/*/meta.ts')
@@ -525,20 +506,6 @@ describe('ComponentMeta Validation', () => {
   })
 
   describe('Chrome meta.ts files', () => {
-    it('every chrome region has meta.ts', async () => {
-      const componentDirs = await getFiles('content/chrome/regions/*/')
-      const missing: string[] = []
-
-      for (const dir of componentDirs) {
-        const metaPath = path.join(dir, 'meta.ts')
-        if (!(await fileExists(metaPath))) {
-          missing.push(relativePath(dir))
-        }
-      }
-
-      expect(missing, `Chrome regions missing meta.ts:\n${missing.join('\n')}`).toHaveLength(0)
-    })
-
     it('every chrome overlay has meta.ts', async () => {
       const componentDirs = await getFiles('content/chrome/overlays/*/')
       const missing: string[] = []
@@ -554,19 +521,126 @@ describe('ComponentMeta Validation', () => {
     })
 
     it('chrome meta.ts files use defineMeta', async () => {
-      const regionMetas = await getFiles('content/chrome/regions/*/meta.ts')
       const overlayMetas = await getFiles('content/chrome/overlays/*/meta.ts')
-      const allMetas = [...regionMetas, ...overlayMetas]
+      const allMetas = [...overlayMetas]
       const violations: string[] = []
 
       for (const file of allMetas) {
         const content = await readFile(file)
-        if (!content.includes('defineMeta')) {
+        if (!content.includes('defineMeta') && !content.includes('defineRegionMeta')) {
           violations.push(relativePath(file))
         }
       }
 
       expect(violations, `Chrome meta.ts not using defineMeta:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+  })
+
+  describe('Chrome pattern meta.ts files', () => {
+    it('every chrome pattern has meta.ts', async () => {
+      const componentDirs = await getFiles('content/chrome/patterns/*/')
+      const missing: string[] = []
+
+      for (const dir of componentDirs) {
+        const metaPath = path.join(dir, 'meta.ts')
+        if (!(await fileExists(metaPath))) {
+          missing.push(relativePath(dir))
+        }
+      }
+
+      expect(missing, `Chrome patterns missing meta.ts:\n${missing.join('\n')}`).toHaveLength(0)
+    })
+
+    it('chrome patterns use defineChromeMeta', async () => {
+      const metaFiles = await getFiles('content/chrome/patterns/*/meta.ts')
+      const violations: string[] = []
+
+      for (const file of metaFiles) {
+        const content = await readFile(file)
+        if (!content.includes('defineChromeMeta')) {
+          violations.push(relativePath(file))
+        }
+      }
+
+      expect(violations, `Chrome patterns not using defineChromeMeta:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
+    it('chrome patterns have chromeSlot field', async () => {
+      const metaFiles = await getFiles('content/chrome/patterns/*/meta.ts')
+      const violations: string[] = []
+
+      for (const file of metaFiles) {
+        const content = await readFile(file)
+        if (!content.includes('chromeSlot:')) {
+          violations.push(relativePath(file))
+        }
+      }
+
+      expect(violations, `Chrome patterns missing chromeSlot:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
+    it('chrome patterns have component: false', async () => {
+      const metaFiles = await getFiles('content/chrome/patterns/*/meta.ts')
+      const violations: string[] = []
+
+      for (const file of metaFiles) {
+        const content = await readFile(file)
+        if (!content.includes('component: false')) {
+          violations.push(relativePath(file))
+        }
+      }
+
+      expect(violations, `Chrome patterns missing component: false:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
+    it('chromeSlot is a valid value', async () => {
+      const VALID_CHROME_SLOTS = ['header', 'footer', 'sidebar', 'null']
+
+      const metaFiles = await getFiles('content/chrome/patterns/*/meta.ts')
+      const violations: string[] = []
+
+      for (const file of metaFiles) {
+        const content = await readFile(file)
+        const match = content.match(/chromeSlot:\s*['"](\w+)['"]/)
+
+        if (match) {
+          const slot = match[1]
+          if (!VALID_CHROME_SLOTS.includes(slot)) {
+            violations.push(`${relativePath(file)}: Invalid chromeSlot "${slot}"`)
+          }
+        }
+        // chromeSlot: null is also valid (free overlays) - no string match needed
+      }
+
+      expect(violations).toHaveLength(0)
+    })
+
+    it('every chrome pattern has types.ts', async () => {
+      const componentDirs = await getFiles('content/chrome/patterns/*/')
+      const missing: string[] = []
+
+      for (const dir of componentDirs) {
+        const typesPath = path.join(dir, 'types.ts')
+        if (!(await fileExists(typesPath))) {
+          missing.push(relativePath(dir))
+        }
+      }
+
+      expect(missing, `Chrome patterns missing types.ts:\n${missing.join('\n')}`).toHaveLength(0)
+    })
+
+    it('every chrome pattern has index.ts factory', async () => {
+      const componentDirs = await getFiles('content/chrome/patterns/*/')
+      const missing: string[] = []
+
+      for (const dir of componentDirs) {
+        const indexPath = path.join(dir, 'index.ts')
+        if (!(await fileExists(indexPath))) {
+          missing.push(relativePath(dir))
+        }
+      }
+
+      expect(missing, `Chrome patterns missing index.ts:\n${missing.join('\n')}`).toHaveLength(0)
     })
   })
 
@@ -578,24 +652,6 @@ describe('ComponentMeta Validation', () => {
         compositeFiles.length,
         'composite/ folder should be renamed to patterns/ and interactive/'
       ).toBe(0)
-    })
-
-    it('patterns/ folder contains factory functions only', async () => {
-      const patternDirs = await getFiles('content/widgets/patterns/*/')
-      const violations: string[] = []
-
-      for (const dir of patternDirs) {
-        // Check for index.ts (factory) vs index.tsx (React component)
-        const hasFactoryIndex = await fileExists(path.join(dir, 'index.ts'))
-        const hasReactIndex = await fileExists(path.join(dir, 'index.tsx'))
-
-        // Patterns should have index.ts, not index.tsx
-        if (hasReactIndex && !hasFactoryIndex) {
-          violations.push(`${relativePath(dir)}: has index.tsx instead of index.ts`)
-        }
-      }
-
-      expect(violations, `Patterns with React components (should be in interactive/):\n${violations.join('\n')}`).toHaveLength(0)
     })
 
     it('interactive/ folder contains React components only', async () => {
@@ -665,11 +721,13 @@ describe('ComponentMeta Validation', () => {
         'primitive',
         'layout',
         'interactive',
+        'repeater',
         'pattern',
         'section',
         'region',
         'overlay',
         'chrome', // Some may use 'chrome' instead of region/overlay
+        'chrome-pattern',
         'theme',
         'page',
         // Behaviour categories (trigger-based)
@@ -885,6 +943,114 @@ describe('ComponentMeta Validation', () => {
       }
 
       expect(violations, `Transition metas not using definePageTransitionMeta():\n${violations.join('\n')}`).toHaveLength(0)
+    })
+  })
+
+  describe('Widget triggers validation', () => {
+    const VALID_TRIGGER_EVENTS = ['mouseenter', 'mouseleave', 'click']
+
+    it('widget triggers only use valid event names', async () => {
+      const allMetas = [
+        ...await getFiles('content/widgets/primitives/*/meta.ts'),
+        ...await getFiles('content/widgets/layout/*/meta.ts'),
+        ...await getFiles('content/widgets/interactive/*/meta.ts'),
+        ...await getFiles('content/widgets/repeaters/*/meta.ts'),
+      ]
+
+      const violations: string[] = []
+
+      for (const file of allMetas) {
+        const content = await readFile(file)
+        const triggersMatch = content.match(/triggers:\s*\[([^\]]*)\]/)
+        if (!triggersMatch) continue
+
+        // Extract trigger strings
+        const triggers = triggersMatch[1].match(/'([^']+)'/g)?.map(s => s.slice(1, -1))
+          ?? triggersMatch[1].match(/"([^"]+)"/g)?.map(s => s.slice(1, -1))
+          ?? []
+
+        for (const trigger of triggers) {
+          if (!VALID_TRIGGER_EVENTS.includes(trigger)) {
+            violations.push(`${relativePath(file)}: invalid trigger "${trigger}" (valid: ${VALID_TRIGGER_EVENTS.join(', ')})`)
+          }
+        }
+      }
+
+      expect(violations, `Invalid widget triggers:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+  })
+
+  describe('Section requiredOverlays validation', () => {
+    it('requiredOverlays reference valid chrome pattern IDs', async () => {
+      const patternRegistryPath = path.join(ENGINE, 'content/chrome/pattern-registry.ts')
+      const registryContent = await readFile(patternRegistryPath)
+
+      // Extract pattern IDs from registry (keys of chromePatternRegistry object)
+      const patternIds = Array.from(registryContent.matchAll(/^\s+(\w+):\s*\{/gm))
+        .map(m => m[1])
+
+      const metaFiles = await getFiles('content/sections/patterns/*/meta.ts')
+      const violations: string[] = []
+
+      for (const file of metaFiles) {
+        const content = await readFile(file)
+        const overlaysMatch = content.match(/requiredOverlays:\s*\[([^\]]*)\]/)
+        if (!overlaysMatch) continue
+
+        const overlays = overlaysMatch[1].match(/'([^']+)'/g)?.map(s => s.slice(1, -1))
+          ?? overlaysMatch[1].match(/"([^"]+)"/g)?.map(s => s.slice(1, -1))
+          ?? []
+
+        for (const overlay of overlays) {
+          if (!patternIds.includes(overlay)) {
+            violations.push(`${relativePath(file)}: requiredOverlays references unknown pattern "${overlay}" (valid: ${patternIds.join(', ')})`)
+          }
+        }
+      }
+
+      expect(violations, `Invalid requiredOverlays references:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+  })
+
+  describe('defaultDecorators validation', () => {
+    it('defaultDecorators reference valid decorator IDs', async () => {
+      const allMetas = [
+        ...await getFiles('content/widgets/primitives/*/meta.ts'),
+        ...await getFiles('content/widgets/layout/*/meta.ts'),
+        ...await getFiles('content/widgets/interactive/*/meta.ts'),
+        ...await getFiles('content/widgets/repeaters/*/meta.ts'),
+        ...await getFiles('content/sections/patterns/*/meta.ts'),
+        ...await getFiles('content/sections/patterns/*/components/*/meta.ts'),
+      ]
+
+      // Get valid decorator IDs from the preset files
+      const decoratorPresets = await getFiles('content/decorators/presets/*.ts')
+      const validIds: string[] = []
+      for (const file of decoratorPresets) {
+        const content = await readFile(file)
+        const idMatch = content.match(/id:\s*['"]([^'"]+)['"]/)
+        if (idMatch) validIds.push(idMatch[1])
+      }
+
+      const violations: string[] = []
+
+      for (const file of allMetas) {
+        const content = await readFile(file)
+        const decoratorsMatch = content.match(/defaultDecorators:\s*\[([\s\S]*?)\]/)
+        if (!decoratorsMatch) continue
+
+        // Extract decorator ref IDs from the array
+        const refIds = Array.from(decoratorsMatch[1].matchAll(/id:\s*['"]([^'"]+)['"]/g))
+          .map(m => m[1])
+
+        for (const refId of refIds) {
+          if (!validIds.includes(refId)) {
+            violations.push(`${relativePath(file)}: defaultDecorators references unknown decorator "${refId}" (valid: ${validIds.join(', ')})`)
+          }
+        }
+      }
+
+      expect(violations, `Invalid defaultDecorators references:\n${violations.join('\n')}`).toHaveLength(0)
     })
   })
 

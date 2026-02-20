@@ -93,3 +93,84 @@ Read the relevant spec before implementing any component.
 | Create a preset | [specs/components/preset/preset.spec.md](specs/components/preset/preset.spec.md) |
 | Know folder layout | [specs/reference/folders.spec.md](specs/reference/folders.spec.md) |
 | See what to avoid | [specs/patterns/anti-patterns.spec.md](specs/patterns/anti-patterns.spec.md) |
+
+---
+
+## Implementing a Section from Figma
+
+When the user designs a section in Figma and asks you to implement it, follow this workflow.
+
+### 1. Read the Figma frame
+
+Use the Figma MCP tools (`get_design_context`, `get_screenshot`) to inspect the frame. Identify the overall layout, visual hierarchy, and content elements.
+
+### 2. Identify the layout structure
+
+Map the visual arrangement to engine layout widgets:
+- Vertical stack → `Stack`
+- Horizontal row → `Flex`
+- Grid of items → `Grid`
+- Two-panel layout → `Split`
+- Full-width wrapper → `Container` or `Box`
+
+### 3. Map Figma elements to existing widgets
+
+| Figma Element | Engine Widget | Notes |
+|---------------|--------------|-------|
+| Text layers | `Text` | Use `as` scale: `display`, `h1`, `h2`, `h3`, `p`, `small` |
+| Images / rectangles with fills | `Image` | |
+| Videos | `Video` or `VideoPlayer` | |
+| Buttons | `Button` | Check variant: `primary`, `secondary`, `ghost` |
+| Links / clickable text | `Link` | |
+| Grouped items | Layout widgets | `Stack`, `Flex`, `Grid` |
+| Repeated items | `__repeat` or scoped repeater | Use `__repeat` for simple cases, scoped widget for stateful |
+| Icons | `Icon` | |
+
+### 4. Map Figma variables to CSS variables
+
+Every visual property must use theme tokens. Map from the Figma variable collections:
+
+| Figma Variable | CSS Variable |
+|----------------|-------------|
+| `colors/*` | `var(--text-primary)`, `var(--accent)`, `var(--color-primary)`, etc. |
+| `type/font-title` | `var(--font-title)` |
+| `type/font-paragraph` | `var(--font-paragraph)` |
+| `type/scale-*` | `var(--font-size-display)` through `var(--font-size-small)` |
+| `spacing/*` | `var(--spacing-xs)` through `var(--spacing-2xl)` |
+| `radius/*` | `var(--radius-sm)`, `var(--radius-md)`, `var(--radius-lg)` |
+| `shadow/*` | `var(--shadow-sm)`, `var(--shadow-md)`, `var(--shadow-lg)` |
+| `motion/*` | `var(--duration-normal)`, `var(--ease-default)`, etc. |
+
+If a Figma element uses a hardcoded color/size instead of a variable, find the closest theme token.
+
+Full mapping table: [theme-contract.spec.md](specs/reference/theme-contract.spec.md#figma--css-variable-mapping)
+
+### 5. Create the section
+
+1. **`types.ts`** — Define the props interface with all CMS-configurable options
+2. **`meta.ts`** — Section metadata with settings (type, label, default for each prop)
+3. **`index.ts`** — Factory function `create{Section}Section(props)` composing widgets
+4. **`preview.ts`** — Preview props for Storybook
+5. **`styles.css`** — Section-specific CSS using only theme variables
+6. **`{Section}.stories.tsx`** — Storybook story
+
+### 6. Theme wiring checklist
+
+Before considering the section done, verify:
+- [ ] All colors use CSS variables (no hardcoded hex/rgb/hsl)
+- [ ] All font-family uses `var(--font-title)`, `var(--font-paragraph)`, or `var(--font-ui)`
+- [ ] All font-size uses `var(--font-size-*)` scale
+- [ ] All spacing uses `var(--spacing-*)` tokens
+- [ ] Section padding uses `var(--spacing-section-x)` / `var(--spacing-section-y)`
+- [ ] All border-radius uses `var(--radius-*)`
+- [ ] All shadows use `var(--shadow-*)`
+- [ ] All transitions use `var(--duration-*) var(--ease-*)`
+- [ ] Responsive sizing uses `cqw`/`cqh`, not `vw`/`vh`
+
+### 7. Add settings for CMS control
+
+Any visual option the user should be able to toggle belongs in `meta.ts` settings:
+- Background color choices
+- Layout variants (e.g., `layout: 'centered' | 'split'`)
+- Content visibility toggles
+- Spacing overrides

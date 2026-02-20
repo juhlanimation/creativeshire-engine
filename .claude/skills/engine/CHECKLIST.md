@@ -1,7 +1,7 @@
 # Component Type Checklists
 
 Comprehensive validation checklists for all Creativeshire Engine component types.
-**Verified against codebase on 2026-02-04.**
+**Verified against codebase on 2026-02-20.**
 
 ---
 
@@ -12,9 +12,8 @@ Comprehensive validation checklists for all Creativeshire Engine component types
 | **Primitive** | `widgets/primitives/` | index.tsx, types.ts, styles.css, meta.ts | widgetRegistry |
 | **Layout** | `widgets/layout/` | index.tsx, types.ts, styles.css, meta.ts | widgetRegistry |
 | **Interactive** | `widgets/interactive/` | index.tsx, types.ts, meta.ts, styles.css? | widgetRegistry |
-| **Pattern** | `widgets/patterns/` | index.ts, types.ts, meta.ts | NOT registered |
 | **Section** | `sections/patterns/` | index.ts, types.ts, meta.ts | NOT registered |
-| **Region** | `chrome/regions/` | index.tsx, types.ts, styles.css, meta.ts | chromeRegistry |
+| **Chrome Pattern** | `chrome/patterns/` | index.ts, types.ts, meta.ts | patternRegistry |
 | **Overlay** | `chrome/overlays/` | index.tsx, types.ts, styles.css?, meta.ts | chromeRegistry |
 | **Behaviour** | `behaviours/{trigger}/` | {name}.ts | behaviourRegistry |
 | **Effect** | `effects/` | {mechanism}.css | index.css |
@@ -94,7 +93,7 @@ export default defineMeta<FlexProps>({
 })
 ```
 
-**Current layouts:** Flex, Box, Stack, Grid, Split, Container
+**Current layouts:** Flex, Box, Stack, Grid, Split, Container, Marquee
 
 ---
 
@@ -144,62 +143,11 @@ if (isBindingExpression(props.items)) {
 }
 ```
 
-**Current interactive:** Video, VideoPlayer, ContactPrompt, ExpandableGalleryRow, GalleryThumbnail, HeroRoles, LogoMarquee, FeaturedProjectsGrid
+**Current interactive:** Video, VideoPlayer, EmailCopy
 
 ---
 
-## 4. WIDGETS - Patterns (Factory Functions)
-
-**Location:** `engine/content/widgets/patterns/{PascalCaseName}/`
-
-### Required Files
-- [ ] `index.ts` - Factory function returning `WidgetSchema` (NO .tsx)
-- [ ] `types.ts` - Config interface
-- [ ] `meta.ts` - Component metadata with `component: false`
-- [ ] NO `styles.css` (patterns don't have styling)
-
-### Validation Rules
-- [ ] Returns `WidgetSchema` object with `type:` field
-- [ ] No JSX or React imports
-- [ ] No React component definition
-- [ ] Composes existing primitives and layouts
-- [ ] Function name: `create{PatternName}(config)`
-
-### Registration
-- [ ] NOT registered in `widgetRegistry` (patterns are factories)
-- [ ] Exported from `engine/content/widgets/patterns/index.ts`
-
-### Meta.ts Structure
-```typescript
-export default defineMeta<ProjectCardConfig>({
-  id: 'ProjectCard',
-  category: 'pattern',
-  component: false,  // KEY: Factory function, not React component
-  // ... rest
-})
-```
-
-### Factory Return Pattern
-```typescript
-export function createProjectCard(config: ProjectCardConfig): WidgetSchema {
-  return {
-    id: config.id ?? 'project-card',
-    type: 'Flex',
-    className: 'project-card',
-    props: { align: 'start' },
-    widgets: [
-      { type: 'Box', widgets: [...] },
-      { type: 'Box', widgets: [...] }
-    ]
-  }
-}
-```
-
-**Current patterns:** ProjectCard, LogoLink
-
----
-
-## 5. SECTIONS - Patterns
+## 4. SECTIONS - Patterns
 
 **Location:** `engine/content/sections/patterns/{PascalCaseName}/`
 
@@ -231,6 +179,30 @@ export default defineMeta<HeroProps>({
 })
 ```
 
+### Theme Wiring (MANDATORY for all sections)
+
+Every section must use theme CSS variables for all visual properties. This ensures sections re-skin correctly when switching themes.
+
+- [ ] All colors use CSS variables: `--text-primary`, `--text-secondary`, `--accent`, `--color-primary`, etc.
+- [ ] All font-family uses: `var(--font-title)`, `var(--font-paragraph)`, or `var(--font-ui)`
+- [ ] All font-size uses scale: `var(--font-size-display)` through `var(--font-size-small)`
+- [ ] All spacing uses tokens: `var(--spacing-xs)` through `var(--spacing-2xl)`
+- [ ] Section padding uses: `var(--spacing-section-x)` and `var(--spacing-section-y)`
+- [ ] All border-radius uses: `var(--radius-sm)`, `var(--radius-md)`, `var(--radius-lg)`
+- [ ] All shadows use: `var(--shadow-sm)`, `var(--shadow-md)`, `var(--shadow-lg)`
+- [ ] All transitions use: `var(--duration-normal) var(--ease-default)` (or fast/slow variants)
+- [ ] Container query units (`cqw`/`cqh`) for responsive sizing, NOT `vw`/`vh`
+
+**NEVER hardcode:**
+- Colors (no `#fff`, no `rgb()`, no `hsl()`)
+- Font families (no `'Inter'`, no `sans-serif`)
+- Font sizes (no `16px`, no `1.2rem`)
+- Spacing (no `24px`, no `2rem`) — except structural layout like `width: 50%`, `aspect-ratio: 16/9`
+
+**Allowed hardcoded values:** structural layout (`width: 50%`, `grid-template-columns: 1fr 1fr`), container query breakpoints (`@container (min-width: 768px)`), line-height, max-width constraints, z-index.
+
+See [theme-contract.spec.md](specs/reference/theme-contract.spec.md) for the full variable reference.
+
 ### Binding + __repeat Pattern
 ```typescript
 if (isBindingExpression(props.projects)) {
@@ -248,45 +220,30 @@ if (isBindingExpression(props.projects)) {
 }
 ```
 
-**Current sections:** Hero, About, FeaturedProjects, OtherProjects
+**Current sections:** HeroVideo, HeroTitle, AboutBio, AboutCollage, ContentPricing, ProjectCompare, ProjectExpand, ProjectFeatured, ProjectGallery, ProjectShowcase, ProjectStrip, ProjectTabs, ProjectVideoGrid, TeamShowcase
 
 ---
 
-## 6. CHROME - Regions
+## 5. CHROME - Patterns (Factory Functions)
 
-**Location:** `engine/content/chrome/regions/{PascalCaseName}/`
+**Location:** `engine/content/chrome/patterns/{PascalCaseName}/`
 
 ### Required Files
-- [ ] `index.tsx` - React component
-- [ ] `types.ts` - Props interface
-- [ ] `styles.css` - Region styling
-- [ ] `meta.ts` - Component metadata
+- [ ] `index.ts` - Factory function returning region schema
+- [ ] `types.ts` - Config interface
+- [ ] `meta.ts` - Pattern metadata with `providesActions`
 
 ### Validation Rules
-- [ ] React components (can have state/hooks)
-- [ ] Appears on every page (header, footer, sidebar)
-- [ ] L1 only (no imports from `experience/`)
-- [ ] Generic - no site-specific content
+- [ ] Factory pattern: composes widgets into region layout
+- [ ] No React components (uses widget schemas)
+- [ ] Declares `providesActions` for action system integration
 
 ### Registration
-- [ ] Exported from `engine/content/chrome/regions/index.ts`
-- [ ] Added to `engine/content/chrome/registry.ts`
-
-### Meta.ts Structure
-```typescript
-export default defineMeta<FooterProps>({
-  id: 'Footer',
-  category: 'region',
-  component: true,
-  // ... rest
-})
-```
-
-**Current regions:** Footer
+- [ ] Registered in `engine/content/chrome/pattern-registry.ts`
 
 ---
 
-## 7. CHROME - Overlays
+## 6. CHROME - Overlays
 
 **Location:** `engine/content/chrome/overlays/{PascalCaseName}/`
 
@@ -318,7 +275,7 @@ export default defineMeta<ModalProps>({
 })
 ```
 
-**Current overlays:** Modal (ModalRoot), CursorLabel, SlideIndicators, NavTimeline
+**Current overlays:** CursorLabel, FixedCard, Modal (ModalRoot), NavTimeline, SlideIndicators
 
 ---
 
@@ -327,11 +284,13 @@ export default defineMeta<ModalProps>({
 **Location:** `engine/experience/behaviours/{trigger}/{kebab-case-name}.ts`
 
 ### Trigger Folders
-- `scroll/` - Scroll-based (progress, direction, velocity)
+- `scroll/` - Scroll-based (progress, direction, velocity, collapse, cover-progress)
 - `hover/` - Hover state (--hover: 0|1)
 - `visibility/` - IntersectionObserver (--visible: 0|1)
 - `animation/` - Continuous/looping (marquee, pulse)
 - `interaction/` - Click/tap (--active: 0|1)
+- `intro/` - Intro-phase behaviours (chrome-reveal, content-reveal, text-reveal, step, scroll-indicator)
+- `video/` - Video frame tracking
 
 ### Required Structure
 - [ ] `{trigger}/{name}.ts` - Behaviour file
@@ -368,7 +327,7 @@ export default scrollFade
 - [ ] Self-registers via `registerBehaviour(behaviour)`
 - [ ] Import triggers registration in `engine/experience/behaviours/index.ts`
 
-**Current behaviours:** scroll/fade, scroll/fade-out, scroll/progress, scroll/color-shift, scroll/image-cycle, hover/reveal, hover/scale, hover/expand, visibility/fade-in, animation/marquee, interaction/toggle
+**Current behaviours:** scroll/collapse, scroll/color-shift, scroll/cover-progress, scroll/fade, scroll/fade-out, scroll/image-cycle, scroll/progress, hover/expand, hover/reveal, hover/scale, visibility/center, visibility/fade-in, animation/marquee, interaction/toggle, intro/chrome-reveal, intro/content-reveal, intro/scroll-indicator, intro/step, intro/text-reveal, video/frame
 
 ---
 
@@ -416,7 +375,7 @@ export default scrollFade
 ### Registration
 - [ ] Imported in `effects/index.css`
 
-**Current effects:** fade.css, transform/scale.css, transform/slide.css, mask/wipe.css, mask/reveal.css, emphasis/spin.css, color-shift.css, overlay-darken.css, marquee-scroll.css
+**Current effects:** color-shift/color-shift.css, emphasis/spin.css, emphasis/pulse.css, fade/fade.css, marquee/marquee-scroll.css, mask/wipe.css, mask/reveal.css, overlay/overlay-darken.css, reveal/clip-path.css, transform/scale.css, transform/slide.css
 
 ---
 
@@ -458,7 +417,7 @@ export function getDriver(container: HTMLElement | null): ScrollDriver
 export function releaseDriver(container: HTMLElement | null): void
 ```
 
-**Current drivers:** ScrollDriver, MomentumDriver, getDriver, SmoothScrollProvider, useScrollFadeDriver, useGsapReveal, gsap/transitions/*
+**Current drivers:** ScrollDriver, MomentumDriver, getDriver, LenisSmoothScrollProvider, SmoothScrollProvider, SmoothScrollContext, ScrollLockContext, useScrollFadeDriver, useSmoothScrollContainer
 
 ---
 
@@ -520,46 +479,44 @@ export function useScrollProgress({
 **Location:** `engine/presets/{kebab-case-name}/`
 
 ### Required Files
-- [ ] `index.ts` - Main preset export (`{name}Preset: SitePreset`)
-- [ ] `site.ts` - Experience configuration
-- [ ] `pages/index.ts` - Page templates barrel
-- [ ] `pages/{pageName}.ts` - Individual page schemas
-- [ ] `chrome/index.ts` - Chrome configuration barrel
-- [ ] `chrome/{region|overlay}.ts` - Chrome configs
+- [ ] `index.ts` - Main preset export (`{name}Preset: SitePreset`) + `registerPreset()` call
+- [ ] `pages/home.ts` - Home page template
+- [ ] `content-contract.ts` - Content contract defining required content fields
 
 ### Validation Rules
 - [ ] kebab-case folder name
 - [ ] Uses binding expressions `{{ content.xxx }}` for all content
 - [ ] Site-specific styling ONLY here (not in engine components)
-- [ ] Chrome config uses widget schemas (not component references)
+- [ ] Chrome config uses chrome pattern factories (not component references)
+- [ ] Registers via `registerPreset()` with metadata
 
 ### Preset Structure
 ```typescript
-export const bojuhlPreset: SitePreset = {
+export const noirPreset: SitePreset = {
   theme: {
+    colorTheme: 'contrast',
     scrollbar: { /* ... */ },
     smoothScroll: { /* ... */ },
-    typography: { /* ... */ },
-    sectionTransition: { /* ... */ }
   },
-  experience: experienceConfig,
+  experience: { type: 'cover-scroll' },
   chrome: {
     regions: {
-      header: 'hidden',
-      footer: footerConfig
+      footer: createContactFooterRegion({ /* ... */ })
     },
     overlays: {
-      floatingContact: floatingContactConfig,
-      modal: { component: 'ModalRoot' }
+      cursorTracker: createCursorTrackerOverlay({ /* ... */ }),
+      modal: createVideoModalOverlay()
     }
   },
   pages: {
     home: homePageTemplate
   }
 }
+
+registerPreset(noirPreset, noirMeta)
 ```
 
-**Current presets:** bojuhl
+**Current presets:** noir, prism, loft, test-multipage
 
 ---
 

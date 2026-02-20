@@ -8,13 +8,15 @@ Structure:
 ```
 engine/
 ├── content/          # L1: Renders once
-│   ├── widgets/      # primitives/, layout/, composite/
-│   ├── sections/     # patterns/
-│   └── chrome/       # regions/, overlays/
+│   ├── widgets/      # primitives/, layout/, interactive/, repeaters/
+│   ├── sections/     # patterns/ (with components/ for scoped widgets)
+│   ├── chrome/       # patterns/, overlays/
+│   └── actions/      # pub/sub, scanner, resolver
 ├── experience/       # L2: Animates 60fps
 │   ├── behaviours/   # Named by TRIGGER
 │   ├── effects/      # Named by MECHANISM
-│   ├── drivers/      # Infrastructure
+│   ├── drivers/      # Continuous: CSS vars at 60fps (scroll, hover)
+│   ├── timeline/     # Discrete: play → complete (EffectTimeline, GSAP reveals)
 │   └── experiences/  # Experience definitions
 ├── presets/          # Templates (copied to site/)
 ├── renderer/         # Schema → React

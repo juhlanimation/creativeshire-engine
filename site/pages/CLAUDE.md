@@ -22,6 +22,6 @@ PageSchema structure:
   id: 'about',
   slug: '/about',
   head: { title: '...', description: '...' },
-  sections: [ createAboutSection({...}) ]
+  sections: [ createAboutBioSection({...}) ]
 }
 ```

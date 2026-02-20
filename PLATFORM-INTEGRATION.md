@@ -299,10 +299,10 @@ interface WidgetSchema {
 | promptText | string | Text input, default: "How can I help you?" |
 | showPrompt | boolean | Toggle, default: true |
 
-**ExpandableGalleryRow**
+**ExpandRowImageRepeater**
 | Field | Type | Control |
 |-------|------|---------|
-| projects | GalleryProject[] | List editor (required) |
+| projects | ExpandRowItem[] | List editor (required) |
 | height | string | Text + unit, default: '32rem' |
 | gap | string | Text + unit, default: '4px' |
 | expandedWidth | string | Text + unit, default: '32rem' |
@@ -310,7 +310,7 @@ interface WidgetSchema {
 | cursorLabel | string | Text, default: 'WATCH' |
 | modalAnimationType | 'wipe-left'\|'wipe-right'\|'expand' | Select |
 
-**GalleryProject** (sub-editor)
+**ExpandRowItem** (sub-editor)
 | Field | Type | Control |
 |-------|------|---------|
 | id | string | Auto-generated |
@@ -356,8 +356,8 @@ on?: {
 }
 ```
 
-Available actions:
-- `open-video-modal` - Opens video in modal
+Available actions (format: `{overlayKey}.{verb}`):
+- `modal.open` - Opens video in modal
 - `navigate-to-project` - Navigate to project page
 - `copy-to-clipboard` - Copy text
 

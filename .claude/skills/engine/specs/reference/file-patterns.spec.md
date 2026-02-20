@@ -558,8 +558,8 @@ Components use **folder-based organization** with `index.tsx` entry points:
 | Behaviour | `behaviours/{name}/` | `index.ts` | `behaviours/depth-layer/index.ts` |
 | Mode | `modes/{name}/` | `index.ts` | `modes/parallax/index.ts` |
 | Preset | `presets/{name}/` | `index.ts` | `presets/showcase/index.ts` |
-| Chrome Region | `chrome/regions/` | `{Name}.tsx` | `chrome/regions/Header.tsx` |
-| Chrome Overlay | `chrome/overlays/` | `{Name}.tsx` | `chrome/overlays/Cursor.tsx` |
+| Chrome Pattern | `chrome/patterns/{Name}/` | `index.ts` | `chrome/patterns/FixedNav/index.ts` |
+| Chrome Overlay | `chrome/overlays/{Name}/` | `index.tsx` | `chrome/overlays/Modal/index.tsx` |
 | Driver | `drivers/` | `{Name}Driver.ts` | `drivers/ScrollDriver.ts` |
 | Trigger | `triggers/` | `use{Name}.ts` | `triggers/useScrollProgress.ts` |
 

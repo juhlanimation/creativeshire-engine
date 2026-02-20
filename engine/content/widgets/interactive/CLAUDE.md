@@ -8,22 +8,14 @@ Interactive widgets are React components (not factory functions) because they re
 - Event handling (hover, click, keyboard)
 - Multiple render modes
 
-## Interactive vs Patterns
-
-| Interactive (this folder) | Patterns (../patterns/) |
-|---------------------------|-------------------------|
-| React components | Factory functions |
-| Return JSX | Return `WidgetSchema` |
-| Uses hooks, refs, effects | No hooks, no state |
-| Complex behavior | Declarative composition |
-
-## Examples
+## Current Global Interactive Widgets
 
 - **Video** - hover-play mode, visibility playback, modal integration
 - **VideoPlayer** - playback controls, scrubber, volume, fullscreen
-- **ContactPrompt** - copy-to-clipboard, flip animation
-- **ExpandableGalleryRow** - coordinated hover expansion
-- **GalleryThumbnail** - expand/collapse with metadata
+- **EmailCopy** - copy-to-clipboard, flip animation
+
+Single-use interactive widgets should be section-scoped, not global.
+See `sections/patterns/{Section}/components/` for scoped widget examples.
 
 ## Colocated Hooks
 
@@ -42,7 +34,7 @@ VideoPlayer/
 
 ## Before Creating
 
-1. Does this require React hooks? (if not, use patterns/)
+1. Does this require React hooks?
 2. Is the name generic? (not site-specific)
 3. Are all hooks colocated with the component?
 4. Does meta.ts have `component: true`?

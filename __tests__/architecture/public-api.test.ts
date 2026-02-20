@@ -142,7 +142,6 @@ describe('Public API Validation', () => {
       // Each entry maps to the parent subpath that re-exports its contents.
       const RE_EXPORTED_BY_PARENT: Record<string, string> = {
         // experience sub-barrels → re-exported by ./experience
-        'experience/actions': './experience',
         'experience/drivers': './experience',
         'experience/experiences': './experience',
         'experience/lifecycle': './experience',
@@ -152,21 +151,23 @@ describe('Public API Validation', () => {
         // intro sub-barrels → re-exported by ./intro
         'intro/intros': './intro',
         'intro/patterns': './intro',
+        'intro/sequences': './intro',
         'intro/triggers': './intro',
         // content sub-barrels → re-exported by parent content barrel
+        'content/actions': './content/chrome',
         'content/chrome/overlays': './content/chrome',
         'content/widgets/interactive': './content/widgets',
         'content/widgets/layout': './content/widgets',
         'content/widgets/primitives': './content/widgets',
-        'content/widgets/patterns': './content/widgets',
         'content/sections/patterns': './content/sections',
         // interface sub-barrels
         'interface/validation': './interface',
         // renderer sub-barrels
         'renderer/hooks': './renderer',
-        // driver sub-barrels
-        'experience/drivers/gsap': './experience',
-        'experience/drivers/gsap/transitions': './experience',
+        // timeline sub-barrels
+        'experience/timeline': './experience',
+        'experience/timeline/gsap': './experience',
+        'experience/timeline/gsap/transitions': './experience',
         'experience/transitions/configs': './experience',
       }
 

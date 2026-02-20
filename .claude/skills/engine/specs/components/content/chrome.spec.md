@@ -20,162 +20,115 @@ Chrome provides persistent UI that exists outside page content. Regions (header,
 
 ```
 engine/content/chrome/
-├── Chrome.tsx           # Orchestrator component
 ├── types.ts             # Chrome types and interfaces
-├── styles.css           # Base chrome styles
-├── regions/
-│   ├── Header.tsx
-│   ├── Footer.tsx
-│   └── Sidebar.tsx
-├── overlays/
-│   ├── Cursor.tsx
-│   ├── Loader.tsx
-│   └── ModalContainer.tsx
+├── registry.ts          # Overlay component registry
+├── pattern-registry.ts  # Chrome pattern metadata registry
+├── patterns/            # Factory functions → WidgetSchema (regions AND overlays)
+│   ├── MinimalNav/      # Header pattern
+│   ├── FixedNav/        # Header pattern
+│   ├── CenteredNav/     # Header pattern
+│   ├── ContactFooter/   # Footer pattern
+│   ├── BrandFooter/     # Footer pattern
+│   ├── FloatingContact/ # Overlay pattern
+│   ├── CursorTracker/   # Overlay pattern
+│   └── VideoModal/      # Overlay pattern
+├── overlays/            # React components (need state)
+│   ├── CursorLabel/
+│   ├── Modal/
+│   ├── SlideIndicators/
+│   ├── NavTimeline/
+│   └── FixedCard/
 └── index.ts             # Barrel exports
 ```
 
-## Widget-based vs Component-based
+## Pattern Settings Principle
 
-Chrome supports two approaches. **Widget-based is preferred** for clean separation of concerns.
+Chrome patterns define **chrome-level layout** (positioning, overlay mode, constrained, direction) and **content props** (binding expressions for CMS data). Widget visual settings (blendMode, color) and behaviour options (flipDuration, fadeDuration) belong on the widget/behaviour metas, not on the chrome pattern meta.
 
-| Approach | Use When | Chrome Responsibility | Content Responsibility |
-|----------|----------|----------------------|------------------------|
-| **Widget-based** (preferred) | Simple overlays, reusable content | Positioning only | Widget handles content |
-| **Component-based** (complex) | Complex regions with internal logic | Everything | N/A |
+This mirrors section patterns: Hero doesn't re-declare Text font settings. FloatingContact doesn't re-declare ContactPrompt blend settings.
 
-### Widget-based (Preferred for Overlays)
+```
+Chrome Pattern Meta Settings:
+  ✅ Content props (promptText, email, navLinks) — same as section content
+  ✅ Chrome layout (overlay, position, constrained, direction, collapsible)
+  ❌ Widget visual settings (blendMode, color, fontSize)
+  ❌ Behaviour options (flipDuration, fadeDuration) — belong on the behaviour
+```
 
-Chrome = positioning. Widget = content. Clean separation.
+## Patterns-Only Architecture
+
+Regions (header, footer) use **widget-based patterns only** — factory functions that return WidgetSchema trees.
+This matches how sections work and keeps a single authoring model.
+
+Overlays may use either:
+- **Widget-based patterns** (e.g., FloatingContact) — ChromeRenderer handles positioning
+- **React components** (e.g., Modal, CursorLabel) — for overlays needing React state
+
+### Region Pattern Example
 
 ```typescript
-// site/config.ts - Widget-based overlay
-overlays: {
-  floatingContact: {
-    widget: {
-      id: 'contact-cta',
-      type: 'HoverReveal',
-      props: {
-        defaultContent: 'How can I help you?',
-        revealedContent: 'hello@example.com',
-        iconType: 'copy',
-        actionType: 'copy',
-      },
-    },
-    position: 'top-right',  // ChromeRenderer handles positioning
-  },
-}
-```
-
-**ChromeRenderer wraps widget in positioning container and portals to body:**
-```html
-<!-- Portaled to document.body -->
-<div class="chrome-overlay chrome-overlay--top-right">
-  <!-- Widget renders here -->
-</div>
-```
-
-### Transform Context Handling
-
-Chrome overlays use `position: fixed` for viewport-relative positioning. When rendered inside a CSS transform context (e.g., GSAP ScrollSmoother), fixed positioning breaks - the element becomes fixed relative to the transformed ancestor, not the viewport.
-
-**Solution:** ChromeRenderer portals widget-based overlays to `document.body`. This keeps them in the React tree (full context access) while escaping the DOM transform context.
-
-```
-React Tree (context flows):     DOM Tree (visual):
-───────────────────────────     ──────────────────
-SmoothScrollProvider            body
-  ChromeRenderer(overlays)        .chrome-overlay (portaled here)
-    WidgetRenderer ─────────────► position: fixed works correctly
-```
-
-**Key principle:** React tree = context tree. DOM tree = visual tree. Portals decouple them.
-
-Component-based overlays (like Modal) handle their own portals internally.
-
-### Component-based (For Complex Regions)
-
-Use for regions (Footer, Header) that have complex internal structure.
-
-```typescript
-// site/config.ts - Component-based region
-regions: {
-  footer: {
-    component: 'Footer',
-    props: {
-      navLinks: [...],
-      contactEmail: 'hello@example.com',
-    },
-  },
+// patterns/FixedNav/index.ts
+export function createFixedNavRegion(props: FixedNavProps): PresetRegionConfig {
+  return {
+    overlay: true,
+    widgets: [{
+      id: 'fixed-nav',
+      type: 'Flex',
+      className: 'header-chrome',
+      widgets: [
+        { id: 'header-brand', type: 'Box', ... },
+        { id: 'header-nav', type: 'Flex', ... },
+      ],
+    }],
+  }
 }
 ```
 
 ### Decision Guide
 
 ```
-Is it an overlay (floating element)?
-    │
-    ├─ YES → Use widget-based
-    │        (ChromeRenderer handles positioning)
-    │
-    └─ NO (region like header/footer)
-           │
-           ├─ Simple content? → Widget-based (widgets array)
-           │
-           └─ Complex with internal logic? → Component-based
+Is it a region (header/footer)?
+    └─ Always widget-based pattern (factory → WidgetSchema)
+
+Is it an overlay?
+    ├─ Needs React state? → Component (Modal, CursorLabel)
+    └─ Static/simple? → Widget-based pattern (FloatingContact)
 ```
 
 ## Interface
 
 ```typescript
-// chrome/types.ts
+// schema/chrome.ts
 export interface RegionSchema {
-  // Widget-based (preferred for simple regions)
   widgets?: WidgetSchema[]
-  // Component-based (for complex regions)
-  component?: string
-  props?: Record<string, SerializableValue>
-  // Behaviour for animation
-  behaviour?: string | BehaviourConfig
-  behaviourOptions?: Record<string, any>
+  style?: CSSProperties
+  constrained?: boolean
+  overlay?: boolean
+  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
+  direction?: 'horizontal' | 'vertical'
+  collapsible?: boolean
+  behaviour?: BehaviourConfig
+  behaviourOptions?: Record<string, SerializableValue>
+  disabledPages?: string[]
 }
 
 export interface OverlaySchema {
   trigger?: TriggerCondition
-  // Widget-based (preferred) - ChromeRenderer handles positioning
-  widget?: WidgetSchema
-  // Component-based (legacy) - component handles positioning
-  component?: string
+  widget?: WidgetSchema          // Widget-based
+  component?: string             // Component-based (for React state)
   props?: Record<string, SerializableValue>
-  // Position for widget-based overlays
   position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
-  behaviour?: string | BehaviourConfig
+  behaviour?: BehaviourConfig
+  disabledPages?: string[]
 }
 
 export interface ChromeSchema {
   regions: {
     header?: RegionSchema
     footer?: RegionSchema
-    sidebar?: RegionSchema
   }
   overlays?: Record<string, OverlaySchema>
 }
-
-export interface PageChromeOverrides {
-  regions?: {
-    header?: 'inherit' | 'hidden' | RegionSchema
-    footer?: 'inherit' | 'hidden' | RegionSchema
-    sidebar?: 'inherit' | 'hidden' | RegionSchema
-  }
-  overlays?: {
-    [key: string]: 'inherit' | 'hidden' | OverlaySchema
-  }
-}
-
-// chrome/regions/Header.tsx
-export default function Header(props: { schema: RegionSchema }): JSX.Element
-
-// chrome/overlays/Cursor.tsx
-export default function Cursor(props: { schema: OverlaySchema }): JSX.Element
 ```
 
 ## Rules
@@ -220,6 +173,44 @@ Renders content               Renders content (L1)
 CSS vars for animation        + Controls animation (L2)
 No experience imports         May import experience/
 ```
+
+## Action-Driven Overlays
+
+Overlays can be activated by the action system instead of CSS selectors or polling.
+
+### Pattern: `providesActions`
+
+Chrome pattern metas declare which actions they provide:
+
+```typescript
+// CursorTracker meta
+providesActions: ['{key}.show', '{key}.hide']
+
+// VideoModal meta
+providesActions: ['{key}.open']
+```
+
+The `{key}` template resolves to the overlay key at runtime. ChromeRenderer passes `overlayKey` to component-based overlays.
+
+### CursorLabel Activation
+
+CursorLabel uses action-based activation:
+- Widget dispatches `{overlayKey}.show` on mouseenter
+- Widget dispatches `{overlayKey}.hide` on mouseleave
+- CursorLabel registers these actions on mount
+- Position reads from experience store (`cursorX`, `cursorY`)
+
+For inline usage (e.g., ExpandRowImageRepeater renders CursorLabel directly), use the `active` prop to bypass the action system.
+
+### Section Required Overlays
+
+Section metas declare `requiredOverlays` to lock overlays in the authoring UI:
+
+```typescript
+requiredOverlays: ['VideoModal']
+```
+
+See: [action-system.spec.md](action-system.spec.md)
 
 ## Validation Rules
 
@@ -272,60 +263,37 @@ No experience imports         May import experience/
 
 ## Template
 
+### Region Pattern (widget-based)
+
 ```typescript
-// regions/Header.tsx
-import { WidgetRenderer } from '@/engine/renderer/WidgetRenderer'
-import type { RegionSchema } from '../types'
+// patterns/FixedNav/index.ts
+import type { PresetRegionConfig } from '../../../../presets/types'
+import type { FixedNavProps } from './types'
 import './styles.css'
 
-interface HeaderProps {
-  schema: RegionSchema
-}
-
-export default function Header({ schema }: HeaderProps) {
-  return (
-    <header className="header">
-      {schema.widgets.map((widget, index) => (
-        <WidgetRenderer key={widget.id ?? index} schema={widget} />
-      ))}
-    </header>
-  )
+export function createFixedNavRegion(props: FixedNavProps): PresetRegionConfig {
+  return {
+    overlay: true,
+    widgets: [{
+      id: 'fixed-nav',
+      type: 'Flex',
+      props: {},
+      className: 'header-chrome',
+      widgets: [
+        { id: 'header-brand', type: 'Box', props: {}, className: 'header-chrome__brand', widgets: [...] },
+        { id: 'header-nav', type: 'Flex', props: {}, className: 'header-chrome__nav', widgets: [...] },
+      ],
+    }],
+  }
 }
 ```
 
+### Overlay Component (React state)
+
 ```typescript
-// overlays/Cursor.tsx
-import { createPortal } from 'react-dom'
-import { WidgetRenderer } from '@/engine/renderer/WidgetRenderer'
-import type { OverlaySchema } from '../types'
-import './styles.css'
-
-interface CursorProps {
-  schema: OverlaySchema
-}
-
-export default function Cursor({ schema }: CursorProps) {
-  const content = (
-    <div className="cursor">
-      <WidgetRenderer schema={schema.widget} />
-    </div>
-  )
-
-  return createPortal(content, document.body)
-}
-```
-
-```css
-/* styles.css */
-.header {
-  transform: translateY(var(--header-y, 0));
-  opacity: var(--header-opacity, 1);
-}
-
-.cursor {
-  pointer-events: none;
-  transform: translate(var(--cursor-x, 0), var(--cursor-y, 0));
-  z-index: 9999;
+// overlays/CursorLabel/index.tsx
+export default function CursorLabel({ overlayKey, ...props }: CursorLabelProps) {
+  // Register actions, read store state, render UI
 }
 ```
 

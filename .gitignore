@@ -10,6 +10,7 @@ dist/
 .claude/settings.local.json
 .claude/logs/
 .claude/_material/
+.claude/plans/
 
 # IDE
 .vscode/
@@ -26,6 +27,14 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
+
+# Storybook
+storybook-static/
+build-storybook.log
+debug-storybook.log
+
+# Script outputs
+scripts/figma-sync-payload.json
 
 # Temporary
 nul

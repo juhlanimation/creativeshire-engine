@@ -18,7 +18,7 @@ export async function getFiles(pattern: string): Promise<string[]> {
   return fg(pattern, {
     cwd: ENGINE,
     absolute: true,
-    ignore: ['**/node_modules/**', '**/*.test.ts'],
+    ignore: ['**/node_modules/**', '**/*.test.ts', '**/*.stories.tsx'],
   })
 }
 
@@ -176,6 +176,22 @@ export function hasCalcWithVar(content: string): boolean {
   }
 
   return false
+}
+
+/**
+ * Check if a component folder has a Storybook story file (*.stories.tsx)
+ */
+export async function hasStoryFile(folderPath: string): Promise<boolean> {
+  const stories = await fg('*.stories.tsx', { cwd: folderPath })
+  return stories.length > 0
+}
+
+/**
+ * Get the story file path for a component folder, or null if none exists.
+ */
+export async function getStoryFile(folderPath: string): Promise<string | null> {
+  const stories = await fg('*.stories.tsx', { cwd: folderPath, absolute: true })
+  return stories[0] ?? null
 }
 
 /**
@@ -348,6 +364,117 @@ export function validateSettingsContent(content: string, context: string): strin
  * Validate registry completeness: every folder has a registry entry and vice versa.
  * Returns violations as strings.
  */
+/**
+ * Strip var() expressions from a CSS line, replacing with VAR placeholder.
+ * Handles nested parens: var(--a, rgba(0,0,0,0.1)) → VAR
+ * Handles nested var(): var(--a, var(--b, #fff)) → VAR
+ */
+export function stripVarExpressions(line: string): string {
+  let result = ''
+  let i = 0
+
+  while (i < line.length) {
+    // Look for 'var(' at current position
+    if (line.slice(i, i + 4) === 'var(') {
+      // Track paren depth to find matching close
+      let depth = 1
+      let j = i + 4
+      while (j < line.length && depth > 0) {
+        if (line[j] === '(') depth++
+        if (line[j] === ')') depth--
+        j++
+      }
+      result += 'VAR'
+      i = j
+    } else {
+      result += line[i]
+      i++
+    }
+  }
+
+  return result
+}
+
+/**
+ * Check if a trimmed CSS line is a comment
+ */
+export function isCSSComment(line: string): boolean {
+  return line.startsWith('/*') || line.startsWith('*') || line.startsWith('//')
+}
+
+/**
+ * Check if a trimmed CSS line is a custom property declaration (--name: value)
+ */
+export function isCustomPropertyDecl(line: string): boolean {
+  return /^\s*--[\w-]+\s*:/.test(line)
+}
+
+/**
+ * Scan CSS files for theme variable violations.
+ *
+ * @param filePattern - glob pattern relative to engine/ (e.g. 'content/**\/*.css')
+ * @param propertyTest - regex to match the CSS property of interest (e.g. /border-radius:/)
+ * @param violationTest - function that checks if a var()-stripped line has a violation
+ * @param skipPaths - path substrings to skip (in addition to global exclusions)
+ * @returns array of 'relative/path:line: content' strings
+ */
+export async function findThemeViolations(
+  filePattern: string,
+  propertyTest: RegExp,
+  violationTest: (strippedLine: string) => boolean,
+  skipPaths: string[] = [],
+): Promise<string[]> {
+  const files = await getFiles(filePattern)
+  const violations: string[] = []
+
+  // Global exclusions
+  const globalExclusions = [
+    'renderer/dev/DevToolsPanel/',
+    'experience/effects/',
+    'experience/experiences/',
+  ]
+
+  const allSkips = [...globalExclusions, ...skipPaths]
+
+  for (const file of files) {
+    const rel = relativePath(file)
+    if (allSkips.some(skip => rel.includes(skip))) continue
+
+    const content = await readFile(file)
+    const lines = content.split('\n')
+    let inBlockComment = false
+
+    for (let i = 0; i < lines.length; i++) {
+      const trimmed = lines[i].trim()
+
+      // Track block comments
+      if (inBlockComment) {
+        if (trimmed.includes('*/')) inBlockComment = false
+        continue
+      }
+      if (trimmed.startsWith('/*') && !trimmed.includes('*/')) {
+        inBlockComment = true
+        continue
+      }
+
+      // Skip single-line comments and custom property declarations
+      if (isCSSComment(trimmed)) continue
+      if (isCustomPropertyDecl(trimmed)) continue
+
+      // Check if line matches the property we're scanning for
+      if (!propertyTest.test(trimmed)) continue
+
+      // Strip var() expressions and test what remains
+      const stripped = stripVarExpressions(trimmed)
+      if (violationTest(stripped)) {
+        violations.push(`${rel}:${i + 1}: ${trimmed}`)
+      }
+    }
+  }
+
+  return violations
+}
+
 export function validateRegistryCompleteness(
   folderNames: string[],
   registryKeys: string[],

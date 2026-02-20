@@ -26,9 +26,9 @@ const COMPONENT_PATHS = [
   'content/widgets/primitives/*',
   'content/widgets/layout/*',
   'content/widgets/interactive/*',
-  'content/widgets/patterns/*',
+  'content/widgets/repeaters/*',
   'content/sections/patterns/*',
-  'content/chrome/regions/*',
+  'content/chrome/patterns/*',
   'content/chrome/overlays/*',
 ]
 

@@ -11,6 +11,7 @@
 
 import { describe, it, expect } from 'vitest'
 import { getFiles, readFile, relativePath } from './helpers'
+import { sectionRegistry } from '../../engine/content/sections/registry'
 
 describe('Preset Binding Expressions', () => {
   // Get all preset TypeScript files (excluding sample-content and content-contract which are metadata)
@@ -115,7 +116,6 @@ describe('Preset Binding Expressions', () => {
       'heading',
       'introText',
       'signature',
-      'promptText',
       'copyrightText',
       'bioParagraphs',
       'projects',
@@ -176,5 +176,62 @@ describe('Preset Binding Expressions', () => {
     }
 
     expect(violations, `Sections without labels:\n${violations.join('\n')}`).toHaveLength(0)
+  })
+
+  it('patternId values must reference registered section patterns', async () => {
+    const files = await getPresetFiles()
+    const violations: string[] = []
+    const registeredIds = Object.keys(sectionRegistry)
+
+    for (const file of files) {
+      if (!file.includes('/pages/') && !file.includes('\\pages\\')) continue
+      const content = await readFile(file)
+
+      // Find all patternId values in the file
+      const patternMatches = content.matchAll(/patternId:\s*['"`]([^'"`]+)['"`]/g)
+      for (const match of patternMatches) {
+        if (!registeredIds.includes(match[1])) {
+          violations.push(
+            `${relativePath(file)}: patternId '${match[1]}' is not registered in sectionRegistry`
+          )
+        }
+      }
+    }
+
+    expect(
+      violations,
+      `Invalid patternId references:\n${violations.join('\n')}`
+    ).toHaveLength(0)
+  })
+
+  it('sections using registered pattern factories must have patternId', async () => {
+    const violations: string[] = []
+
+    // Every registered factory must stamp patternId in its return value
+    const factoryFiles = await getFiles('content/sections/patterns/*/index.ts')
+
+    for (const id of Object.keys(sectionRegistry)) {
+      const factoryFile = factoryFiles.find(f => {
+        const normalized = f.replace(/\\/g, '/')
+        return normalized.includes(`/patterns/${id}/index.ts`)
+      })
+
+      if (!factoryFile) {
+        violations.push(`Factory file not found for pattern '${id}'`)
+        continue
+      }
+
+      const content = await readFile(factoryFile)
+      if (!content.includes(`patternId: '${id}'`) && !content.includes(`patternId: "${id}"`)) {
+        violations.push(
+          `${relativePath(factoryFile)}: create${id}Section() does not stamp patternId: '${id}' in its return value`
+        )
+      }
+    }
+
+    expect(
+      violations,
+      `Factory patternId violations:\n${violations.join('\n')}`
+    ).toHaveLength(0)
   })
 })

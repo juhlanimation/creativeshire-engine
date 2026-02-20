@@ -20,45 +20,6 @@ describe('Intro Sequence-Timed Pattern', () => {
     expect(await fileExists(triggerPath), 'useSequence.ts should exist').toBe(true)
   })
 
-  it('IntroOverlay component exists in chrome/overlays/', async () => {
-    const overlayPath = path.join(ENGINE, 'content', 'chrome', 'overlays', 'IntroOverlay')
-    expect(await fileExists(overlayPath), 'IntroOverlay folder should exist').toBe(true)
-    expect(await fileExists(path.join(overlayPath, 'index.tsx')), 'index.tsx should exist').toBe(true)
-    expect(await fileExists(path.join(overlayPath, 'types.ts')), 'types.ts should exist').toBe(true)
-  })
-
-  it('IntroOverlay is configured in preset intro config (not chrome overlays)', async () => {
-    // Bojuhl preset
-    const bojuhlSite = path.join(ENGINE, 'presets', 'bojuhl', 'site.ts')
-    const bojuhlContent = await readFile(bojuhlSite)
-    expect(bojuhlContent, 'bojuhl site.ts should have overlay in intro config').toContain("component: 'IntroOverlay'")
-
-    // Bishoy-gendi preset
-    const bgSite = path.join(ENGINE, 'presets', 'bishoy-gendi', 'site.ts')
-    const bgContent = await readFile(bgSite)
-    expect(bgContent, 'bishoy-gendi site.ts should have overlay in intro config').toContain("component: 'IntroOverlay'")
-  })
-
-  it('IntroOverlay is NOT in preset chrome overlays', async () => {
-    // Bojuhl preset
-    const bojuhlIndex = path.join(ENGINE, 'presets', 'bojuhl', 'index.ts')
-    const bojuhlContent = await readFile(bojuhlIndex)
-    expect(bojuhlContent, 'bojuhl should not have introOverlay in chrome').not.toContain('introOverlay')
-
-    // Bishoy-gendi chrome config
-    const bgChrome = path.join(ENGINE, 'presets', 'bishoy-gendi', 'chrome', 'index.ts')
-    const bgContent = await readFile(bgChrome)
-    expect(bgContent, 'bishoy-gendi should not have introOverlay in chrome').not.toContain('introOverlay')
-  })
-
-  it('TextMask widget exists in widgets/interactive/', async () => {
-    const widgetPath = path.join(ENGINE, 'content', 'widgets', 'interactive', 'TextMask')
-    expect(await fileExists(widgetPath), 'TextMask folder should exist').toBe(true)
-    expect(await fileExists(path.join(widgetPath, 'index.tsx')), 'index.tsx should exist').toBe(true)
-    expect(await fileExists(path.join(widgetPath, 'types.ts')), 'types.ts should exist').toBe(true)
-    expect(await fileExists(path.join(widgetPath, 'meta.ts')), 'meta.ts should exist').toBe(true)
-  })
-
   it('intro/step behaviour exists', async () => {
     const behaviourPath = path.join(ENGINE, 'experience', 'behaviours', 'intro', 'step', 'index.ts')
     expect(await fileExists(behaviourPath), 'intro/step/index.ts should exist').toBe(true)

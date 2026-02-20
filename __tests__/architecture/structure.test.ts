@@ -18,15 +18,6 @@
  *   ├── styles.css (expected - layout CSS)
  *   └── NO: hooks/, stores/
  *
- * COMPOSITES (two patterns):
- *   Factory Pattern (index.ts):
- *     ├── index.ts (returns WidgetSchema, no JSX)
- *     ├── types.ts
- *     └── NO: styles.css, React imports
- *   React Component Pattern (index.tsx):
- *     ├── index.tsx (for complex state: Video, VideoPlayer)
- *     ├── types.ts
- *     └── styles.css (allowed for React component composites)
  *
  * BEHAVIOURS: experience/behaviours/{trigger}/
  *   ├── index.ts (barrel)
@@ -42,8 +33,8 @@
  *   ├── index.ts (barrel)
  *   └── types.ts
  *
- * CHROME REGIONS: content/chrome/regions/{Name}/
- *   └── index.tsx (required)
+ * CHROME PATTERNS: content/chrome/patterns/{Name}/
+ *   └── index.ts (required)
  *
  * CHROME OVERLAYS: content/chrome/overlays/{Name}/
  *   └── index.tsx (required) - L1/L2 hybrid, may import from experience/
@@ -193,76 +184,46 @@ describe('Component Structure Validation', () => {
     })
   })
 
-  describe('Composite structure', () => {
-    it('each composite has index.tsx or index.ts', async () => {
-      const allFiles = await getFiles('content/widgets/composite/**/*.{ts,tsx}')
-      const folders = new Set<string>()
+  describe('Repeater structure', () => {
+    it('each repeater has index.tsx, types.ts, and meta.ts', async () => {
+      const folders = await getFolders('content/widgets/repeaters/*')
+      const missingIndex: string[] = []
+      const missingTypes: string[] = []
+      const missingMeta: string[] = []
 
-      for (const file of allFiles) {
-        const rel = relativePath(file)
-        const parts = rel.split('/')
-        if (parts.length >= 4 && !parts[3].includes('.')) {
-          folders.add(parts[3])
-        }
-      }
-
-      const missing: string[] = []
       for (const folder of folders) {
-        const indexTsx = path.join(ENGINE, 'content/widgets/composite', folder, 'index.tsx')
-        const indexTs = path.join(ENGINE, 'content/widgets/composite', folder, 'index.ts')
-        if (!(await fileExists(indexTsx)) && !(await fileExists(indexTs))) {
-          missing.push(`content/widgets/composite/${folder}/index.{ts,tsx}`)
+        if (!(await fileExists(path.join(folder, 'index.tsx')))) {
+          missingIndex.push(`${relativePath(folder)}/index.tsx`)
+        }
+        if (!(await fileExists(path.join(folder, 'types.ts')))) {
+          missingTypes.push(`${relativePath(folder)}/types.ts`)
+        }
+        if (!(await fileExists(path.join(folder, 'meta.ts')))) {
+          missingMeta.push(`${relativePath(folder)}/meta.ts`)
         }
       }
 
-      expect(missing, `Composites missing index file:\\n${missing.join('\\n')}`).toHaveLength(0)
+      expect(missingIndex, `Repeaters missing index.tsx:\n${missingIndex.join('\n')}`).toHaveLength(0)
+      expect(missingTypes, `Repeaters missing types.ts:\n${missingTypes.join('\n')}`).toHaveLength(0)
+      expect(missingMeta, `Repeaters missing meta.ts:\n${missingMeta.join('\n')}`).toHaveLength(0)
     })
 
-    /**
-     * Per widget-composite.spec.md: Two patterns exist:
-     * 1. Factory Pattern (index.ts) - NO CSS files allowed, returns WidgetSchema
-     * 2. React Component Pattern (index.tsx) - CAN have styles.css (Video, VideoPlayer)
-     *
-     * This test validates factory composites don't have CSS files.
-     */
-    describe('Factory composites have no CSS', () => {
-      it('factory composites (index.ts) do not have CSS files', async () => {
-        const allFiles = await getFiles('content/widgets/composite/**/*.{ts,tsx}')
-        const factoryFolders: string[] = []
+    it('repeater folder names follow [Layout][Content]Repeater convention', async () => {
+      const folders = await getFolders('content/widgets/repeaters/*')
+      const violations: string[] = []
 
-        // Identify factory composites (have index.ts, NOT index.tsx)
-        for (const file of allFiles) {
-          if (file.endsWith('index.ts') && !file.endsWith('index.tsx')) {
-            const rel = relativePath(file)
-            const parts = rel.split('/')
-            // Skip the barrel file (composite/index.ts)
-            if (parts.length >= 5 && parts[3] !== 'index.ts') {
-              const folder = parts[3]
-              // Verify this folder doesn't also have index.tsx (React component)
-              const tsxExists = allFiles.some(f =>
-                f.includes(`composite/${folder}/index.tsx`)
-              )
-              if (!tsxExists && !factoryFolders.includes(folder)) {
-                factoryFolders.push(folder)
-              }
-            }
-          }
+      for (const folder of folders) {
+        const name = path.basename(folder)
+        if (!/^[A-Z][a-zA-Z]+Repeater$/.test(name)) {
+          violations.push(`${name}: does not match [Layout][Content]Repeater convention`)
         }
+      }
 
-        const violations: string[] = []
-        for (const folder of factoryFolders) {
-          const cssFiles = await getFiles(`content/widgets/composite/${folder}/*.css`)
-          if (cssFiles.length > 0) {
-            violations.push(`${folder} is a factory composite but has CSS: ${cssFiles.map(f => relativePath(f)).join(', ')}`)
-          }
-        }
-
-        expect(violations, `Factory composites with CSS (factories return schema, not styled components):\\n${violations.join('\\n')}`).toHaveLength(0)
-      })
+      expect(violations, `Repeater naming violations:\n${violations.join('\n')}`).toHaveLength(0)
     })
 
-    it('composites do not have @keyframes in CSS (animations belong in L2 effects)', async () => {
-      const cssFiles = await getFiles('content/widgets/composite/**/*.css')
+    it('repeaters do not have @keyframes in CSS (animations belong in L2 effects)', async () => {
+      const cssFiles = await getFiles('content/widgets/repeaters/**/*.css')
       const violations: string[] = []
 
       for (const file of cssFiles) {
@@ -272,7 +233,12 @@ describe('Component Structure Validation', () => {
         }
       }
 
-      expect(violations, `@keyframes in composites (move to experience/effects/):\\n${violations.join('\\n')}`).toHaveLength(0)
+      expect(violations, `@keyframes in repeaters (move to experience/effects/):\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
+    it('repeaters folder has index.ts barrel', async () => {
+      const indexFiles = await getFiles('content/widgets/repeaters/index.ts')
+      expect(indexFiles.length, 'Missing repeaters/index.ts').toBeGreaterThan(0)
     })
   })
 
@@ -443,23 +409,83 @@ describe('Component Structure Validation', () => {
 
       expect(violations, `Section folders not PascalCase:\\n${violations.join('\\n')}`).toHaveLength(0)
     })
-  })
 
-  describe('Chrome structure', () => {
-    it('all chrome regions have types.ts', async () => {
-      const folders = await getFolders('content/chrome/regions/*')
-      const violations: string[] = []
+    it('each section pattern has styles.css', async () => {
+      const folders = await getFolders('content/sections/patterns/*')
+      const missing: string[] = []
 
       for (const folder of folders) {
-        const typesPath = path.join(folder, 'types.ts')
-        if (!(await fileExists(typesPath))) {
-          violations.push(`${relativePath(folder)} missing types.ts`)
+        const cssPath = path.join(folder, 'styles.css')
+        if (!(await fileExists(cssPath))) {
+          missing.push(`${relativePath(folder)}/styles.css`)
         }
       }
 
-      expect(violations, `Chrome regions missing types.ts:\n${violations.join('\n')}`).toHaveLength(0)
+      expect(missing, `Section patterns missing styles.css:\n${missing.join('\n')}`).toHaveLength(0)
     })
 
+    it('section components/ subdirectories contain index.tsx or index.ts', async () => {
+      const componentFolders = await getFolders('content/sections/patterns/*/components/*')
+      const missing: string[] = []
+
+      for (const folder of componentFolders) {
+        const hasTsx = await fileExists(path.join(folder, 'index.tsx'))
+        const hasTs = await fileExists(path.join(folder, 'index.ts'))
+        if (!hasTsx && !hasTs) {
+          missing.push(`${relativePath(folder)}/index.ts(x)`)
+        }
+      }
+
+      // Only assert if there are component folders (feature may not be used yet)
+      if (componentFolders.length > 0) {
+        expect(missing, `Section internal components missing index.ts(x):\n${missing.join('\n')}`).toHaveLength(0)
+      }
+    })
+
+    it('scoped widget registrations match parent section name', async () => {
+      const files = await getFiles('content/sections/patterns/*/components/*/index.tsx')
+      const violations: string[] = []
+
+      for (const file of files) {
+        const content = await readFile(file)
+        const rel = relativePath(file)
+        const parts = rel.split('/')
+        // parts: content/sections/patterns/SectionName/components/ComponentName/index.tsx
+        const sectionName = parts[3]
+
+        // Check if file registers a scoped widget
+        const registerMatch = content.match(/registerScopedWidget\s*\(\s*['"]([^'"]+)['"]/)
+        if (registerMatch) {
+          const scopedName = registerMatch[1]
+          if (!scopedName.startsWith(`${sectionName}__`)) {
+            violations.push(`${rel}: registered as '${scopedName}' but should start with '${sectionName}__'`)
+          }
+        }
+      }
+
+      if (violations.length > 0) {
+        expect(violations, `Scoped widget names don't match parent section:\n${violations.join('\n')}`).toHaveLength(0)
+      }
+    })
+
+    it('engine/styles.css imports all section pattern styles', async () => {
+      const folders = await getFolders('content/sections/patterns/*')
+      const engineCss = await readFile(path.join(ENGINE, 'styles.css'))
+      const missing: string[] = []
+
+      for (const folder of folders) {
+        const name = path.basename(folder)
+        const expectedImport = `content/sections/patterns/${name}/styles.css`
+        if (!engineCss.includes(expectedImport)) {
+          missing.push(expectedImport)
+        }
+      }
+
+      expect(missing, `engine/styles.css missing section pattern CSS imports:\n${missing.join('\n')}`).toHaveLength(0)
+    })
+  })
+
+  describe('Chrome structure', () => {
     it('all chrome overlays have types.ts', async () => {
       const folders = await getFolders('content/chrome/overlays/*')
       const violations: string[] = []
@@ -472,29 +498,6 @@ describe('Component Structure Validation', () => {
       }
 
       expect(violations, `Chrome overlays missing types.ts:\n${violations.join('\n')}`).toHaveLength(0)
-    })
-
-    it('each chrome region has index.tsx', async () => {
-      const allFiles = await getFiles('content/chrome/regions/**/*.tsx')
-      const folders = new Set<string>()
-
-      for (const file of allFiles) {
-        const rel = relativePath(file)
-        const parts = rel.split('/')
-        if (parts.length >= 4 && !parts[3].includes('.')) {
-          folders.add(parts[3])
-        }
-      }
-
-      const missing: string[] = []
-      for (const folder of folders) {
-        const indexPath = path.join(ENGINE, 'content/chrome/regions', folder, 'index.tsx')
-        if (!(await fileExists(indexPath))) {
-          missing.push(`content/chrome/regions/${folder}/index.tsx`)
-        }
-      }
-
-      expect(missing, `Chrome regions missing index.tsx:\\n${missing.join('\\n')}`).toHaveLength(0)
     })
 
     it('each chrome overlay has index.tsx', async () => {
@@ -521,9 +524,8 @@ describe('Component Structure Validation', () => {
     })
 
     it('chrome folders are PascalCase', async () => {
-      const regionFiles = await getFiles('content/chrome/regions/**/*.tsx')
       const overlayFiles = await getFiles('content/chrome/overlays/**/*.tsx')
-      const allFiles = [...regionFiles, ...overlayFiles]
+      const allFiles = [...overlayFiles]
 
       const folders = new Set<string>()
       for (const file of allFiles) {
@@ -735,26 +737,6 @@ describe('Component Structure Validation', () => {
       expect(violations).toHaveLength(0)
     })
 
-    it('all widget patterns have types.ts', async () => {
-      const folders = await getFolders('content/widgets/patterns/*')
-      const violations: string[] = []
-
-      for (const folder of folders) {
-        const typesPath = path.join(folder, 'types.ts')
-        const exists = await fileExists(typesPath)
-        if (!exists) {
-          violations.push(`${relativePath(folder)} missing types.ts`)
-        }
-      }
-
-      if (violations.length > 0) {
-        console.log('Missing types.ts files:')
-        violations.forEach((v) => console.log(`  - ${v}`))
-      }
-
-      expect(violations).toHaveLength(0)
-    })
-
     it('all section patterns have types.ts', async () => {
       const folders = await getFolders('content/sections/patterns/*')
       const violations: string[] = []
@@ -800,29 +782,6 @@ describe('Component Structure Validation', () => {
       expect(missing, `Presets missing index.ts:\\n${missing.join('\\n')}`).toHaveLength(0)
     })
 
-    it('each preset has pages/index.ts', async () => {
-      const allFiles = await getFiles('presets/*/pages/**/*.ts')
-      const presets = new Set<string>()
-
-      for (const file of allFiles) {
-        const rel = relativePath(file)
-        const parts = rel.split('/')
-        if (parts.length >= 2) {
-          presets.add(parts[1])
-        }
-      }
-
-      const missing: string[] = []
-      for (const preset of presets) {
-        const indexPath = path.join(ENGINE, 'presets', preset, 'pages', 'index.ts')
-        if (!(await fileExists(indexPath))) {
-          missing.push(`presets/${preset}/pages/index.ts`)
-        }
-      }
-
-      expect(missing, `Presets missing pages/index.ts:\\n${missing.join('\\n')}`).toHaveLength(0)
-    })
-
     it('preset folders are kebab-case', async () => {
       const allFiles = await getFiles('presets/**/*.ts')
       const presets = new Set<string>()
@@ -845,50 +804,49 @@ describe('Component Structure Validation', () => {
       expect(violations, `Preset folders not kebab-case:\\n${violations.join('\\n')}`).toHaveLength(0)
     })
 
-    it('each preset has site.ts', async () => {
-      const allFiles = await getFiles('presets/**/*.ts')
-      const presets = new Set<string>()
+    it('preset CSS does not style factory-generated section selectors', async () => {
+      // Factory-generated IDs that should be in section pattern CSS, not presets
+      const factorySelectors = [
+        '#hero',
+        '#hero-intro',
+        '#hero-scroll',
+        '#about',
+        '#about-mobile-bg',
+        '#about-content',
+        '#about-bio-column',
+        '#about-image-column',
+        '#about-gradient',
+        '#about-logos',
+        '#featured-projects',
+        '.featured-projects__content',
+        '.other-projects-section',
+        '.other-projects-header',
+        '.other-projects-heading',
+        '.other-projects-year-range',
+        '.project-gallery__video-area',
+        '.project-gallery__selector',
+        '.photo-collage',
+        '.photo-collage__text',
+        '.photo-collage__image',
+      ]
 
-      for (const file of allFiles) {
-        const rel = relativePath(file)
-        const parts = rel.split('/')
-        if (parts.length >= 2 && !parts[1].includes('.')) {
-          presets.add(parts[1])
+      const presetCssFiles = await getFiles('presets/**/*.css')
+      const violations: string[] = []
+
+      for (const file of presetCssFiles) {
+        const content = await readFile(file)
+        for (const selector of factorySelectors) {
+          // Match selector at start of line or after comma/space (not inside comments or strings)
+          // Simple check: if the selector appears as a CSS selector (not in a comment)
+          const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+          const regex = new RegExp(`^\\s*${escaped}[\\s{,>+~:.[\\]]`, 'm')
+          if (regex.test(content)) {
+            violations.push(`${relativePath(file)}: contains factory selector "${selector}"`)
+          }
         }
       }
 
-      const missing: string[] = []
-      for (const preset of presets) {
-        const sitePath = path.join(ENGINE, 'presets', preset, 'site.ts')
-        if (!(await fileExists(sitePath))) {
-          missing.push(`presets/${preset}/site.ts`)
-        }
-      }
-
-      expect(missing, `Presets missing site.ts:\\n${missing.join('\\n')}`).toHaveLength(0)
-    })
-
-    it('each preset has chrome/index.ts', async () => {
-      const allFiles = await getFiles('presets/*/chrome/**/*.ts')
-      const presets = new Set<string>()
-
-      for (const file of allFiles) {
-        const rel = relativePath(file)
-        const parts = rel.split('/')
-        if (parts.length >= 2) {
-          presets.add(parts[1])
-        }
-      }
-
-      const missing: string[] = []
-      for (const preset of presets) {
-        const chromePath = path.join(ENGINE, 'presets', preset, 'chrome', 'index.ts')
-        if (!(await fileExists(chromePath))) {
-          missing.push(`presets/${preset}/chrome/index.ts`)
-        }
-      }
-
-      expect(missing, `Presets missing chrome/index.ts:\\n${missing.join('\\n')}`).toHaveLength(0)
+      expect(violations, `Preset CSS contains factory-generated section selectors (should be in pattern styles):\n${violations.join('\n')}`).toHaveLength(0)
     })
   })
 

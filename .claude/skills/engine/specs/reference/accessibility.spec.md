@@ -126,11 +126,11 @@ Accessibility ensures all users can perceive, understand, navigate, and interact
 
 | Element | Purpose | Engine Location |
 |---------|---------|-----------------|
-| `<header>` | Site header with logo/navigation | `chrome/regions/Header.tsx` |
-| `<nav>` | Navigation menus | `chrome/regions/Header.tsx` |
+| `<header>` | Site header with logo/navigation | `chrome/patterns/` (widget-based) |
+| `<nav>` | Navigation menus | `chrome/patterns/` (widget-based) |
 | `<main>` | Primary content area | `PageRenderer.tsx` |
-| `<footer>` | Site footer | `chrome/regions/Footer.tsx` |
-| `<aside>` | Complementary content | `chrome/regions/Sidebar.tsx` |
+| `<footer>` | Site footer | `chrome/patterns/` (widget-based) |
+| `<aside>` | Complementary content | `chrome/patterns/` (widget-based) |
 | `<section>` | Grouped content with heading | `SectionRenderer.tsx` |
 
 ### Heading Hierarchy

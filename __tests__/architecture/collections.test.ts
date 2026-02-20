@@ -10,13 +10,13 @@
  *
  * ❌ Bad (array as prop - items hidden in hierarchy):
  * {
- *   type: 'LogoMarquee',
+ *   type: 'MarqueeImageRepeater',
  *   props: { logos: '{{ content.logos }}' }
  * }
  *
  * ✅ Good (items as children - visible in hierarchy):
  * {
- *   type: 'LogoMarquee',
+ *   type: 'MarqueeImageRepeater',
  *   widgets: [{
  *     __repeat: '{{ content.logos }}',
  *     type: 'LogoItem',
@@ -35,14 +35,12 @@ import { getFiles, readFile, relativePath } from './helpers'
  * Format: { widgetType: arrayPropName }
  */
 const COLLECTION_WIDGETS: Record<string, string> = {
-  LogoMarquee: 'logos',
-  ExpandableGalleryRow: 'projects',
-  FeaturedProjectsGrid: 'projects',
-  HeroRoles: 'roles',
-  ShotIndicator: 'shots',
+  // Global repeaters
+  ExpandRowImageRepeater: 'projects',
+  // Section-scoped widgets (type files live in sections/patterns/**/components/)
+  MarqueeImageRepeater: 'logos',
   TabbedContent: 'tabs',
-  ProjectSelector: 'projects',
-  TeamShowcase: 'members',
+  FlexGalleryCardRepeater: 'projects',
 }
 
 /**
@@ -51,8 +49,8 @@ const COLLECTION_WIDGETS: Record<string, string> = {
  * they coordinate multiple DOM structures from a single data source.
  * Exempt from the "use __repeat children" schema validation.
  */
-const SELF_MANAGED_COLLECTIONS = new Set([
-  'TeamShowcase', // Renders videos + names + hover/scroll state from members array
+const SELF_MANAGED_COLLECTIONS = new Set<string>([
+  // StackVideoShowcase now reads from child widgets via __repeat, not self-managed
 ])
 
 /**
@@ -170,13 +168,13 @@ describe('Collection Widgets Architecture', () => {
         console.log(`
   // Before (items hidden):
   {
-    type: 'LogoMarquee',
+    type: 'MarqueeImageRepeater',
     props: { logos: '{{ content.logos }}' }
   }
 
   // After (items visible in hierarchy):
   {
-    type: 'LogoMarquee',
+    type: 'MarqueeImageRepeater',
     props: { duration: 30 },
     widgets: [{
       __repeat: '{{ content.logos }}',
@@ -202,12 +200,14 @@ describe('Collection Widgets Architecture', () => {
     it('collection widgets should document their array props', async () => {
       const missing: string[] = []
 
-      for (const widgetType of Object.keys(COLLECTION_WIDGETS)) {
-        // Find the widget's types.ts file
-        const typeFiles = await getFiles(`content/widgets/**/types.ts`)
+      // Search both global widgets and section-scoped components
+      const globalTypeFiles = await getFiles(`content/widgets/**/types.ts`)
+      const scopedTypeFiles = await getFiles(`content/sections/**/components/**/types.ts`)
+      const allTypeFiles = [...globalTypeFiles, ...scopedTypeFiles]
 
+      for (const widgetType of Object.keys(COLLECTION_WIDGETS)) {
         let found = false
-        for (const file of typeFiles) {
+        for (const file of allTypeFiles) {
           const content = await readFile(file)
           if (content.includes(`interface ${widgetType}Props`)) {
             found = true
@@ -229,8 +229,10 @@ describe('Collection Widgets Architecture', () => {
 
   describe('Known collection widgets registry', () => {
     it('all widgets with array props must be registered in COLLECTION_WIDGETS', async () => {
-      // Find all widgets with array props in their types
-      const typeFiles = await getFiles('content/widgets/**/types.ts')
+      // Find all widgets with array props in their types (global + scoped)
+      const globalTypeFiles = await getFiles('content/widgets/**/types.ts')
+      const scopedTypeFiles = await getFiles('content/sections/**/components/**/types.ts')
+      const typeFiles = [...globalTypeFiles, ...scopedTypeFiles]
       const detectedArrayWidgets: Record<string, string[]> = {}
 
       for (const file of typeFiles) {
@@ -275,8 +277,10 @@ describe('Collection Widgets Architecture', () => {
     })
 
     it('COLLECTION_WIDGETS entries reference existing widgets', async () => {
-      // Verify all registered widgets actually exist
-      const typeFiles = await getFiles('content/widgets/**/types.ts')
+      // Verify all registered widgets actually exist (global + scoped)
+      const globalTypeFiles = await getFiles('content/widgets/**/types.ts')
+      const scopedTypeFiles = await getFiles('content/sections/**/components/**/types.ts')
+      const typeFiles = [...globalTypeFiles, ...scopedTypeFiles]
       const existingWidgets: Set<string> = new Set()
 
       for (const file of typeFiles) {

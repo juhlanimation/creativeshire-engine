@@ -94,46 +94,6 @@ describe('Import Boundaries', () => {
       expect(violations, `L1 sections importing from L2:\n${violations.join('\n')}`).toHaveLength(0)
     })
 
-    it('composites do not import from experience/', async () => {
-      const files = await getFiles('content/widgets/composite/**/*.{ts,tsx}')
-      const violations: string[] = []
-
-      for (const file of files) {
-        const content = await readFile(file)
-        const imports = extractImports(content)
-
-        for (const imp of imports) {
-          if (isL1ToL2Import(file, imp)) {
-            violations.push(`${relativePath(file)}: imports "${imp}"`)
-          }
-        }
-      }
-
-      expect(violations, `L1 composites importing from L2:\n${violations.join('\n')}`).toHaveLength(0)
-    })
-
-    /**
-     * Chrome regions (Header, Footer, Sidebar) are pure L1 content.
-     * They render once and stay idle. Animation is via CSS variables set by L2.
-     */
-    it('chrome regions do not import from experience/', async () => {
-      const files = await getFiles('content/chrome/regions/**/*.{ts,tsx}')
-      const violations: string[] = []
-
-      for (const file of files) {
-        const content = await readFile(file)
-        const imports = extractImports(content)
-
-        for (const imp of imports) {
-          if (isL1ToL2Import(file, imp)) {
-            violations.push(`${relativePath(file)}: imports "${imp}"`)
-          }
-        }
-      }
-
-      expect(violations, `Chrome regions importing from L2:\n${violations.join('\n')}`).toHaveLength(0)
-    })
-
     /**
      * Chrome overlays (Modal, CursorLabel) are L1/L2 HYBRID components.
      *

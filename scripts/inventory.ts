@@ -290,18 +290,8 @@ async function generateInventory(): Promise<CategoryInfo[]> {
   const interactive = await getFolders('content/widgets/interactive/*')
   categories.push({
     category: 'Widgets: Interactive',
-    description: 'Stateful React components (Video, VideoPlayer, ContactPrompt, etc.)',
+    description: 'Stateful React components (Video, VideoPlayer, EmailCopy, etc.)',
     components: await Promise.all(interactive.map(getComponentInfo)),
-  })
-
-  // Widgets - Patterns
-  const patterns = await getFolders('content/widgets/patterns/*')
-  categories.push({
-    category: 'Widgets: Patterns',
-    description: 'Factory functions returning WidgetSchema',
-    components: [
-      ...await Promise.all(patterns.filter(p => !p.endsWith('styles')).map(getComponentInfo)),
-    ],
   })
 
   // Sections
@@ -312,12 +302,12 @@ async function generateInventory(): Promise<CategoryInfo[]> {
     components: await Promise.all(sections.map(getComponentInfo)),
   })
 
-  // Chrome - Regions
-  const regions = await getFolders('content/chrome/regions/*')
+  // Chrome - Patterns
+  const patterns = await getFolders('content/chrome/patterns/*')
   categories.push({
-    category: 'Chrome: Regions',
-    description: 'Site-wide UI regions (Header, Footer)',
-    components: await Promise.all(regions.map(getComponentInfo)),
+    category: 'Chrome: Patterns',
+    description: 'Widget-based region factories (FixedNav, ContactFooter, etc.)',
+    components: await Promise.all(patterns.map(getComponentInfo)),
   })
 
   // Chrome - Overlays
@@ -445,7 +435,7 @@ async function generateInventory(): Promise<CategoryInfo[]> {
   const presets = await getFolders('presets/*')
   categories.push({
     category: 'Presets',
-    description: 'Site templates (bojuhl)',
+    description: 'Site templates (noir, prism, loft)',
     components: await Promise.all(presets.map(async (p) => {
       const name = path.basename(p)
       const files = await fg('**/*', { cwd: p, onlyFiles: true })

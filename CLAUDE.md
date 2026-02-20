@@ -15,7 +15,7 @@ This is a **library package** (`@creativeshire/engine`).
 
 ```typescript
 import { SiteRenderer } from '@creativeshire/engine'
-import { bojuhlPreset } from '@creativeshire/engine/presets'
+import { noirPreset } from '@creativeshire/engine/presets'
 ```
 
 ### Subpath Imports
@@ -23,7 +23,7 @@ import { bojuhlPreset } from '@creativeshire/engine/presets'
 ```typescript
 import { SiteRenderer } from '@creativeshire/engine/renderer'
 import type { SiteSchema } from '@creativeshire/engine/schema'
-import { bojuhlPreset } from '@creativeshire/engine/presets'
+import { noirPreset } from '@creativeshire/engine/presets'
 ```
 
 ---
@@ -31,23 +31,35 @@ import { bojuhlPreset } from '@creativeshire/engine/presets'
 ## Widget Hierarchy
 
 ```
-PRIMITIVES (atoms - no children, single purpose)
-  Text, Image, Icon, Button, Link
+GLOBAL WIDGETS (reusable across 2+ sections)
+  primitives/    Text, Image, Icon, Button, Link
+  layout/        Stack, Grid, Flex, Split, Container, Box, Marquee
+  interactive/   Video, VideoPlayer, EmailCopy
+  repeaters/     ExpandRowImageRepeater
 
-LAYOUT (structure - holds children)
-  Stack, Grid, Flex, Split, Container, Box
+SECTION-SCOPED WIDGETS (inside sections/patterns/{Section}/components/)
+  Registered via registerScopedWidget('{Section}__{Widget}', Component)
+  Side-effect imported in section factory
+  NOT in global registry, NOT in meta-registry
 
-PATTERNS (factory functions → WidgetSchema)
-  ProjectCard = createProjectCard() → {type: 'Flex', widgets: [...]}
-  LogoLink = createLogoLink() → {type: 'Link', widgets: [...]}
-
-INTERACTIVE (React components with state)
-  Video = hover-play, visibility, modal integration
-  VideoPlayer = controls, scrubber, fullscreen
-  ContactPrompt = copy-to-clipboard, flip animation
-  ExpandableGalleryRow = coordinated hover expansion
-  GalleryThumbnail = expandable with metadata
+  AboutBio__MarqueeImageRepeater
+  ProjectCompare__VideoCompare
+  ProjectGallery__FlexGalleryCardRepeater
+  ProjectShowcase__FlexButtonRepeater (with IndexNav colocated inside)
+  ProjectTabs__TabbedContent
+  TeamShowcase__StackVideoShowcase
+  ProjectFeatured/components/ProjectCard (factory helper, no scoped registration)
 ```
+
+**Widget placement decision tree:**
+- Used by 2+ sections → global (`widgets/`)
+- Used by 1 section, has React state → section-scoped (`sections/patterns/{Section}/components/`)
+- Purely structural repetition → inline in section factory using Stack/Flex + `__repeat`
+
+**Repeater naming convention:** `[LayoutType][ContentType]Repeater`
+- **LayoutType** = how items are arranged (Marquee, Stack, Row, ExpandRow, Grid, Flex)
+- **ContentType** = what widget/pattern each item renders as (Image, Text, ProjectCard)
+- Use engine widget/layout names only — no domain terms like "Logo" or "Gallery"
 
 ## Architecture
 
@@ -98,32 +110,52 @@ Effects named by MECHANISM: `fade`, `transform/`, `mask/`
 
 ```
 engine/
+├── config/                Breakpoints, responsive constants
+├── styles/                container-queries.css
+├── styles.css             Global engine styles
+├── themes/                Theme definitions, registry, utils
 ├── content/
+│   ├── actions/           Action pub/sub (index, resolver, scanner)
 │   ├── widgets/
 │   │   ├── primitives/    Text, Image, Icon, Button, Link
-│   │   ├── layout/        Stack, Grid, Flex, Split, Container, Box
-│   │   ├── patterns/      Factory functions → WidgetSchema
-│   │   └── interactive/   React components with state
+│   │   ├── layout/        Stack, Grid, Flex, Split, Container, Box, Marquee
+│   │   ├── interactive/   Video, VideoPlayer, EmailCopy
+│   │   └── repeaters/     ExpandRowImageRepeater (multi-section)
 │   ├── sections/
-│   │   └── patterns/      Hero, About, ProjectGrid...
+│   │   └── patterns/      HeroVideo, AboutBio, ProjectGallery...
+│   │       └── {Section}/components/  Section-scoped widgets
 │   └── chrome/
-│       ├── regions/       Header, Footer, Sidebar
-│       └── overlays/      Modal, CursorLabel...
+│       ├── patterns/      FixedNav, ContactFooter, FloatingContact...
+│       └── overlays/      Modal, CursorLabel, SlideIndicators...
 ├── experience/
 │   ├── behaviours/        Named by TRIGGER
 │   │   ├── scroll/        progress, direction, velocity
 │   │   ├── hover/         state (--hover: 0|1)
 │   │   ├── visibility/    in-view (--visible: 0|1)
 │   │   ├── animation/     continuous (marquee, pulse)
-│   │   └── interaction/   toggle (--active: 0|1)
+│   │   ├── interaction/   toggle (--active: 0|1)
+│   │   ├── intro/         Intro-specific behaviours
+│   │   └── video/         Video frame tracking
 │   ├── effects/           Named by MECHANISM
-│   │   ├── fade.css       Opacity (single file)
-│   │   ├── transform/     slide, scale, rotate, flip
-│   │   ├── mask/          wipe, expand
-│   │   ├── emphasis/      pulse, shake, bounce
-│   │   └── page/          Route transitions (later)
-│   ├── drivers/           ScrollDriver, VisibilityDriver
-│   └── experiences/       stacking, slideshow, infinite-carousel...
+│   │   ├── color-shift/   Color/blend transitions
+│   │   ├── emphasis/      spin, pulse, shake, bounce
+│   │   ├── fade/          Opacity-based animations
+│   │   ├── marquee/       Infinite scroll animation
+│   │   ├── mask/          wipe, reveal
+│   │   ├── overlay/       Background overlay darkening
+│   │   ├── reveal/        Progressive clip-path reveals
+│   │   └── transform/     slide, scale
+│   ├── drivers/           Continuous: CSS vars at 60fps (ScrollDriver, MomentumDriver)
+│   ├── timeline/          Discrete: play → complete
+│   │   ├── EffectTimeline Parallel/sequential track orchestration
+│   │   ├── animateElement CSS class-based animation Promise wrapper
+│   │   └── gsap/          GSAP reveal transitions (wipe, expand, fade)
+│   ├── experiences/       stacking, slideshow, infinite-carousel...
+│   ├── lifecycle/         SectionLifecycleProvider
+│   ├── navigation/        Page transitions, keyboard/swipe/wheel nav
+│   ├── transitions/       Transition registry + fade config
+│   └── triggers/          React hooks for behaviours
+├── intro/                 Intro sequences, triggers, provider
 ├── interface/             Platform ↔ Engine contract
 │   ├── EngineProvider     Root provider with controller
 │   ├── EngineStore        Zustand state management
@@ -145,6 +177,17 @@ Just describe what you want. For non-trivial work:
 4. **Validate visually** when layout matters
 
 Work **top-down**: SITE → PAGE → SECTION → WIDGET. Never start with atoms.
+
+### Figma → Code Workflow
+
+Design sections in Figma using synced theme variables, then implement with Claude:
+
+1. **Sync tokens:** `FIGMA_TOKEN=xxx npx tsx scripts/figma-sync.ts` — pushes theme variables to Figma
+2. **Design in Figma** using only Figma variables (Colors, Typography, Spacing collections) — no freestyle hex values
+3. **Implement:** Point Claude at the Figma frame via MCP tools → follows the [Section from Figma workflow](.claude/skills/engine/SKILL.md) → wires all CSS to theme variables
+4. **Verify:** All CSS uses `var(--*)` tokens, `npm run test:arch` passes, light/dark themes work
+
+Variable mapping reference: [theme-contract.spec.md](.claude/skills/engine/specs/reference/theme-contract.spec.md#figma--css-variable-mapping)
 
 ### Browser Tools: When to Use
 
@@ -224,3 +267,20 @@ Browser automation captures **screenshots** (static snapshots). It cannot percei
    | `height: 100vh` | `height: 100cqh` (or `100dvh` for fullscreen sections) |
 
    **Exceptions:** `dvh` is acceptable for full-viewport section heights. `100vw` in overlay positioning calcs is intentional (fixed-position overlays are viewport-relative).
+
+9. **Use existing props/variants/theme before adding CSS:** Widgets already have configurable variants, settings, and theme-driven styles. Before writing ANY custom CSS, check the widget's `meta.ts` settings and the theme contract. The answer is almost always "set a prop" or "use a theme variable," not "add a stylesheet."
+
+   **Decision order:**
+   1. Does the widget have a setting/variant for this? → Use it (`variant: 'hover-underline'`)
+   2. Does the theme contract have a variable? → Use it (`var(--link-color)`)
+   3. Can an existing widget setting be extended? → Add a choice to the existing setting
+   4. None of the above? → Only then write CSS, and put it in the widget's own `styles.css`
+
+   | ❌ Layered CSS | ✅ Use what exists |
+   |---|---|
+   | Custom `.hover-underline { border-bottom... }` | `variant: 'hover-underline'` on Link widget |
+   | `.section-title { font-size: 3rem; color: white }` | Theme variables + Text widget settings |
+   | New `pattern-overrides.css` file | Props on the widget schema |
+   | Section-level CSS overriding widget internals | Widget's own settings/variants |
+
+   **Why:** Layered CSS creates invisible coupling. When someone changes a widget's internals, the layered CSS breaks silently. Props and theme variables are the contract — CSS files are implementation details that should stay inside their widget.

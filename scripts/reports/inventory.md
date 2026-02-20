@@ -59,11 +59,11 @@
 | Component | Path | index | types | meta | styles | CMS Editable |
 |-----------|------|:-----:|:-----:|:----:|:------:|:-------------|
 | **ContactPrompt** | `content/widgets/interactive/ContactPrompt` | ✅ | ✅ | ✅ | ✅ | `email`, `promptText` |
-| **ExpandableGalleryRow** | `content/widgets/interactive/ExpandableGalleryRow` | ✅ | ✅ | ✅ | ✅ | `height`, `gap`, `expandedWidth`, `transitionDuration`, `cursorLabel`, `projects[]` |
-| **FeaturedProjectsGrid** | `content/widgets/interactive/FeaturedProjectsGrid` | ✅ | ✅ | ✅ | ✅ | `projects`, `projects[]` |
-| **GalleryThumbnail** | `content/widgets/interactive/GalleryThumbnail` | ✅ | ✅ | ✅ | ✅ | `expandedWidth`, `transitionDuration` |
-| **HeroRoles** | `content/widgets/interactive/HeroRoles` | ✅ | ✅ | ✅ | — | `roles[]` |
-| **LogoMarquee** | `content/widgets/interactive/LogoMarquee` | ✅ | ✅ | ✅ | ✅ | `logos`, `duration`, `logoWidth`, `logoGap`, `logos[]` |
+| **ExpandRowImageRepeater** | `content/widgets/repeaters/ExpandRowImageRepeater` | ✅ | ✅ | ✅ | ✅ | `height`, `gap`, `expandedWidth`, `transitionDuration`, `cursorLabel`, `projects[]` |
+| **StackProjectCardRepeater** | `content/widgets/interactive/StackProjectCardRepeater` | ✅ | ✅ | ✅ | ✅ | `projects`, `projects[]` |
+| **ExpandRowThumbnail** | `content/widgets/interactive/ExpandRowThumbnail` | ✅ | ✅ | ✅ | ✅ | `expandedWidth`, `transitionDuration` |
+| **StackTextRepeater** | `content/widgets/repeaters/StackTextRepeater` | ✅ | ✅ | ✅ | — | `items[]` |
+| **MarqueeImageRepeater** | `content/widgets/interactive/MarqueeImageRepeater` | ✅ | ✅ | ✅ | ✅ | `logos`, `duration`, `logoWidth`, `logoGap`, `logos[]` |
 | **Video** | `content/widgets/interactive/Video` | ✅ | ✅ | ✅ | ✅ | `src`, `poster`, `alt`, `videoUrl` |
 | **VideoPlayer** | `content/widgets/interactive/VideoPlayer` | ✅ | ✅ | ✅ | ✅ | `src`, `poster`, `autoPlay`, `startTime` |
 
@@ -75,7 +75,6 @@
 
 | Component | Path | index | types | meta | styles | CMS Editable |
 |-----------|------|:-----:|:-----:|:----:|:------:|:-------------|
-| **LogoLink** | `content/widgets/patterns/LogoLink` | ✅ | ✅ | ✅ | — | `text`, `imageSrc`, `imageAlt`, `href` |
 | **ProjectCard** | `content/widgets/patterns/ProjectCard` | ✅ | ✅ | ✅ | — | `thumbnailSrc`, `thumbnailAlt`, `videoSrc`, `videoUrl`, `client`, `studio`, `title`, `description`, `year`, `role`, `reversed` |
 
 ---
@@ -220,7 +219,7 @@
 
 ### `FeaturedProject`
 
-**Used by:** FeaturedProjectsGrid, FeaturedProjects
+**Used by:** StackProjectCardRepeater, FeaturedProjects
 
 | Field | Type | Required | Description |
 |-------|------|:--------:|-------------|
@@ -235,9 +234,9 @@
 | `year` | `string` | ✅ | — |
 | `role` | `string` | ✅ | — |
 
-### `GalleryProject`
+### `ExpandRowItem`
 
-**Used by:** GalleryThumbnail
+**Used by:** ExpandRowThumbnail
 
 | Field | Type | Required | Description |
 |-------|------|:--------:|-------------|
@@ -254,7 +253,7 @@
 
 ### `LogoItem`
 
-**Used by:** LogoMarquee, About
+**Used by:** MarqueeImageRepeater, About
 
 | Field | Type | Required | Description |
 |-------|------|:--------:|-------------|

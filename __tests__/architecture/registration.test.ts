@@ -20,8 +20,10 @@ import {
 import { widgetRegistry } from '../../engine/content/widgets/registry'
 import { getChromeComponent, getAllChromeMetas, getChromeComponentIds } from '../../engine/content/chrome/registry'
 import { behaviourRegistry, getBehaviourIds, getAllBehaviourMetas } from '../../engine/experience/behaviours/registry'
-import { transitionRegistry } from '../../engine/experience/drivers/gsap/transitions/registry'
+import { transitionRegistry } from '../../engine/experience/timeline/gsap/transitions/registry'
 import { sectionRegistry } from '../../engine/content/sections/registry'
+import { getThemeIds, getAllThemeMetas } from '../../engine/themes'
+import { widgetMetaRegistry } from '../../engine/content/widgets/meta-registry'
 
 describe('Registration Validation', () => {
   describe('Widget Registry', () => {
@@ -82,19 +84,19 @@ describe('Registration Validation', () => {
       expect(violations).toHaveLength(0)
     })
 
-    it('patterns are NOT registered (they are factories)', async () => {
-      const folders = await getFolders('content/widgets/patterns/*')
+    it('all repeaters are registered', async () => {
+      const folders = await getFolders('content/widgets/repeaters/*')
       const violations: string[] = []
 
       for (const folder of folders) {
         const name = getComponentName(folder)
-        if (widgetRegistry[name]) {
-          violations.push(`Pattern "${name}" should NOT be in widgetRegistry (patterns are factories, not components)`)
+        if (!widgetRegistry[name]) {
+          violations.push(`Repeater "${name}" folder exists but is not registered in widgetRegistry`)
         }
       }
 
       if (violations.length > 0) {
-        console.log('Incorrectly registered patterns:')
+        console.log('Unregistered repeaters:')
         violations.forEach((v) => console.log(`  - ${v}`))
       }
 
@@ -125,6 +127,7 @@ describe('Registration Validation', () => {
       const primitives = await getFolders('content/widgets/primitives/*')
       const layouts = await getFolders('content/widgets/layout/*')
       const interactives = await getFolders('content/widgets/interactive/*')
+      const repeaters = await getFolders('content/widgets/repeaters/*')
       // Chrome overlays can be registered as widgets for use with ExperienceChromeRenderer
       const chromeOverlays = await getFolders('content/chrome/overlays/*')
 
@@ -132,11 +135,16 @@ describe('Registration Validation', () => {
         ...primitives.map(getComponentName),
         ...layouts.map(getComponentName),
         ...interactives.map(getComponentName),
+        ...repeaters.map(getComponentName),
         ...chromeOverlays.map(getComponentName),
       ])
 
       const violations: string[] = []
       for (const name of Object.keys(widgetRegistry)) {
+        // Scoped widgets (Section__Widget) register dynamically via registerScopedWidget()
+        // and live in sections/patterns/{Section}/components/ — skip them here
+        if (name.includes('__')) continue
+
         if (!allFolderNames.has(name)) {
           violations.push(`widgetRegistry has "${name}" but no corresponding folder exists`)
         }
@@ -186,26 +194,61 @@ describe('Registration Validation', () => {
     })
   })
 
-  describe('Chrome Registry', () => {
-    it('all region folders are registered', async () => {
-      const folders = await getFolders('content/chrome/regions/*')
+  describe('Widget Meta Registry', () => {
+    it('every global widget folder has a meta-registry entry', async () => {
+      const primitives = await getFolders('content/widgets/primitives/*')
+      const layouts = await getFolders('content/widgets/layout/*')
+      const interactives = await getFolders('content/widgets/interactive/*')
+      const repeaters = await getFolders('content/widgets/repeaters/*')
+
+      const allFolders = [...primitives, ...layouts, ...interactives, ...repeaters]
       const violations: string[] = []
 
-      for (const folder of folders) {
+      for (const folder of allFolders) {
         const name = getComponentName(folder)
-        if (!getChromeComponent(name)) {
-          violations.push(`Region "${name}" folder exists but is not registered in chromeRegistry`)
+        if (!(name in widgetMetaRegistry)) {
+          violations.push(`Widget "${name}" has a folder but no entry in widgetMetaRegistry`)
         }
       }
 
       if (violations.length > 0) {
-        console.log('Unregistered regions:')
+        console.log('Missing meta-registry entries:')
         violations.forEach((v) => console.log(`  - ${v}`))
       }
 
       expect(violations).toHaveLength(0)
     })
 
+    it('no orphaned meta-registry entries without corresponding folders', async () => {
+      const primitives = await getFolders('content/widgets/primitives/*')
+      const layouts = await getFolders('content/widgets/layout/*')
+      const interactives = await getFolders('content/widgets/interactive/*')
+      const repeaters = await getFolders('content/widgets/repeaters/*')
+
+      const allFolderNames = new Set([
+        ...primitives.map(getComponentName),
+        ...layouts.map(getComponentName),
+        ...interactives.map(getComponentName),
+        ...repeaters.map(getComponentName),
+      ])
+
+      const violations: string[] = []
+      for (const name of Object.keys(widgetMetaRegistry)) {
+        if (!allFolderNames.has(name)) {
+          violations.push(`widgetMetaRegistry has "${name}" but no corresponding widget folder exists`)
+        }
+      }
+
+      if (violations.length > 0) {
+        console.log('Orphaned meta-registry entries:')
+        violations.forEach((v) => console.log(`  - ${v}`))
+      }
+
+      expect(violations).toHaveLength(0)
+    })
+  })
+
+  describe('Chrome Registry', () => {
     it('all overlay folders are registered', async () => {
       const folders = await getFolders('content/chrome/overlays/*')
       const violations: string[] = []
@@ -245,8 +288,8 @@ describe('Registration Validation', () => {
       expect(violations, `Chrome meta validation failures:\n${violations.join('\n')}`).toHaveLength(0)
     })
 
-    it('chrome meta category is region or overlay', () => {
-      const VALID_CHROME_CATEGORIES = ['region', 'overlay']
+    it('chrome meta category is overlay', () => {
+      const VALID_CHROME_CATEGORIES = ['overlay']
       const metas = getAllChromeMetas()
       const violations: string[] = []
 
@@ -342,7 +385,7 @@ describe('Registration Validation', () => {
     const EXCLUDED_FILES = ['index.ts', 'registry.ts', 'types.ts', 'resolve.ts']
 
     it('all transition files are registered', async () => {
-      const files = await getFiles('experience/drivers/gsap/transitions/*.ts')
+      const files = await getFiles('experience/timeline/gsap/transitions/*.ts')
       const violations: string[] = []
 
       for (const file of files) {
@@ -371,7 +414,7 @@ describe('Registration Validation', () => {
     })
 
     it('transition IDs match filename', async () => {
-      const files = await getFiles('experience/drivers/gsap/transitions/*.ts')
+      const files = await getFiles('experience/timeline/gsap/transitions/*.ts')
       const violations: string[] = []
 
       for (const file of files) {
@@ -487,6 +530,70 @@ describe('Registration Validation', () => {
       }
 
       expect(violations).toHaveLength(0)
+    })
+  })
+
+  describe('Theme Registry', () => {
+    it('all theme definition files are registered', async () => {
+      const files = await getFiles('themes/definitions/*.ts')
+      const violations: string[] = []
+
+      for (const file of files) {
+        const content = await readFile(file)
+        // Extract theme ID from: id: 'theme-name'
+        const idMatch = content.match(/id:\s*['"]([^'"]+)['"]/)
+        if (!idMatch) {
+          violations.push(`${relativePath(file)}: No theme ID found`)
+          continue
+        }
+
+        const themeId = idMatch[1]
+        const registeredIds = getThemeIds()
+        if (!registeredIds.includes(themeId)) {
+          violations.push(`${relativePath(file)}: Theme "${themeId}" not registered`)
+        }
+      }
+
+      if (violations.length > 0) {
+        console.log('Unregistered themes:')
+        violations.forEach((v) => console.log(`  - ${v}`))
+      }
+
+      expect(violations).toHaveLength(0)
+    })
+
+    it('all registered themes have required meta fields', () => {
+      const metas = getAllThemeMetas()
+      const violations: string[] = []
+
+      expect(metas.length).toBeGreaterThan(0)
+
+      for (const meta of metas) {
+        if (!meta.id) violations.push('Theme meta missing id')
+        if (!meta.name) violations.push(`Theme "${meta.id}" missing name`)
+        if (!meta.description) violations.push(`Theme "${meta.id}" missing description`)
+      }
+
+      expect(violations, `Theme meta validation:\n${violations.join('\n')}`).toHaveLength(0)
+    })
+
+    it('no orphaned theme registry entries', async () => {
+      const files = await getFiles('themes/definitions/*.ts')
+      const fileIds = new Set<string>()
+
+      for (const file of files) {
+        const content = await readFile(file)
+        const idMatch = content.match(/id:\s*['"]([^'"]+)['"]/)
+        if (idMatch) fileIds.add(idMatch[1])
+      }
+
+      const registeredIds = getThemeIds()
+      const orphaned = registeredIds.filter((id) => !fileIds.has(id))
+
+      expect(
+        orphaned,
+        `Orphaned theme registry entries:\n${orphaned.join('\n')}`
+      ).toHaveLength(0)
     })
   })
 })

@@ -17,14 +17,14 @@ When building a CMS like Squarespace/Webflow, users need to see, select, reorder
 ```typescript
 // Schema - items hidden from hierarchy
 {
-  type: 'LogoMarquee',
+  type: 'MarqueeImageRepeater',
   props: { logos: '{{ content.logos }}' }  // ← Black box!
 }
 ```
 
 ```
 Hierarchy Panel:
-└─ 🎠 LogoMarquee
+└─ 🎠 MarqueeImageRepeater
    (no children visible)
 ```
 
@@ -39,7 +39,7 @@ Users cannot:
 ```typescript
 // Schema - items visible in hierarchy
 {
-  type: 'LogoMarquee',
+  type: 'MarqueeImageRepeater',
   props: { duration: 30 },
   widgets: [{
     __repeat: '{{ content.logos }}',
@@ -56,7 +56,7 @@ Users cannot:
 
 ```
 Hierarchy Panel:
-└─ 🎠 LogoMarquee
+└─ 🎠 MarqueeImageRepeater
     ├─ 🖼️ logo-0 [LogoItem]    ⋮⋮ drag
     ├─ 🖼️ logo-1 [LogoItem]    ⋮⋮ drag
     ├─ 🖼️ logo-2 [LogoItem]    ⋮⋮ drag
@@ -99,10 +99,10 @@ Widgets with array props that MUST use `__repeat`:
 
 | Widget | Array Prop | Child Type |
 |--------|-----------|------------|
-| `LogoMarquee` | `logos` | `LogoItem` |
-| `ExpandableGalleryRow` | `projects` | `GalleryThumbnail` |
-| `FeaturedProjectsGrid` | `projects` | `ProjectCard` |
-| `HeroRoles` | `roles` | `Text` |
+| `MarqueeImageRepeater` | `logos` | `LogoItem` |
+| `ExpandRowImageRepeater` | `projects` | `ExpandRowThumbnail` |
+| `StackProjectCardRepeater` | `projects` | `ProjectCard` |
+| `StackTextRepeater` | `items` | `Text` |
 
 ## Implementation Pattern
 
@@ -110,16 +110,16 @@ Widgets with array props that MUST use `__repeat`:
 
 ```typescript
 // Widget component
-interface LogoMarqueeProps extends WidgetBaseProps {
+interface MarqueeImageRepeaterProps extends WidgetBaseProps {
   duration?: number
   logoWidth?: number
   logoGap?: number
   widgets?: WidgetSchema[]  // Children, not logos array
 }
 
-function LogoMarquee({ duration, widgets, ...props }: LogoMarqueeProps) {
+function MarqueeImageRepeater({ duration, widgets, ...props }: MarqueeImageRepeaterProps) {
   return (
-    <div className="logo-marquee">
+    <div className="marquee-image-repeater">
       <WidgetRenderer widgets={widgets} />
     </div>
   )
@@ -132,7 +132,7 @@ function LogoMarquee({ duration, widgets, ...props }: LogoMarqueeProps) {
 // Preset schema
 {
   id: 'client-logos',
-  type: 'LogoMarquee',
+  type: 'MarqueeImageRepeater',
   props: { duration: 30 },
   widgets: [{
     __repeat: '{{ content.about.clientLogos }}',
@@ -152,7 +152,7 @@ function LogoMarquee({ duration, widgets, ...props }: LogoMarqueeProps) {
 // After platform resolves bindings
 {
   id: 'client-logos',
-  type: 'LogoMarquee',
+  type: 'MarqueeImageRepeater',
   props: { duration: 30 },
   widgets: [
     { id: 'logo-0', type: 'Image', props: { src: '/nike.svg', alt: 'Nike' } },
@@ -182,7 +182,7 @@ When a collection item is selected in hierarchy:
 │  INSPECTOR: logo-1                      │
 ├─────────────────────────────────────────┤
 │                                         │
-│  Type: LogoItem (in LogoMarquee)        │
+│  Type: LogoItem (in MarqueeImageRepeater)        │
 │  Index: 1 of 3           [⬆️] [⬇️] [🗑️] │
 │                                         │
 │  ─── Content ────────────────────────   │
@@ -214,7 +214,7 @@ When a collection item is selected in hierarchy:
 ```typescript
 // WRONG - no CMS integration
 {
-  type: 'LogoMarquee',
+  type: 'MarqueeImageRepeater',
   props: { logos: [{ src: '/a.svg' }, { src: '/b.svg' }] }
 }
 ```
