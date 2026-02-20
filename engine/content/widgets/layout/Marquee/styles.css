@@ -1,0 +1,26 @@
+/**
+ * Marquee layout widget styles.
+ * Structural CSS for infinite horizontal scroll.
+ * Animation keyframes live in experience/effects/marquee-scroll.css
+ */
+
+.marquee-widget {
+  overflow: hidden;
+  width: 100%;
+}
+
+.marquee-widget__track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll var(--marquee-duration, 30s) linear infinite;
+  animation-play-state: var(--marquee-play-state, running);
+}
+
+.marquee-widget[data-direction="right"] .marquee-widget__track {
+  animation-direction: reverse;
+}
+
+.marquee-widget__group {
+  display: flex;
+  flex-shrink: 0;
+}

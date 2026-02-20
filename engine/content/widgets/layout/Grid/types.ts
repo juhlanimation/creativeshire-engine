@@ -18,6 +18,8 @@ export interface GridProps {
   rows?: number | string
   /** Gap between items (number = px, string = CSS value) */
   gap?: number | string
+  /** Multiplier for the gap value (e.g., 2 = double the gap) */
+  gapScale?: number
   /** Column gap (overrides gap for columns) */
   columnGap?: number | string
   /** Row gap (overrides gap for rows) */

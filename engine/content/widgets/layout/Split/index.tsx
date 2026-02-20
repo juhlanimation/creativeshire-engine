@@ -11,7 +11,6 @@ import React, { memo, forwardRef, type CSSProperties } from 'react'
 import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
 import { toCssGap, GRID_ALIGN_MAP } from '../utils'
 import type { SplitProps, SplitRatio } from './types'
-import './styles.css'
 
 /**
  * Converts ratio to CSS grid template.
@@ -50,7 +49,7 @@ function splitToStyle(props: SplitProps): CSSProperties {
   }
 
   if (props.gap !== undefined) {
-    styles.gap = toCssGap(props.gap)
+    styles.gap = toCssGap(props.gap, props.gapScale)
   }
 
   if (props.align) {
@@ -73,6 +72,7 @@ const Split = memo(forwardRef<HTMLDivElement, SplitProps>(function Split(
     id,
     ratio,
     gap,
+    gapScale,
     reverse,
     align,
     style,
@@ -83,7 +83,7 @@ const Split = memo(forwardRef<HTMLDivElement, SplitProps>(function Split(
   },
   ref
 ) {
-  const computedStyle = splitToStyle({ ratio, gap, reverse, align, style })
+  const computedStyle = splitToStyle({ ratio, gap, gapScale, reverse, align, style })
 
   return (
     <div

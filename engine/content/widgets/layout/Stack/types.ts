@@ -14,6 +14,8 @@ export interface StackProps {
   id?: string
   /** Gap between items (number = px, string = CSS value) */
   gap?: number | string
+  /** Multiplier for the gap value (e.g., 2 = double the gap) */
+  gapScale?: number
   /** Align items along cross axis (horizontal alignment) */
   align?: 'start' | 'center' | 'end' | 'stretch'
   /** Inline styles */

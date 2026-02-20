@@ -1,6 +1,8 @@
 /**
  * VideoPlayer styles.
- * Matches bo-juhl-portfolio video player layout exactly.
+ *
+ * Colors are hardcoded (white on black) — video players are always dark
+ * regardless of site theme, like YouTube/Vimeo. No theme variables for colors.
  *
  * From bojuhl source:
  * - Center play: w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm
@@ -13,7 +15,7 @@
   position: relative;
   width: 100%;
   height: 100%;
-  background: black;
+  background: #000;
   overflow: hidden;
 }
 
@@ -36,7 +38,7 @@
   object-fit: contain;
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.3s ease-in-out;
+  transition: opacity var(--duration-normal, 0.3s) var(--ease-default, ease-in-out);
 }
 
 .video-player__video--ready {
@@ -58,8 +60,8 @@
 .video-player__center-play {
   width: 5rem;    /* w-20 = 80px = 5rem */
   height: 5rem;   /* h-20 = 80px = 5rem */
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.2);  /* bg-white/20 */
+  border-radius: var(--radius-full, 9999px);
+  background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(4px);             /* backdrop-blur-sm */
   -webkit-backdrop-filter: blur(4px);
   display: flex;
@@ -102,15 +104,16 @@
   right: 2rem;     /* right-8 = 32px = 2rem */
   display: flex;
   align-items: center;
-  gap: 0.75rem;    /* gap-3 = 12px */
+  gap: var(--spacing-sm, 0.75rem);
   pointer-events: auto;  /* Enable interaction on this control */
 }
 
 /* Time labels - matches bojuhl: text-white/80 text-sm font-medium min-w-[45px] tabular-nums */
 .video-player__time {
-  font-size: 0.875rem;       /* text-sm */
+  font-family: var(--font-ui, system-ui, sans-serif);
+  font-size: var(--font-size-body, 0.875rem);
   font-weight: 500;          /* font-medium */
-  color: rgba(255, 255, 255, 0.8);  /* text-white/80 */
+  color: rgba(255, 255, 255, 0.8);
   font-variant-numeric: tabular-nums;
   min-width: 45px;
 }
@@ -127,8 +130,8 @@
 .video-player__progress {
   flex: 1;
   height: 6px;     /* h-1.5 = 6px */
-  background: rgba(255, 255, 255, 0.2);  /* bg-white/20 */
-  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full, 9999px);
   cursor: pointer;
   position: relative;
   overflow: hidden;
@@ -142,8 +145,8 @@
   left: 0;
   height: 100%;
   background: white;
-  border-radius: 9999px;
-  transition: width 75ms linear;  /* transition-all duration-75 - playback continuity */
+  border-radius: var(--radius-full, 9999px);
+  transition: width 75ms linear;  /* playback continuity — intentionally snappy, not themed */
   pointer-events: none;
 }
 
@@ -157,7 +160,7 @@
   height: 1rem;    /* h-4 = 16px = 1rem */
   background: white;
   border-radius: 50%;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);  /* shadow-lg */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   opacity: 0;
   pointer-events: none;
 }
@@ -174,12 +177,12 @@
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 0.75rem;    /* gap-3 = 12px */
-  padding: 0.75rem 1rem;   /* py-3 px-4 */
-  background: rgba(255, 255, 255, 0.1);  /* bg-white/10 */
+  gap: var(--spacing-sm, 0.75rem);
+  padding: var(--spacing-sm, 0.75rem) var(--spacing-md, 1rem);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(4px);             /* backdrop-blur-sm */
   -webkit-backdrop-filter: blur(4px);
-  border-radius: 9999px;
+  border-radius: var(--radius-full, 9999px);
   pointer-events: auto;  /* Enable interaction on this control */
 }
 
@@ -212,8 +215,8 @@
   height: 4px;     /* h-1 = 4px */
   -webkit-appearance: none;
   appearance: none;
-  background: rgba(255, 255, 255, 0.3);  /* bg-white/30 */
-  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-full, 9999px);
   cursor: pointer;
 }
 
@@ -263,7 +266,7 @@
   }
 
   .video-player__time {
-    font-size: 0.75rem;
+    font-size: var(--font-size-small, 0.75rem);
     min-width: 38px;
   }
 
@@ -289,7 +292,7 @@
 }
 
 :where([data-breakpoint="mobile"]) .video-player__time {
-  font-size: 0.75rem;
+  font-size: var(--font-size-small, 0.75rem);
   min-width: 38px;
 }
 

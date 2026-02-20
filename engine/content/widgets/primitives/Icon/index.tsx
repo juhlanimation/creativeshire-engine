@@ -7,7 +7,6 @@
 
 import React, { memo, forwardRef, useMemo, type CSSProperties } from 'react'
 import type { IconProps } from './types'
-import './styles.css'
 
 /**
  * Converts size prop to CSS value.

@@ -13,13 +13,111 @@
   transition: none; /* Animations handled by drivers, not CSS transitions */
 }
 
-/* Inline link styling (for html mode) */
-.text-widget a {
-  color: rgb(153, 51, 255); /* #9933FF purple - var(--interaction) */
-  text-decoration: none;
+/* Type scale — matches theme typography scale tokens */
+/* Theme-level weight/lineHeight/letterSpacing are CSS defaults; per-instance inline styles override them */
+.text-widget[data-scale="display"] {
+  font-family: var(--font-title);
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-display, 700);
+  line-height: var(--line-height-display, 1.1);
+  letter-spacing: var(--letter-spacing-display, -0.02em);
+}
+.text-widget[data-scale="h1"] {
+  font-family: var(--font-heading, var(--font-title));
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-heading, 600);
+  line-height: var(--line-height-heading, 1.2);
+  letter-spacing: var(--letter-spacing-heading, -0.01em);
+}
+.text-widget[data-scale="h2"] {
+  font-family: var(--font-heading, var(--font-title));
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-heading, 600);
+  line-height: var(--line-height-heading, 1.2);
+  letter-spacing: var(--letter-spacing-heading, -0.01em);
+}
+.text-widget[data-scale="h3"] {
+  font-family: var(--font-heading, var(--font-title));
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-heading, 600);
+  line-height: var(--line-height-heading, 1.2);
+  letter-spacing: var(--letter-spacing-heading, -0.01em);
+}
+.text-widget[data-scale="body"],
+.text-widget[data-scale="p"] {
+  font-family: var(--font-paragraph);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-body, 400);
+  line-height: var(--line-height-body, 1.5);
+  letter-spacing: var(--letter-spacing-body, 0em);
+}
+.text-widget[data-scale="small"] {
+  font-family: var(--font-paragraph);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-small, 400);
+  line-height: var(--line-height-small, 1.4);
+  letter-spacing: var(--letter-spacing-small, 0.02em);
+}
+.text-widget[data-scale="xs"] {
+  font-family: var(--font-paragraph);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-xs, var(--font-weight-small, 400));
+  line-height: var(--line-height-xs, var(--line-height-small, 1.4));
+  letter-spacing: var(--letter-spacing-xs, var(--letter-spacing-small, 0.02em));
+}
+.text-widget[data-scale="span"] {
+  font-family: var(--font-paragraph);
+  font-weight: var(--font-weight-body, 400);
+  line-height: var(--line-height-body, 1.5);
+  letter-spacing: var(--letter-spacing-body, 0em);
 }
 
-/* No underline on hover - cursor label provides hover feedback */
-.text-widget a:hover {
+/* Semantic color variants */
+.text-widget[data-color="primary"] { color: var(--text-primary); }
+.text-widget[data-color="secondary"] { color: var(--text-secondary); }
+.text-widget[data-color="accent"] { color: var(--accent); }
+.text-widget[data-color="interaction"] { color: var(--interaction); }
+
+/* Inline link styling (for html mode) —
+ * Uses ::after pseudo-element for animated underline,
+ * matching the Link widget's theme-driven grow effect.
+ * Controlled by data-link-hover: none | underline | hover-underline */
+.text-widget a {
+  color: var(--interaction, currentColor);
   text-decoration: none;
+  position: relative;
+}
+
+.text-widget a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: calc(-1 * var(--text-decoration-offset, 0px));
+  width: 0;
+  height: var(--text-decoration-thickness, 1px);
+  background: repeating-linear-gradient(
+    to right,
+    currentColor 0,
+    currentColor var(--text-decoration-dash, 100%),
+    transparent var(--text-decoration-dash, 100%),
+    transparent calc(var(--text-decoration-dash, 100%) + var(--text-decoration-gap, 0px))
+  );
+  opacity: var(--text-decoration-opacity, 1);
+  transition: width var(--duration-normal, 300ms) var(--ease-default, ease);
+  pointer-events: none;
+}
+
+/* None — no underline */
+.text-widget[data-link-hover="none"] a::after {
+  display: none;
+}
+
+/* Underline — always visible */
+.text-widget[data-link-hover="underline"] a::after {
+  width: 100%;
+}
+
+/* Hover-underline — grow on hover */
+.text-widget[data-link-hover="hover-underline"] a:hover::after {
+  width: 100%;
 }

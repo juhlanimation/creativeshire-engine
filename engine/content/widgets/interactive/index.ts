@@ -18,42 +18,6 @@ export type { VideoProps } from './Video/types'
 export { default as VideoPlayer } from './VideoPlayer'
 export type { VideoPlayerProps } from './VideoPlayer/types'
 
-// ContactPrompt - copy-to-clipboard with flip animation
-export { default as ContactPrompt } from './ContactPrompt'
-export type { ContactPromptProps } from './ContactPrompt/types'
-
-// ExpandableGalleryRow - gallery row with hover expansion
-export { default as ExpandableGalleryRow } from './ExpandableGalleryRow'
-export type { ExpandableGalleryRowProps } from './ExpandableGalleryRow/types'
-
-// GalleryThumbnail - expandable thumbnail with video and metadata
-export { default as GalleryThumbnail } from './GalleryThumbnail'
-export type { GalleryThumbnailProps, GalleryProject } from './GalleryThumbnail'
-
-// HeroRoles - role titles for hero sections (supports binding expressions)
-export { default as HeroRoles } from './HeroRoles'
-export type { HeroRolesProps } from './HeroRoles/types'
-
-// FeaturedProjectsGrid - featured project cards (supports binding expressions)
-export { default as FeaturedProjectsGrid } from './FeaturedProjectsGrid'
-export type { FeaturedProjectsGridProps, FeaturedProject } from './FeaturedProjectsGrid/types'
-
-// LogoMarquee - horizontal marquee of client logos (supports binding expressions)
-export { default as LogoMarquee } from './LogoMarquee'
-export type { LogoMarqueeProps, LogoItem } from './LogoMarquee/types'
-
-// EmailReveal - hover-triggered email fold-out with copy-to-clipboard
-export { default as EmailReveal } from './EmailReveal'
-export type { EmailRevealProps } from './EmailReveal/types'
-
-// SectionFooter - footer bar for project sections with social icons and email copy
-export { default as SectionFooter } from './SectionFooter'
-export type { SectionFooterProps } from './SectionFooter/types'
-
-// HeroVideo - full-screen video hero with intro timing and scroll cover progress
-export { default as HeroVideo } from './HeroVideo'
-export type { HeroVideoProps } from './HeroVideo/types'
-
-// TeamShowcase - fullscreen video showcase with hover/scroll team member selection
-export { default as TeamShowcase } from './TeamShowcase'
-export type { TeamShowcaseProps, TeamMember } from './TeamShowcase/types'
+// EmailCopy - click-to-copy email with flip or reveal animation
+export { default as EmailCopy } from './EmailCopy'
+export type { EmailCopyProps, EmailCopyVariant } from './EmailCopy/types'

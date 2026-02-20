@@ -1,60 +1,126 @@
 /**
  * Button widget styles.
- * Uses CSS variables with fallbacks for animation support.
+ * Every visual property reads from theme CSS variables.
+ *
+ * Theme token mapping:
+ *   Typography   → --font-ui, --font-size-body
+ *   Spacing      → --spacing-sm (padding-y), --spacing-md (padding-x), --spacing-xs (gap)
+ *   Radius       → --radius-md
+ *   Borders      → --border-width, --border-style (ghost variant)
+ *   Motion       → --duration-fast, --ease-default
+ *   Decoration   → --text-decoration-style, --text-decoration-thickness, --text-decoration-offset
+ *   Interaction  → --hover-opacity, --active-scale
+ *   Focus        → --focus-ring-width, --focus-ring-offset, --color-focus
+ *   Colors       → --color-primary, --color-primary-contrast, --color-secondary, etc.
  */
 
 .button-widget {
-  /* Animation CSS variables with fallbacks (set by behaviours) */
+  /* L2 behaviour variables (set by scroll/visibility drivers) */
   transform: translateY(var(--y, 0px));
   opacity: var(--opacity, 1);
 
-  /* Default styling */
+  /* Layout */
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5em 1em;
-  border: none;
-  border-radius: 4px;
-  font: inherit;
+  gap: var(--spacing-xs, 0.25rem);
+
+  /* Spacing — from theme */
+  padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
+
+  /* Typography — from theme */
+  font-family: var(--font-ui, inherit);
+  font-size: var(--font-size-body, 1rem);
   font-weight: 500;
+
+  /* Shape — from theme */
+  border: none;
+  border-radius: var(--radius-md, 4px);
   cursor: pointer;
-  transition: none; /* Animations handled by drivers, not CSS transitions */
+
+  /* No text-decoration — hover underline handled by ::after on inner text span */
+  text-decoration: none;
+
+  /* Transitions — ALL animatable properties use theme motion tokens */
+  transition:
+    opacity var(--duration-fast, 150ms) var(--ease-default, ease),
+    transform var(--duration-fast, 150ms) var(--ease-default, ease);
 }
 
-/* Primary variant (default) */
+/* Inner text span — anchor for underline pseudo */
+.button-widget__text {
+  position: relative;
+}
+
+/* Hover underline — grows from left under the text.
+ * Uses repeating-linear-gradient for precise dash/gap control. */
+.button-widget__text::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: calc(-1 * var(--text-decoration-offset, 0px));
+  width: 0;
+  height: var(--text-decoration-thickness, 1px);
+  background: repeating-linear-gradient(
+    to right,
+    currentColor 0,
+    currentColor var(--text-decoration-dash, 100%),
+    transparent var(--text-decoration-dash, 100%),
+    transparent calc(var(--text-decoration-dash, 100%) + var(--text-decoration-gap, 0px))
+  );
+  opacity: var(--text-decoration-opacity, 1);
+  transition: width var(--duration-normal, 300ms) var(--ease-default, ease);
+  pointer-events: none;
+}
+
+/* Hover — opacity from theme + grow underline */
+.button-widget:hover:not(:disabled) {
+  opacity: var(--hover-opacity, 1);
+}
+
+.button-widget:hover:not(:disabled) .button-widget__text::after {
+  width: 100%;
+}
+
+/* Active — press scale from theme (preserves L2 translateY) */
+.button-widget:active:not(:disabled) {
+  transform: translateY(var(--y, 0px)) scale(var(--active-scale, 1));
+}
+
+/* Primary variant (default) — colors from theme palette */
 .button-widget[data-variant="primary"] {
   background-color: var(--color-primary, #0066cc);
   color: var(--color-primary-contrast, #ffffff);
 }
 
-/* Secondary variant */
+/* Secondary variant — colors from theme palette */
 .button-widget[data-variant="secondary"] {
   background-color: var(--color-secondary, #e0e0e0);
   color: var(--color-secondary-contrast, #333333);
 }
 
-/* Ghost variant */
+/* Ghost variant — border from theme tokens */
 .button-widget[data-variant="ghost"] {
   background-color: transparent;
   color: inherit;
-  border: 1px solid currentColor;
+  border: var(--border-width, 1px) var(--border-style, solid) currentColor;
 }
 
 /* Disabled state */
 .button-widget:disabled {
-  opacity: 0.5;
+  opacity: var(--disabled-opacity, 0.5);
   cursor: not-allowed;
 }
 
-/* Focus state - remove default outline, rely on :focus-visible */
+/* Focus state — remove default outline, rely on :focus-visible */
 .button-widget:focus {
   outline: none;
 }
 
-/* Keyboard focus indicator (accessibility) */
+/* Keyboard focus indicator — ring from theme interaction tokens */
 .button-widget:focus-visible {
-  outline: 2px solid var(--color-focus, currentColor);
-  outline-offset: 2px;
+  outline: var(--focus-ring-width, 2px) solid var(--color-focus, currentColor);
+  outline-offset: var(--focus-ring-offset, 2px);
 }
 
 /* Enable will-change only when behaviour is attached */

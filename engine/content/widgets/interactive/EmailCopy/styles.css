@@ -1,0 +1,318 @@
+/**
+ * EmailCopy widget styles + colocated effects.
+ *
+ * Two variants:
+ *
+ * FLIP (.email-copy--flip):
+ * Structure:
+ * .email-copy.email-copy--flip (button)
+ *   .email-copy__text-stack (overflow hidden, 2 texts — when label)
+ *     .email-copy__text--prompt (primary - visible by default)
+ *     .email-copy__text--email (secondary - flips in on hover)
+ *   OR .email-copy__text (plain email text — when no label)
+ *   .email-copy__icon-stack (overflow hidden, 2 icons)
+ *     .email-copy__icon--copy (primary - visible on hover)
+ *     .email-copy__icon--check (secondary - flips in on click)
+ *
+ * REVEAL (.email-copy--reveal):
+ * Structure:
+ * .email-copy.email-copy--reveal (button)
+ *   span (label)
+ *   .email-copy__address (max-width fold-out)
+ *     .email-copy__address-text (email in parentheses)
+ *   .email-copy__reveal-icon (clipboard/checkmark swap)
+ *
+ * Hover color (--ec-hover) applies to BOTH variants via data-hover-color.
+ */
+
+/* =============================================================================
+ * SHARED - Base reset, hover color mapping
+ * ============================================================================= */
+
+.email-copy {
+  /* Button UA reset */
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  appearance: none;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  font-family: var(--font-ui, system-ui, sans-serif);
+  font-weight: 400;
+  letter-spacing: 0.025em;
+  white-space: nowrap;
+}
+
+.email-copy:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: var(--text-decoration-offset, 4px);
+}
+
+/* Hover color mapping — applies to both variants */
+.email-copy[data-hover-color="accent"] { --ec-hover: var(--accent); }
+.email-copy[data-hover-color="interaction"] { --ec-hover: var(--interaction); }
+.email-copy[data-hover-color="primary"] { --ec-hover: var(--text-primary); }
+
+/* Shared icon SVG sizing */
+.email-copy__icon-svg {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+}
+
+/* =============================================================================
+ * FLIP VARIANT
+ * ============================================================================= */
+
+.email-copy--flip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 1.75rem; /* 28px */
+  font-size: var(--font-size-h3, 1.125rem);
+}
+
+/* Text stack - contains prompt and email stacked vertically */
+.email-copy__text-stack {
+  position: relative;
+  height: 1.75rem; /* 28px */
+  overflow: hidden;
+  text-align: left;
+}
+
+/* Shared text styles */
+.email-copy__text {
+  display: block;
+  line-height: 1.75rem; /* 28px - matches container */
+}
+
+/* Prompt text - visible by default, slides up on hover */
+.email-copy__text--prompt {
+  transform: translateY(var(--text-reveal-y, 0));
+  transition: transform var(--flip-duration, var(--duration-normal, 400ms)) var(--ease-default, cubic-bezier(0.4, 0, 0.2, 1));
+  will-change: transform;
+}
+
+/* Email text - positioned below, slides in on hover */
+.email-copy__text--email {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  transform: translateY(var(--text-reveal-y, 0));
+  transition: transform var(--flip-duration, var(--duration-normal, 400ms)) var(--ease-default, cubic-bezier(0.4, 0, 0.2, 1));
+  will-change: transform;
+}
+
+/* Icon stack - inline to right of text */
+.email-copy__icon-stack {
+  position: relative;
+  margin-left: var(--spacing-sm, 0.5rem);
+  width: 1rem;
+  height: 1rem;
+  overflow: hidden;
+  /* Fade in on hover */
+  opacity: var(--icon-opacity, 0);
+  transition: opacity var(--fade-duration, var(--duration-fast, 200ms)) var(--ease-out, ease-out);
+  will-change: opacity;
+}
+
+/* Shared icon styles */
+.email-copy__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Copy icon - visible by default in stack, slides up on click */
+.email-copy__icon--copy {
+  transform: translateY(var(--icon-reveal-y, 0));
+  transition: transform var(--flip-duration, var(--duration-normal, 400ms)) var(--ease-default, cubic-bezier(0.4, 0, 0.2, 1));
+  will-change: transform;
+}
+
+/* Checkmark icon - positioned below, slides in on click */
+.email-copy__icon--check {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  transform: translateY(var(--icon-reveal-y, 0));
+  transition: transform var(--flip-duration, var(--duration-normal, 400ms)) var(--ease-default, cubic-bezier(0.4, 0, 0.2, 1));
+  will-change: transform;
+}
+
+/* Fallback hover when no behaviour wrapper parent (e.g. Storybook, footer).
+   When BehaviourWrapper wraps this widget, its parent div has [data-behaviour]
+   and the behaviour handles --text-reveal-y, --icon-opacity, --shift-color.
+   Using parent check avoids green flash: CSS :hover fires instantly but React
+   data-hovered (which toggles mix-blend-mode) lags by one frame. */
+:not([data-behaviour]) > .email-copy--flip:hover {
+  --text-reveal-y: -100%;
+  --icon-opacity: 1;
+  color: var(--ec-hover, var(--accent, currentColor));
+}
+
+/* Non-blend mode: use --shift-color from hover/reveal behaviour for text color.
+   When the behaviour is attached, --shift-color provides:
+   - default: 'white' (visible over dark hero backgrounds in any theme mode)
+   - hovered: interaction color (visible CTA)
+   Without behaviour, --shift-color is unset → falls back to --text-primary (theme color). */
+.email-copy--flip:not([data-blend-mode]) {
+  color: var(--shift-color, var(--text-primary, white));
+}
+
+/* =============================================================================
+ * Blend Mode: Difference — overlay-level blend with flash prevention
+ *
+ * Mix-blend-mode lives on .chrome-overlay (see chrome.css) because children
+ * can't blend through the overlay's stacking context to reach page content.
+ *
+ * Flash prevention: on unhover, CSS :hover is removed instantly (reverting
+ * blend to difference) but --shift-color transition takes 300ms (still purple).
+ * Purple + difference = green flash. Fix: transition-duration: 0s on the
+ * default (unhover) state so color snaps to white in the same frame.
+ * ============================================================================= */
+
+/* Instant color transition on unhover (prevents green flash).
+   Overrides color-shift effect's 300ms transition. */
+[data-effect="color-shift"].email-copy--flip[data-blend-mode="difference"] {
+  transition: color 0s;
+}
+
+/* Smooth color transition on hover-in — standalone fallback */
+:not([data-behaviour]) > .email-copy--flip[data-blend-mode="difference"]:hover {
+  color: var(--ec-hover, var(--accent, #9933FF));
+  transition: color var(--shift-duration, 300ms) var(--shift-easing, ease-in-out);
+}
+
+/* Smooth color transition on hover-in — wrapped (BehaviourWrapper) */
+[data-hovered] > .email-copy--flip[data-blend-mode="difference"] {
+  transition: color var(--shift-duration, 300ms) var(--shift-easing, ease-in-out);
+}
+
+/* =============================================================================
+ * REVEAL VARIANT
+ * ============================================================================= */
+
+.email-copy--reveal {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 0.5rem);
+  font-size: var(--font-size-body, 1rem);
+  line-height: 1.5;
+  text-transform: none;
+  transition: color var(--duration-fast, 0.2s) var(--ease-out, ease-out);
+}
+
+/* Email address fold-out container */
+.email-copy__address {
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: all var(--duration-normal, 300ms) var(--ease-out, ease-out);
+}
+
+.email-copy--reveal-hovered {
+  color: var(--ec-hover, var(--accent, currentColor));
+}
+
+.email-copy--reveal-hovered .email-copy__address {
+  max-width: 280px;
+  opacity: 1;
+  margin-left: var(--spacing-xs, 0.25rem);
+}
+
+/* Email text in parentheses */
+.email-copy__address-text {
+  color: var(--text-secondary, rgba(255, 255, 255, 0.4));
+}
+
+/* Reveal icon container — folds out with the email address */
+.email-copy__reveal-icon {
+  position: relative;
+  width: 0;
+  height: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  overflow: hidden;
+  transition: all var(--duration-normal, 300ms) var(--ease-out, ease-out);
+}
+
+.email-copy--reveal-hovered .email-copy__reveal-icon {
+  width: 1rem;
+  opacity: 1;
+  margin-left: calc(-1 * var(--spacing-sm, 0.5rem) + 0.25rem);
+}
+
+/* Reveal icon SVGs */
+.email-copy__reveal-icon-svg {
+  position: absolute;
+  width: 0.875rem;
+  height: 0.875rem;
+  transition: all var(--duration-normal, 300ms) var(--ease-out, ease-out);
+}
+
+/* Clipboard icon - visible by default */
+.email-copy__reveal-icon--copy {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.email-copy--reveal-copied .email-copy__reveal-icon--copy {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+/* Checkmark icon - hidden by default */
+.email-copy__reveal-icon--check {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+.email-copy--reveal-copied .email-copy__reveal-icon--check {
+  opacity: 1;
+  transform: scale(1);
+  color: var(--ec-hover, var(--accent, currentColor));
+}
+
+/* =============================================================================
+ * REDUCED MOTION
+ * ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Flip variant */
+  .email-copy__text--prompt,
+  .email-copy__text--email,
+  .email-copy__icon-stack,
+  .email-copy__icon--copy,
+  .email-copy__icon--check {
+    transition: none;
+  }
+  /* Reveal variant */
+  .email-copy__address,
+  .email-copy__reveal-icon-svg {
+    transition: none;
+  }
+}
+
+/* =============================================================================
+ * Color Shift Effect (colocated with flip variant)
+ *
+ * --shift-color is set by the hover/reveal behaviour on the BehaviourWrapper parent.
+ * It changes from defaultColor ('white') to hoverColor ('var(--interaction)') on hover.
+ *
+ * For blend-mode: difference, the transition-duration is overridden above:
+ * - 0s on unhover (prevents green flash when blend reverts to difference)
+ * - 300ms on hover-in (smooth color transition to interaction color)
+ * ============================================================================= */
+[data-effect="color-shift"].email-copy {
+  color: var(--shift-color, var(--text-primary, white));
+  will-change: color;
+}
+

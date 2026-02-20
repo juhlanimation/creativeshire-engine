@@ -13,6 +13,7 @@ export const meta = defineMeta<ImageProps>({
   icon: 'image',
   tags: ['media', 'visual', 'photo'],
   component: true,
+  triggers: ['mouseenter', 'mouseleave', 'click'],
 
   settings: {
     src: {
@@ -59,12 +60,23 @@ export const meta = defineMeta<ImageProps>({
       ],
     },
     objectPosition: {
-      type: 'text',
+      type: 'select',
       label: 'Object Position',
       default: 'center',
-      description: 'Position of the image within container (e.g., center, top, bottom 20%)',
-      validation: { maxLength: 50 },
+      description: 'Position of the image within its container',
+      choices: [
+        { value: 'center', label: 'Center' },
+        { value: 'top', label: 'Top' },
+        { value: 'bottom', label: 'Bottom' },
+        { value: 'left', label: 'Left' },
+        { value: 'right', label: 'Right' },
+        { value: 'top left', label: 'Top Left' },
+        { value: 'top right', label: 'Top Right' },
+        { value: 'bottom left', label: 'Bottom Left' },
+        { value: 'bottom right', label: 'Bottom Right' },
+      ],
       advanced: true,
+      hidden: true,
     },
     filter: {
       type: 'text',
@@ -81,6 +93,23 @@ export const meta = defineMeta<ImageProps>({
       default: false,
       description: 'Mark as decorative (hides from screen readers)',
       advanced: true,
+      hidden: true,
+    },
+    priority: {
+      type: 'toggle',
+      label: 'Above Fold',
+      default: false,
+      description: 'Disables lazy loading and adds high fetch priority for above-the-fold images',
+      advanced: true,
+    },
+    sizes: {
+      type: 'text',
+      label: 'Sizes Hint',
+      default: '',
+      description: 'Responsive sizes attribute (e.g., "(max-width: 768px) 100vw, 50vw")',
+      validation: { maxLength: 200 },
+      advanced: true,
+      hidden: true,
     },
   },
 })

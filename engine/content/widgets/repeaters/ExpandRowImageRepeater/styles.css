@@ -1,0 +1,11 @@
+/**
+ * ExpandRowImageRepeater styles.
+ * Content Layer (L1) - container only.
+ */
+
+.expand-row-image-repeater {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  position: relative;
+}

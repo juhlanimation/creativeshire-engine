@@ -13,6 +13,7 @@ export const meta = defineMeta<ButtonProps>({
   icon: 'button',
   tags: ['interactive', 'action', 'form'],
   component: true,
+  triggers: ['mouseenter', 'mouseleave', 'click'],
 
   settings: {
     label: {

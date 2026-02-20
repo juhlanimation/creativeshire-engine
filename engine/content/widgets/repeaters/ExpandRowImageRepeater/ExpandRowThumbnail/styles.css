@@ -1,0 +1,121 @@
+/**
+ * ExpandRowThumbnail styles.
+ * Content Layer (L1) - structure only.
+ *
+ * Single expandable thumbnail: media (poster + video) above labels.
+ * Internal to ExpandRowImageRepeater.
+ */
+
+/* Root: flex column — media on top, labels below */
+.expand-row-thumbnail {
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Media container — holds poster + video absolutely */
+.expand-row-thumbnail__media {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Poster image — sized to expanded width, centered for uncrop effect */
+.expand-row-thumbnail__poster {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--expanded-width, 32rem);
+  height: 100%;
+  object-fit: cover;
+}
+
+.expand-row-thumbnail__poster--hidden {
+  opacity: 0;
+}
+
+/* Video — fills media container (only visible when expanded, so no uncrop needed) */
+.expand-row-thumbnail__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+}
+
+.expand-row-thumbnail__video--visible {
+  opacity: 1;
+}
+
+/* Labels container */
+.expand-row-thumbnail__labels {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-sm, 0.5rem);
+  font-family: var(--font-paragraph, system-ui, sans-serif);
+  font-size: var(--font-size-xs, 10px);
+  line-height: 1.5;
+  color: inherit;
+  opacity: 0;
+  pointer-events: none;
+  height: 6rem;
+  overflow: hidden;
+}
+
+.expand-row-thumbnail__labels--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.expand-row-thumbnail__labels-left,
+.expand-row-thumbnail__labels-right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs, 0.25rem);
+  min-width: 0;
+  flex: 1;
+}
+
+.expand-row-thumbnail__labels-left {
+  align-items: flex-start;
+  padding-right: var(--spacing-sm, 0.5rem);
+}
+
+.expand-row-thumbnail__labels-right {
+  align-items: flex-end;
+  text-align: right;
+  padding-left: var(--spacing-sm, 0.5rem);
+}
+
+/* Label text styles */
+.expand-row-thumbnail__year,
+.expand-row-thumbnail__role,
+.expand-row-thumbnail__client,
+.expand-row-thumbnail__studio {
+  opacity: 0.6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  line-height: 1.4;
+}
+
+.expand-row-thumbnail__title {
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  line-height: 1.4;
+}
+
+.expand-row-thumbnail__client .uppercase,
+.expand-row-thumbnail__studio .uppercase {
+  text-transform: uppercase;
+}

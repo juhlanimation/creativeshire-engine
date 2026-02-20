@@ -18,10 +18,20 @@ export const meta = defineMeta<StackProps>({
     gap: {
       type: 'spacing',
       label: 'Gap',
-      default: 0,
+      default: 'tight',
       description: 'Vertical space between items',
       bindable: true,
       validation: { min: 0, max: 500 },
+    },
+    gapScale: {
+      type: 'number',
+      label: 'Gap Scale',
+      default: 1,
+      description: 'Multiplier for the gap value',
+      min: 0.25,
+      max: 10,
+      step: 0.25,
+      bindable: true,
     },
     align: {
       type: 'alignment',

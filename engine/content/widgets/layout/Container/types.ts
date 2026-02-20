@@ -14,8 +14,8 @@ export interface ContainerProps {
   id?: string
   /** Maximum width (number = px, string = CSS value) */
   maxWidth?: number | string
-  /** Horizontal padding (number = px, string = CSS value) */
-  padding?: number | string
+  /** Horizontal padding (layout preset name or CSS value) */
+  padding?: string
   /** Center the container horizontally */
   center?: boolean
   /** Inline styles */

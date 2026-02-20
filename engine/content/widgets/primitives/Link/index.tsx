@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * Link widget - renders a navigation link with CSS variable support.
  * Content Layer (L1) - no scroll listeners or viewport units.
@@ -5,17 +7,19 @@
  * Uses Next.js Link for internal routes (href starts with /),
  * native <a> element for external URLs.
  *
- * Supports page transitions via TransitionProvider:
- * - If TransitionProvider exists, intercepts navigation to run exit tasks
- * - Falls back to standard navigation if no provider
+ * Supports page transitions via PageTransitionContext (EffectTimeline):
+ * - If PageTransitionProvider exists, intercepts navigation to play exit timeline
+ * - Empty timeline = navigate immediately (no fallback timeout)
+ * - Multiple effects can register tracks (hero slide, content blur, etc.)
+ * - Navigation waits for the LONGEST track to finish
  */
 
-import React, { memo, forwardRef, useCallback, type MouseEvent } from 'react'
+import React, { memo, forwardRef, useCallback, useRef, type MouseEvent } from 'react'
 import NextLink from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useTransitionOptional } from '../../../../experience/navigation'
+import { usePageTransition } from '../../../../experience/navigation/PageTransitionContext'
+import { prefersReducedMotion } from '../../../../experience/timeline/animateElement'
 import type { LinkProps } from './types'
-import './styles.css'
 
 /**
  * Determines if a URL is internal (starts with / but not //).
@@ -34,7 +38,7 @@ function hasModifierKey(e: MouseEvent): boolean {
 /**
  * Dev query params to preserve during navigation.
  */
-const DEV_PARAMS = ['_preset', '_experience']
+const DEV_PARAMS = ['_preset', '_experience', '_intro', '_transition']
 
 /**
  * Get href with preserved dev query params from current URL.
@@ -64,14 +68,22 @@ function getHrefWithDevParams(href: string): string {
 }
 
 /**
+ * Strip trailing slash for pathname comparison (but keep "/" as-is).
+ */
+function stripTrailingSlash(p: string): string {
+  return p.length > 1 && p.endsWith('/') ? p.slice(0, -1) : p
+}
+
+/**
  * Link component renders a navigation link.
  * Supports CSS variable animation via var() fallbacks in styles.css.
  *
- * When TransitionProvider is available, coordinates page transitions:
+ * When PageTransitionProvider is available, coordinates page transitions:
  * 1. Intercepts click
- * 2. Executes exit stack
- * 3. Navigates via router.push
- * 4. Entry stack runs on new page mount
+ * 2. Plays exit timeline (all registered tracks in parallel)
+ * 3. Waits for ALL tracks to complete
+ * 4. Navigates via router.push
+ * 5. Entry animation plays on new page mount
  */
 const Link = memo(forwardRef<HTMLAnchorElement, LinkProps>(function Link(
   {
@@ -91,7 +103,12 @@ const Link = memo(forwardRef<HTMLAnchorElement, LinkProps>(function Link(
   ref
 ) {
   const router = useRouter()
-  const transitionContext = useTransitionOptional()
+  const transitionContext = usePageTransition()
+
+  // Version counter — incremented on each click so stale async
+  // continuations (from a previous click's await) can detect they're
+  // outdated and bail before calling router.push a second time.
+  const versionRef = useRef(0)
 
   const computedClassName = className ? `link-widget ${className}` : 'link-widget'
 
@@ -99,18 +116,11 @@ const Link = memo(forwardRef<HTMLAnchorElement, LinkProps>(function Link(
   const isExternal = !isInternalLink(href)
   const computedRel = rel ?? (isExternal && target === '_blank' ? 'noopener noreferrer' : undefined)
 
-  // Determine if we should use transitions
-  const shouldTransition =
-    transitionContext &&
-    !skipTransition &&
-    !isExternal &&
-    target !== '_blank'
-
   /**
-   * Handle click - intercept for transition or dev param preservation.
+   * Handle click - intercept for page transition or dev param preservation.
    */
   const handleClick = useCallback(
-    (e: MouseEvent<HTMLAnchorElement>) => {
+    async (e: MouseEvent<HTMLAnchorElement>) => {
       // Call user's onClick first
       onClick?.(e)
       if (e.defaultPrevented) return
@@ -124,22 +134,67 @@ const Link = memo(forwardRef<HTMLAnchorElement, LinkProps>(function Link(
       // Get href with dev params preserved (only affects dev mode)
       const navHref = getHrefWithDevParams(href)
 
-      // If transitions enabled, intercept and run transition
+      // Skip transition for same-page navigation
+      if (typeof window !== 'undefined') {
+        const hrefPath = stripTrailingSlash(href.split('?')[0].split('#')[0])
+        if (stripTrailingSlash(window.location.pathname) === hrefPath) {
+          e.preventDefault()
+          return
+        }
+      }
+
+      // Determine if we should use transitions
+      const shouldTransition =
+        transitionContext &&
+        !skipTransition &&
+        !prefersReducedMotion()
+
       if (shouldTransition && transitionContext) {
         e.preventDefault()
-        transitionContext.startTransition(href, () => {
+
+        const { getExitTimeline, startTransition, endTransition } = transitionContext
+        const exitTimeline = getExitTimeline()
+
+        // If an exit animation is already in-flight (user clicked rapidly),
+        // skip exit and navigate immediately
+        if (exitTimeline.playing) {
           router.push(navHref)
-        })
+          return
+        }
+
+        // Stamp this click so we can detect stale continuations after await
+        const version = ++versionRef.current
+
+        // Signal transition is starting
+        startTransition()
+
+        // If timeline has tracks, play them and wait for ALL to complete
+        if (!exitTimeline.isEmpty) {
+          await exitTimeline.play()
+        }
+        // Empty timeline = navigate immediately (no fallback timeout)
+
+        // A newer click happened while we were waiting — abort
+        if (versionRef.current !== version) return
+
+        // Navigate to new page
+        router.push(navHref)
+
+        // Clear timeline for next transition
+        exitTimeline.clear()
+
+        // Signal transition ended
+        endTransition()
         return
       }
 
-      // In dev mode, intercept to preserve query params even without transitions
+      // No transition — in dev mode, intercept to preserve query params
       if (navHref !== href) {
         e.preventDefault()
         router.push(navHref)
       }
     },
-    [onClick, href, target, isExternal, shouldTransition, transitionContext, router]
+    [onClick, href, target, isExternal, skipTransition, transitionContext, router]
   )
 
   const commonProps = {
@@ -154,7 +209,7 @@ const Link = memo(forwardRef<HTMLAnchorElement, LinkProps>(function Link(
   // Use Next.js Link for internal navigation
   if (isInternalLink(href)) {
     // Note: We don't modify the href attribute here to avoid hydration mismatch.
-    // Dev query params (_preset, _experience) are added in handleClick instead.
+    // Dev query params (_preset, _experience, _intro, _transition) are added in handleClick instead.
     return (
       <NextLink
         ref={ref}

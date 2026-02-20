@@ -37,7 +37,7 @@
   width: 100%;
   overflow: hidden;
   cursor: pointer;
-  background-color: #000;
+  background-color: var(--site-outer-bg, #000);
 }
 
 /* Poster image - fills container */

@@ -9,7 +9,6 @@ import React, { memo, forwardRef, type CSSProperties } from 'react'
 import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
 import { toCssGap } from '../utils'
 import type { GridProps } from './types'
-import './styles.css'
 
 /**
  * Converts a column/row value to CSS grid template.
@@ -40,15 +39,15 @@ function gridToStyle(props: GridProps): CSSProperties {
   }
 
   if (props.gap !== undefined) {
-    styles.gap = toCssGap(props.gap)
+    styles.gap = toCssGap(props.gap, props.gapScale)
   }
 
   if (props.columnGap !== undefined) {
-    styles.columnGap = toCssGap(props.columnGap)
+    styles.columnGap = toCssGap(props.columnGap, props.gapScale)
   }
 
   if (props.rowGap !== undefined) {
-    styles.rowGap = toCssGap(props.rowGap)
+    styles.rowGap = toCssGap(props.rowGap, props.gapScale)
   }
 
   return styles
@@ -64,6 +63,7 @@ const Grid = memo(forwardRef<HTMLDivElement, GridProps>(function Grid(
     columns,
     rows,
     gap,
+    gapScale,
     columnGap,
     rowGap,
     style,
@@ -74,7 +74,7 @@ const Grid = memo(forwardRef<HTMLDivElement, GridProps>(function Grid(
   },
   ref
 ) {
-  const computedStyle = gridToStyle({ columns, rows, gap, columnGap, rowGap, style })
+  const computedStyle = gridToStyle({ columns, rows, gap, gapScale, columnGap, rowGap, style })
 
   return (
     <div

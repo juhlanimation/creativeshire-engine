@@ -21,6 +21,8 @@ export interface SplitProps {
   ratio?: SplitRatio | string
   /** Gap between columns (number = px, string = CSS value) */
   gap?: number | string
+  /** Multiplier for the gap value (e.g., 2 = double the gap) */
+  gapScale?: number
   /** Reverse the column order */
   reverse?: boolean
   /** Vertical alignment of columns */

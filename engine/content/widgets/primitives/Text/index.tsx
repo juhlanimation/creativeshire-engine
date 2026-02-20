@@ -6,18 +6,49 @@
  */
 
 import React, { memo, forwardRef } from 'react'
-import type { TextProps } from './types'
-import './styles.css'
+import type { TextProps, TextElement } from './types'
+
+/** HTML elements used by Text. */
+type TextHTMLElement = 'h1' | 'h2' | 'h3' | 'p' | 'small' | 'span'
+
+/** Map scale levels to HTML elements. */
+const ELEMENT_MAP: Record<TextElement, TextHTMLElement> = {
+  display: 'h1',
+  h1: 'h1',
+  h2: 'h2',
+  h3: 'h3',
+  body: 'p',
+  p: 'p',
+  small: 'small',
+  xs: 'small',
+  span: 'span',
+}
 
 /**
  * Text component renders text content.
  * Supports CSS variable animation via var() fallbacks in styles.css.
  */
 const Text = memo(forwardRef<HTMLElement, TextProps>(function Text(
-  { id, content, as: Element = 'p', variant, html, style, className, 'data-behaviour': dataBehaviour },
+  {
+    id, content, as: scale = 'p', variant, color, html, linkHoverStyle,
+    textAlign, textTransform, blendMode, fontWeight, letterSpacing, lineHeight,
+    style, className, 'data-behaviour': dataBehaviour,
+  },
   ref
 ) {
+  const Element = ELEMENT_MAP[scale] ?? 'p'
   const computedClassName = className ? `text-widget ${className}` : 'text-widget'
+  const dataColor = color && color !== 'inherit' ? color : undefined
+
+  const computedStyle: React.CSSProperties = {
+    ...style,
+    ...(textAlign && { textAlign }),
+    ...(textTransform && { textTransform }),
+    ...(blendMode && { mixBlendMode: blendMode as React.CSSProperties['mixBlendMode'] }),
+    ...(fontWeight && { fontWeight }),
+    ...(letterSpacing && { letterSpacing }),
+    ...(lineHeight && { lineHeight }),
+  }
 
   // Render with dangerouslySetInnerHTML for rich text (inline links, etc.)
   if (html) {
@@ -27,8 +58,11 @@ const Text = memo(forwardRef<HTMLElement, TextProps>(function Text(
         ref={ref as React.Ref<any>}
         id={id}
         className={computedClassName}
-        style={style}
+        style={computedStyle}
+        data-scale={scale}
         data-variant={variant}
+        data-color={dataColor}
+        data-link-hover={linkHoverStyle || 'hover-underline'}
         data-behaviour={dataBehaviour}
         dangerouslySetInnerHTML={{ __html: content }}
       />
@@ -42,8 +76,10 @@ const Text = memo(forwardRef<HTMLElement, TextProps>(function Text(
       ref={ref as React.Ref<any>}
       id={id}
       className={computedClassName}
-      style={style}
+      style={computedStyle}
+      data-scale={scale}
       data-variant={variant}
+      data-color={dataColor}
       data-behaviour={dataBehaviour}
     >
       {content}

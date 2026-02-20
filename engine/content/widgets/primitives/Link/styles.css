@@ -1,49 +1,91 @@
 /**
  * Link widget styles.
- * Uses CSS variables with fallbacks for animation support.
+ * Every visual property reads from theme CSS variables.
+ *
+ * Theme token mapping:
+ *   Typography   → --font-ui (inherits)
+ *   Colors       → --color-link
+ *   Motion       → --duration-fast, --ease-default
+ *   Decoration   → --text-decoration-style, --text-decoration-thickness, --text-decoration-offset
+ *   Interaction  → --hover-opacity
+ *   Focus        → --focus-ring-width, --focus-ring-offset, --color-focus
  */
 
 .link-widget {
-  /* Animation CSS variables with fallbacks (set by behaviours) */
+  /* L2 behaviour variables (set by scroll/visibility drivers) */
   transform: translateY(var(--y, 0px));
   opacity: var(--opacity, 1);
 
-  /* Default styling */
+  /* Typography — from theme */
+  font-family: var(--font-ui, inherit);
+  font-size: var(--font-size-body, 1rem);
+
+  /* Colors — from theme palette */
   color: var(--color-link, currentColor);
-  text-decoration: none;
   cursor: pointer;
-}
 
-/* Default variant - no underline */
-.link-widget[data-variant="default"] {
+  /* No text-decoration — underline handled by ::after pseudo */
   text-decoration: none;
+  position: relative;
+
+  /* Transitions — use theme motion tokens */
+  transition:
+    opacity var(--duration-fast, 150ms) var(--ease-default, ease),
+    transform var(--duration-fast, 150ms) var(--ease-default, ease);
 }
 
-/* Underline variant - always underlined */
-.link-widget[data-variant="underline"] {
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
+/* Hover underline — grows from left via ::after width transition.
+ * Uses repeating-linear-gradient for precise dash/gap control.
+ * --text-decoration-dash / --text-decoration-gap drive the pattern;
+ * when absent, defaults produce a continuous solid line. */
+.link-widget::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: calc(-1 * var(--text-decoration-offset, 0px));
+  width: 0;
+  height: var(--text-decoration-thickness, 1px);
+  background: repeating-linear-gradient(
+    to right,
+    currentColor 0,
+    currentColor var(--text-decoration-dash, 100%),
+    transparent var(--text-decoration-dash, 100%),
+    transparent calc(var(--text-decoration-dash, 100%) + var(--text-decoration-gap, 0px))
+  );
+  opacity: var(--text-decoration-opacity, 1);
+  transition: width var(--duration-normal, 300ms) var(--ease-default, ease);
+  pointer-events: none;
 }
 
-/* Hover-underline variant - underline only on hover */
-.link-widget[data-variant="hover-underline"] {
-  text-decoration: none;
+/* Hover — opacity from theme interaction tokens */
+.link-widget:hover {
+  opacity: var(--hover-opacity, 1);
 }
 
-.link-widget[data-variant="hover-underline"]:hover {
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
+/* Default variant — no underline */
+.link-widget[data-variant="default"]::after {
+  display: none;
 }
 
-/* Focus state - remove default outline, rely on :focus-visible */
+/* Underline variant — always visible */
+.link-widget[data-variant="underline"]::after {
+  width: 100%;
+}
+
+/* Hover-underline variant — grows on hover */
+.link-widget[data-variant="hover-underline"]:hover::after {
+  width: 100%;
+}
+
+/* Focus state — remove default outline, rely on :focus-visible */
 .link-widget:focus {
   outline: none;
 }
 
-/* Keyboard focus indicator (accessibility) */
+/* Keyboard focus indicator — ring from theme interaction tokens */
 .link-widget:focus-visible {
-  outline: 2px solid var(--color-focus, currentColor);
-  outline-offset: 2px;
+  outline: var(--focus-ring-width, 2px) solid var(--color-focus, currentColor);
+  outline-offset: var(--focus-ring-offset, 2px);
 }
 
 /* Enable will-change only when behaviour is attached */

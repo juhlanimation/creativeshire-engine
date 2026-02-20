@@ -9,7 +9,6 @@ import React, { memo, forwardRef, useRef, useImperativeHandle, type CSSPropertie
 import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
 import { ALIGN_MAP, JUSTIFY_MAP, toCssGap } from '../utils'
 import type { FlexProps } from './types'
-import './styles.css'
 
 /**
  * Maps flex props to CSS properties.
@@ -37,7 +36,7 @@ function flexToStyle(props: FlexProps): CSSProperties {
   }
 
   if (props.gap !== undefined) {
-    styles.gap = toCssGap(props.gap)
+    styles.gap = toCssGap(props.gap, props.gapScale)
   }
 
   return styles
@@ -55,11 +54,11 @@ const Flex = memo(forwardRef<HTMLDivElement, FlexProps>(function Flex(
     justify,
     wrap,
     gap,
+    gapScale,
     style,
     className,
     'data-behaviour': dataBehaviour,
     'data-effect': dataEffect,
-    'data-marquee-track': dataMarqueeTrack,
     'data-index': dataIndex,
     'data-reversed': dataReversedProp,
     widgets
@@ -90,7 +89,7 @@ const Flex = memo(forwardRef<HTMLDivElement, FlexProps>(function Flex(
   })()
 
   // Only pass direction if explicitly provided - allows CSS to control responsive direction
-  const computedStyle = flexToStyle({ direction, align, justify, wrap, gap, style })
+  const computedStyle = flexToStyle({ direction, align, justify, wrap, gap, gapScale, style })
 
   return (
     <div
@@ -100,7 +99,6 @@ const Flex = memo(forwardRef<HTMLDivElement, FlexProps>(function Flex(
       style={computedStyle}
       data-behaviour={dataBehaviour}
       data-effect={dataEffect}
-      data-marquee-track={dataMarqueeTrack ? '' : undefined}
       data-index={dataIndex !== undefined ? String(dataIndex) : undefined}
       data-reversed={computedReversed !== undefined ? String(computedReversed) : undefined}
     >

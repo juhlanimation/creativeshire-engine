@@ -9,7 +9,6 @@ import React, { memo, forwardRef, type CSSProperties } from 'react'
 import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
 import { toCssValue } from '../utils'
 import type { BoxProps } from './types'
-import './styles.css'
 
 /**
  * Maps box props to CSS properties.
@@ -46,7 +45,6 @@ const Box = memo(forwardRef<HTMLDivElement, BoxProps>(function Box(
     className,
     'data-behaviour': dataBehaviour,
     'data-effect': dataEffect,
-    'data-marquee-track': dataMarqueeTrack,
     widgets
   },
   ref
@@ -61,7 +59,6 @@ const Box = memo(forwardRef<HTMLDivElement, BoxProps>(function Box(
       style={Object.keys(computedStyle).length > 0 ? computedStyle : undefined}
       data-behaviour={dataBehaviour}
       data-effect={dataEffect}
-      data-marquee-track={dataMarqueeTrack ? '' : undefined}
     >
       {widgets?.map((widget, index) => (
         <WidgetRenderer key={widget.id ?? index} widget={widget} />

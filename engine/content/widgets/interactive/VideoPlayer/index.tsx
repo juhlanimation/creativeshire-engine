@@ -28,7 +28,6 @@
 import { useRef, useState, useCallback, useEffect, memo } from 'react'
 import { useVideoControls, useAutoSavePosition } from './hooks'
 import type { VideoPlayerProps } from './types'
-import './styles.css'
 
 /**
  * Format seconds to MM:SS or HH:MM:SS.
@@ -228,7 +227,7 @@ const VideoPlayer = memo(function VideoPlayer({
       <video
         ref={videoRef}
         className={`video-player__video${videoReady ? ' video-player__video--ready' : ''}`}
-        src={src}
+        src={src || undefined}
         poster={poster}
         playsInline
         preload="auto"

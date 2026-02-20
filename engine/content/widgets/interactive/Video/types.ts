@@ -21,7 +21,7 @@ import type { WidgetBaseProps } from '../../types'
 
 /**
  * Payload sent when Video widget is clicked with videoUrl.
- * Consumed by 'open-video-modal' action registered by ModalRoot.
+ * Consumed by '{overlayKey}.open' action registered by ModalRoot.
  */
 export interface VideoClickPayload {
   /** Full-length video URL for modal playback */
@@ -65,6 +65,13 @@ export interface VideoProps extends WidgetBaseProps {
   /** Time in seconds to seek to for initial frame display (when no poster image) */
   posterTime?: number
 
+  /** Custom loop point: restart from N seconds when video ends instead of 0.
+   *  When set and > 0, disables native loop attribute and uses ended event handler. */
+  loopStartTime?: number
+  /** Adds data-intro-video attribute to the <video> element.
+   *  The intro system's useVideoTime hook queries [data-intro-video] to monitor playback timing. */
+  introVideo?: boolean
+
   // Modal integration props
   /** Full-length video URL for modal playback (enables click-to-open) */
   videoUrl?: string
@@ -76,4 +83,16 @@ export interface VideoProps extends WidgetBaseProps {
    * When provided with videoUrl, clicking triggers this with VideoClickPayload.
    */
   onClick?: (payload: VideoClickPayload) => void
+
+  /**
+   * Mouse enter handler injected by WidgetRenderer from schema.on.
+   * Forwarded alongside internal hover-play state management.
+   */
+  onMouseEnter?: () => void
+
+  /**
+   * Mouse leave handler injected by WidgetRenderer from schema.on.
+   * Forwarded alongside internal hover-play state management.
+   */
+  onMouseLeave?: () => void
 }

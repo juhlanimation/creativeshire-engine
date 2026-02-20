@@ -8,7 +8,6 @@
 
 import React, { memo, forwardRef } from 'react'
 import type { ButtonProps } from './types'
-import './styles.css'
 
 /**
  * Button component renders an interactive button.
@@ -41,7 +40,7 @@ const Button = memo(forwardRef<HTMLButtonElement, ButtonProps>(function Button(
       data-variant={variant}
       data-behaviour={dataBehaviour}
     >
-      {label}
+      <span className="button-widget__text">{label}</span>
     </button>
   )
 }))

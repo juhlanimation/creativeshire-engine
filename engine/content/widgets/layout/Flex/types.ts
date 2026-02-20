@@ -22,6 +22,8 @@ export interface FlexProps {
   wrap?: boolean
   /** Gap between items (number = px, string = CSS value) */
   gap?: number | string
+  /** Multiplier for the gap value (e.g., 3 = triple the gap) */
+  gapScale?: number
   /** Inline styles */
   style?: CSSProperties
   /** Additional CSS class names */
@@ -30,8 +32,6 @@ export interface FlexProps {
   'data-behaviour'?: string
   /** Data attribute for effect binding */
   'data-effect'?: string
-  /** Data attribute for marquee track */
-  'data-marquee-track'?: boolean
   /** Data attribute for item index (from __repeat binding) */
   'data-index'?: string | number
   /** Data attribute for reversed layout (explicit or computed from data-index) */

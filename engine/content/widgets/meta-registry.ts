@@ -11,6 +11,7 @@
  */
 
 import type { ComponentMeta } from '../../schema/meta'
+import { extractDefaults } from '../../schema/settings'
 
 // Primitives
 import { meta as TextMeta } from './primitives/Text/meta'
@@ -26,25 +27,15 @@ import { meta as GridMeta } from './layout/Grid/meta'
 import { meta as BoxMeta } from './layout/Box/meta'
 import { meta as ContainerMeta } from './layout/Container/meta'
 import { meta as SplitMeta } from './layout/Split/meta'
+import { meta as MarqueeMeta } from './layout/Marquee/meta'
 
 // Interactive
 import { meta as VideoMeta } from './interactive/Video/meta'
 import { meta as VideoPlayerMeta } from './interactive/VideoPlayer/meta'
-import { meta as ContactPromptMeta } from './interactive/ContactPrompt/meta'
-import { meta as ExpandableGalleryRowMeta } from './interactive/ExpandableGalleryRow/meta'
-import { meta as GalleryThumbnailMeta } from './interactive/GalleryThumbnail/meta'
-import { meta as HeroRolesMeta } from './interactive/HeroRoles/meta'
-import { meta as FeaturedProjectsGridMeta } from './interactive/FeaturedProjectsGrid/meta'
-import { meta as LogoMarqueeMeta } from './interactive/LogoMarquee/meta'
-import { meta as VideoCompareMeta } from './interactive/VideoCompare/meta'
-import { meta as ProjectSelectorMeta } from './interactive/ProjectSelector/meta'
-import { meta as TabbedContentMeta } from './interactive/TabbedContent/meta'
-import { meta as ShotIndicatorMeta } from './interactive/ShotIndicator/meta'
+import { meta as EmailCopyMeta } from './interactive/EmailCopy/meta'
 
-// Patterns (factory functions)
-import { meta as LogoLinkMeta } from './patterns/LogoLink/meta'
-import { meta as ProjectCardMeta } from './patterns/ProjectCard/meta'
-import { meta as ContactBarMeta } from './patterns/ContactBar/meta'
+// Repeaters (array-to-widget)
+import { meta as ExpandRowImageRepeaterMeta } from './repeaters/ExpandRowImageRepeater/meta'
 
 /**
  * Registry mapping widget type strings to their metadata.
@@ -63,29 +54,44 @@ export const widgetMetaRegistry = {
   Box: BoxMeta,
   Container: ContainerMeta,
   Split: SplitMeta,
+  Marquee: MarqueeMeta,
   // Interactive
   Video: VideoMeta,
   VideoPlayer: VideoPlayerMeta,
-  ContactPrompt: ContactPromptMeta,
-  ExpandableGalleryRow: ExpandableGalleryRowMeta,
-  GalleryThumbnail: GalleryThumbnailMeta,
-  HeroRoles: HeroRolesMeta,
-  FeaturedProjectsGrid: FeaturedProjectsGridMeta,
-  LogoMarquee: LogoMarqueeMeta,
-  VideoCompare: VideoCompareMeta,
-  ProjectSelector: ProjectSelectorMeta,
-  TabbedContent: TabbedContentMeta,
-  ShotIndicator: ShotIndicatorMeta,
-  // Patterns
-  LogoLink: LogoLinkMeta,
-  ProjectCard: ProjectCardMeta,
-  ContactBar: ContactBarMeta,
+  EmailCopy: EmailCopyMeta,
+  // Repeaters
+  ExpandRowImageRepeater: ExpandRowImageRepeaterMeta,
 } as const
 
 /**
  * All registered widget type names.
  */
 export type WidgetType = keyof typeof widgetMetaRegistry
+
+// =============================================================================
+// Widget Defaults (pre-computed at module load — zero render-time cost)
+// =============================================================================
+
+/**
+ * Pre-computed default prop values for each widget type.
+ * Extracted from meta.settings at module load time.
+ * Used by WidgetRenderer to fill in unspecified props.
+ */
+export const WIDGET_DEFAULTS: Record<string, Record<string, unknown>> =
+  Object.fromEntries(
+    Object.entries(widgetMetaRegistry).map(([type, meta]) => [
+      type,
+      meta.settings ? extractDefaults(meta.settings as Record<string, never>) : {},
+    ])
+  )
+
+/**
+ * Get pre-computed default props for a widget type.
+ * Returns empty object for unknown types (safe to spread).
+ */
+export function getWidgetDefaults(type: string): Record<string, unknown> {
+  return WIDGET_DEFAULTS[type] ?? {}
+}
 
 /**
  * Retrieves metadata for a widget by type string.

@@ -6,11 +6,11 @@
  */
 
 import React, { memo, forwardRef, useMemo, type CSSProperties } from 'react'
+import NextImage from 'next/image'
 import type { ImageProps } from './types'
-import './styles.css'
 
 /**
- * Image component renders an image.
+ * Image component renders an image via next/image.
  * Supports CSS variable animation via var() fallbacks in styles.css.
  */
 const Image = memo(forwardRef<HTMLImageElement, ImageProps>(function Image(
@@ -25,7 +25,10 @@ const Image = memo(forwardRef<HTMLImageElement, ImageProps>(function Image(
     filter,
     style,
     className,
-    'data-behaviour': dataBehaviour
+    'data-behaviour': dataBehaviour,
+    sizes,
+    priority = false,
+    quality,
   },
   ref
 ) {
@@ -38,8 +41,7 @@ const Image = memo(forwardRef<HTMLImageElement, ImageProps>(function Image(
   }), [style, aspectRatio, objectFit, objectPosition, filter])
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <NextImage
       ref={ref}
       id={id}
       className={className ? `image-widget ${className}` : 'image-widget'}
@@ -48,6 +50,11 @@ const Image = memo(forwardRef<HTMLImageElement, ImageProps>(function Image(
       aria-hidden={decorative ? true : undefined}
       style={Object.keys(computedStyle).length > 0 ? computedStyle : undefined}
       data-behaviour={dataBehaviour}
+      width={1920}
+      height={1080}
+      sizes={sizes}
+      priority={priority}
+      quality={quality}
     />
   )
 }))

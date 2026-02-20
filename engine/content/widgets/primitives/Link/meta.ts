@@ -13,6 +13,7 @@ export const meta = defineMeta<LinkProps>({
   icon: 'link',
   tags: ['navigation', 'interactive', 'anchor'],
   component: true,
+  triggers: ['mouseenter', 'mouseleave', 'click'],
 
   settings: {
     href: {
@@ -43,14 +44,6 @@ export const meta = defineMeta<LinkProps>({
         { value: 'underline', label: 'Underline' },
         { value: 'hover-underline', label: 'Hover Underline' },
       ],
-    },
-    rel: {
-      type: 'text',
-      label: 'Rel Attribute',
-      default: '',
-      description: 'Relationship attribute (e.g., noopener noreferrer)',
-      validation: { maxLength: 50 },
-      advanced: true,
     },
   },
 })

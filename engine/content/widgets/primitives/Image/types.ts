@@ -31,4 +31,10 @@ export interface ImageProps {
   className?: string
   /** Data attribute for behaviour binding */
   'data-behaviour'?: string
+  /** Responsive sizes hint (e.g., '(max-width: 768px) 100vw, 50vw') */
+  sizes?: string
+  /** Mark as above-fold — disables lazy loading, adds fetchpriority="high" */
+  priority?: boolean
+  /** Image quality 1-100 (default: 75) */
+  quality?: number
 }

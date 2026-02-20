@@ -11,7 +11,7 @@
  * Modal integration:
  * - When videoUrl is provided and onClick handler is set (via schema.on),
  *   clicking calls onClick with { videoUrl, poster, rect }
- * - The 'open-video-modal' action (registered by ModalRoot) handles opening
+ * - The '{overlayKey}.open' action (registered by ModalRoot) handles opening
  *
  * Why composite (not primitive):
  * - Multiple elements in hover-play mode (div > img + video)
@@ -24,18 +24,17 @@
  * element. Per spec, composites with complex state CAN have colocated hooks.
  */
 
-import { useState, useRef, useEffect, useCallback, type CSSProperties } from 'react'
+import React, { memo, forwardRef, useState, useRef, useEffect, useCallback, type CSSProperties } from 'react'
 import { useSectionLifecycle } from '../../../../experience'
 import { useVisibilityPlayback } from './useVisibilityPlayback'
 import { usePlaybackPosition } from '../VideoPlayer/hooks'
 import type { VideoProps } from './types'
-import './styles.css'
 
 /**
  * Video widget component.
  * Renders a video with configurable autoplay, loop, and muted options.
  */
-export default function Video({
+const Video = memo(forwardRef<HTMLElement, VideoProps>(function Video({
   src,
   poster,
   alt = '',
@@ -48,12 +47,16 @@ export default function Video({
   background = false,
   aspectRatio,
   posterTime,
+  loopStartTime,
+  introVideo,
   className,
   videoUrl,
   modalAnimationType,
   onClick,
+  onMouseEnter: onMouseEnterProp,
+  onMouseLeave: onMouseLeaveProp,
   'data-behaviour': dataBehaviour,
-}: VideoProps) {
+}, ref) {
   const [isHovered, setIsHovered] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -61,6 +64,7 @@ export default function Video({
 
   // Debounced hover handlers to prevent flicker during scroll
   // Small delay prevents brief mouse passes from triggering video playback
+  // Also forwards to action handler props (onMouseEnter/onMouseLeave) for cursor label etc.
   const handleMouseEnter = useCallback(() => {
     // Clear any pending leave timeout
     if (hoverTimeoutRef.current) {
@@ -71,7 +75,9 @@ export default function Video({
     hoverTimeoutRef.current = setTimeout(() => {
       setIsHovered(true)
     }, 50) // 50ms delay - fast enough to feel instant, slow enough to filter scroll
-  }, [])
+    // Forward to action handler (e.g. cursorLabel.show) — fires immediately
+    onMouseEnterProp?.()
+  }, [onMouseEnterProp])
 
   const handleMouseLeave = useCallback(() => {
     // Clear any pending enter timeout
@@ -81,7 +87,9 @@ export default function Video({
     }
     // Immediate leave for responsive feel
     setIsHovered(false)
-  }, [])
+    // Forward to action handler (e.g. cursorLabel.hide)
+    onMouseLeaveProp?.()
+  }, [onMouseLeaveProp])
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -153,6 +161,24 @@ export default function Video({
     }
   }, [isHovered, hoverPlay])
 
+  // Custom loop point: restart from loopStartTime when video ends
+  // When loopStartTime > 0, native loop is disabled and we use ended event instead
+  useEffect(() => {
+    if (!loopStartTime || loopStartTime <= 0) return
+    const video = videoRef.current
+    if (!video) return
+
+    const handleEnded = () => {
+      video.currentTime = loopStartTime
+      video.play().catch(() => {
+        // Autoplay may be blocked - silent fail
+      })
+    }
+
+    video.addEventListener('ended', handleEnded)
+    return () => video.removeEventListener('ended', handleEnded)
+  }, [loopStartTime])
+
   // Handle click - calls onClick with payload if videoUrl and handler exist
   const handleClick = useCallback(() => {
     if (!videoUrl || !onClick || !containerRef.current) return
@@ -160,12 +186,11 @@ export default function Video({
     // Compute animation type: explicit prop takes priority, otherwise read from CSS variable
     let animationType = modalAnimationType
     if (!animationType) {
-      const card = containerRef.current.closest('.project-card')
-      if (card) {
-        const isReversed = getComputedStyle(card).getPropertyValue('--card-reversed').trim() === '1'
-        animationType = isReversed ? 'wipe-right' : 'wipe-left'
+      const reversedAncestor = containerRef.current.closest('[data-reversed]')
+      if (reversedAncestor) {
+        animationType = reversedAncestor.getAttribute('data-reversed') === 'true' ? 'wipe-right' : 'wipe-left'
       } else {
-        animationType = 'wipe-left' // Default fallback
+        animationType = 'wipe-left'
       }
     }
 
@@ -189,17 +214,25 @@ export default function Video({
       className,
     ].filter(Boolean).join(' ')
 
+    // Disable native loop when custom loop point is set (handled by ended event)
+    const useNativeLoop = loop && !(loopStartTime && loopStartTime > 0)
+
     return (
       <video
-        ref={videoRef}
-        src={src}
+        ref={(node) => {
+          (videoRef as React.MutableRefObject<HTMLVideoElement | null>).current = node
+          if (typeof ref === 'function') ref(node)
+          else if (ref) (ref as React.MutableRefObject<HTMLElement | null>).current = node
+        }}
+        src={src || undefined}
         poster={poster}
-        loop={loop}
+        loop={useNativeLoop}
         muted={muted}
         playsInline
         preload={preload ?? (autoplay ? 'auto' : undefined)}
         className={classes}
         data-behaviour={dataBehaviour}
+        data-intro-video={introVideo || undefined}
         style={!background ? { objectFit, ...(aspectRatio ? { aspectRatio } : {}) } : undefined}
       />
     )
@@ -220,7 +253,11 @@ export default function Video({
 
   return (
     <div
-      ref={containerRef}
+      ref={(node) => {
+        (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node
+        if (typeof ref === 'function') ref(node)
+        else if (ref) (ref as React.MutableRefObject<HTMLElement | null>).current = node
+      }}
       className={containerClasses}
       style={containerStyle}
       onMouseEnter={handleMouseEnter}
@@ -243,15 +280,18 @@ export default function Video({
       {/* Video - visible and playing when hovering */}
       <video
         ref={videoRef}
-        src={src}
-        loop={loop}
+        src={src || undefined}
+        loop={loop && !(loopStartTime && loopStartTime > 0)}
         muted={muted}
         playsInline
         preload={preload ?? 'metadata'}
         className={`video-widget__video ${isHovered ? 'video-widget__video--visible' : ''}`}
         style={{ objectFit }}
         data-effect="media-crossfade"
+        data-intro-video={introVideo || undefined}
       />
     </div>
   )
-}
+}))
+
+export default Video

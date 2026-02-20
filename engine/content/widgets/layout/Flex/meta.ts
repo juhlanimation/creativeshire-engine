@@ -68,5 +68,15 @@ export const meta = defineMeta<FlexProps>({
       bindable: true,
       validation: { min: 0, max: 500 },
     },
+    gapScale: {
+      type: 'number',
+      label: 'Gap Scale',
+      default: 3,
+      description: 'Multiplier for the gap value',
+      min: 0.25,
+      max: 10,
+      step: 0.25,
+      bindable: true,
+    },
   },
 })

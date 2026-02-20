@@ -32,8 +32,6 @@ export interface BoxProps {
   'data-behaviour'?: string
   /** Data attribute for effect binding */
   'data-effect'?: string
-  /** Data attribute for marquee track */
-  'data-marquee-track'?: boolean
   /** Child widgets - schema-driven rendering */
   widgets?: WidgetSchema[]
 }

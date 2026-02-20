@@ -9,9 +9,8 @@
 
 import React, { memo, forwardRef, type CSSProperties } from 'react'
 import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
-import { toCssValue } from '../utils'
+import { toCssPadding, toCssValue } from '../utils'
 import type { ContainerProps } from './types'
-import './styles.css'
 
 /**
  * Maps container props to CSS properties.
@@ -26,8 +25,8 @@ function containerToStyle(props: ContainerProps): CSSProperties {
   }
 
   if (props.padding !== undefined) {
-    styles.paddingLeft = toCssValue(props.padding)
-    styles.paddingRight = toCssValue(props.padding)
+    styles.paddingLeft = toCssPadding(props.padding)
+    styles.paddingRight = toCssPadding(props.padding)
   }
 
   if (props.center) {

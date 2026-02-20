@@ -11,7 +11,6 @@ import React, { memo, forwardRef, type CSSProperties } from 'react'
 import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
 import { ALIGN_MAP, toCssGap } from '../utils'
 import type { StackProps } from './types'
-import './styles.css'
 
 /**
  * Maps stack props to CSS properties.
@@ -28,7 +27,7 @@ function stackToStyle(props: StackProps): CSSProperties {
   }
 
   if (props.gap !== undefined) {
-    styles.gap = toCssGap(props.gap)
+    styles.gap = toCssGap(props.gap, props.gapScale)
   }
 
   return styles
@@ -42,6 +41,7 @@ const Stack = memo(forwardRef<HTMLDivElement, StackProps>(function Stack(
   {
     id,
     gap,
+    gapScale,
     align,
     style,
     className,
@@ -51,7 +51,7 @@ const Stack = memo(forwardRef<HTMLDivElement, StackProps>(function Stack(
   },
   ref
 ) {
-  const computedStyle = stackToStyle({ gap, align, style })
+  const computedStyle = stackToStyle({ gap, gapScale, align, style })
 
   return (
     <div

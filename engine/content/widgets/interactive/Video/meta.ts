@@ -13,6 +13,7 @@ export const meta = defineMeta<VideoProps>({
   icon: 'video',
   tags: ['media', 'video', 'interactive', 'modal'],
   component: true,
+  triggers: ['mouseenter', 'mouseleave', 'click'],
 
   settings: {
     src: {
@@ -73,6 +74,7 @@ export const meta = defineMeta<VideoProps>({
         { value: 'contain', label: 'Contain' },
         { value: 'fill', label: 'Fill' },
       ],
+      hidden: true,
     },
     aspectRatio: {
       type: 'select',
@@ -100,6 +102,7 @@ export const meta = defineMeta<VideoProps>({
         { value: 'auto', label: 'Auto (full)' },
       ],
       advanced: true,
+      hidden: true,
     },
     posterTime: {
       type: 'number',
@@ -117,12 +120,30 @@ export const meta = defineMeta<VideoProps>({
       default: false,
       description: 'Absolute positioning for background videos',
       advanced: true,
+      hidden: true,
+    },
+    loopStartTime: {
+      type: 'number',
+      label: 'Loop Start Time',
+      default: 0,
+      description: 'Custom loop point: restart from N seconds when video ends instead of 0',
+      min: 0,
+      max: 3600,
+      advanced: true,
+      bindable: true,
+    },
+    introVideo: {
+      type: 'toggle',
+      label: 'Intro Video',
+      default: false,
+      description: 'Mark as intro video for the intro timing system (adds data-intro-video attribute)',
+      advanced: true,
     },
     videoUrl: {
       type: 'video',
       label: 'Modal Video URL',
       default: '',
-      description: 'Full-length video for modal playback. Use with on: { click: "open-video-modal" }',
+      description: 'Full-length video for modal playback. Use with on: { click: "modal.open" }',
       group: 'Modal',
       bindable: true,
     },
