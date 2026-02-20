@@ -1,0 +1,113 @@
+/**
+ * ContactFooter chrome pattern metadata for platform UI.
+ */
+
+import { defineChromeMeta } from '../../../../schema/meta'
+import type { ContactFooterProps } from './types'
+
+export const meta = defineChromeMeta<ContactFooterProps>({
+  id: 'ContactFooter',
+  name: 'Contact Footer',
+  description: 'Three-column footer with navigation, contact info, and studio links',
+  category: 'chrome-pattern',
+  chromeSlot: 'footer',
+  icon: 'footer',
+  tags: ['chrome', 'footer', 'contact', 'navigation', 'studio'],
+  component: false,
+
+  settings: {
+    navLinks: {
+      type: 'custom',
+      label: 'Navigation Links',
+      default: [],
+      description: 'Footer navigation links',
+      group: 'Navigation',
+      bindable: true,
+    },
+    contactHeading: {
+      type: 'text',
+      label: 'Contact Heading',
+      default: 'GET IN TOUCH',
+      description: 'Heading for the contact column',
+      validation: { maxLength: 100 },
+      group: 'Contact',
+      bindable: true,
+    },
+    contactEmail: {
+      type: 'text',
+      label: 'Contact Email',
+      default: '',
+      description: 'Contact email address',
+      validation: { maxLength: 320, pattern: '^[^@]+@[^@]+\\.[^@]+$', message: 'Please enter a valid email address' },
+      group: 'Contact',
+      bindable: true,
+    },
+    linkedinUrl: {
+      type: 'text',
+      label: 'LinkedIn URL',
+      default: '',
+      description: 'LinkedIn profile URL',
+      validation: { maxLength: 2048, pattern: '^(https?:\\/\\/|\\/|#|mailto:)', message: 'Must be a valid URL, path, or anchor' },
+      group: 'Contact',
+      bindable: true,
+    },
+    studioHeading: {
+      type: 'text',
+      label: 'Studio Heading',
+      default: 'FIND MY STUDIO',
+      description: 'Heading for the studio column',
+      validation: { maxLength: 100 },
+      group: 'Studio',
+      bindable: true,
+    },
+    studioUrl: {
+      type: 'text',
+      label: 'Studio URL',
+      default: '',
+      description: 'Studio website URL',
+      validation: { maxLength: 2048, pattern: '^(https?:\\/\\/|\\/|#|mailto:)', message: 'Must be a valid URL, path, or anchor' },
+      group: 'Studio',
+      bindable: true,
+    },
+    studioEmail: {
+      type: 'text',
+      label: 'Studio Email',
+      default: '',
+      description: 'Studio contact email address',
+      validation: { maxLength: 320, pattern: '^[^@]+@[^@]+\\.[^@]+$', message: 'Please enter a valid email address' },
+      group: 'Studio',
+      bindable: true,
+    },
+    copyright: {
+      type: 'text',
+      label: 'Copyright Text',
+      default: '',
+      description: 'Copyright notice text',
+      validation: { maxLength: 200 },
+      group: 'Legal',
+      bindable: true,
+    },
+    paddingTop: {
+      type: 'range',
+      label: 'Padding Top',
+      default: 3,
+      min: 0,
+      max: 12,
+      step: 0.5,
+      unit: 'rem',
+      description: 'Top padding above the content area. 0 uses the theme default.',
+      group: 'Spacing',
+    },
+    copyrightGap: {
+      type: 'range',
+      label: 'Padding Bottom',
+      default: 5.5,
+      min: 0,
+      max: 12,
+      step: 0.5,
+      unit: 'rem',
+      description: 'Padding under the text content (above the copyright). 0 uses the theme default.',
+      group: 'Spacing',
+    },
+  },
+})

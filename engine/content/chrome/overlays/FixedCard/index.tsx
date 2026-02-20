@@ -19,7 +19,6 @@ import { useExperience } from '../../../../experience'
 import type { InfiniteCarouselState } from '../../../../experience/experiences/types'
 import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
 import type { FixedCardProps } from './types'
-import './styles.css'
 
 /**
  * Calculate fold progress for the CURRENT card (the one whose section is active).

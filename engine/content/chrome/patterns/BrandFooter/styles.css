@@ -1,0 +1,109 @@
+/**
+ * BrandFooter chrome pattern styles.
+ * Responsive 3-column layout: nav | brand | contact.
+ * Mobile: stacked column, brand first.
+ * Desktop: horizontal row with flex-1 center column.
+ */
+
+/* ── Root layout ─────────────────────────────────────────────── */
+.brand-footer {
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg, 2rem);
+  padding: var(--spacing-lg, 1.5rem) var(--spacing-lg, 2rem);
+}
+
+/* ── Column ordering (mobile: brand first) ───────────────────── */
+.brand-footer__brand   { order: 1; }
+.brand-footer__nav     { order: 2; }
+.brand-footer__contact { order: 3; }
+
+/* ── Column alignment (mobile: all centered) ─────────────────── */
+.brand-footer__nav,
+.brand-footer__contact {
+  align-items: center;
+}
+
+/* ── Brand name — use title font from theme ──────────────────── */
+.brand-footer__brand .text-widget[data-scale="h2"] {
+  font-family: var(--font-title);
+}
+
+/* ── Nav links — small, uppercase ────────────────────────────── */
+.brand-footer__nav .link-widget {
+  font-size: var(--font-size-xs, 0.75rem);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-xs, 0.1em);
+}
+
+/* ── Contact items — small text ──────────────────────────────── */
+.brand-footer__contact .link-widget {
+  font-size: var(--font-size-xs, 0.75rem);
+}
+
+/* ── Hover — opacity shift for links (theme-driven) ──────────── */
+.brand-footer__nav .link-widget:hover,
+.brand-footer__contact .link-widget:hover {
+  opacity: var(--hover-opacity, 0.7);
+}
+
+/* ── Desktop: 3-column row ───────────────────────────────────── */
+@container site (min-width: 768px) {
+  .brand-footer {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0;
+    padding: var(--spacing-lg, 1.5rem) var(--spacing-2xl, 4rem);
+  }
+
+  /* All columns take equal space */
+  .brand-footer__nav,
+  .brand-footer__brand,
+  .brand-footer__contact {
+    flex: 1;
+  }
+
+  /* Restore natural ordering */
+  .brand-footer__nav     { order: 1; align-items: flex-start; }
+  .brand-footer__brand   { order: 2; }
+  .brand-footer__contact { order: 3; align-items: flex-end; }
+}
+
+/* ── Large desktop: wider padding ────────────────────────────── */
+@container site (min-width: 1024px) {
+  .brand-footer {
+    padding: var(--spacing-lg, 1.5rem) var(--spacing-section-x, 6rem);
+  }
+}
+
+/* ── Fallback for browsers without container query support ──── */
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .brand-footer {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0;
+  padding: var(--spacing-lg, 1.5rem) var(--spacing-2xl, 4rem);
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .brand-footer__nav,
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .brand-footer__brand,
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .brand-footer__contact {
+  flex: 1;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .brand-footer__nav {
+  order: 1;
+  align-items: flex-start;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .brand-footer__brand {
+  order: 2;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .brand-footer__contact {
+  order: 3;
+  align-items: flex-end;
+}
+
+:where([data-breakpoint="desktop"]) .brand-footer {
+  padding: var(--spacing-lg, 1.5rem) var(--spacing-section-x, 6rem);
+}

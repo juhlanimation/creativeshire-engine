@@ -1,0 +1,239 @@
+/**
+ * ContactFooter chrome pattern styles.
+ * Uses CSS variables with fallbacks for animation support.
+ */
+
+.footer-chrome {
+  /* Animation CSS variables with fallbacks (set by behaviours) */
+  transform: translateY(var(--footer-y, 0));
+  opacity: var(--footer-opacity, 1);
+
+  /* Layout - matches hero horizontal padding */
+  position: relative; /* For absolute copyright positioning on tablet+ */
+  width: 100%;
+  overflow: hidden; /* Contain any overflowing content */
+  box-sizing: border-box;
+  padding: var(--footer-padding-top, var(--spacing-2xl, 4rem)) var(--spacing-lg, 2rem) var(--footer-copyright-gap, var(--spacing-section-y, 5rem));
+  background-color: var(--theme-bg, var(--site-outer-bg, #000));
+  color: var(--text-primary, #fff);
+}
+
+/* Mobile: Single column stacked */
+.footer-chrome__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg, 2rem);
+}
+
+/* Left column - contains navigation */
+.footer-chrome__left {
+  display: flex;
+  flex-direction: column;
+  width: auto; /* Override stack-widget's width: 100% */
+}
+
+/* Navigation - stacked links */
+.footer-chrome__nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm, 0.5rem);
+  width: auto; /* Override stack-widget's width: 100% */
+}
+
+/* Right group - contains contact + studio */
+.footer-chrome__right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg, 2rem);
+  width: auto; /* Override flex-widget's potential width issues */
+}
+
+/* Section styling (contact, studio) */
+.footer-chrome__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm, 0.5rem);
+  width: auto; /* Override stack-widget's width: 100% */
+}
+
+/* Section headings */
+.footer-chrome__heading {
+  font-family: var(--font-title, system-ui, sans-serif);
+  font-size: 0.875rem;
+  font-weight: 900;
+  color: inherit;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+/* Navigation links - uses display font */
+/* MOVED TO L2: data-effect="color-shift" */
+.footer-chrome__nav-link {
+  font-family: var(--font-title, system-ui, sans-serif);
+  font-size: 0.875rem;
+  font-weight: 300;
+  color: inherit;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.footer-chrome__nav-link:hover {
+  color: var(--interaction);
+}
+
+/* Contact/Studio links - uses body font */
+/* MOVED TO L2: data-effect="color-shift" */
+.footer-chrome__link {
+  font-family: var(--font-paragraph, system-ui, sans-serif);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: inherit;
+  text-decoration: none;
+}
+
+.footer-chrome__link:hover {
+  color: var(--interaction);
+}
+
+/* Social links - uses body font */
+/* MOVED TO L2: data-effect="color-shift" */
+.footer-chrome__social-link {
+  font-family: var(--font-paragraph, system-ui, sans-serif);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: inherit;
+  text-decoration: none;
+  text-transform: lowercase;
+}
+
+.footer-chrome__social-link:hover {
+  color: var(--interaction);
+}
+
+/* Copyright */
+.footer-chrome__copyright {
+  font-family: var(--font-paragraph, system-ui, sans-serif);
+  font-size: var(--font-size-small);
+  font-weight: 400;
+  color: inherit;
+  opacity: 0.5;
+  margin: var(--footer-copyright-gap, var(--spacing-lg, 2rem)) 0 0;
+}
+
+/* Tablet+ (768px): Two-part layout - left nav, right contact+studio */
+@container site (min-width: 768px) {
+  .footer-chrome {
+    padding: var(--footer-padding-top, var(--spacing-2xl, 4rem)) var(--spacing-2xl, 4rem) var(--footer-copyright-gap, var(--spacing-section-y, 5rem));
+  }
+
+  .footer-chrome__content {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--spacing-2xl, 4rem);
+  }
+
+  /* Left column - nav centered to align with copyright below */
+  .footer-chrome__left {
+    flex: none;
+  }
+
+  /* Right group - contact + studio side-by-side */
+  .footer-chrome__right {
+    flex-direction: row;
+    align-items: flex-start; /* Align to top of row */
+    gap: var(--spacing-2xl, 4rem); /* Same gap as before between sections */
+  }
+
+  .footer-chrome__section {
+    flex: none;
+  }
+
+  /* Scale font sizes for tablet+ */
+  .footer-chrome__heading {
+    font-size: var(--font-size-body, 1rem);
+  }
+
+  .footer-chrome__nav-link,
+  .footer-chrome__link,
+  .footer-chrome__social-link {
+    font-size: var(--font-size-body, 1rem);
+  }
+
+  /* Copyright - absolute positioned at bottom-left */
+  .footer-chrome__copyright {
+    position: absolute;
+    bottom: var(--spacing-sm, 0.5rem);
+    left: var(--spacing-2xl, 4rem); /* Match left padding */
+    margin: 0;
+  }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome {
+  padding: var(--footer-padding-top, var(--spacing-2xl, 4rem)) var(--spacing-2xl, 4rem) var(--footer-copyright-gap, var(--spacing-section-y, 5rem));
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__content {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-2xl, 4rem);
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__left {
+  flex: none;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__right {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--spacing-2xl, 4rem);
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__section {
+  flex: none;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__heading {
+  font-size: var(--font-size-body, 1rem);
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__nav-link,
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__link,
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__social-link {
+  font-size: var(--font-size-body, 1rem);
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__copyright {
+  position: absolute;
+  bottom: var(--spacing-sm, 0.5rem);
+  left: var(--spacing-2xl, 4rem);
+  margin: 0;
+}
+
+/* Desktop (1024px+): Increased padding to match hero */
+@container site (min-width: 1024px) {
+  .footer-chrome {
+    padding: var(--footer-padding-top, var(--spacing-2xl, 4rem)) var(--spacing-section-x, 6rem) var(--footer-copyright-gap, var(--spacing-section-y, 5rem));
+  }
+
+  /* Copyright position matches left padding */
+  .footer-chrome__copyright {
+    left: var(--spacing-section-x, 6rem);
+  }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="desktop"]) .footer-chrome {
+  padding: var(--footer-padding-top, var(--spacing-2xl, 4rem)) var(--spacing-section-x, 6rem) var(--footer-copyright-gap, var(--spacing-section-y, 5rem));
+}
+
+:where([data-breakpoint="desktop"]) .footer-chrome__copyright {
+  left: var(--spacing-section-x, 6rem);
+}
+
+/* Behaviour targeting */
+.footer-chrome[data-behaviour] {
+  will-change: transform, opacity;
+}

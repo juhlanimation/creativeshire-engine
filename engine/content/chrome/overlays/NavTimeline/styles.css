@@ -11,6 +11,7 @@
   pointer-events: none;
   transform: translateY(-50%);
   mix-blend-mode: difference;
+  font-family: var(--font-ui, system-ui, sans-serif);
 }
 
 /* Position variants */

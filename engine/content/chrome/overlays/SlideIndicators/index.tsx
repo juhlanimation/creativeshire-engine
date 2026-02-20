@@ -9,7 +9,6 @@ import { useSyncExternalStore, useCallback } from 'react'
 import type { StoreApi } from 'zustand'
 import { useExperience } from '../../../../experience'
 import type { NavigableExperienceState } from '../../../../experience/experiences/types'
-import './styles.css'
 
 export interface SlideIndicatorsProps {
   /** Position: 'left' | 'right' | 'bottom' */

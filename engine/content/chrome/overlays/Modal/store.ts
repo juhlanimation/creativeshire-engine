@@ -35,7 +35,7 @@ interface ModalState {
   /** Request close - sets phase to 'closing' (modal stays for animation) */
   close: () => void
 
-  /** Set transition phase (called by useTransitionComplete) */
+  /** Set transition phase (called by transition callbacks) */
   setTransitionPhase: (phase: TransitionPhase) => void
 
   /** Get current config (for compatibility) */

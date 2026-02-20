@@ -1,0 +1,72 @@
+/**
+ * FixedNav chrome pattern styles.
+ * Layout-only — positioning handled by chrome renderer wrapper.
+ */
+
+.header-chrome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--header-background, transparent);
+  color: var(--header-color, inherit);
+}
+
+/* Logo/title container */
+.header-chrome__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 0.75rem);
+}
+
+.header-chrome__logo {
+  height: 2rem;
+  width: auto;
+}
+
+.header-chrome__title {
+  font-family: var(--font-ui, inherit);
+  font-size: var(--font-size-body, 1rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Navigation */
+.header-chrome__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg, 2rem);
+}
+
+.header-chrome__nav-link {
+  font-family: var(--font-ui, inherit);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  color: inherit;
+  opacity: 0.8;
+  transition: opacity var(--duration-fast, 200ms) var(--ease-default, ease);
+}
+
+.header-chrome__nav-link:hover,
+.header-chrome__nav-link:focus-visible {
+  opacity: 1;
+}
+
+.header-chrome__nav-link[data-active="true"] {
+  opacity: 1;
+}
+
+/* Responsive: mobile */
+@media (max-width: 768px) {
+  .header-chrome__nav {
+    gap: var(--spacing-md, 1rem);
+  }
+
+  .header-chrome__nav-link {
+    font-size: var(--font-size-small);
+  }
+}

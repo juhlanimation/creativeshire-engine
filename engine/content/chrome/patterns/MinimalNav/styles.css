@@ -1,0 +1,91 @@
+/**
+ * MinimalNav chrome pattern styles.
+ * Layout-only — positioning handled by chrome renderer wrapper.
+ *
+ * Design: right-aligned nav links + divider + small email.
+ * Uses theme variables for typography, spacing, and colors.
+ *
+ * Underline hover reuses the Button's ::after pattern driven by
+ * --text-decoration-style / --text-decoration-thickness theme tokens.
+ */
+
+.minimal-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md, 1rem);
+  width: auto;
+  font-family: var(--font-ui, inherit);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Nav links group — wider gap between links than between divider/email */
+.minimal-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  width: auto;
+}
+
+.minimal-nav__link {
+  position: relative;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 400;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity var(--duration-fast, 150ms) var(--ease-default, ease);
+}
+
+.minimal-nav__link:hover,
+.minimal-nav__link:focus-visible {
+  opacity: var(--hover-opacity, 0.7);
+}
+
+/* Vertical divider line */
+.minimal-nav__divider {
+  height: 0.75rem;
+  width: 1px;
+  background: currentColor;
+  opacity: var(--border-divider-opacity, 0.5);
+  align-self: center;
+  flex-shrink: 0;
+}
+
+/* Email — smaller and lighter than nav links */
+.minimal-nav__email {
+  position: relative;
+  font-family: inherit;
+  font-size: 0.625rem;
+  font-weight: 300;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-decoration: none;
+  color: inherit;
+  align-self: center;
+  line-height: 1;
+  transition: opacity var(--duration-fast, 150ms) var(--ease-default, ease);
+}
+
+.minimal-nav__email:hover,
+.minimal-nav__email:focus-visible {
+  opacity: var(--hover-opacity, 0.7);
+}
+
+/* When Link variant handles hover underline, disable opacity hover */
+.minimal-nav--hover-underline .minimal-nav__link:hover,
+.minimal-nav--hover-underline .minimal-nav__link:focus-visible,
+.minimal-nav--hover-underline .minimal-nav__email:hover,
+.minimal-nav--hover-underline .minimal-nav__email:focus-visible {
+  opacity: 1;
+}
+
+/* Hide on mobile */
+@container site (max-width: 767px) {
+  .minimal-nav {
+    display: none;
+  }
+}

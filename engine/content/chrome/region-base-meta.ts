@@ -60,6 +60,62 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
       group: 'Common',
     },
 
+    // ── Layout ──────────────────────────────────────────────────────────────
+    'layout.justify': {
+      type: 'select',
+      label: 'Justify',
+      default: '',
+      description: 'Horizontal placement of region content',
+      choices: [
+        { value: '', label: 'Default' },
+        { value: 'start', label: 'Start' },
+        { value: 'center', label: 'Center' },
+        { value: 'end', label: 'End' },
+        { value: 'between', label: 'Space Between' },
+        { value: 'around', label: 'Space Around' },
+      ],
+      group: 'Layout',
+    },
+    'layout.align': {
+      type: 'select',
+      label: 'Align',
+      default: '',
+      description: 'Vertical alignment of region content',
+      choices: [
+        { value: '', label: 'Default' },
+        { value: 'start', label: 'Start' },
+        { value: 'center', label: 'Center' },
+        { value: 'end', label: 'End' },
+        { value: 'stretch', label: 'Stretch' },
+      ],
+      group: 'Layout',
+    },
+    'layout.padding': {
+      type: 'spacing',
+      label: 'Content Padding',
+      default: '',
+      description: 'Padding inside the region layout wrapper',
+      validation: { maxLength: 200 },
+      group: 'Layout',
+    },
+    'layout.maxWidth': {
+      type: 'text',
+      label: 'Content Max Width',
+      default: '',
+      description: 'Maximum width of region content (e.g. var(--site-max-width))',
+      validation: { maxLength: 200 },
+      editorHint: 'structural',
+      group: 'Layout',
+    },
+    'layout.gap': {
+      type: 'text',
+      label: 'Content Gap',
+      default: '',
+      description: 'Gap between top-level widgets in the region',
+      validation: { maxLength: 200 },
+      group: 'Layout',
+    },
+
     // ── Header ─────────────────────────────────────────────────────────────
     sticky: {
       type: 'toggle',
@@ -98,35 +154,34 @@ export const regionBaseMeta = defineMeta<Record<string, unknown>>({
       group: 'Footer',
     },
 
-    // ── Sidebar ────────────────────────────────────────────────────────────
-    position: {
+    // ── Positioning ─────────────────────────────────────────────────────────
+    overlay: {
+      type: 'toggle',
+      label: 'Overlay',
+      default: true,
+      description: 'Float on top of content (true) or take document flow space (false)',
+      editorHint: 'structural',
+      group: 'Positioning',
+    },
+    direction: {
       type: 'select',
-      label: 'Position',
-      default: 'left',
-      description: 'Sidebar position',
+      label: 'Direction',
+      default: 'horizontal',
+      description: 'Layout direction. Vertical = sidebar-like',
       choices: [
-        { value: 'left', label: 'Left' },
-        { value: 'right', label: 'Right' },
+        { value: 'horizontal', label: 'Horizontal' },
+        { value: 'vertical', label: 'Vertical' },
       ],
       editorHint: 'structural',
-      group: 'Sidebar',
-    },
-    'style.width': {
-      type: 'text',
-      label: 'Width',
-      default: '',
-      description: 'Sidebar width (e.g., "280px", "20rem")',
-      validation: { maxLength: 200 },
-      editorHint: 'structural',
-      group: 'Sidebar',
+      group: 'Positioning',
     },
     collapsible: {
       type: 'toggle',
       label: 'Collapsible',
       default: false,
-      description: 'Allow sidebar to collapse on smaller screens',
+      description: 'Auto-hide on scroll down, show on scroll up',
       editorHint: 'structural',
-      group: 'Sidebar',
+      group: 'Positioning',
     },
   },
 })

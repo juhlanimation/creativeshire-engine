@@ -14,5 +14,5 @@ export type { SlideIndicatorsProps } from './SlideIndicators/types'
 export { default as NavTimeline } from './NavTimeline'
 export type { NavTimelineProps } from './NavTimeline/types'
 
-export { default as IntroOverlay } from './IntroOverlay'
-export type { IntroOverlayProps } from './IntroOverlay/types'
+export { default as FixedCard } from './FixedCard'
+export type { FixedCardProps, CardConfig } from './FixedCard/types'

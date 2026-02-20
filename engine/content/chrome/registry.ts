@@ -2,9 +2,8 @@
  * Chrome registry - maps component names to React components.
  * Content Layer (L1) - component lookup with meta support.
  *
- * Supports two registration modes:
- * 1. Eager: Component registered directly (current default)
- * 2. Lazy: Loader function registered, component loaded on demand
+ * Only overlay components are registered here (they need React state).
+ * Regions use widget-based patterns (factory functions → WidgetSchema).
  */
 
 import type { ComponentType } from 'react'
@@ -13,16 +12,17 @@ import type { ComponentMeta } from '../../schema/meta'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Chrome props vary by type, registry lookup is untyped
 type ChromeComponent = ComponentType<any>
 
-/** Registry entry - either loaded component or lazy loader */
-type RegistryEntry =
-  | { type: 'loaded'; component: ChromeComponent; meta?: ComponentMeta }
-  | { type: 'lazy'; meta: ComponentMeta; loader: () => Promise<ChromeComponent> }
+/** Registry entry */
+interface RegistryEntry {
+  component: ChromeComponent
+  meta?: ComponentMeta
+}
 
 /** Registry of chrome components by ID */
 const registry = new Map<string, RegistryEntry>()
 
 /**
- * Register a chrome component eagerly.
+ * Register a chrome component.
  */
 export function registerChromeComponent(
   id: string,
@@ -32,61 +32,22 @@ export function registerChromeComponent(
   if (registry.has(id)) {
     console.warn(`Chrome component "${id}" is already registered. Overwriting.`)
   }
-  registry.set(id, { type: 'loaded', component, meta })
+  registry.set(id, { component, meta })
 }
 
 /**
- * Register a chrome component lazily with metadata.
- * Component code loads only when getChromeComponentAsync() is called.
- */
-export function registerLazyChromeComponent(
-  meta: ComponentMeta,
-  loader: () => Promise<ChromeComponent>
-): void {
-  if (registry.has(meta.id)) {
-    console.warn(`Chrome component "${meta.id}" is already registered. Overwriting.`)
-  }
-  registry.set(meta.id, { type: 'lazy', meta, loader })
-}
-
-/**
- * Get a chrome component by name (sync).
- * Returns undefined for lazy components that haven't loaded yet.
+ * Get a chrome component by name.
  */
 export function getChromeComponent(name: string): ChromeComponent | undefined {
-  const entry = registry.get(name)
-  if (!entry) return undefined
-  if (entry.type === 'loaded') return entry.component
-  return undefined // Lazy not yet loaded
+  return registry.get(name)?.component
 }
 
 /**
- * Get a chrome component by name (async to support lazy loading).
- * Loads and caches lazy components on first access.
- */
-export async function getChromeComponentAsync(name: string): Promise<ChromeComponent | undefined> {
-  const entry = registry.get(name)
-  if (!entry) return undefined
-
-  if (entry.type === 'loaded') {
-    return entry.component
-  }
-
-  // Lazy: load and cache
-  const component = await entry.loader()
-  registry.set(name, { type: 'loaded', component, meta: entry.meta })
-  return component
-}
-
-/**
- * Get all chrome component metadata (without loading lazy components).
+ * Get all chrome component metadata.
  */
 export function getAllChromeMetas(): ComponentMeta[] {
   return Array.from(registry.values())
-    .map((entry) => {
-      if (entry.type === 'loaded') return entry.meta
-      return entry.meta
-    })
+    .map((e) => e.meta)
     .filter((meta): meta is ComponentMeta => meta !== undefined)
 }
 
@@ -107,13 +68,9 @@ export function ensureChromeRegistered(): void {
 }
 
 // =============================================================================
-// Eager registrations (chrome components are always needed)
+// Eager registrations (overlay components — need React state)
 // =============================================================================
 
-import Footer from './regions/Footer'
-import { meta as footerMeta } from './regions/Footer/meta'
-import Header from './regions/Header'
-import { meta as headerMeta } from './regions/Header/meta'
 import CursorLabel from './overlays/CursorLabel'
 import { meta as cursorLabelMeta } from './overlays/CursorLabel/meta'
 import { ModalRoot } from './overlays/Modal'
@@ -122,16 +79,11 @@ import SlideIndicators from './overlays/SlideIndicators'
 import { meta as slideIndicatorsMeta } from './overlays/SlideIndicators/meta'
 import NavTimeline from './overlays/NavTimeline'
 import { meta as navTimelineMeta } from './overlays/NavTimeline/meta'
-import IntroOverlay from './overlays/IntroOverlay'
-import { meta as introOverlayMeta } from './overlays/IntroOverlay/meta'
 import FixedCard from './overlays/FixedCard'
 import { meta as fixedCardMeta } from './overlays/FixedCard/meta'
 
-registerChromeComponent('Footer', Footer, footerMeta)
-registerChromeComponent('Header', Header, headerMeta)
 registerChromeComponent('CursorLabel', CursorLabel, cursorLabelMeta)
 registerChromeComponent('ModalRoot', ModalRoot, modalMeta)
 registerChromeComponent('SlideIndicators', SlideIndicators, slideIndicatorsMeta)
 registerChromeComponent('NavTimeline', NavTimeline, navTimelineMeta)
-registerChromeComponent('IntroOverlay', IntroOverlay, introOverlayMeta)
 registerChromeComponent('FixedCard', FixedCard, fixedCardMeta)

@@ -11,7 +11,6 @@ import type { StoreApi } from 'zustand'
 import { useExperience } from '../../../../experience'
 import type { InfiniteCarouselState } from '../../../../experience/experiences/types'
 import type { NavTimelineProps } from './types'
-import './styles.css'
 
 // =============================================================================
 // Easing utilities for smooth animations

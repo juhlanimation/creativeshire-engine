@@ -24,12 +24,11 @@ import { useModalStore } from './store'
 import { useSmoothScroll, useSmoothScrollContainer } from '../../../../experience'
 import { useContainer } from '../../../../interface/ContainerContext'
 import { useSiteContainer } from '../../../../renderer/SiteContainerContext'
-// ARCHITECTURE EXCEPTION: Overlays may import driver utilities for enter/exit animations.
-// RevealTransition is driver infrastructure (not a behaviour), providing GSAP timeline
+// ARCHITECTURE EXCEPTION: Overlays may import timeline utilities for enter/exit animations.
+// RevealTransition is timeline infrastructure (not a behaviour), providing GSAP timeline
 // control for sequenced modal transitions that CSS cannot achieve.
-import { RevealTransition } from '../../../../experience/drivers/gsap'
-import type { RevealType } from '../../../../experience/drivers/gsap'
-import './styles.css'
+import { RevealTransition } from '../../../../experience/timeline/gsap'
+import type { RevealType } from '../../../../experience/timeline/gsap'
 
 /**
  * Close icon (X) SVG.

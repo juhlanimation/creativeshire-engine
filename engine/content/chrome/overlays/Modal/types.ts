@@ -4,12 +4,12 @@
  */
 
 import type { ReactNode } from 'react'
-// ARCHITECTURE EXCEPTION: Type imports from drivers/ are allowed for overlay animations.
+// ARCHITECTURE EXCEPTION: Type imports from timeline/ are allowed for overlay animations.
 // See Modal/index.tsx for full rationale.
-import type { RevealType } from '../../../../experience/drivers/gsap'
+import type { RevealType } from '../../../../experience/timeline/gsap'
 
 // Re-export for convenience
-export type { RevealType } from '../../../../experience/drivers/gsap'
+export type { RevealType } from '../../../../experience/timeline/gsap'
 
 /**
  * Transition phase for modal open/close animation.
