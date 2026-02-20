@@ -1,5 +1,5 @@
 /**
- * Project data for the bojuhl portfolio.
+ * Project data for the sample portfolio.
  * Sourced from reference implementation.
  */
 
@@ -60,8 +60,8 @@ export const otherProjects: OtherProject[] = [
     id: 'genshin-impact',
     thumbnailSrc: '/images/other-projects/genshin-impact-thumbnail.webp',
     thumbnailAlt: 'Genshin Impact thumbnail',
-    videoSrc: TEST_VIDEO_URL,
-    videoUrl: TEST_VIDEO_URL,
+    videoSrc: '/videos/other-projects/genshin-impact-hover.webm',
+    videoUrl: '/videos/other-projects/genshin-impact-full-length.webm',
     title: 'SCENERY AND SENTIMENT',
     year: '2023',
     role: 'Executive Producer',
@@ -72,8 +72,8 @@ export const otherProjects: OtherProject[] = [
     id: 'its-on',
     thumbnailSrc: '/images/other-projects/its-on-thumbnail.webp',
     thumbnailAlt: "It's On thumbnail",
-    videoSrc: TEST_VIDEO_URL,
-    videoUrl: TEST_VIDEO_URL,
+    videoSrc: '/videos/other-projects/its-on-hover.webm',
+    videoUrl: '/videos/other-projects/its-on-full-length.webm',
     title: "IT'S ON!",
     year: '2018',
     role: 'Executive Producer, Editor',
@@ -84,8 +84,8 @@ export const otherProjects: OtherProject[] = [
     id: 'marvel-midnight-sun',
     thumbnailSrc: '/images/other-projects/marvel-thumbnail.webp',
     thumbnailAlt: 'Marvel Midnight Sun thumbnail',
-    videoSrc: TEST_VIDEO_URL,
-    videoUrl: TEST_VIDEO_URL,
+    videoSrc: '/videos/other-projects/marvel-hover.webm',
+    videoUrl: '/videos/other-projects/marvel-full-length.webm',
     title: 'MARVEL MIDNIGHT SUN',
     year: '2022',
     role: 'Executive Producer',
@@ -96,8 +96,8 @@ export const otherProjects: OtherProject[] = [
     id: 'ninjago-legacy',
     thumbnailSrc: '/images/other-projects/ninjago-thumbnail.webp',
     thumbnailAlt: 'Ninjago Legacy thumbnail',
-    videoSrc: TEST_VIDEO_URL,
-    videoUrl: TEST_VIDEO_URL,
+    videoSrc: '/videos/other-projects/ninjago-hover.webm',
+    videoUrl: '/videos/other-projects/ninjago-full-length.webm',
     title: 'NINJAGO LEGACY',
     year: '2021',
     role: 'Executive Producer',
@@ -108,8 +108,8 @@ export const otherProjects: OtherProject[] = [
     id: 'the-goblin-queen',
     thumbnailSrc: '/images/other-projects/the-goblin-queen-thumbnail.webp',
     thumbnailAlt: 'The Goblin Queen thumbnail',
-    videoSrc: TEST_VIDEO_URL,
-    videoUrl: TEST_VIDEO_URL,
+    videoSrc: '/videos/other-projects/the-goblin-queen-hover.webm',
+    videoUrl: '/videos/other-projects/the-goblin-queen-full-length.webm',
     title: 'THE GOBLIN QUEEN',
     year: '2024',
     role: 'Executive Producer',

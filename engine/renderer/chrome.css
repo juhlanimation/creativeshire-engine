@@ -241,3 +241,15 @@ footer.chrome-header--overlay {
 :where([data-breakpoint="mobile"]) .chrome-overlay {
   display: none;
 }
+
+/* ── Brand text — typography-only class for header brand logos ──── */
+/* No animation or positioning — that's handled by behaviours.
+   Just the visual identity: weight, case, spacing, size. */
+.brand-text {
+  color: white;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 1.25rem;
+  pointer-events: none;
+}

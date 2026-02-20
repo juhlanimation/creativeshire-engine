@@ -12,7 +12,6 @@
  *    (e.g. <a> tags in rich text that can't use widget `on` maps)
  * 3. Direct control (active prop): For inline usage in interactive widgets
  *
- * Reference: bojuhl.com cursor-label.tsx
  * - 10px font, uppercase, tracking-wide
  * - mix-blend-mode: difference for visibility on any background
  * - Offset: x+24, y+8 from cursor

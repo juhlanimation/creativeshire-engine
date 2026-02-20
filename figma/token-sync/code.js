@@ -1757,7 +1757,7 @@ async function buildThemeShowcase(tk) {
     hero.resize(380, 340); hero.cornerRadius = 8; hero.clipsContent = true
     bindFill(hero, 'colors/background')
     const ht = instVariant('Primitives/Text', 'H1', 300, 48)
-    ht.name = 'Title'; ht.x = 32; ht.y = 80; setText(ht, "I'm Bo Juhl"); hero.appendChild(ht)
+    ht.name = 'Title'; ht.x = 32; ht.y = 80; setText(ht, "I'm Alex Morgan"); hero.appendChild(ht)
     const hr = instVariant('Primitives/Text', 'Small', 280, 16)
     hr.name = 'Roles'; hr.x = 32; hr.y = 140; setText(hr, 'EXECUTIVE PRODUCER / EDITOR'); hero.appendChild(hr)
     const hb = instVariant('Primitives/Button', 'Ghost', 120, 44)

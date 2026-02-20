@@ -58,24 +58,11 @@ const preview: Preview = {
         dynamicTitle: true,
       },
     },
-    presetContext: {
-      toolbar: {
-        title: 'Preset',
-        items: [
-          { value: '', title: 'None' },
-          { value: 'noir', title: 'Noir' },
-          { value: 'loft', title: 'Loft' },
-          { value: 'prism', title: 'Prism' },
-        ],
-        dynamicTitle: true,
-      },
-    },
   },
 
   initialGlobals: {
     colorTheme: 'contrast',
     colorMode: 'dark',
-    presetContext: '',
   },
 }
 

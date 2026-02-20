@@ -126,7 +126,7 @@ Error messages should be:
 
 ```typescript
 // Good
-`Site "bojuhl" missing schemaVersion. Add schemaVersion: "2.0.0" to site config.`
+`Site "noir" missing schemaVersion. Add schemaVersion: "2.0.0" to site config.`
 
 // Bad
 `Invalid config`

@@ -1,7 +1,7 @@
 # Engine Directory Tree
 
-**Generated:** 2026-02-18
-**Files:** 621 | **Directories:** 151
+**Generated:** 2026-02-20
+**Files:** 638 | **Directories:** 157
 
 ```
 engine/
@@ -16,11 +16,13 @@ engine/
 │   ├── chrome/
 │   │   ├── overlays/
 │   │   │   ├── CursorLabel/
+│   │   │   │   ├── CursorLabel.stories.tsx
 │   │   │   │   ├── index.tsx
 │   │   │   │   ├── meta.ts
 │   │   │   │   ├── styles.css
 │   │   │   │   └── types.ts
 │   │   │   ├── FixedCard/
+│   │   │   │   ├── FixedCard.stories.tsx
 │   │   │   │   ├── index.tsx
 │   │   │   │   ├── meta.ts
 │   │   │   │   ├── styles.css
@@ -30,19 +32,21 @@ engine/
 │   │   │   │   │   └── video.tsx
 │   │   │   │   ├── index.tsx
 │   │   │   │   ├── meta.ts
+│   │   │   │   ├── Modal.stories.tsx
 │   │   │   │   ├── ModalRoot.tsx
 │   │   │   │   ├── store.ts
 │   │   │   │   ├── styles.css
-│   │   │   │   ├── types.ts
-│   │   │   │   └── useTransitionComplete.ts
+│   │   │   │   └── types.ts
 │   │   │   ├── NavTimeline/
 │   │   │   │   ├── index.tsx
 │   │   │   │   ├── meta.ts
+│   │   │   │   ├── NavTimeline.stories.tsx
 │   │   │   │   ├── styles.css
 │   │   │   │   └── types.ts
 │   │   │   ├── SlideIndicators/
 │   │   │   │   ├── index.tsx
 │   │   │   │   ├── meta.ts
+│   │   │   │   ├── SlideIndicators.stories.tsx
 │   │   │   │   ├── styles.css
 │   │   │   │   └── types.ts
 │   │   │   └── index.ts
@@ -52,6 +56,7 @@ engine/
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── meta.ts
 │   │   │   │   ├── preview.ts
+│   │   │   │   ├── styles.css
 │   │   │   │   └── types.ts
 │   │   │   ├── CenteredNav/
 │   │   │   │   ├── CenteredNav.stories.tsx
@@ -67,6 +72,7 @@ engine/
 │   │   │   │   ├── styles.css
 │   │   │   │   └── types.ts
 │   │   │   ├── CursorTracker/
+│   │   │   │   ├── CursorTracker.stories.tsx
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── meta.ts
 │   │   │   │   ├── preview.ts
@@ -95,18 +101,29 @@ engine/
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── meta.ts
 │   │   │   │   ├── preview.ts
-│   │   │   │   └── types.ts
+│   │   │   │   ├── types.ts
+│   │   │   │   └── VideoModal.stories.tsx
 │   │   │   └── index.ts
 │   │   ├── CLAUDE.md
 │   │   ├── index.ts
 │   │   ├── overlay-base-meta.ts
 │   │   ├── pattern-registry.ts
 │   │   ├── region-base-meta.ts
+│   │   └── registry.ts
+│   ├── decorators/
+│   │   ├── presets/
+│   │   │   ├── cursor-label.ts
+│   │   │   ├── hover-scale.ts
+│   │   │   ├── index.ts
+│   │   │   └── video-modal.ts
+│   │   ├── index.ts
+│   │   ├── merge.ts
 │   │   ├── registry.ts
+│   │   ├── resolve.ts
 │   │   └── types.ts
 │   ├── sections/
 │   │   ├── patterns/
-│   │   │   ├── About/
+│   │   │   ├── AboutBio/
 │   │   │   │   ├── components/
 │   │   │   │   │   └── MarqueeImageRepeater/
 │   │   │   │   │       ├── index.tsx
@@ -114,66 +131,38 @@ engine/
 │   │   │   │   │       ├── meta.ts
 │   │   │   │   │       ├── styles.css
 │   │   │   │   │       └── types.ts
-│   │   │   │   ├── About.stories.tsx
+│   │   │   │   ├── AboutBio.stories.tsx
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── meta.ts
 │   │   │   │   ├── preview.ts
 │   │   │   │   ├── styles.css
 │   │   │   │   └── types.ts
-│   │   │   ├── FeaturedProjects/
-│   │   │   │   ├── components/
-│   │   │   │   │   └── ProjectCard/
-│   │   │   │   │       ├── index.ts
-│   │   │   │   │       ├── meta.ts
-│   │   │   │   │       ├── ProjectCard.stories.tsx
-│   │   │   │   │       ├── styles.css
-│   │   │   │   │       └── types.ts
-│   │   │   │   ├── FeaturedProjects.stories.tsx
+│   │   │   ├── AboutCollage/
+│   │   │   │   ├── AboutCollage.stories.tsx
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── meta.ts
 │   │   │   │   ├── preview.ts
 │   │   │   │   ├── styles.css
 │   │   │   │   └── types.ts
-│   │   │   ├── Hero/
-│   │   │   │   ├── Hero.stories.tsx
+│   │   │   ├── ContentPricing/
+│   │   │   │   ├── ContentPricing.stories.tsx
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── meta.ts
 │   │   │   │   ├── preview.ts
 │   │   │   │   ├── styles.css
 │   │   │   │   └── types.ts
-│   │   │   ├── MemberGallery/
-│   │   │   │   ├── components/
-│   │   │   │   │   └── StackVideoShowcase/
-│   │   │   │   │       ├── index.tsx
-│   │   │   │   │       ├── meta.ts
-│   │   │   │   │       ├── StackVideoShowcase.stories.tsx
-│   │   │   │   │       ├── styles.css
-│   │   │   │   │       └── types.ts
+│   │   │   ├── HeroTitle/
+│   │   │   │   ├── HeroTitle.stories.tsx
 │   │   │   │   ├── index.ts
-│   │   │   │   ├── MemberGallery.stories.tsx
 │   │   │   │   ├── meta.ts
 │   │   │   │   ├── preview.ts
 │   │   │   │   ├── styles.css
 │   │   │   │   └── types.ts
-│   │   │   ├── OtherProjects/
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── meta.ts
-│   │   │   │   ├── OtherProjects.stories.tsx
-│   │   │   │   ├── preview.ts
-│   │   │   │   ├── styles.css
-│   │   │   │   └── types.ts
-│   │   │   ├── PhotoCollage/
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── meta.ts
-│   │   │   │   ├── PhotoCollage.stories.tsx
-│   │   │   │   ├── preview.ts
-│   │   │   │   ├── styles.css
-│   │   │   │   └── types.ts
-│   │   │   ├── Pricing/
+│   │   │   ├── HeroVideo/
+│   │   │   │   ├── HeroVideo.stories.tsx
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── meta.ts
 │   │   │   │   ├── preview.ts
-│   │   │   │   ├── Pricing.stories.tsx
 │   │   │   │   ├── styles.css
 │   │   │   │   └── types.ts
 │   │   │   ├── ProjectCompare/
@@ -195,6 +184,20 @@ engine/
 │   │   │   │   ├── meta.ts
 │   │   │   │   ├── preview.ts
 │   │   │   │   ├── ProjectExpand.stories.tsx
+│   │   │   │   ├── styles.css
+│   │   │   │   └── types.ts
+│   │   │   ├── ProjectFeatured/
+│   │   │   │   ├── components/
+│   │   │   │   │   └── ProjectCard/
+│   │   │   │   │       ├── index.ts
+│   │   │   │   │       ├── meta.ts
+│   │   │   │   │       ├── ProjectCard.stories.tsx
+│   │   │   │   │       ├── styles.css
+│   │   │   │   │       └── types.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── meta.ts
+│   │   │   │   ├── preview.ts
+│   │   │   │   ├── ProjectFeatured.stories.tsx
 │   │   │   │   ├── styles.css
 │   │   │   │   └── types.ts
 │   │   │   ├── ProjectGallery/
@@ -220,7 +223,6 @@ engine/
 │   │   │   │   │   └── FlexButtonRepeater/
 │   │   │   │   │       ├── IndexNav/
 │   │   │   │   │       │   ├── index.tsx
-│   │   │   │   │       │   ├── meta.ts
 │   │   │   │   │       │   ├── styles.css
 │   │   │   │   │       │   └── types.ts
 │   │   │   │   │       ├── FlexButtonRepeater.stories.tsx
@@ -231,6 +233,13 @@ engine/
 │   │   │   │   ├── meta.ts
 │   │   │   │   ├── preview.ts
 │   │   │   │   ├── ProjectShowcase.stories.tsx
+│   │   │   │   ├── styles.css
+│   │   │   │   └── types.ts
+│   │   │   ├── ProjectStrip/
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── meta.ts
+│   │   │   │   ├── preview.ts
+│   │   │   │   ├── ProjectStrip.stories.tsx
 │   │   │   │   ├── styles.css
 │   │   │   │   └── types.ts
 │   │   │   ├── ProjectTabs/
@@ -253,6 +262,20 @@ engine/
 │   │   │   │   ├── preview.ts
 │   │   │   │   ├── ProjectVideoGrid.stories.tsx
 │   │   │   │   ├── styles.css
+│   │   │   │   └── types.ts
+│   │   │   ├── TeamShowcase/
+│   │   │   │   ├── components/
+│   │   │   │   │   └── StackVideoShowcase/
+│   │   │   │   │       ├── index.tsx
+│   │   │   │   │       ├── meta.ts
+│   │   │   │   │       ├── StackVideoShowcase.stories.tsx
+│   │   │   │   │       ├── styles.css
+│   │   │   │   │       └── types.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── meta.ts
+│   │   │   │   ├── preview.ts
+│   │   │   │   ├── styles.css
+│   │   │   │   ├── TeamShowcase.stories.tsx
 │   │   │   │   └── types.ts
 │   │   │   ├── base.ts
 │   │   │   ├── index.ts
@@ -337,9 +360,6 @@ engine/
 │       │   ├── CLAUDE.md
 │       │   ├── index.ts
 │       │   └── utils.ts
-│       ├── patterns/
-│       │   ├── CLAUDE.md
-│       │   └── index.ts
 │       ├── primitives/
 │       │   ├── Button/
 │       │   │   ├── Button.stories.tsx
@@ -451,8 +471,7 @@ engine/
 │   │   │   ├── cover-progress/
 │   │   │   │   ├── CoverProgress.stories.tsx
 │   │   │   │   ├── index.ts
-│   │   │   │   ├── meta.ts
-│   │   │   │   └── styles.css
+│   │   │   │   └── meta.ts
 │   │   │   ├── fade/
 │   │   │   │   ├── Fade.stories.tsx
 │   │   │   │   ├── index.ts
@@ -469,6 +488,9 @@ engine/
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── meta.ts
 │   │   │   │   └── Progress.stories.tsx
+│   │   │   ├── reveal/
+│   │   │   │   ├── index.ts
+│   │   │   │   └── meta.ts
 │   │   │   └── index.ts
 │   │   ├── video/
 │   │   │   ├── frame/
@@ -493,19 +515,6 @@ engine/
 │   │   ├── resolve.ts
 │   │   └── types.ts
 │   ├── drivers/
-│   │   ├── gsap/
-│   │   │   ├── transitions/
-│   │   │   │   ├── expand.ts
-│   │   │   │   ├── fade.ts
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── registry.ts
-│   │   │   │   ├── resolve.ts
-│   │   │   │   ├── types.ts
-│   │   │   │   ├── wipe-left.ts
-│   │   │   │   └── wipe-right.ts
-│   │   │   ├── index.ts
-│   │   │   ├── reveal-transition.tsx
-│   │   │   └── use-gsap-reveal.ts
 │   │   ├── getDriver.ts
 │   │   ├── index.ts
 │   │   ├── LenisSmoothScrollProvider.tsx
@@ -518,11 +527,20 @@ engine/
 │   │   ├── useScrollFadeDriver.ts
 │   │   └── useSmoothScrollContainer.ts
 │   ├── effects/
+│   │   ├── color-shift/
+│   │   │   └── color-shift.css
 │   │   ├── emphasis/
+│   │   │   ├── pulse.css
 │   │   │   └── spin.css
+│   │   ├── fade/
+│   │   │   └── fade.css
+│   │   ├── marquee/
+│   │   │   └── marquee-scroll.css
 │   │   ├── mask/
 │   │   │   ├── reveal.css
 │   │   │   └── wipe.css
+│   │   ├── overlay/
+│   │   │   └── overlay-darken.css
 │   │   ├── reveal/
 │   │   │   ├── clip-path.css
 │   │   │   └── index.css
@@ -530,11 +548,7 @@ engine/
 │   │   │   ├── scale.css
 │   │   │   └── slide.css
 │   │   ├── CLAUDE.md
-│   │   ├── color-shift.css
-│   │   ├── fade.css
-│   │   ├── index.css
-│   │   ├── marquee-scroll.css
-│   │   └── overlay-darken.css
+│   │   └── index.css
 │   ├── experiences/
 │   │   ├── cinematic-portfolio/
 │   │   │   ├── CinematicPortfolio.stories.tsx
@@ -568,8 +582,6 @@ engine/
 │   │   ├── index.ts
 │   │   └── SectionLifecycleProvider.tsx
 │   ├── navigation/
-│   │   ├── animateElement.ts
-│   │   ├── EffectTimeline.ts
 │   │   ├── index.ts
 │   │   ├── NavigationInitializer.tsx
 │   │   ├── page-transition.css
@@ -583,6 +595,23 @@ engine/
 │   │   ├── useKeyboardNavigation.ts
 │   │   ├── useSwipeNavigation.ts
 │   │   └── useWheelNavigation.ts
+│   ├── timeline/
+│   │   ├── gsap/
+│   │   │   ├── transitions/
+│   │   │   │   ├── expand.ts
+│   │   │   │   ├── fade.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── registry.ts
+│   │   │   │   ├── resolve.ts
+│   │   │   │   ├── types.ts
+│   │   │   │   ├── wipe-left.ts
+│   │   │   │   └── wipe-right.ts
+│   │   │   ├── index.ts
+│   │   │   ├── reveal-transition.tsx
+│   │   │   └── use-gsap-reveal.ts
+│   │   ├── animateElement.ts
+│   │   ├── EffectTimeline.ts
+│   │   └── index.ts
 │   ├── transitions/
 │   │   ├── configs/
 │   │   │   ├── default-fade.ts
@@ -644,50 +673,34 @@ engine/
 │   ├── index.ts
 │   └── types.ts
 ├── presets/
-│   ├── bishoy-gendi/
-│   │   ├── chrome/
-│   │   │   └── index.ts
+│   ├── loft/
 │   │   ├── pages/
-│   │   │   ├── home.ts
-│   │   │   └── index.ts
-│   │   ├── BishoyGendi.stories.tsx
+│   │   │   └── home.ts
 │   │   ├── content-contract.ts
 │   │   ├── index.ts
-│   │   ├── sample-content.ts
-│   │   ├── site.ts
-│   │   └── styles.css
-│   ├── bojuhl/
+│   │   ├── Loft.stories.tsx
+│   │   └── sample-content.ts
+│   ├── noir/
 │   │   ├── pages/
-│   │   │   ├── home.ts
-│   │   │   └── index.ts
-│   │   ├── Bojuhl.stories.tsx
+│   │   │   └── home.ts
 │   │   ├── content-contract.ts
 │   │   ├── index.ts
-│   │   ├── sample-content.ts
-│   │   └── site.ts
-│   ├── port-12/
-│   │   ├── chrome/
-│   │   │   └── index.ts
+│   │   ├── Noir.stories.tsx
+│   │   └── sample-content.ts
+│   ├── prism/
 │   │   ├── pages/
-│   │   │   ├── home.ts
-│   │   │   └── index.ts
+│   │   │   └── home.ts
 │   │   ├── content-contract.ts
 │   │   ├── index.ts
-│   │   ├── Port12.stories.tsx
+│   │   ├── Prism.stories.tsx
 │   │   ├── sample-content.ts
-│   │   ├── site.ts
 │   │   └── styles.css
 │   ├── test-multipage/
-│   │   ├── chrome/
-│   │   │   ├── header.ts
-│   │   │   └── index.ts
 │   │   ├── pages/
 │   │   │   ├── about.ts
-│   │   │   ├── home.ts
-│   │   │   └── index.ts
+│   │   │   └── home.ts
 │   │   ├── content-contract.ts
 │   │   ├── index.ts
-│   │   ├── site.ts
 │   │   └── TestMultipage.stories.tsx
 │   ├── CLAUDE.md
 │   ├── index.ts
@@ -722,6 +735,7 @@ engine/
 │   ├── PageRenderer.tsx
 │   ├── PinnedBackdropContext.tsx
 │   ├── PinnedSection.tsx
+│   ├── resets.css
 │   ├── scrollbar.css
 │   ├── SectionChromeContext.tsx
 │   ├── SectionRenderer.tsx
@@ -744,6 +758,7 @@ engine/
 │   ├── region-meta.ts
 │   ├── section-meta.ts
 │   ├── section.ts
+│   ├── settings-helpers.ts
 │   ├── settings.ts
 │   ├── shell.ts
 │   ├── site-meta.ts
@@ -760,14 +775,22 @@ engine/
 ├── themes/
 │   ├── definitions/
 │   │   ├── contrast.ts
+│   │   ├── crossroad.ts
 │   │   ├── earthy.ts
 │   │   ├── editorial.ts
 │   │   ├── monochrome.ts
 │   │   ├── muted.ts
 │   │   └── neon.ts
+│   ├── showcase/
+│   │   ├── _shared.tsx
+│   │   ├── Colors.stories.tsx
+│   │   ├── Interaction.stories.tsx
+│   │   ├── Overview.stories.tsx
+│   │   ├── SpacingLayout.stories.tsx
+│   │   ├── Surfaces.stories.tsx
+│   │   └── Typography.stories.tsx
 │   ├── index.ts
 │   ├── registry.ts
-│   ├── Theme.stories.tsx
 │   ├── types.ts
 │   └── utils.ts
 ├── validation/

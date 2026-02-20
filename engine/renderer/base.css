@@ -55,6 +55,10 @@ html:has([data-site-renderer]) {
  * [data-site-renderer] — z-index: 1, bg: transparent. Container query root.
  *   Sections own their backgrounds — transparent sections show the layer below.
  *
+ * [data-chrome-layer] — No positioning, no z-index. Non-stacking-context
+ *   portal target for overlay headers. Headers inside use position:fixed +
+ *   z-index at root compositing level, so mix-blend-mode works.
+ *
  * [data-viewport-layer="foreground"] — z-index: 100. Portal target for
  *   content above everything (modals, lightboxes, cursor effects).
  *
@@ -79,8 +83,12 @@ html:has([data-site-renderer]) {
    position:fixed works correctly here because no ancestor creates a containing block.
    pointer-events:none so they don't intercept clicks — portaled content opts in.
 
-   Stacking: engine-root bg → background(0) → site-renderer(1) → foreground(100).
-   Transparent areas in site-renderer reveal the background layer beneath. */
+   Stacking: engine-root bg → background(0) → site-renderer(1) → chrome-layer → foreground(100).
+   Transparent areas in site-renderer reveal the background layer beneath.
+
+   [data-chrome-layer] is a non-stacking-context div between site-renderer and foreground.
+   Overlay headers portal here so their mix-blend-mode reaches page content.
+   MUST NOT have position, z-index, opacity, transform, or any stacking-context trigger. */
 [data-viewport-layer] {
   position: fixed;
   inset: 0;

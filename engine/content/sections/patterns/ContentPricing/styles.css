@@ -219,13 +219,13 @@
 .plan-card {
   padding: 1.5rem;
   text-align: center;
+  gap: 1rem;
 }
 
 .plan-card__illustration {
   width: 12rem;
   height: 12rem;
   object-fit: contain;
-  margin-bottom: 1rem;
 }
 
 .plan-card__name {
@@ -260,21 +260,12 @@
   white-space: pre-line;
 }
 
-/* Margins scoped under .plan-card to beat .text-widget { margin: 0 } */
-.plan-card .plan-card__price {
-  margin-top: 0.25rem;
-}
-
-.plan-card .plan-card__description {
-  margin: 0.75rem 0 1rem;
-}
 
 .plan-card__divider {
   width: 8rem;
   height: 1px;
   background: currentColor;
   opacity: 0.2;
-  margin-bottom: 1rem;
 }
 
 @container (min-width: 48rem) {

@@ -1,5 +1,5 @@
 /**
- * About section data for the bojuhl portfolio.
+ * About section data for the sample portfolio.
  */
 
 /**
@@ -14,14 +14,14 @@ export const bioParagraphs = [
 /**
  * Signature attribution.
  */
-export const signature = 'Bo Juhl'
+export const signature = 'Alex Morgan'
 
 /**
  * Profile photo configuration.
  */
 export const profilePhoto = {
   src: '/images/profile-highres.webp',
-  alt: 'Bo Juhl - Executive Producer & Editor',
+  alt: 'Alex Morgan - Creative Director & Producer',
 }
 
 /**

@@ -6,7 +6,6 @@
  * Values sourced from reference portfolio site.
  *
  * Media paths reference /videos/bishoy-gendi/ and /images/bishoy-gendi/
- * (copied from the source portfolio's public/ folder).
  */
 
 const VIDEO_BASE = '/videos/bishoy-gendi'
@@ -15,15 +14,15 @@ const POSTER_BASE = '/images/bishoy-gendi/posters'
 
 export const prismSampleContent = {
   head: {
-    title: 'Bishoy Gendi | Character Animator',
+    title: 'Jordan Rivera | Character Animator',
     description: 'Senior character animator based in London, UK. 16 years of experience in animation.',
   },
 
   contact: {
-    email: 'bishoygendi@yahoo.co.uk',
-    instagram: 'https://instagram.com/bishoygendi',
-    linkedin: 'https://linkedin.com/in/bishoygendi',
-    displayName: 'Bishoy Gendi',
+    email: 'hello@example.com',
+    instagram: 'https://instagram.com/example',
+    linkedin: 'https://linkedin.com/in/example',
+    displayName: 'Jordan Rivera',
   },
 
   showreel: {
@@ -35,7 +34,7 @@ export const prismSampleContent = {
   about: {
     label: 'HEY, I AM',
     videoSrc: `${VIDEO_BASE}/sample-showreel.webm`,
-    name: 'Bishoy Gendi',
+    name: 'Jordan Rivera',
     title: 'Senior Character Animator',
     location: 'London, UK',
     bio: "With 16 years as a character animator, animation lead, and supervisor, I've had the privilege of bringing stories to life for some amazing projects with talented people. Feel free to explore my contributions.",
@@ -273,7 +272,7 @@ export const prismSampleContent = {
       },
     ],
     externalLink: {
-      url: 'https://instagram.com/bishoygendi',
+      url: 'https://instagram.com/example',
       label: 'See more on Instagram',
     },
   },

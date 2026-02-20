@@ -14,7 +14,6 @@ import type { Decorator } from '@storybook/react'
 export interface StoryGlobals {
   colorTheme?: string
   colorMode?: string
-  presetContext?: string
 }
 
 export const StoryGlobalsContext = createContext<StoryGlobals>({})
@@ -26,9 +25,8 @@ export const StoryGlobalsContext = createContext<StoryGlobals>({})
 export const StoryGlobalsDecorator: Decorator = (Story, context) => {
   const colorTheme = (context.globals.colorTheme as string) ?? undefined
   const colorMode = (context.globals.colorMode as string) ?? undefined
-  const presetContext = (context.globals.presetContext as string) || undefined
   return (
-    <StoryGlobalsContext.Provider value={{ colorTheme, colorMode, presetContext }}>
+    <StoryGlobalsContext.Provider value={{ colorTheme, colorMode }}>
       <Story />
     </StoryGlobalsContext.Provider>
   )

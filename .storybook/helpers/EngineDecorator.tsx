@@ -64,7 +64,7 @@ export const EngineDecorator: Decorator = (Story, context) => {
   }, [palette?.background, palette?.text])
 
   // Explicit background/color on data-site-content prevents preset CSS contamination.
-  // Preset stories (e.g. Port-12) side-effect import their CSS which sets
+  // Preset stories side-effect import their CSS which sets
   // `[data-site-content] { background-color }` globally. Inline styles override this.
   const contentStyle = useMemo(() => ({
     backgroundColor: palette?.background ?? 'transparent',

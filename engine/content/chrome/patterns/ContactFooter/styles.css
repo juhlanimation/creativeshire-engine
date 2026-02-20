@@ -13,7 +13,7 @@
   width: 100%;
   overflow: hidden; /* Contain any overflowing content */
   box-sizing: border-box;
-  padding: var(--footer-padding-top, var(--spacing-2xl, 4rem)) var(--spacing-lg, 2rem) var(--footer-copyright-gap, var(--spacing-section-y, 5rem));
+  padding: var(--footer-padding-top, var(--spacing-2xl, 4rem)) var(--spacing-lg, 2rem) var(--footer-padding-bottom, var(--spacing-section-y, 5rem));
   background-color: var(--theme-bg, var(--site-outer-bg, #000));
   color: var(--text-primary, #fff);
 }
@@ -117,13 +117,13 @@
   font-weight: 400;
   color: inherit;
   opacity: 0.5;
-  margin: var(--footer-copyright-gap, var(--spacing-lg, 2rem)) 0 0;
+  margin: var(--footer-padding-bottom, var(--spacing-lg, 2rem)) 0 0;
 }
 
 /* Tablet+ (768px): Two-part layout - left nav, right contact+studio */
 @container site (min-width: 768px) {
   .footer-chrome {
-    padding: var(--footer-padding-top, var(--spacing-2xl, 4rem)) var(--spacing-2xl, 4rem) var(--footer-copyright-gap, var(--spacing-section-y, 5rem));
+    padding: var(--footer-padding-top, var(--spacing-2xl, 4rem)) var(--spacing-2xl, 4rem) var(--footer-padding-bottom, var(--spacing-section-y, 5rem));
   }
 
   .footer-chrome__content {
@@ -171,7 +171,7 @@
 
 /* Fallback for browsers without container query support */
 :where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome {
-  padding: var(--footer-padding-top, var(--spacing-2xl, 4rem)) var(--spacing-2xl, 4rem) var(--footer-copyright-gap, var(--spacing-section-y, 5rem));
+  padding: var(--footer-padding-top, var(--spacing-2xl, 4rem)) var(--spacing-2xl, 4rem) var(--footer-padding-bottom, var(--spacing-section-y, 5rem));
 }
 
 :where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .footer-chrome__content {
@@ -215,7 +215,7 @@
 /* Desktop (1024px+): Increased padding to match hero */
 @container site (min-width: 1024px) {
   .footer-chrome {
-    padding: var(--footer-padding-top, var(--spacing-2xl, 4rem)) var(--spacing-section-x, 6rem) var(--footer-copyright-gap, var(--spacing-section-y, 5rem));
+    padding: var(--footer-padding-top, var(--spacing-2xl, 4rem)) var(--spacing-section-x, 6rem) var(--footer-padding-bottom, var(--spacing-section-y, 5rem));
   }
 
   /* Copyright position matches left padding */
@@ -226,7 +226,7 @@
 
 /* Fallback for browsers without container query support */
 :where([data-breakpoint="desktop"]) .footer-chrome {
-  padding: var(--footer-padding-top, var(--spacing-2xl, 4rem)) var(--spacing-section-x, 6rem) var(--footer-copyright-gap, var(--spacing-section-y, 5rem));
+  padding: var(--footer-padding-top, var(--spacing-2xl, 4rem)) var(--spacing-section-x, 6rem) var(--footer-padding-bottom, var(--spacing-section-y, 5rem));
 }
 
 :where([data-breakpoint="desktop"]) .footer-chrome__copyright {

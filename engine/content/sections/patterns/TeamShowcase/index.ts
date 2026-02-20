@@ -76,7 +76,7 @@ export function createTeamShowcaseSection(props: TeamShowcaseProps): SectionSche
     paddingBottom: props.paddingBottom,
     paddingLeft: props.paddingLeft,
     paddingRight: props.paddingRight,
-    sectionHeight: props.sectionHeight ?? 'viewport',
+    sectionHeight: props.sectionHeight ?? 'auto',
     widgets: [{
       id: `${sectionId}-showcase`,
       type: 'TeamShowcase__StackVideoShowcase',

@@ -203,6 +203,7 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
 
   // Refs for viewport portal layers (outside all containment)
   const backgroundLayerRef = useRef<HTMLDivElement>(null)
+  const chromeLayerRef = useRef<HTMLDivElement>(null)
   const foregroundLayerRef = useRef<HTMLDivElement>(null)
 
   // Viewport layers only in fullpage mode (no containment escape needed in iframes)
@@ -231,6 +232,7 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
       {renderViewportLayers && (
         <ViewportPortalRegistrar
           backgroundRef={backgroundLayerRef}
+          chromeRef={chromeLayerRef}
           foregroundRef={foregroundLayerRef}
         />
       )}
@@ -334,6 +336,12 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
     </ScrollLockProvider>
     </ThemeProvider>
     </div>
+      {/* Chrome portal layer — non-stacking-context target for overlay headers.
+          Sits between site-renderer and foreground layer so headers can blend
+          with page content while modals in foreground layer stay above. */}
+      {renderViewportLayers && (
+        <div ref={chromeLayerRef} data-chrome-layer />
+      )}
       {/* Foreground viewport layer — above site content (z-index: 100) */}
       {renderViewportLayers && (
         <div

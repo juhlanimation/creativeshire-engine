@@ -355,8 +355,8 @@ Engine passes binding expressions as opaque strings. Platform resolves them at r
 Each preset should document its expected content structure:
 
 ```typescript
-// presets/bojuhl/content-schema.ts
-export interface BojuhlContentSchema {
+// presets/noir/content-schema.ts
+export interface NoirContentSchema {
   hero: { introText: string; roles: string[]; videoSrc: string }
   about: { bioParagraphs: string[]; signature: string; photoSrc: string; photoAlt: string; clientLogos: LogoData[] }
   projects: { featured: ProjectData[]; other: ProjectData[]; otherHeading: string; yearRange: string }

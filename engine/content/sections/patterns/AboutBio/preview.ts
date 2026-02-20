@@ -6,9 +6,9 @@ export const previewProps: Partial<AboutBioProps> = {
     'I was one of the original founders of Sun Creature and spent more than a decade helping shape its growth - guiding dozens of productions and working with hundreds of artists as the studio evolved from a small team to a large international company. I stepped away from the studio in early 2024 to pursue new paths.',
     'Today, <a href="https://crossroad.studio" target="_blank" rel="noopener">Crossroad</a> is a remote-first setup rooted in collaboration and craft. I also take on freelance and consultancy work - always excited to dive in and make strong work with good people.',
   ],
-  signature: 'Bo Juhl',
+  signature: 'Alex Morgan',
   photoSrc: '/images/profile-highres.webp',
-  photoAlt: 'Bo Juhl - Executive Producer & Editor',
+  photoAlt: 'Alex Morgan - Creative Director & Producer',
   clientLogos: [
     { name: 'Netflix', src: '/clients/netflix-alpha.webp', alt: 'Netflix logo', height: 72 },
     { name: 'Amazon Studios', src: '/clients/AMZN_STUDIOS - alpha.webp', alt: 'Amazon Studios logo', height: 48 },

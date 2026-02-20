@@ -13,4 +13,8 @@ export interface BrandFooterProps {
   phoneDisplay?: string
   address?: string
   copyright: string
+  /** Top padding above the content area (rem). 0 = use theme default. */
+  paddingTop?: number
+  /** Bottom padding below the content area (rem). 0 = use theme default. */
+  paddingBottom?: number
 }

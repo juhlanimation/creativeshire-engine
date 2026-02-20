@@ -15,7 +15,7 @@ import type { BaseSectionProps } from '../base'
  * Uses CSSProperties for direct inline styling.
  */
 export interface HeroTextStyles {
-  /** Style for intro text (e.g., "I'm Bo Juhl") */
+  /** Style for intro text (e.g., "I'm Alex Morgan") */
   intro?: CSSProperties
   /** Style for role title headings */
   roleTitle?: CSSProperties
@@ -57,7 +57,7 @@ export const DEFAULT_HERO_STYLES: HeroTextStyles = {
  */
 export interface HeroVideoProps extends BaseSectionProps {
   // === Content ===
-  /** Intro text (e.g., "I'm Bo Juhl") — defaults to {{ content.hero.introText }} */
+  /** Intro text (e.g., "I'm Alex Morgan") — defaults to {{ content.hero.introText }} */
   introText?: string
   /** Array of role titles (e.g., ["EXECUTIVE PRODUCER", "PRODUCER", "EDITOR"]) — defaults to {{ content.hero.roles }} */
   roles?: string[] | string

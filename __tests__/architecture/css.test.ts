@@ -19,7 +19,7 @@ import {
 
 describe('CSS Rule Validation', () => {
   describe('Viewport units in sections', () => {
-    // TASK-007 FIXED: Bojuhl-specific CSS moved to preset
+    // TASK-007 FIXED: Site-specific CSS moved to preset
     // Rule: Generic section styles must NOT use viewport units (vh/vw/svh/dvh)
     // Viewport sizing is handled by BehaviourWrapper in L2
     describe('No viewport units in generic sections', () => {

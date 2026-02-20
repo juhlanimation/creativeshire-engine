@@ -28,14 +28,14 @@ The hierarchy panel displays the site structure as a tree, allowing users to:
 
 ## Full Hierarchy Example
 
-Based on the Bojuhl preset with all `__repeat` collections expanded:
+Based on the Noir preset with all `__repeat` collections expanded:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │  HIERARCHY                                              🔍 ⚙️   │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  📦 Site: bojuhl                                                │
+│  📦 Site: noir                                                   │
 │  │                                                              │
 │  ├─ ⚡ Experience: stacking                                     │
 │  │                                                              │

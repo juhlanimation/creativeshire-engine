@@ -15,6 +15,7 @@ import { meta } from './meta'
 
 const scrollFadeOut: Behaviour = {
   ...meta,
+  prerasterize: true,
   requires: ['sectionVisibility', 'prefersReducedMotion'],
 
   cssTemplate: `

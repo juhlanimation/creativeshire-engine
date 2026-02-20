@@ -32,7 +32,7 @@ export const noirContentContract: ContentContract = {
       label: 'Page Title',
       section: 'head',
       required: true,
-      default: 'Bo Juhl | Executive Producer & Editor',
+      default: 'Alex Morgan | Creative Director & Producer',
     },
     {
       path: 'head.description',
@@ -40,7 +40,7 @@ export const noirContentContract: ContentContract = {
       label: 'Meta Description',
       section: 'head',
       required: true,
-      default: 'Executive Producer leading animated films and campaigns for Riot Games, Netflix, Supercell, Amazon, and LEGO.',
+      default: 'Creative Director leading animated films and campaigns for leading studios and brands.',
     },
 
     // ── Header ────────────────────────────────────────────────────────
@@ -60,7 +60,7 @@ export const noirContentContract: ContentContract = {
       label: 'Hero Intro Text',
       section: 'hero',
       required: true,
-      default: "I'm Bo Juhl",
+      default: "I'm Alex Morgan",
     },
     {
       path: 'hero.roles',
@@ -100,7 +100,7 @@ export const noirContentContract: ContentContract = {
       type: 'text',
       label: 'Signature Name',
       section: 'about',
-      default: 'Bo Juhl',
+      default: 'Alex Morgan',
     },
     {
       path: 'about.photoSrc',

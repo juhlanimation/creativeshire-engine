@@ -14,12 +14,10 @@ import React, { useContext, useLayoutEffect, useMemo } from 'react'
 import { SiteRenderer } from '../../engine/renderer/SiteRenderer'
 import { StoryGlobalsContext } from './story-globals'
 import { getTheme, ensureThemesRegistered } from '../../engine/themes'
-import { getPreset, ensurePresetsRegistered } from '../../engine/presets'
 import type { SiteSchema, PageSchema, ThemeSchema, RegionSchema, ChromeSchema } from '../../engine/schema'
 
-// Ensure themes and presets are registered before any lookups
+// Ensure themes are registered before any lookups
 ensureThemesRegistered()
-ensurePresetsRegistered()
 
 /** Overlays available in all chrome stories (invisible until triggered). */
 const CHROME_STORY_OVERLAYS: ChromeSchema['overlays'] = {
@@ -39,13 +37,9 @@ interface ChromeStoryRendererProps {
  * Reads colorTheme/colorMode from Storybook globals (via StoryGlobalsDecorator).
  */
 export function ChromeStoryRenderer({ region, slot }: ChromeStoryRendererProps) {
-  const { colorTheme: globalColorTheme, colorMode: globalColorMode, presetContext } = useContext(StoryGlobalsContext)
+  const { colorTheme: globalColorTheme, colorMode: globalColorMode } = useContext(StoryGlobalsContext)
 
-  // When a preset is selected, look up its theme overrides
-  const presetTheme = presetContext ? getPreset(presetContext)?.theme : undefined
-
-  // Use preset's colorTheme as default when user hasn't overridden via toolbar
-  const colorTheme = globalColorTheme ?? presetTheme?.colorTheme ?? 'contrast'
+  const colorTheme = globalColorTheme ?? 'contrast'
 
   // Resolve palette for body bg sync + outerBackground default
   const themeDef = getTheme(colorTheme)
@@ -59,16 +53,12 @@ export function ChromeStoryRenderer({ region, slot }: ChromeStoryRendererProps) 
     return () => { document.body.style.backgroundColor = '' }
   }, [palette?.background])
 
-  // When a preset context is selected, merge its typography/container overrides
-  // so the chrome pattern renders with preset-accurate styling.
   const theme = useMemo((): ThemeSchema => ({
     colorTheme,
     colorMode: effectiveMode as 'dark' | 'light',
     container: {
       outerBackground: palette?.background,
-      ...presetTheme?.container,
     },
-    ...(presetTheme?.typography && { typography: presetTheme.typography }),
     sectionTransition: {
       fadeDuration: '0.15s',
       fadeEasing: 'ease-out',
@@ -76,7 +66,7 @@ export function ChromeStoryRenderer({ region, slot }: ChromeStoryRendererProps) 
     smoothScroll: {
       enabled: true,
     },
-  }), [colorTheme, effectiveMode, palette?.background, presetTheme])
+  }), [colorTheme, effectiveMode, palette?.background])
 
   const site: SiteSchema = {
     id: 'storybook',

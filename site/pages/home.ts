@@ -1,6 +1,6 @@
 /**
  * Home page schema.
- * Bo Juhl portfolio landing page.
+ * Sample portfolio landing page.
  */
 
 import type { PageSchema } from '../../engine/schema'
@@ -22,18 +22,18 @@ const otherProjectsYearRange = `${Math.min(...otherProjectYears)}-${Math.max(...
 
 /**
  * Home page configuration.
- * Uses section patterns with real Bo Juhl content.
+ * Uses section patterns with sample content.
  */
 export const homePage: PageSchema = {
   id: 'home',
   slug: '/',
   head: {
-    title: 'Bo Juhl | Executive Producer & Editor',
-    description: 'Executive Producer leading animated films and campaigns for Riot Games, Netflix, Supercell, Amazon, and LEGO.',
+    title: 'Alex Morgan | Creative Director & Producer',
+    description: 'Creative Director leading animated films and campaigns for leading studios and brands.',
   },
   sections: [
     createHeroVideoSection({
-      introText: "I'm Bo Juhl",
+      introText: "I'm Alex Morgan",
       roles: ['EXECUTIVE PRODUCER', 'PRODUCER', 'EDITOR'],
       videoSrc: '/videos/frontpage/frontpage.webm',
       scrollIndicatorText: '(SCROLL)',

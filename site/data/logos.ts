@@ -1,5 +1,5 @@
 /**
- * Client logo data for the bojuhl portfolio.
+ * Client logo data for the sample portfolio.
  */
 
 import type { LogoItem } from '../../engine/content/sections/patterns/AboutBio/types'

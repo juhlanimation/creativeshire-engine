@@ -1,6 +1,6 @@
 /**
  * AboutSection pattern - factory function for about/bio sections.
- * Structure matches bojuhl.com about-section.tsx exactly:
+ * Structure:
  * - Mobile: background image (30% opacity), centered bio text
  * - Desktop: two-column (bio left, image right)
  * - Logo marquee absolute positioned at bottom
@@ -19,7 +19,7 @@ import './components/MarqueeImageRepeater'  // scoped widget registration
 const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
 
 /**
- * Creates an AboutSection schema matching bojuhl.com layout.
+ * Creates an AboutSection schema.
  *
  * @param props - About section configuration
  * @returns SectionSchema for the about section

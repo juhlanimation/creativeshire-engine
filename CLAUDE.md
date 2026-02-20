@@ -229,7 +229,7 @@ Browser automation captures **screenshots** (static snapshots). It cannot percei
 
    | ❌ Site-specific | ✅ Generalized |
    |---|---|
-   | `BojuhlHero` | `Hero` pattern with settings |
+   | `ClientNameHero` | `Hero` pattern with settings |
    | `AcmeFooter` | `Footer` region with layout options |
    | Hardcoded colors | Theme variables via settings |
 

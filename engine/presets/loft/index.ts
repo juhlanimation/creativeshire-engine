@@ -15,7 +15,6 @@
 
 import type { SitePreset } from '../types'
 import { registerPreset, type PresetMeta } from '../registry'
-import { createScrollRevealBrandWidget } from '../../content/chrome/patterns/ScrollRevealBrand'
 import { createBrandFooterRegion } from '../../content/chrome/patterns/BrandFooter'
 import { homePageTemplate } from './pages/home'
 import { loftContentContract } from './content-contract'
@@ -56,6 +55,12 @@ export const loftPreset: SitePreset = {
         pinned: true,
       }],
     },
+    chromeBehaviours: {
+      header: [{
+        behaviour: 'scroll/reveal',
+        options: { sourceVar: '--hero-cover-progress' },
+      }],
+    },
     intro: {
       pattern: 'video-gate',
       settings: {
@@ -76,7 +81,12 @@ export const loftPreset: SitePreset = {
           padding: 'var(--spacing-md, 1.25rem) var(--spacing-lg, 2rem)',
         },
         widgets: [
-          createScrollRevealBrandWidget({ brandName: '{{ content.header.brandName }}' }),
+          {
+            id: 'brand-logo',
+            type: 'Text',
+            props: { content: '{{ content.header.brandName }}', as: 'div' },
+            className: 'brand-text',
+          },
           {
             id: 'minimal-nav',
             type: 'Flex',

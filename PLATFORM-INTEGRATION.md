@@ -31,7 +31,7 @@ PLATFORM (you build this)
 ```typescript
 interface StoredSite {
   id: string
-  presetId: string              // "bojuhl", "minimal", etc.
+  presetId: string              // "noir", "prism", "loft", etc.
   schema: SiteSchema            // Full JSON schema
   createdAt: Date
   updatedAt: Date

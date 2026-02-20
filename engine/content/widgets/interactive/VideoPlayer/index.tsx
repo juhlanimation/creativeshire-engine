@@ -2,15 +2,13 @@
 
 /**
  * VideoPlayer composite widget.
- * Matches bo-juhl-portfolio video player exactly.
- *
- * Layout (from bojuhl):
+ * Layout:
  * - Video: absolute inset-0, object-contain, starts opacity 0
  * - Center play: w-20 h-20, bg-white/20 backdrop-blur-sm
  * - Progress bar: bottom-24 (6rem), left-8 right-8 (2rem)
  * - Volume control: bottom-8 (2rem), centered pill bg-white/10
  *
- * Animation sequence (from bojuhl):
+ * Animation sequence:
  * 1. Wipe animation reveals black background
  * 2. After wipe completes, video fades from opacity 0 to 1
  * 3. Video starts playing during the fade-in
@@ -46,7 +44,7 @@ function formatTime(seconds: number): string {
 }
 
 /**
- * Play icon SVG - matches bojuhl exactly.
+ * Play icon SVG.
  */
 function PlayIcon() {
   return (
@@ -57,7 +55,7 @@ function PlayIcon() {
 }
 
 /**
- * Volume icons SVG - matches bojuhl exactly.
+ * Volume icons SVG.
  */
 function VolumeIcon({ volume }: { volume: number }) {
   if (volume === 0) {
@@ -85,7 +83,7 @@ function VolumeIcon({ volume }: { volume: number }) {
 
 /**
  * VideoPlayer component.
- * Matches bo-juhl-portfolio video player layout exactly.
+ * VideoPlayer component.
  */
 const VideoPlayer = memo(function VideoPlayer({
   src,
@@ -130,7 +128,7 @@ const VideoPlayer = memo(function VideoPlayer({
     }
   }, [])
 
-  // Handle video ready - fade in and play (matches bojuhl.com)
+  // Handle video ready - fade in and play
   const handleCanPlay = useCallback(() => {
     if (videoReady) return
     setVideoReady(true)
@@ -238,7 +236,7 @@ const VideoPlayer = memo(function VideoPlayer({
       />
 
       {/* Center play button - shown when paused (hidden during programmatic control) */}
-      {/* Matches bojuhl: w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm */}
+      {/* w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm */}
       {!controls.isPlaying && !overlaySuppressed && (
         <div
           className="video-player__center-overlay"
@@ -255,7 +253,7 @@ const VideoPlayer = memo(function VideoPlayer({
         className={`video-player__controls ${controlsVisible ? 'video-player__controls--visible' : ''}`}
         data-effect="controls-fade"
       >
-        {/* Progress bar - bottom-24 left-8 right-8 (matches bojuhl) */}
+        {/* Progress bar — bottom-24 left-8 right-8 */}
         <div className="video-player__progress-container">
           <span className="video-player__time video-player__time--current">
             {formatTime(controls.currentTime)}
@@ -282,7 +280,7 @@ const VideoPlayer = memo(function VideoPlayer({
           </span>
         </div>
 
-        {/* Volume control - bottom-8, centered pill (matches bojuhl) */}
+        {/* Volume control — bottom-8, centered pill */}
         <div className="video-player__volume-container">
           <button
             type="button"

@@ -19,12 +19,10 @@ import React, { useContext, useLayoutEffect, useMemo } from 'react'
 import { SiteRenderer } from '../../engine/renderer/SiteRenderer'
 import { StoryGlobalsContext } from './story-globals'
 import { getTheme, ensureThemesRegistered } from '../../engine/themes'
-import { getPreset, ensurePresetsRegistered } from '../../engine/presets'
 import type { SiteSchema, PageSchema, SectionSchema, ThemeSchema, ChromeSchema } from '../../engine/schema'
 
-// Ensure themes and presets are registered before any lookups
+// Ensure themes are registered before any lookups
 ensureThemesRegistered()
-ensurePresetsRegistered()
 
 /** Overlays available in all section stories. Both are invisible until triggered. */
 const SECTION_STORY_OVERLAYS: ChromeSchema['overlays'] = {
@@ -45,13 +43,9 @@ interface SectionStoryRendererProps {
  * identically in isolation vs assembled in a preset.
  */
 export function SectionStoryRenderer({ section }: SectionStoryRendererProps) {
-  const { colorTheme: globalColorTheme, colorMode: globalColorMode, presetContext } = useContext(StoryGlobalsContext)
+  const { colorTheme: globalColorTheme, colorMode: globalColorMode } = useContext(StoryGlobalsContext)
 
-  // When a preset is selected, look up its theme overrides
-  const presetTheme = presetContext ? getPreset(presetContext)?.theme : undefined
-
-  // Use preset's colorTheme as default when user hasn't overridden via toolbar
-  const colorTheme = globalColorTheme ?? presetTheme?.colorTheme ?? 'contrast'
+  const colorTheme = globalColorTheme ?? 'contrast'
 
   // Resolve palette for body bg sync + outerBackground default
   const themeDef = getTheme(colorTheme)
@@ -66,16 +60,12 @@ export function SectionStoryRenderer({ section }: SectionStoryRendererProps) {
   }, [palette?.background])
 
   // Build a production-realistic theme from the active colorTheme.
-  // When a preset context is selected, merge its typography/container overrides
-  // so the section renders identically to how it appears in the preset story.
   const theme = useMemo((): ThemeSchema => ({
     colorTheme,
     colorMode: effectiveMode as 'dark' | 'light',
     container: {
       outerBackground: palette?.background,
-      ...presetTheme?.container,
     },
-    ...(presetTheme?.typography && { typography: presetTheme.typography }),
     sectionTransition: {
       fadeDuration: '0.15s',
       fadeEasing: 'ease-out',
@@ -83,7 +73,7 @@ export function SectionStoryRenderer({ section }: SectionStoryRendererProps) {
     smoothScroll: {
       enabled: true,
     },
-  }), [colorTheme, effectiveMode, palette?.background, presetTheme])
+  }), [colorTheme, effectiveMode, palette?.background])
 
   const site: SiteSchema = {
     id: 'storybook',

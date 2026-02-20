@@ -21,8 +21,6 @@ interface LayoutWidgetKeyMapping {
 
 interface SaveDefaultsParam {
   id: string
-  settingKeys: string[]
-  defaults: Record<string, unknown>
   layoutWidgetKeys?: Record<string, LayoutWidgetKeyMapping>
 }
 
@@ -44,11 +42,6 @@ async function postMetaChanges(
   })
   return res.json()
 }
-
-/** Section container keys that are structural, not saveable to meta.ts */
-const CONTAINER_KEYS = new Set([
-  'constrained', 'paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight', 'sectionHeight',
-])
 
 addons.register(ADDON_ID, (api) => {
   const channel = addons.getChannel()
@@ -77,17 +70,15 @@ addons.register(ADDON_ID, (api) => {
       const grouped = new Map<string, Record<string, unknown>>()
 
       for (const [key, value] of Object.entries(changedArgs)) {
-        if (CONTAINER_KEYS.has(key)) continue
-
-        if (saveDefaults.settingKeys.includes(key)) {
-          // Section/pattern setting
-          if (!grouped.has(saveDefaults.id)) grouped.set(saveDefaults.id, {})
-          grouped.get(saveDefaults.id)![key] = value
-        } else if (layoutWidgetKeys[key]) {
-          // Layout widget override
+        if (layoutWidgetKeys[key]) {
+          // Layout widget override → route to widget's meta
           const mapping = layoutWidgetKeys[key]
           if (!grouped.has(mapping.metaId)) grouped.set(mapping.metaId, {})
           grouped.get(mapping.metaId)![mapping.settingKey] = value
+        } else {
+          // Pattern/section setting → route to pattern's meta (server skips unknown keys)
+          if (!grouped.has(saveDefaults.id)) grouped.set(saveDefaults.id, {})
+          grouped.get(saveDefaults.id)![key] = value
         }
       }
 

@@ -28,14 +28,14 @@ export const prismContentContract: ContentContract = {
 
   sourceFields: [
     // ── Head ───────────────────────────────────────────────────────────────
-    { path: 'head.title', type: 'text', label: 'Page Title', section: 'head', required: true, default: 'Bishoy Gendi | Character Animator' },
+    { path: 'head.title', type: 'text', label: 'Page Title', section: 'head', required: true, default: 'Jordan Rivera | Character Animator' },
     { path: 'head.description', type: 'textarea', label: 'Meta Description', section: 'head', required: true, default: 'Senior character animator based in London, UK. 16 years of experience in animation.' },
 
     // ── Contact ────────────────────────────────────────────────────────────
     { path: 'contact.email', type: 'text', label: 'Email', section: 'contact', required: true, placeholder: 'hello@example.com' },
     { path: 'contact.instagram', type: 'text', label: 'Instagram URL', section: 'contact', placeholder: 'https://instagram.com/username' },
     { path: 'contact.linkedin', type: 'text', label: 'LinkedIn URL', section: 'contact', placeholder: 'https://linkedin.com/in/username' },
-    { path: 'contact.displayName', type: 'text', label: 'Display Name', section: 'contact', default: 'Bishoy Gendi' },
+    { path: 'contact.displayName', type: 'text', label: 'Display Name', section: 'contact', default: 'Jordan Rivera' },
 
     // ── Showreel ───────────────────────────────────────────────────────────
     { path: 'showreel.videoSrc', type: 'text', label: 'Showreel Video URL', section: 'showreel', required: true },
@@ -45,10 +45,10 @@ export const prismContentContract: ContentContract = {
     // ── About ─────────────────────────────────────────────────────────────
     { path: 'about.label', type: 'text', label: 'About Label', section: 'about', default: 'HEY, I AM' },
     { path: 'about.videoSrc', type: 'text', label: 'Background Video URL', section: 'about' },
-    { path: 'about.name', type: 'text', label: 'Full Name', section: 'about', required: true, default: 'Bishoy Gendi' },
+    { path: 'about.name', type: 'text', label: 'Full Name', section: 'about', required: true, default: 'Jordan Rivera' },
     { path: 'about.title', type: 'text', label: 'Professional Title', section: 'about', required: true, default: 'Senior Character Animator' },
     { path: 'about.location', type: 'text', label: 'Location', section: 'about', default: 'London, UK' },
-    { path: 'about.bio', type: 'textarea', label: 'Biography (HTML)', section: 'about', required: true, default: 'With 16 years of experience in the animation industry, I have had the privilege of working on a diverse range of projects—from feature films and television series to commercials and video games.' },
+    { path: 'about.bio', type: 'textarea', label: 'Biography (HTML)', section: 'about', required: true, default: 'With 16 years of experience in the animation industry, I have had the privilege of working on a diverse range of projects — from feature films and television series to commercials and video games.' },
 
     // ── Azuki Elementals ───────────────────────────────────────────────────
     { path: 'azukiElementals.backgroundColor', type: 'text', label: 'Background Color', section: 'azukiElementals', default: '#C03540' },

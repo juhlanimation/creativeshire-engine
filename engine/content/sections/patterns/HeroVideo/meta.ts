@@ -23,7 +23,7 @@ export const meta = defineSectionMeta<HeroVideoProps>({
       type: 'text',
       label: 'Intro Text',
       default: '',
-      description: 'Introduction text (e.g., "I\'m Bo Juhl")',
+      description: 'Introduction text (e.g., "I\'m Alex Morgan")',
       validation: { maxLength: 100 },
       group: 'Content',
     },

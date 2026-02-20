@@ -11,7 +11,7 @@
  * Key features:
  * - Single modal at a time
  * - Transition phase tracking (closed -> opening -> open -> closing -> closed)
- * - GSAP-powered wipe/expand transitions (matching bojuhl.com)
+ * - GSAP-powered wipe/expand transitions
  * - Focus trap and scroll lock
  * - ARIA attributes and keyboard support
  * - Sequenced content fade after wipe

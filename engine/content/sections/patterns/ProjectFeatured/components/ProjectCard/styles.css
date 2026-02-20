@@ -6,7 +6,7 @@
  * - Set explicitly: data-reversed="true"
  * - Computed from index: Flex widget computes from data-index
  *
- * Reference: bojuhl.com project-card.tsx
+ * Layout reference:
  * - Thumbnail: w-full md:w-[55cqw] shrink-0 min-w-0
  * - Gap: gap-4 md:gap-2 (16px / 8px)
  * - Metadata: text-[10px] opacity-60 gap-x-8 gap-y-1 mt-2

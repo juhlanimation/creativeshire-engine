@@ -156,6 +156,11 @@ export function createBrandFooterRegion(props: BrandFooterProps): PresetRegionCo
     widgets: contactWidgets,
   }
 
+  // Build inline style for optional spacing overrides (CSS custom properties)
+  const rootStyle: Record<string, string> = {}
+  if (props.paddingTop) rootStyle['--footer-padding-top'] = `${props.paddingTop}rem`
+  if (props.paddingBottom) rootStyle['--footer-padding-bottom'] = `${props.paddingBottom}rem`
+
   // ── Root: 3-column responsive layout ────────────────────────
   return {
     widgets: [
@@ -163,6 +168,7 @@ export function createBrandFooterRegion(props: BrandFooterProps): PresetRegionCo
         id: 'brand-footer',
         type: 'Flex',
         className: 'brand-footer',
+        ...(Object.keys(rootStyle).length > 0 && { style: rootStyle }),
         // No direction/align/justify — CSS handles responsive switching
         widgets: [
           ...(navColumn ? [navColumn] : []),

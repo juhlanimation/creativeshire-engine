@@ -220,7 +220,7 @@ export function createContactFooterRegion(props: ContactFooterProps): PresetRegi
   // Build inline style for optional spacing overrides (CSS custom properties)
   const rootStyle: Record<string, string> = {}
   if (props.paddingTop) rootStyle['--footer-padding-top'] = `${props.paddingTop}rem`
-  if (props.copyrightGap) rootStyle['--footer-copyright-gap'] = `${props.copyrightGap}rem`
+  if (props.paddingBottom) rootStyle['--footer-padding-bottom'] = `${props.paddingBottom}rem`
 
   return {
     widgets: [

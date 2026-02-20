@@ -62,8 +62,6 @@ export function widgetStoryConfig(widgetType: string, meta: ComponentMeta, figma
       ...designParams(figmaUrl),
       saveDefaults: {
         id: meta.id ?? widgetType,
-        settingKeys: Object.keys(settings),
-        defaults: extractDefaults(settings),
       },
     },
     argTypes: settingsToArgTypes(settings),
@@ -441,8 +439,6 @@ export function sectionStoryConfig(
       ...designParams(figmaUrl),
       saveDefaults: {
         id: sectionMeta.id,
-        settingKeys: Object.keys(settings),
-        defaults: extractDefaults(settings),
         layoutWidgetKeys,
       },
     },
@@ -509,8 +505,6 @@ export function patternStoryConfig(
       ...designParams(figmaUrl),
       saveDefaults: {
         id: meta.id ?? '',
-        settingKeys: Object.keys(settings),
-        defaults: extractDefaults(settings),
       },
     },
     argTypes: settingsToArgTypes(settings),
@@ -684,6 +678,20 @@ export function chromePatternStoryConfig(
     argMap = derived.argMap
   }
 
+  // Build layout widget key mapping for save-defaults (same as sections)
+  const layoutWidgetKeys: Record<string, { metaId: string; settingKey: string }> = {}
+  if (regionConfig) {
+    const lws = scanLayoutWidgetsFromTree(regionConfig.widgets ?? [], maxLayoutDepth)
+    for (const lw of lws) {
+      const lwSettings = (lw.meta.settings ?? {}) as Record<string, SettingConfig>
+      for (const settingKey of Object.keys(lwSettings)) {
+        if (!(settingKey in lw.currentProps)) continue
+        const argKey = `${LW_PREFIX}${lw.id}:${settingKey}`
+        layoutWidgetKeys[argKey] = { metaId: lw.meta.id ?? lw.type, settingKey }
+      }
+    }
+  }
+
   // Constrained toggle for slot-based patterns
   const constrainedArgType: Record<string, ArgType> = hasSlot
     ? { constrained: { control: { type: 'boolean' }, description: 'Limit region width to --site-max-width', table: { category: 'Container' } } }
@@ -698,8 +706,7 @@ export function chromePatternStoryConfig(
       ...designParams(figmaUrl),
       saveDefaults: {
         id: patternMeta.id,
-        settingKeys: Object.keys(settings),
-        defaults: extractDefaults(settings),
+        layoutWidgetKeys,
       },
     },
     argTypes: {
@@ -793,8 +800,6 @@ export function behaviourStoryConfig(behaviour: Behaviour, figmaUrl?: string) {
       ...designParams(figmaUrl),
       saveDefaults: {
         id: behaviour.id,
-        settingKeys: Object.keys(settings),
-        defaults: extractDefaults(settings),
       },
     },
     argTypes: {

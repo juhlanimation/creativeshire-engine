@@ -17,7 +17,6 @@ import type { SitePreset } from '../types'
 import { registerPreset, type PresetMeta } from '../registry'
 import { createContactFooterRegion } from '../../content/chrome/patterns/ContactFooter'
 import { createCursorTrackerOverlay } from '../../content/chrome/patterns/CursorTracker'
-import { createScrollRevealBrandWidget } from '../../content/chrome/patterns/ScrollRevealBrand'
 import { createVideoModalOverlay } from '../../content/chrome/patterns/VideoModal'
 import { homePageTemplate } from './pages/home'
 import { noirContentContract } from './content-contract'
@@ -84,12 +83,11 @@ export const noirPreset: SitePreset = {
       header: {
         overlay: true,
         layout: {
-          justify: 'between',
+          justify: 'end',
           align: 'start',
           padding: '1.5rem 2rem',
         },
         widgets: [
-          createScrollRevealBrandWidget({ brandName: '{{ content.header.brandName }}' }),
           {
             id: 'floating-contact',
             type: 'EmailCopy',

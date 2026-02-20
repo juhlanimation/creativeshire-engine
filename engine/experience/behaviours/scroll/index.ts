@@ -13,6 +13,7 @@ import './color-shift'
 import './image-cycle'
 import './cover-progress'
 import './collapse'
+import './reveal'
 
 // Re-export for explicit imports
 export { default as scrollFade } from './fade'
@@ -22,3 +23,4 @@ export { default as scrollColorShift } from './color-shift'
 export { default as scrollImageCycle } from './image-cycle'
 export { default as scrollCoverProgress } from './cover-progress'
 export { default as scrollCollapse } from './collapse'
+export { default as scrollReveal } from './reveal'

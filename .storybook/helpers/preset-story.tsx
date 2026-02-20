@@ -381,7 +381,7 @@ export function presetStoryConfig(presetId: string, name: string, preset?: SiteP
   // Build conditional argTypes and defaults for each experience's behaviour settings.
   // Collects behaviours from ALL sources to handle:
   // - Lazy experiences (cinematic-portfolio, slideshow) whose definitions aren't in getAllExperiences()
-  // - Preset-supplied behaviours (e.g. Port-12 adds scroll/cover-progress to cover-scroll)
+  // - Preset-supplied behaviours (e.g. a preset may add scroll/cover-progress to cover-scroll)
   const experienceSettingArgTypes: Record<string, unknown> = {}
   const experienceSettingDefaults: Record<string, unknown> = {}
 

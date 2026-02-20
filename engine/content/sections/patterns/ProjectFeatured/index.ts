@@ -12,7 +12,7 @@ import { isBindingExpression } from '../utils'
  * Creates a FeaturedProjectsSection schema with project cards.
  * Cards use alternating layout (thumbnail left/right).
  *
- * Structure matches bojuhl.com:
+ * Structure:
  * - Section (full width background, vertical padding)
  *   - Content wrapper Flex (max-width 2400px, centered, gap between cards)
  *     - ProjectCard widgets

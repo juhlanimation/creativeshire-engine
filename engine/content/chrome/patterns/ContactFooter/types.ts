@@ -23,6 +23,6 @@ export interface ContactFooterProps {
   copyright: string
   /** Top padding above the content area (rem). 0 = use theme default. */
   paddingTop?: number
-  /** Gap between the content area and the copyright line (rem). 0 = use theme default. */
-  copyrightGap?: number
+  /** Bottom padding below the content area (rem). 0 = use theme default. */
+  paddingBottom?: number
 }

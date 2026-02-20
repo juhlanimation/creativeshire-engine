@@ -6,6 +6,6 @@
 .expand-row-image-repeater {
   display: flex;
   flex-direction: row;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
 }

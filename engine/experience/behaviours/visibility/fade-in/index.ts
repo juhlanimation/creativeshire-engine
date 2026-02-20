@@ -19,6 +19,7 @@ export interface FadeInSettings {
 
 const visibilityFadeIn: Behaviour<FadeInSettings> = {
   ...meta,
+  prerasterize: true,
   requires: ['sectionVisibility', 'prefersReducedMotion'],
 
   compute: (state, options) => {

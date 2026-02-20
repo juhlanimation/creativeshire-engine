@@ -1,25 +1,24 @@
 # Creativeshire Engine Inventory
 
-**Generated:** 04/02/2026, 13:11:56
+**Generated:** 20/02/2026, 15:03:32
 
 ## Summary
 
 | Category | Count |
 |----------|-------|
 | Widgets: Primitives | 5 |
-| Widgets: Layout | 6 |
-| Widgets: Interactive | 8 |
-| Widgets: Patterns | 2 |
-| Sections | 4 |
-| Chrome: Regions | 1 |
-| Chrome: Overlays | 4 |
-| Behaviours | 11 |
-| Effects | 9 |
-| Experiences | 4 |
-| Drivers | 5 |
+| Widgets: Layout | 7 |
+| Widgets: Interactive | 3 |
+| Sections | 14 |
+| Chrome: Patterns | 8 |
+| Chrome: Overlays | 5 |
+| Behaviours | 0 |
+| Effects | 11 |
+| Experiences | 1 |
+| Drivers | 6 |
 | Triggers | 5 |
-| Presets | 1 |
-| **Total** | **65** |
+| Presets | 4 |
+| **Total** | **69** |
 
 ---
 
@@ -31,7 +30,7 @@
 |-----------|------|:-----:|:-----:|:----:|:------:|:-------------|
 | **Button** | `content/widgets/primitives/Button` | ✅ | ✅ | ✅ | ✅ | `label` |
 | **Icon** | `content/widgets/primitives/Icon` | ✅ | ✅ | ✅ | ✅ | `name`, `label` |
-| **Image** | `content/widgets/primitives/Image` | ✅ | ✅ | ✅ | ✅ | `src`, `alt` |
+| **Image** | `content/widgets/primitives/Image` | ✅ | ✅ | ✅ | ✅ | `src`, `alt`, `filter` |
 | **Link** | `content/widgets/primitives/Link` | ✅ | ✅ | ✅ | ✅ | `href` |
 | **Text** | `content/widgets/primitives/Text` | ✅ | ✅ | ✅ | ✅ | `content` |
 
@@ -45,37 +44,23 @@
 |-----------|------|:-----:|:-----:|:----:|:------:|:-------------|
 | **Box** | `content/widgets/layout/Box` | ✅ | ✅ | ✅ | ✅ | `width`, `height`, `minWidth`, `maxWidth`, `flexGrow`, `flexShrink` |
 | **Container** | `content/widgets/layout/Container` | ✅ | ✅ | ✅ | ✅ | `maxWidth`, `padding`, `center` |
-| **Flex** | `content/widgets/layout/Flex` | ✅ | ✅ | ✅ | ✅ | `direction`, `align`, `justify`, `wrap`, `gap` |
-| **Grid** | `content/widgets/layout/Grid` | ✅ | ✅ | ✅ | ✅ | `columns`, `rows`, `gap`, `columnGap`, `rowGap` |
-| **Split** | `content/widgets/layout/Split` | ✅ | ✅ | ✅ | ✅ | `ratio`, `gap`, `reverse`, `align` |
-| **Stack** | `content/widgets/layout/Stack` | ✅ | ✅ | ✅ | ✅ | `gap`, `align` |
+| **Flex** | `content/widgets/layout/Flex` | ✅ | ✅ | ✅ | ✅ | `direction`, `align`, `justify`, `wrap`, `gap`, `gapScale` |
+| **Grid** | `content/widgets/layout/Grid` | ✅ | ✅ | ✅ | ✅ | `columns`, `rows`, `gap`, `gapScale`, `columnGap`, `rowGap` |
+| **Marquee** | `content/widgets/layout/Marquee` | ✅ | ✅ | ✅ | ✅ | `duration`, `gap`, `gapScale`, `direction` |
+| **Split** | `content/widgets/layout/Split` | ✅ | ✅ | ✅ | ✅ | `ratio`, `gap`, `gapScale`, `reverse`, `align` |
+| **Stack** | `content/widgets/layout/Stack` | ✅ | ✅ | ✅ | ✅ | `gap`, `gapScale`, `align` |
 
 ---
 
 ## Widgets: Interactive
 
-> Stateful React components (Video, VideoPlayer, ContactPrompt, etc.)
+> Stateful React components (Video, VideoPlayer, EmailCopy, etc.)
 
 | Component | Path | index | types | meta | styles | CMS Editable |
 |-----------|------|:-----:|:-----:|:----:|:------:|:-------------|
-| **ContactPrompt** | `content/widgets/interactive/ContactPrompt` | ✅ | ✅ | ✅ | ✅ | `email`, `promptText` |
-| **ExpandRowImageRepeater** | `content/widgets/repeaters/ExpandRowImageRepeater` | ✅ | ✅ | ✅ | ✅ | `height`, `gap`, `expandedWidth`, `transitionDuration`, `cursorLabel`, `projects[]` |
-| **StackProjectCardRepeater** | `content/widgets/interactive/StackProjectCardRepeater` | ✅ | ✅ | ✅ | ✅ | `projects`, `projects[]` |
-| **ExpandRowThumbnail** | `content/widgets/interactive/ExpandRowThumbnail` | ✅ | ✅ | ✅ | ✅ | `expandedWidth`, `transitionDuration` |
-| **StackTextRepeater** | `content/widgets/repeaters/StackTextRepeater` | ✅ | ✅ | ✅ | — | `items[]` |
-| **MarqueeImageRepeater** | `content/widgets/interactive/MarqueeImageRepeater` | ✅ | ✅ | ✅ | ✅ | `logos`, `duration`, `logoWidth`, `logoGap`, `logos[]` |
-| **Video** | `content/widgets/interactive/Video` | ✅ | ✅ | ✅ | ✅ | `src`, `poster`, `alt`, `videoUrl` |
+| **EmailCopy** | `content/widgets/interactive/EmailCopy` | ✅ | ✅ | ✅ | ✅ | `email`, `label` |
+| **Video** | `content/widgets/interactive/Video` | ✅ | ✅ | ✅ | ✅ | `src`, `poster`, `alt`, `posterTime`, `loopStartTime`, `videoUrl` |
 | **VideoPlayer** | `content/widgets/interactive/VideoPlayer` | ✅ | ✅ | ✅ | ✅ | `src`, `poster`, `autoPlay`, `startTime` |
-
----
-
-## Widgets: Patterns
-
-> Factory functions returning WidgetSchema
-
-| Component | Path | index | types | meta | styles | CMS Editable |
-|-----------|------|:-----:|:-----:|:----:|:------:|:-------------|
-| **ProjectCard** | `content/widgets/patterns/ProjectCard` | ✅ | ✅ | ✅ | — | `thumbnailSrc`, `thumbnailAlt`, `videoSrc`, `videoUrl`, `client`, `studio`, `title`, `description`, `year`, `role`, `reversed` |
 
 ---
 
@@ -85,20 +70,37 @@
 
 | Component | Path | index | types | meta | styles | CMS Editable |
 |-----------|------|:-----:|:-----:|:----:|:------:|:-------------|
-| **About** | `content/sections/patterns/About` | ✅ | ✅ | ✅ | — | `bioParagraphs[]` |
-| **FeaturedProjects** | `content/sections/patterns/FeaturedProjects` | ✅ | ✅ | ✅ | — | `projects[]` |
-| **Hero** | `content/sections/patterns/Hero` | ✅ | ✅ | ✅ | — | `roles[]` |
-| **OtherProjects** | `content/sections/patterns/OtherProjects` | ✅ | ✅ | ✅ | — | `projects[]` |
+| **AboutBio** | `content/sections/patterns/AboutBio` | ✅ | ✅ | ✅ | ✅ | — |
+| **AboutCollage** | `content/sections/patterns/AboutCollage` | ✅ | ✅ | ✅ | ✅ | `images[]` |
+| **ContentPricing** | `content/sections/patterns/ContentPricing` | ✅ | ✅ | ✅ | ✅ | `plans[]` |
+| **HeroTitle** | `content/sections/patterns/HeroTitle` | ✅ | ✅ | ✅ | ✅ | — |
+| **HeroVideo** | `content/sections/patterns/HeroVideo` | ✅ | ✅ | ✅ | ✅ | — |
+| **ProjectCompare** | `content/sections/patterns/ProjectCompare` | ✅ | ✅ | ✅ | ✅ | `beforeVideo`, `afterVideo`, `description` |
+| **ProjectExpand** | `content/sections/patterns/ProjectExpand` | ✅ | ✅ | ✅ | ✅ | `videos`, `videos[]` |
+| **ProjectFeatured** | `content/sections/patterns/ProjectFeatured` | ✅ | ✅ | ✅ | ✅ | — |
+| **ProjectGallery** | `content/sections/patterns/ProjectGallery` | ✅ | ✅ | ✅ | ✅ | `projects`, `projects[]` |
+| **ProjectShowcase** | `content/sections/patterns/ProjectShowcase` | ✅ | ✅ | ✅ | ✅ | `studio`, `role`, `videoSrc` |
+| **ProjectStrip** | `content/sections/patterns/ProjectStrip` | ✅ | ✅ | ✅ | ✅ | — |
+| **ProjectTabs** | `content/sections/patterns/ProjectTabs` | ✅ | ✅ | ✅ | ✅ | `tabs`, `tabs[]` |
+| **ProjectVideoGrid** | `content/sections/patterns/ProjectVideoGrid` | ✅ | ✅ | ✅ | ✅ | `videos`, `videos[]` |
+| **TeamShowcase** | `content/sections/patterns/TeamShowcase` | ✅ | ✅ | ✅ | ✅ | `members[]` |
 
 ---
 
-## Chrome: Regions
+## Chrome: Patterns
 
-> Site-wide UI regions (Header, Footer)
+> Widget-based region factories (FixedNav, ContactFooter, etc.)
 
 | Component | Path | index | types | meta | styles | CMS Editable |
 |-----------|------|:-----:|:-----:|:----:|:------:|:-------------|
-| **Footer** | `content/chrome/regions/Footer` | ✅ | ✅ | ✅ | ✅ | `navLinks`, `contactHeading`, `contactEmail`, `contactLinkedin`, `studioHeading`, `studioUrl`, `studioEmail`, `studioSocials`, `copyrightText`, `navLinks[]` |
+| **BrandFooter** | `content/chrome/patterns/BrandFooter` | ✅ | ✅ | ✅ | ✅ | `brandName`, `navLinks`, `email`, `phone`, `phoneDisplay`, `address`, `copyright` |
+| **CenteredNav** | `content/chrome/patterns/CenteredNav` | ✅ | ✅ | ✅ | — | `brandName`, `navLinks` |
+| **ContactFooter** | `content/chrome/patterns/ContactFooter` | ✅ | ✅ | ✅ | ✅ | `navLinks`, `contactHeading`, `contactEmail`, `linkedinUrl`, `studioHeading`, `studioUrl`, `studioEmail`, `copyright` |
+| **CursorTracker** | `content/chrome/patterns/CursorTracker` | ✅ | ✅ | ✅ | — | `label` |
+| **FixedNav** | `content/chrome/patterns/FixedNav` | ✅ | ✅ | ✅ | ✅ | `siteTitle`, `navLinks`, `logo` |
+| **FloatingContact** | `content/chrome/patterns/FloatingContact` | ✅ | ✅ | ✅ | — | `label`, `email` |
+| **MinimalNav** | `content/chrome/patterns/MinimalNav` | ✅ | ✅ | ✅ | ✅ | `navLinks`, `email` |
+| **VideoModal** | `content/chrome/patterns/VideoModal` | ✅ | ✅ | ✅ | — | — |
 
 ---
 
@@ -109,6 +111,7 @@
 | Component | Path | index | types | meta | styles | CMS Editable |
 |-----------|------|:-----:|:-----:|:----:|:------:|:-------------|
 | **CursorLabel** | `content/chrome/overlays/CursorLabel` | ✅ | ✅ | ✅ | ✅ | — |
+| **FixedCard** | `content/chrome/overlays/FixedCard` | ✅ | ✅ | ✅ | ✅ | — |
 | **Modal** | `content/chrome/overlays/Modal` | ✅ | ✅ | ✅ | ✅ | — |
 | **NavTimeline** | `content/chrome/overlays/NavTimeline` | ✅ | ✅ | ✅ | ✅ | — |
 | **SlideIndicators** | `content/chrome/overlays/SlideIndicators` | ✅ | ✅ | ✅ | ✅ | — |
@@ -119,19 +122,7 @@
 
 > L2 trigger-based behaviours (scroll/, hover/, visibility/, etc.)
 
-| Name | Path |
-|------|------|
-| **scroll/color-shift** | `experience/behaviours/scroll/color-shift.ts` |
-| **scroll/fade-out** | `experience/behaviours/scroll/fade-out.ts` |
-| **scroll/fade** | `experience/behaviours/scroll/fade.ts` |
-| **scroll/image-cycle** | `experience/behaviours/scroll/image-cycle.ts` |
-| **scroll/progress** | `experience/behaviours/scroll/progress.ts` |
-| **hover/expand** | `experience/behaviours/hover/expand.ts` |
-| **hover/reveal** | `experience/behaviours/hover/reveal.ts` |
-| **hover/scale** | `experience/behaviours/hover/scale.ts` |
-| **visibility/fade-in** | `experience/behaviours/visibility/fade-in.ts` |
-| **animation/marquee** | `experience/behaviours/animation/marquee.ts` |
-| **interaction/toggle** | `experience/behaviours/interaction/toggle.ts` |
+*No components*
 
 ---
 
@@ -141,15 +132,17 @@
 
 | Name | Path |
 |------|------|
-| **color-shift** | `experience/effects/color-shift.css` |
-| **fade** | `experience/effects/fade.css` |
-| **marquee-scroll** | `experience/effects/marquee-scroll.css` |
-| **overlay-darken** | `experience/effects/overlay-darken.css` |
+| **color-shift/color-shift** | `experience/effects/color-shift/color-shift.css` |
+| **emphasis/pulse** | `experience/effects/emphasis/pulse.css` |
 | **emphasis/spin** | `experience/effects/emphasis/spin.css` |
+| **fade/fade** | `experience/effects/fade/fade.css` |
+| **marquee/marquee-scroll** | `experience/effects/marquee/marquee-scroll.css` |
 | **mask/reveal** | `experience/effects/mask/reveal.css` |
 | **mask/wipe** | `experience/effects/mask/wipe.css` |
+| **overlay/overlay-darken** | `experience/effects/overlay/overlay-darken.css` |
 | **transform/scale** | `experience/effects/transform/scale.css` |
 | **transform/slide** | `experience/effects/transform/slide.css` |
+| **reveal/clip-path** | `experience/effects/reveal/clip-path.css` |
 
 ---
 
@@ -159,10 +152,7 @@
 
 | Name | Path |
 |------|------|
-| **cinematic-portfolio** | `experience/experiences/cinematic-portfolio.ts` |
-| **infinite-carousel** | `experience/experiences/infinite-carousel.ts` |
-| **slideshow** | `experience/experiences/slideshow.ts` |
-| **stacking** | `experience/experiences/stacking.ts` |
+| **createExperienceStore** | `experience/experiences/createExperienceStore.ts` |
 
 ---
 
@@ -175,6 +165,7 @@
 | **getDriver** | `experience/drivers/getDriver.ts` |
 | **MomentumDriver** | `experience/drivers/MomentumDriver.ts` |
 | **ScrollDriver** | `experience/drivers/ScrollDriver.ts` |
+| **SmoothScrollContext** | `experience/drivers/SmoothScrollContext.ts` |
 | **useScrollFadeDriver** | `experience/drivers/useScrollFadeDriver.ts` |
 | **useSmoothScrollContainer** | `experience/drivers/useSmoothScrollContainer.ts` |
 
@@ -196,11 +187,14 @@
 
 ## Presets
 
-> Site templates (bojuhl)
+> Site templates (noir, prism, loft)
 
 | Component | Path | index | types | meta | styles | CMS Editable |
 |-----------|------|:-----:|:-----:|:----:|:------:|:-------------|
-| **bojuhl** | `presets/bojuhl` | ✅ | ❌ | ❌ | ✅ | — |
+| **loft** | `presets/loft` | ✅ | ❌ | ❌ | — | — |
+| **noir** | `presets/noir` | ✅ | ❌ | ❌ | — | — |
+| **prism** | `presets/prism` | ✅ | ❌ | ❌ | ✅ | — |
+| **test-multipage** | `presets/test-multipage` | ✅ | ❌ | ❌ | — | — |
 
 ---
 
@@ -208,31 +202,50 @@
 
 > TypeScript interfaces used in array props. These define the fields for CMS data entry.
 
+### `AboutCollageImage`
+
+**Used by:** AboutCollage
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `src` | `string` | ✅ | — |
+| `alt` | `string` | ✅ | — |
+
 ### `BioLink`
 
-**Used by:** About
+**Used by:** AboutBio
 
 | Field | Type | Required | Description |
 |-------|------|:--------:|-------------|
 | `text` | `string` | ✅ | Link display text |
 | `href` | `string` | ✅ | Link destination |
 
-### `FeaturedProject`
+### `DecoratorRef`
 
-**Used by:** StackProjectCardRepeater, FeaturedProjects
+**Used by:** decorators
 
 | Field | Type | Required | Description |
 |-------|------|:--------:|-------------|
-| `thumbnailSrc` | `string` | ✅ | — |
-| `thumbnailAlt` | `string` | ✅ | — |
-| `videoSrc` | `string` | — | — |
-| `videoUrl` | `string` | — | — |
-| `client` | `string` | ✅ | — |
-| `studio` | `string` | ✅ | — |
-| `title` | `string` | ✅ | — |
-| `description` | `string` | ✅ | — |
-| `year` | `string` | ✅ | — |
-| `role` | `string` | ✅ | — |
+| `id` | `string` | ✅ | Decorator ID from registry |
+| `params` | `Record<string, unknown>` | — | Per-instance param overrides |
+| `overlayKeys` | `Record<string, string>` | — | Override overlay key mapping |
+
+### `ExpandableVideoItem`
+
+**Used by:** ProjectExpand
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `id` | `string` | ✅ | Unique item ID |
+| `thumbnailSrc` | `string` | ✅ | Thumbnail image URL |
+| `thumbnailAlt` | `string` | ✅ | Thumbnail alt text |
+| `videoSrc` | `string` | — | Video source for hover preview (optional) |
+| `videoUrl` | `string` | ✅ | Video URL for modal playback |
+| `title` | `string` | ✅ | Video/project title |
+| `client` | `string` | — | Client name |
+| `studio` | `string` | — | Studio name |
+| `year` | `string` | — | Year |
+| `role` | `string` | — | Role/position |
 
 ### `ExpandRowItem`
 
@@ -240,7 +253,7 @@
 
 | Field | Type | Required | Description |
 |-------|------|:--------:|-------------|
-| `id` | `string` | ✅ | Unique project ID |
+| `id` | `string` | ✅ | Unique item ID |
 | `thumbnailSrc` | `string` | ✅ | Thumbnail image source |
 | `thumbnailAlt` | `string` | ✅ | Thumbnail alt text |
 | `videoSrc` | `string` | — | Video source for hover playback (optional) |
@@ -251,28 +264,107 @@
 | `year` | `string` | ✅ | Project year |
 | `role` | `string` | ✅ | Role in project |
 
-### `LogoItem`
+### `ExternalLink`
 
-**Used by:** MarqueeImageRepeater, About
+**Used by:** ProjectTabs
 
 | Field | Type | Required | Description |
 |-------|------|:--------:|-------------|
-| `src` | `string` | ✅ | — |
-| `alt` | `string` | ✅ | — |
-| `href` | `string` | — | — |
+| `href` | `string` | ✅ | Link URL |
+| `icon` | `string` | ✅ | Icon name (e.g., 'instagram') |
+
+### `FeaturedProject`
+
+**Used by:** ProjectFeatured
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `thumbnailSrc` | `string` | ✅ | Thumbnail image source |
+| `thumbnailAlt` | `string` | ✅ | Thumbnail alt text |
+| `videoSrc` | `string` | — | Video source for playback (optional) |
+| `videoUrl` | `string` | — | Video URL for modal playback (optional) |
+| `client` | `string` | ✅ | Client name |
+| `studio` | `string` | ✅ | Studio name |
+| `title` | `string` | ✅ | Project title |
+| `description` | `string` | ✅ | Project description |
+| `year` | `string` | ✅ | Project year |
+| `role` | `string` | ✅ | Role in project |
+
+### `FlexGalleryCardRepeaterItem`
+
+**Used by:** FlexGalleryCardRepeater
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `id` | `string` | ✅ | Unique identifier |
+| `thumbnail` | `string` | ✅ | Thumbnail image source |
+| `alt` | `string` | — | Thumbnail alt text |
+| `title` | `string` | ✅ | Project title |
+| `year` | `string` | — | Project year (optional) |
+| `studio` | `string` | — | Studio name (optional) |
+| `role` | `string` | — | Role (optional, shown in info card) |
+| `url` | `string` | — | Video/external URL (optional) |
+| `posterTime` | `number` | — | Time in seconds to seek to for thumbnail frame display |
+
+### `GalleryProject`
+
+**Used by:** ProjectGallery
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `id` | `string` | ✅ | Unique identifier |
+| `thumbnail` | `string` | ✅ | Thumbnail image URL |
+| `video` | `string` | ✅ | Main video URL |
+| `title` | `string` | ✅ | Project title |
+| `year` | `string` | ✅ | Project year |
+| `studio` | `string` | ✅ | Studio name |
+| `url` | `string` | — | External URL (optional) |
+
+### `IndexNavItem`
+
+**Used by:** IndexNav
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `label` | `string` | ✅ | Display label for the button |
+| `value` | `string \| number` | — | Optional value associated with this item |
+
+### `LogoItem`
+
+**Used by:** AboutBio, MarqueeImageRepeater
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `name` | `string` | ✅ | Logo name for identification |
+| `src` | `string` | ✅ | Image source URL |
+| `alt` | `string` | ✅ | Alt text for accessibility |
+| `height` | `number` | ✅ | Display height in pixels - adjust per logo for visual balance |
+
+### `MemberItem`
+
+**Used by:** TeamShowcase
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `id` | `string` | ✅ | Unique identifier |
+| `name` | `string` | ✅ | Display name |
+| `subtitle` | `string` | — | Optional subtitle (role, title, etc.) |
+| `videoSrc` | `string` | ✅ | Video source URL |
+| `videoPoster` | `string` | — | Video poster/thumbnail |
+| `href` | `string` | — | Optional link URL |
 
 ### `NavLink`
 
-**Used by:** chrome
+**Used by:** ContactFooter
 
 | Field | Type | Required | Description |
 |-------|------|:--------:|-------------|
-| `label` | `string` | ✅ | Display text |
-| `href` | `string` | ✅ | Link destination |
+| `label` | `string` | ✅ | — |
+| `href` | `string` | ✅ | — |
 
 ### `OtherProject`
 
-**Used by:** OtherProjects
+**Used by:** ProjectStrip
 
 | Field | Type | Required | Description |
 |-------|------|:--------:|-------------|
@@ -287,11 +379,103 @@
 | `year` | `string` | ✅ | Project year |
 | `role` | `string` | ✅ | Role in project |
 
-### `SocialLink`
+### `PricingFeature`
 
-**Used by:** chrome
+**Used by:** ContentPricing
 
 | Field | Type | Required | Description |
 |-------|------|:--------:|-------------|
-| `platform` | `string` | ✅ | Platform name (e.g., "linkedin", "instagram") |
-| `url` | `string` | ✅ | Link URL |
+| `label` | `string` | ✅ | Feature name/description |
+| `included` | `boolean \| 'partial'` | ✅ | Included status: true = check, false = x, 'partial' = plus/limited |
+| `tooltip` | `string` | — | Optional tooltip/explanation |
+
+### `PricingIcons`
+
+**Used by:** ContentPricing
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `included` | `string` | — | Icon for included feature (default: checkmark) |
+| `excluded` | `string` | — | Icon for excluded feature (default: x/cross) |
+| `partial` | `string` | — | Icon for partial/limited feature (default: plus) |
+
+### `PricingPlan`
+
+**Used by:** ContentPricing
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `id` | `string` | ✅ | Unique identifier |
+| `name` | `string` | ✅ | Plan name (e.g., "Basic", "Pro", "Enterprise") |
+| `price` | `string` | ✅ | Price display (e.g., "$99/mo", "Contact us", "Free") |
+| `period` | `string` | — | Optional price period (e.g., "/month", "/year") |
+| `description` | `string` | — | Plan description |
+| `features` | `PricingFeature[]` | ✅ | Features list with inclusion status |
+| `ctaText` | `string` | — | CTA button text |
+| `ctaHref` | `string` | — | CTA button link |
+| `highlighted` | `boolean` | — | Highlight this plan (recommended/popular) |
+| `badge` | `string` | — | Badge text (e.g., "Most Popular", "Best Value") |
+
+### `ProjectTab`
+
+**Used by:** ProjectTabs
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `id` | `string` | ✅ | Unique tab identifier |
+| `label` | `string` | ✅ | Tab label |
+| `layout` | `'standard' \| 'compact'` | ✅ | Layout type |
+| `info` | `ProjectTabInfo` | — | Project info (for standard layout) |
+| `videos` | `TabVideo[]` | ✅ | Videos for this tab |
+
+### `ProjectTabInfo`
+
+**Used by:** ProjectTabs
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `title` | `string` | ✅ | Project title |
+| `client` | `string` | ✅ | Client name |
+| `studio` | `string` | ✅ | Studio name |
+| `role` | `string` | ✅ | Role in project |
+
+### `ShowcaseMember`
+
+**Used by:** StackVideoShowcase
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `name` | `string` | ✅ | Display name |
+| `videoSrc` | `string` | — | Video source URL (played as background when active) |
+| `videoPoster` | `string` | — | Video poster/thumbnail |
+| `href` | `string` | — | External link URL (opens on click when active) |
+
+### `TabItem`
+
+**Used by:** TabbedContent
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `id` | `string` | ✅ | Unique identifier for the tab |
+| `label` | `string` | ✅ | Tab label displayed in header |
+| `content` | `WidgetSchema[]` | ✅ | Content widgets for this tab panel |
+
+### `TabVideo`
+
+**Used by:** ProjectTabs
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `src` | `string` | ✅ | Video source URL |
+| `title` | `string` | ✅ | Video title |
+
+### `VideoGridItem`
+
+**Used by:** ProjectVideoGrid
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `src` | `string` | ✅ | Video source URL |
+| `title` | `string` | ✅ | Video title (for hover display) |
+| `aspectRatio` | `'16:9' \| '9:16' \| '1:1'` | ✅ | Aspect ratio: '16:9' (horizontal), '9:16' (vertical), '1:1' (square) |
+| `column` | `'left' \| 'right'` | ✅ | Grid column assignment |

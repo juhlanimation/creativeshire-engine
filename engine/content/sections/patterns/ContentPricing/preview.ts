@@ -62,7 +62,7 @@ export const previewProps: Partial<ContentPricingProps> = {
 }
 
 // =====================================================================
-// Medlemskab (Port12) — Illustration-based plan cards + contact section
+// Membership — Illustration-based plan cards + contact section
 // =====================================================================
 
 const IMAGE_BASE = '/images/port-12'

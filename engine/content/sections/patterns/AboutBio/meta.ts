@@ -29,7 +29,7 @@ export const meta = defineSectionMeta<AboutBioProps>({
     signature: {
       type: 'text',
       label: 'Signature',
-      default: 'Bo Juhl',
+      default: 'Alex Morgan',
       description: 'Signature text (e.g., name)',
       validation: { required: true, maxLength: 100 },
       group: 'Content',
@@ -45,7 +45,7 @@ export const meta = defineSectionMeta<AboutBioProps>({
     photoAlt: {
       type: 'text',
       label: 'Photo Alt',
-      default: 'Bo Juhl - Executive Producer & Editor',
+      default: 'Alex Morgan - Creative Director & Producer',
       description: 'Accessibility description for photo',
       validation: { required: true, maxLength: 200 },
       group: 'Media',

@@ -47,7 +47,7 @@ export const loftSampleContent = {
       { name: 'Maria Tranberg', videoSrc: `${VIDEO_BASE}/MARIAT.webm`, portfolioUrl: 'https://mariatranberg.com' },
       { name: 'Nicolaj Larsson', videoSrc: `${VIDEO_BASE}/NL_Port12_Showreel_v2.webm`, portfolioUrl: 'https://ccccccc.tv' },
       { name: 'Tor Birk Trads', videoSrc: `${VIDEO_BASE}/TorBirkTrads2.webm`, portfolioUrl: 'https://www.torbirktrads.dk' },
-      { name: 'Bo Juhl', videoSrc: `${VIDEO_BASE}/BJ_Port12_Showreel_v1.webm`, portfolioUrl: 'https://bojuhl.com' },
+      { name: 'Alex Morgan', videoSrc: `${VIDEO_BASE}/BJ_Port12_Showreel_v1.webm`, portfolioUrl: 'https://example.com' },
       { name: 'Maria Kjær', videoSrc: `${VIDEO_BASE}/StrejfStudio_Showreel_2025_v3.webm`, portfolioUrl: 'https://www.linkedin.com/in/maria-kjær-nørgaard/' },
     ],
   },

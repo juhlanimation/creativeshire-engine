@@ -50,7 +50,7 @@
 
 /* Container wrapper (RevealTransition) - GETS the clip-path animation */
 .modal__container {
-  /* Fill entire viewport - matches bojuhl.com video player */
+  /* Fill entire viewport */
   position: absolute;
   inset: 0;
   pointer-events: auto;
@@ -109,7 +109,7 @@
   background-color: rgba(255, 255, 255, 0.5);
 }
 
-/* Close button - matches bojuhl: top-6 left-6 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm */
+/* Close button — top-6 left-6 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm */
 /* MOVED TO L2: data-effect="button-hover" */
 .modal__close {
   position: var(--modal-position, fixed);
@@ -145,7 +145,7 @@
   outline: none;
 }
 
-/* Close icon - matches bojuhl: w-6 h-6 */
+/* Close icon — w-6 h-6 */
 .modal__close svg {
   width: 1.5rem;      /* w-6 = 24px = 1.5rem */
   height: 1.5rem;     /* h-6 = 24px = 1.5rem */

@@ -15,12 +15,12 @@ export const noirSampleContent = {
   },
 
   head: {
-    title: 'Bo Juhl | Executive Producer & Editor',
-    description: 'Executive Producer leading animated films and campaigns for Riot Games, Netflix, Supercell, Amazon, and LEGO.',
+    title: 'Alex Morgan | Creative Director & Producer',
+    description: 'Creative Director leading animated films and campaigns for leading studios and brands.',
   },
 
   hero: {
-    introText: "I'm Bo Juhl",
+    introText: "I'm Alex Morgan",
     roles: ['EXECUTIVE PRODUCER', 'PRODUCER', 'EDITOR'],
     videoSrc: '/videos/frontpage/frontpage.webm',
     scrollIndicatorText: '(SCROLL)',
@@ -32,9 +32,9 @@ export const noirSampleContent = {
       'I was one of the original founders of Sun Creature and spent more than a decade helping shape its growth - guiding dozens of productions and working with hundreds of artists as the studio evolved from a small team to a large international company. I stepped away from the studio in early 2024 to pursue new paths.',
       'Today, <a href="https://crossroad.studio" target="_blank" rel="noopener">Crossroad</a> is a remote-first setup rooted in collaboration and craft. I also take on freelance and consultancy work - always excited to dive in and make strong work with good people.',
     ].join('\n\n'),
-    signature: 'Bo Juhl',
+    signature: 'Alex Morgan',
     photoSrc: '/images/profile-highres.webp',
-    photoAlt: 'Bo Juhl - Executive Producer & Editor',
+    photoAlt: 'Alex Morgan - Creative Director & Producer',
     clientLogos: [
       { name: 'Netflix', src: '/clients/netflix-alpha.webp', alt: 'Netflix logo', height: 72 },
       { name: 'Amazon Studios', src: '/clients/AMZN_STUDIOS - alpha.webp', alt: 'Amazon Studios logo', height: 48 },
@@ -164,8 +164,8 @@ export const noirSampleContent = {
       { label: 'PROJECTS', href: '#projects' },
     ],
     contactHeading: 'GET IN TOUCH',
-    email: 'hello@bojuhl.com',
-    linkedinUrl: 'https://linkedin.com/in/bojuhl',
+    email: 'hello@example.com',
+    linkedinUrl: 'https://linkedin.com/in/example',
     studioHeading: 'FIND MY STUDIO',
     studioUrl: 'https://crossroadstudio.com',
     studioUrlLabel: 'crossroadstudio.com',
@@ -174,11 +174,11 @@ export const noirSampleContent = {
       { platform: 'linkedin', url: 'https://linkedin.com/company/crossroadstudio' },
       { platform: 'instagram', url: 'https://instagram.com/crossroadstudio' },
     ],
-    copyright: 'Copyright \u00a9 Bo Juhl / All rights reserved',
+    copyright: 'Copyright \u00a9 Alex Morgan / All rights reserved',
   },
 
   contact: {
     label: 'How can I help you?',
-    email: 'hello@bojuhl.com',
+    email: 'hello@example.com',
   },
 }

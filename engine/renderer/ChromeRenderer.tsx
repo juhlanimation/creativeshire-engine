@@ -14,7 +14,8 @@
  *    which makes position:fixed behave like position:absolute)
  *
  * Overlay region strategy (mode-dependent):
- * - Fullpage mode: Portal to foregroundLayer (outside CSS containment) → position:fixed
+ * - Fullpage mode: Portal to chromeLayer (non-stacking-context, so blend modes work)
+ *   Falls back to foregroundLayer → position:fixed
  * - Contained mode: No portal (stays in document flow) → position:sticky
  *   (ScrollSmoother is disabled in contained mode, so sticky works)
  *
@@ -361,7 +362,7 @@ function OverlaysRenderer({
 export function ChromeRenderer({ siteChrome, pageChrome, position, hideChrome, currentPageSlug }: ChromeRendererProps): React.ReactNode {
   const { portalTarget, mode } = useContainer()
   const { siteContainer } = useSiteContainer()
-  const { foregroundLayer } = useViewportPortal()
+  const { chromeLayer, foregroundLayer } = useViewportPortal()
   const { introHidesChrome } = useChromeVisibility()
   const { colorTheme } = useThemeContext()
 
@@ -430,10 +431,9 @@ export function ChromeRenderer({ siteChrome, pageChrome, position, hideChrome, c
         if (mode === 'contained') {
           return <div className="chrome-overlay-anchor">{wrapped}</div>
         }
-        // Fullpage mode: portal to foreground layer to escape CSS containment
-        // (container-type: inline-size on [data-site-renderer] traps position:fixed).
-        // React portals preserve context tree so Link in nav still works.
-        const target = foregroundLayer || siteContainer
+        // Fullpage mode: portal to chrome layer (non-stacking-context) so headers
+        // can use mix-blend-mode against page content. Falls back to foreground layer.
+        const target = chromeLayer || foregroundLayer || siteContainer
         return target ? createPortal(wrapped, target) : wrapped
       }
 
@@ -459,7 +459,7 @@ export function ChromeRenderer({ siteChrome, pageChrome, position, hideChrome, c
         if (mode === 'contained') {
           return wrapped
         }
-        const target = foregroundLayer || siteContainer
+        const target = chromeLayer || foregroundLayer || siteContainer
         return target ? createPortal(wrapped, target) : wrapped
       }
 

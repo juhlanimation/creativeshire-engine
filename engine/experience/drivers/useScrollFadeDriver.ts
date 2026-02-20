@@ -17,6 +17,7 @@ import { useEffect, useRef, type RefObject } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { resolveBehaviour } from '../behaviours/resolve'
+import { MIN_PAINT_OPACITY } from '../behaviours/types'
 import type { BehaviourState } from '../../schema/experience'
 
 // Register plugin (client-only)
@@ -99,7 +100,12 @@ export function useScrollFadeDriver(
       }
       const vars = behaviour.compute(state, {})
       Object.entries(vars).forEach(([key, val]) => {
-        el.style.setProperty(key, String(val))
+        let value = String(val)
+        if (behaviour.prerasterize && key.includes('opacity')) {
+          const num = Number(val)
+          if (num < MIN_PAINT_OPACITY) value = String(MIN_PAINT_OPACITY)
+        }
+        el.style.setProperty(key, value)
       })
     }
 

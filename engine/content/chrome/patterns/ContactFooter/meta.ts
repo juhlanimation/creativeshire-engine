@@ -90,7 +90,7 @@ export const meta = defineChromeMeta<ContactFooterProps>({
     paddingTop: {
       type: 'range',
       label: 'Padding Top',
-      default: 3,
+      default: 1.5,
       min: 0,
       max: 12,
       step: 0.5,
@@ -98,7 +98,7 @@ export const meta = defineChromeMeta<ContactFooterProps>({
       description: 'Top padding above the content area. 0 uses the theme default.',
       group: 'Spacing',
     },
-    copyrightGap: {
+    paddingBottom: {
       type: 'range',
       label: 'Padding Bottom',
       default: 5.5,
@@ -106,7 +106,7 @@ export const meta = defineChromeMeta<ContactFooterProps>({
       max: 12,
       step: 0.5,
       unit: 'rem',
-      description: 'Padding under the text content (above the copyright). 0 uses the theme default.',
+      description: 'Bottom padding below the content area. 0 uses the theme default.',
       group: 'Spacing',
     },
   },

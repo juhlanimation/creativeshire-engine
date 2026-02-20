@@ -110,7 +110,7 @@ Create `src/app/globals.css`:
 @import "@creativeshire/engine/styles";
 
 /* If using a preset, import its styles too */
-@import "@creativeshire/engine/presets/bojuhl/styles";
+@import "@creativeshire/engine/presets/noir/styles";
 
 /* Tell Tailwind to scan engine components */
 @source "../node_modules/@creativeshire/engine/**/*.tsx";
@@ -351,8 +351,8 @@ Create `src/app/preview/globals.css`:
 /* Engine core styles */
 @import "@creativeshire/engine/styles";
 
-/* Preset styles (if using bojuhl) */
-@import "@creativeshire/engine/presets/bojuhl/styles";
+/* Preset styles (if using noir) */
+@import "@creativeshire/engine/presets/noir/styles";
 
 /* Scan engine components for Tailwind classes */
 @source "../../../node_modules/@creativeshire/engine/**/*.tsx";
@@ -374,7 +374,7 @@ Create `src/app/preview/[site]/page.tsx`:
 
 ```tsx
 import { SiteRenderer } from '@creativeshire/engine'
-import { bojuhlPreset } from '@creativeshire/engine/presets'
+import { noirPreset } from '@creativeshire/engine/presets'
 
 interface Props {
   params: Promise<{ site: string }>
@@ -383,8 +383,8 @@ interface Props {
 export default async function PreviewPage({ params }: Props) {
   const { site } = await params
 
-  if (site === 'bojuhl') {
-    return <SiteRenderer config={bojuhlPreset.site} page={bojuhlPreset.pages.home} />
+  if (site === 'noir') {
+    return <SiteRenderer config={noirPreset.site} page={noirPreset.pages.home} />
   }
 
   return <div>Site not found: {site}</div>
@@ -398,7 +398,7 @@ export default async function PreviewPage({ params }: Props) {
 export function EditorCanvas() {
   return (
     <iframe
-      src="/preview/bojuhl"
+      src="/preview/noir"
       style={{ width: '100%', height: '100%', border: 'none' }}
     />
   )
@@ -421,7 +421,7 @@ Create `src/app/[site]/page.tsx`:
 
 ```typescript
 import { SiteRenderer } from '@creativeshire/engine'
-import { bojuhlPreset } from '@creativeshire/engine/presets'
+import { noirPreset } from '@creativeshire/engine/presets'
 
 interface Props {
   params: Promise<{ site: string }>
@@ -430,10 +430,10 @@ interface Props {
 export default async function SitePage({ params }: Props) {
   const { site } = await params
 
-  // For now, use bojuhl preset
+  // For now, use noir preset
   // Later: fetch site config from database
-  if (site === 'bojuhl') {
-    return <SiteRenderer config={bojuhlPreset.site} page={bojuhlPreset.pages.home} />
+  if (site === 'noir') {
+    return <SiteRenderer config={noirPreset.site} page={noirPreset.pages.home} />
   }
 
   return <div>Site not found: {site}</div>

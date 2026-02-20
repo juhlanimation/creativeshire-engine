@@ -2,7 +2,7 @@
  * scroll/fade behaviour - Fades section in as it enters viewport.
  *
  * Uses sectionVisibility (0-1 intersection ratio) to compute opacity.
- * Matches bojuhl.com fade-in effect with 1.5x acceleration.
+ * Fade-in effect with 1.5x acceleration.
  *
  * CSS Variables Output:
  * - --section-opacity: Section opacity (0-1)
@@ -15,6 +15,7 @@ import { meta } from './meta'
 
 const scrollFade: Behaviour = {
   ...meta,
+  prerasterize: true,
   requires: ['sectionVisibility', 'prefersReducedMotion'],
 
   cssTemplate: `

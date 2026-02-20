@@ -114,7 +114,6 @@
 @import './content/chrome/patterns/MinimalNav/styles.css' layer(chrome);
 @import './content/chrome/patterns/ContactFooter/styles.css' layer(chrome);
 @import './content/chrome/patterns/BrandFooter/styles.css' layer(chrome);
-@import './content/chrome/patterns/ScrollRevealBrand/styles.css' layer(chrome);
 
 /* Overlays */
 @import './content/chrome/overlays/Modal/styles.css' layer(chrome);

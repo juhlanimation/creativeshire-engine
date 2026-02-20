@@ -16,7 +16,7 @@
  */
 
 import type { Driver, Target } from './types'
-import type { Behaviour } from '../behaviours/types'
+import { MIN_PAINT_OPACITY, type Behaviour } from '../behaviours/types'
 import type { BehaviourState } from '../../schema/experience'
 
 /**
@@ -300,7 +300,12 @@ export class ScrollDriver implements Driver {
       }
 
       for (const key in vars) {
-        const value = String(vars[key])
+        let value = String(vars[key])
+        // Prerasterize: clamp opacity vars to minimum paint threshold
+        if (behaviour.prerasterize && key.includes('opacity')) {
+          const num = Number(vars[key])
+          if (num < MIN_PAINT_OPACITY) value = String(MIN_PAINT_OPACITY)
+        }
         if (cached[key] !== value) {
           cached[key] = value
           element.style.setProperty(key, value)
@@ -366,7 +371,11 @@ export class ScrollDriver implements Driver {
     const vars = behaviour.compute(initialState, options, element)
     const cached: Record<string, string> = {}
     for (const key in vars) {
-      const value = String(vars[key])
+      let value = String(vars[key])
+      if (behaviour.prerasterize && key.includes('opacity')) {
+        const num = Number(vars[key])
+        if (num < MIN_PAINT_OPACITY) value = String(MIN_PAINT_OPACITY)
+      }
       cached[key] = value
       element.style.setProperty(key, value)
     }

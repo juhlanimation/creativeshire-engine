@@ -71,4 +71,6 @@ export interface ExperienceConfig {
   id: string
   /** Per-section behaviour overrides. Keys are section IDs. */
   sectionBehaviours?: Record<string, import('../experience/experiences/types').BehaviourAssignment[]>
+  /** Per-chrome-region behaviour overrides. Keys are region IDs (header, footer). */
+  chromeBehaviours?: Record<string, import('../experience/experiences/types').BehaviourAssignment[]>
 }

@@ -76,12 +76,17 @@ export function useResolvedExperience(site: SiteSchema, page: PageSchema): Resol
       ...(site.experience?.sectionBehaviours ?? {}),
       ...(page.experience?.sectionBehaviours ?? {}),
     }
+    const presetChromeBehaviours: Record<string, BehaviourAssignment[]> = {
+      ...(site.experience?.chromeBehaviours ?? {}),
+      ...(page.experience?.chromeBehaviours ?? {}),
+    }
     // Merge intro: preset intro overrides experience default
     const introOverride = page.experience?.intro ?? site.experience?.intro
     const needsBehaviourMerge = Object.keys(presetBehaviours).length > 0
+    const needsChromeMerge = Object.keys(presetChromeBehaviours).length > 0
     const needsIntroMerge = introOverride !== undefined
 
-    if (!needsBehaviourMerge && !needsIntroMerge) return experience
+    if (!needsBehaviourMerge && !needsChromeMerge && !needsIntroMerge) return experience
 
     const merged = needsBehaviourMerge ? { ...experience.sectionBehaviours } : experience.sectionBehaviours
     if (needsBehaviourMerge) {
@@ -89,12 +94,18 @@ export function useResolvedExperience(site: SiteSchema, page: PageSchema): Resol
         (merged as Record<string, BehaviourAssignment[]>)[key] = assignments
       }
     }
+
+    const mergedChrome = needsChromeMerge
+      ? { ...(experience.chromeBehaviours ?? {}), ...presetChromeBehaviours }
+      : experience.chromeBehaviours
+
     return {
       ...experience,
       ...(needsBehaviourMerge && { sectionBehaviours: merged }),
+      ...(needsChromeMerge && { chromeBehaviours: mergedChrome }),
       ...(needsIntroMerge && { intro: introOverride }),
     }
-  }, [experience, site.experience?.sectionBehaviours, page.experience?.sectionBehaviours, site.experience?.intro, page.experience?.intro])
+  }, [experience, site.experience?.sectionBehaviours, page.experience?.sectionBehaviours, site.experience?.chromeBehaviours, page.experience?.chromeBehaviours, site.experience?.intro, page.experience?.intro])
 
   // Create store for this render (memoized to avoid recreating on every render)
   const store = useMemo(

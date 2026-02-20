@@ -224,7 +224,7 @@ After all component items (widgets, sections, behaviours, chrome), add:
 
 ### Example
 
-For `/plan portfolio/bojuhl.com`:
+For `/plan portfolio/example.com`:
 
 ```
 Components:
@@ -235,7 +235,7 @@ SECTION-001 HeroSection       (depends: WIDGET-001, WIDGET-002)
 ...
 
 Assembly (LAST):
-PRESET-001 Bojuhl Preset      (depends: ALL above)
+PRESET-001 Noir Preset        (depends: ALL above)
 ```
 
 The PRESET item ensures `/build` completes with a working site, not just components.

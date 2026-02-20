@@ -40,7 +40,11 @@ const ExpandRowThumbnail = memo(function ExpandRowThumbnail({
     if (!video || !videoSrc) return
 
     if (isExpanded) {
-      video.play().catch(() => {})
+      video.play().catch((err) => {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('[ExpandRowThumbnail] video.play() failed:', err.message, videoSrc)
+        }
+      })
     } else {
       video.pause()
       video.currentTime = 0

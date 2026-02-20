@@ -6,7 +6,7 @@
  * - Header: Title + year range (small caps, left-aligned)
  * - Gallery: ExpandRowImageRepeater with coordinated hover
  *
- * Reference: bojuhl.com "Other Selected Projects" section
+ * "Other Selected Projects" expandable gallery section.
  */
 
 import type { SectionSchema, WidgetSchema, SerializableValue } from '../../../../schema'

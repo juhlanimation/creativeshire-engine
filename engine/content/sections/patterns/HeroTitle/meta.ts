@@ -77,7 +77,7 @@ export const meta = defineSectionMeta<HeroTitleProps>({
 
     // Typography
     titleScale: textScaleSetting('Title Scale', 'display'),
-    titleSizeMultiplier: textSizeMultiplierSetting('Title Size', 3),
+    titleSizeMultiplier: textSizeMultiplierSetting('Title Size', 4),
     taglineScale: textScaleSetting('Tagline Scale', 'h3'),
     scrollIndicatorScale: textScaleSetting('Scroll Indicator Scale', 'small'),
   },
