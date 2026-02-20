@@ -13,6 +13,7 @@ import type { PageSchema, SectionSchema } from '../../../schema'
  */
 const heroSection: SectionSchema = {
   id: 'hero',
+  patternId: 'HeroVideo',
   label: 'Hero',
   layout: {
     type: 'stack',
@@ -47,7 +48,6 @@ const heroSection: SectionSchema = {
       type: 'Text',
       props: {
         content: 'This is the home page of the test multipage preset',
-        as: 'p',
       },
       style: {
         fontSize: 'clamp(1rem, 2cqw, 1.25rem)',
@@ -97,7 +97,6 @@ const featureSection: SectionSchema = {
       type: 'Text',
       props: {
         content: 'Click "About" in the header to test page transitions.',
-        as: 'p',
       },
       style: {
         fontSize: '1rem',

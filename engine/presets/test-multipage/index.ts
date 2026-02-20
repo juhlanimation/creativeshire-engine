@@ -20,9 +20,9 @@
 
 import type { SitePreset } from '../types'
 import { registerPreset, type PresetMeta } from '../registry'
-import { transitionConfig } from './site'
-import { headerConfig } from './chrome'
-import { homePageTemplate, aboutPageTemplate } from './pages'
+import { createFixedNavRegion } from '../../content/chrome/patterns/FixedNav'
+import { homePageTemplate } from './pages/home'
+import { aboutPageTemplate } from './pages/about'
 import { testMultipageContentContract } from './content-contract'
 
 /**
@@ -46,10 +46,18 @@ export const testMultipagePreset: SitePreset = {
       track: '#f0f0f0',
     },
   },
-  transition: transitionConfig,
+  transition: { id: 'fade' },
   chrome: {
     regions: {
-      header: headerConfig,
+      header: createFixedNavRegion({
+        siteTitle: 'Test Site',
+        navLinks: [
+          { label: 'Home', href: '/' },
+          { label: 'About', href: '/about' },
+        ],
+        background: 'rgba(255, 255, 255, 0.95)',
+        color: '#000000',
+      }),
       footer: 'hidden',
     },
   },

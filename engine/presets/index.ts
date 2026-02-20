@@ -7,10 +7,10 @@
  */
 
 // Preset exports (auto-register on import)
-export { bojuhlPreset, bojuhlMeta, bojuhlContentContract } from './bojuhl'
-export { bishoyGendiPreset, bishoyGendiMeta, bishoyGendiContentContract } from './bishoy-gendi'
+export { noirPreset, noirMeta, noirContentContract } from './noir'
+export { prismPreset, prismMeta, prismContentContract } from './prism'
 export { testMultipagePreset, testMultipageMeta, testMultipageContentContract } from './test-multipage'
-export { port12Preset, port12Meta, port12ContentContract } from './port-12'
+export { loftPreset, loftMeta, loftContentContract } from './loft'
 
 /**
  * Ensures all presets are registered.

@@ -13,6 +13,7 @@ import type { PageSchema, SectionSchema } from '../../../schema'
  */
 const aboutSection: SectionSchema = {
   id: 'about',
+  patternId: 'AboutBio',
   label: 'About',
   layout: {
     type: 'stack',
@@ -47,7 +48,6 @@ const aboutSection: SectionSchema = {
       type: 'Text',
       props: {
         content: 'This is the about page of the test multipage preset',
-        as: 'p',
       },
       style: {
         fontSize: 'clamp(1rem, 2cqw, 1.25rem)',
@@ -98,7 +98,6 @@ const teamSection: SectionSchema = {
       type: 'Text',
       props: {
         content: 'Click "Home" in the header to test page transitions back.',
-        as: 'p',
       },
       style: {
         fontSize: '1rem',
