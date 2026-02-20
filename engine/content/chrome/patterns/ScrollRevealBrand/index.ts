@@ -55,6 +55,7 @@ export function createScrollRevealBrandWidget(props: ScrollRevealBrandProps): Wi
 export function createScrollRevealBrandRegion(props: ScrollRevealBrandProps): PresetRegionConfig {
   return {
     overlay: true,
+    style: { mixBlendMode: 'difference' },
     layout: {
       align: 'start',
       padding: '1.5rem 2rem',
