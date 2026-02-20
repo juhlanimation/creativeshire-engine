@@ -1,0 +1,83 @@
+/**
+ * Hero section pattern — structural CSS.
+ * Viewport-height container with video background and bottom-aligned content.
+ */
+
+#hero {
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Content wrapper - positioned at bottom, auto height */
+/* Note: No z-index or transform to allow mix-blend-mode to work with video behind */
+#hero-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  /* Override default transform to prevent stacking context - needed for blend mode */
+  transform: none;
+  /* Horizontal padding - px-8 = 32px mobile */
+  padding: 0 32px;
+  /* Bottom padding: configurable via --hero-bottom-offset (default 12% of vh) */
+  padding-bottom: calc(var(--vh, 1svh) * var(--hero-bottom-offset, 12) + env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+  /* Gap between elements - viewport-relative to match reference scaling */
+  /* Reference: gap-[2vh] md:gap-[2.5vh] */
+  gap: calc(var(--vh, 1svh) * 2);
+}
+
+/* Override transform to prevent stacking context creation.
+   Layout/text widgets have transform: translateY(var(--y, 0px)) by default for
+   behaviour animation, but even translateY(0px) creates a stacking context which
+   isolates mix-blend-mode: difference from the video background. */
+#hero-content,
+#hero-intro,
+#hero-roles {
+  transform: none;
+}
+
+/* Intro text - extra margin for ~3.5vh total gap to first role (2.5vh gap + 1vh margin) */
+#hero-intro {
+  margin-bottom: calc(var(--vh, 1svh) * 1);
+}
+
+/* Scroll indicator - absolutely positioned at bottom center */
+/* Note: Higher specificity to override the general transform: none rule */
+/* Fade-out animation is handled by GSAP ScrollTrigger (useScrollIndicatorFade hook) */
+#hero #hero-scroll {
+  position: absolute;
+  bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Tablet (768px+) - md:px-16 = 64px, md:gap-[2.5vh] */
+@container site (min-width: 768px) {
+  #hero-content {
+    padding: 0 64px;
+    padding-bottom: calc(var(--vh, 1svh) * var(--hero-bottom-offset, 12) + env(safe-area-inset-bottom, 0px));
+    gap: calc(var(--vh, 1svh) * 2.5);
+  }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) #hero-content {
+  padding: 0 64px;
+  padding-bottom: calc(var(--vh, 1svh) * var(--hero-bottom-offset, 12) + env(safe-area-inset-bottom, 0px));
+  gap: calc(var(--vh, 1svh) * 2.5);
+}
+
+/* Desktop (1024px+) - lg:px-24 = 96px */
+@container site (min-width: 1024px) {
+  #hero-content {
+    padding: 0 96px;
+    padding-bottom: calc(var(--vh, 1svh) * var(--hero-bottom-offset, 12) + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="desktop"]) #hero-content {
+  padding: 0 96px;
+  padding-bottom: calc(var(--vh, 1svh) * var(--hero-bottom-offset, 12) + env(safe-area-inset-bottom, 0px));
+}

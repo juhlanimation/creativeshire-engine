@@ -1,0 +1,69 @@
+/**
+ * Hero Title section pattern — structural CSS.
+ * Viewport-height container with video background and centered content.
+ */
+
+#hero-title {
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Content wrapper - centered vertically and horizontally */
+/* Note: No z-index or transform to allow mix-blend-mode to work with video behind */
+#hero-title #hero-content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  /* Override default transform to prevent stacking context - needed for blend mode */
+  transform: none;
+  /* Horizontal padding */
+  padding: 0 12px;
+  box-sizing: border-box;
+  /* Gap between title and tagline */
+  gap: calc(var(--vh, 1svh) * 2);
+}
+
+/* Override transform to prevent stacking context creation.
+   Layout/text widgets have transform: translateY(var(--y, 0px)) by default for
+   behaviour animation, but even translateY(0px) creates a stacking context which
+   isolates mix-blend-mode: difference from the video background. */
+#hero-content,
+#hero-title-heading,
+#hero-tagline {
+  transform: none;
+}
+
+/* Scroll indicator - absolutely positioned at bottom center */
+/* Note: Higher specificity to override the general transform: none rule */
+#hero-title #hero-title-scroll {
+  position: absolute;
+  bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Tablet (768px+) */
+@container site (min-width: 768px) {
+  #hero-title #hero-content {
+    padding: 0 16px;
+  }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) #hero-title #hero-content {
+  padding: 0 16px;
+}
+
+/* Desktop (1024px+) */
+@container site (min-width: 1024px) {
+  #hero-title #hero-content {
+    padding: 0 24px;
+  }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="desktop"]) #hero-title #hero-content {
+  padding: 0 24px;
+}

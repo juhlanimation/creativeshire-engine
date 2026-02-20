@@ -1,4 +1,5 @@
 import { defineSectionMeta } from '../../../../schema/meta'
+import { textScaleSetting } from '../../../../schema/settings-helpers'
 import type { ProjectCompareProps } from './types'
 
 export const meta = defineSectionMeta<ProjectCompareProps>({
@@ -63,25 +64,8 @@ export const meta = defineSectionMeta<ProjectCompareProps>({
       group: 'Content',
       bindable: true,
     },
-    backgroundColor: {
-      type: 'color',
-      label: 'Background',
-      default: '#FDF9F0',
-      group: 'Style',
-    },
-    videoBackgroundColor: {
-      type: 'color',
-      label: 'Video Background',
-      default: '#3B3D2E',
-      group: 'Style',
-    },
-    email: {
-      type: 'text',
-      label: 'Email',
-      default: '',
-      validation: { required: true, maxLength: 320, pattern: '^[^@]+@[^@]+\\.[^@]+$', message: 'Please enter a valid email address' },
-      group: 'Contact',
-      bindable: true,
-    },
+
+    // Typography
+    descriptionScale: textScaleSetting('Description Scale', 'body'),
   },
 })

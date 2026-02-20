@@ -1,0 +1,34 @@
+/**
+ * FlexGalleryCardRepeater container styles.
+ * Content Layer (L1) - structure only.
+ *
+ * Card-level styles live in SelectorCard/styles.css.
+ * This file handles container layout, orientation, and CSS custom properties.
+ */
+
+/* Semantic accent color mapping (inherited by SelectorCard children) */
+.flex-gcr[data-accent="accent"] { --ps-accent: var(--accent); }
+.flex-gcr[data-accent="interaction"] { --ps-accent: var(--interaction); }
+.flex-gcr[data-accent="primary"] { --ps-accent: var(--text-primary); }
+
+/* Semantic border radius mapping (inherited by SelectorCard children) */
+.flex-gcr[data-radius="none"] { --ps-radius: 0; }
+.flex-gcr[data-radius="sm"] { --ps-radius: var(--radius-sm, 4px); }
+.flex-gcr[data-radius="md"] { --ps-radius: var(--radius-md, 8px); }
+.flex-gcr[data-radius="lg"] { --ps-radius: var(--radius-lg, 12px); }
+.flex-gcr[data-radius="full"] { --ps-radius: 9999px; }
+
+.flex-gcr {
+  display: flex;
+  gap: var(--spacing-sm, 0.5rem);
+}
+
+.flex-gcr--horizontal {
+  flex-direction: row;
+  justify-content: center;
+}
+
+.flex-gcr--vertical {
+  flex-direction: column;
+  align-items: stretch;
+}

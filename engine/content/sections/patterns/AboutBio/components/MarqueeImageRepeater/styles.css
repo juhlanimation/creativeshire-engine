@@ -1,0 +1,18 @@
+/**
+ * MarqueeImageRepeater widget styles.
+ * Image-specific visual treatment (opacity, hover, filter).
+ *
+ * CSS variables set on .marquee-image-repeater wrapper cascade to images:
+ *   --logo-filter: filter applied to each image (e.g. brightness(0) invert(1))
+ *   --logo-opacity: base opacity for images (default: 0.7)
+ */
+
+.marquee-image-repeater__img {
+  filter: var(--logo-filter, none);
+  opacity: var(--logo-opacity, var(--hover-opacity, 0.7));
+  transition: opacity var(--duration-normal, 0.3s) var(--ease-default, ease);
+}
+
+.marquee-image-repeater__img:hover {
+  opacity: 1;
+}

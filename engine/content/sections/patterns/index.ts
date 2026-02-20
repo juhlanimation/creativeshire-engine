@@ -3,17 +3,22 @@
  * Factory functions that return SectionSchema for common patterns.
  */
 
-export { createHeroSection } from './Hero'
-export type { HeroProps } from './Hero/types'
+export type { BaseSectionProps } from './base'
 
-export { createAboutSection } from './About'
-export type { AboutProps, LogoItem, BioLink } from './About/types'
+export { createHeroVideoSection } from './HeroVideo'
+export type { HeroVideoProps } from './HeroVideo/types'
 
-export { createFeaturedProjectsSection } from './FeaturedProjects'
-export type { FeaturedProjectsProps, FeaturedProject } from './FeaturedProjects/types'
+export { createHeroTitleSection } from './HeroTitle'
+export type { HeroTitleProps } from './HeroTitle/types'
 
-export { createOtherProjectsSection } from './OtherProjects'
-export type { OtherProjectsProps, OtherProject } from './OtherProjects/types'
+export { createAboutBioSection } from './AboutBio'
+export type { AboutBioProps, LogoItem, BioLink } from './AboutBio/types'
+
+export { createProjectFeaturedSection } from './ProjectFeatured'
+export type { ProjectFeaturedProps, FeaturedProject } from './ProjectFeatured/types'
+
+export { createProjectStripSection } from './ProjectStrip'
+export type { ProjectStripProps, OtherProject } from './ProjectStrip/types'
 
 export { createProjectVideoGridSection } from './ProjectVideoGrid'
 export type { ProjectVideoGridProps, VideoGridItem } from './ProjectVideoGrid/types'
@@ -33,8 +38,11 @@ export type { ProjectCompareProps } from './ProjectCompare/types'
 export { createProjectTabsSection } from './ProjectTabs'
 export type { ProjectTabsProps, ProjectTab, TabVideo } from './ProjectTabs/types'
 
-export { createMemberGallerySection } from './MemberGallery'
-export type { MemberGalleryProps, MemberItem, MemberGalleryTextStyles } from './MemberGallery/types'
+export { createTeamShowcaseSection } from './TeamShowcase'
+export type { TeamShowcaseProps, MemberItem } from './TeamShowcase/types'
 
-export { createPricingSection } from './Pricing'
-export type { PricingProps, PricingPlan, PricingFeature, PricingIcons, PricingTextStyles } from './Pricing/types'
+export { createContentPricingSection } from './ContentPricing'
+export type { ContentPricingProps, PricingPlan, PricingFeature, PricingIcons } from './ContentPricing/types'
+
+export { createAboutCollageSection } from './AboutCollage'
+export type { AboutCollageProps, AboutCollageImage } from './AboutCollage/types'

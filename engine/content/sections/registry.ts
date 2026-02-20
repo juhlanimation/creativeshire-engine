@@ -10,18 +10,20 @@
 import type { SectionMeta, SectionCategory, SectionSchema } from '../../schema'
 
 // Import section pattern metas only (safe - no renderer dependencies)
-import { meta as HeroMeta } from './patterns/Hero/meta'
-import { meta as AboutMeta } from './patterns/About/meta'
-import { meta as FeaturedProjectsMeta } from './patterns/FeaturedProjects/meta'
-import { meta as OtherProjectsMeta } from './patterns/OtherProjects/meta'
+import { meta as HeroVideoMeta } from './patterns/HeroVideo/meta'
+import { meta as HeroTitleMeta } from './patterns/HeroTitle/meta'
+import { meta as AboutBioMeta } from './patterns/AboutBio/meta'
+import { meta as ProjectFeaturedMeta } from './patterns/ProjectFeatured/meta'
+import { meta as ProjectStripMeta } from './patterns/ProjectStrip/meta'
 import { meta as ProjectVideoGridMeta } from './patterns/ProjectVideoGrid/meta'
 import { meta as ProjectExpandMeta } from './patterns/ProjectExpand/meta'
 import { meta as ProjectShowcaseMeta } from './patterns/ProjectShowcase/meta'
 import { meta as ProjectGalleryMeta } from './patterns/ProjectGallery/meta'
 import { meta as ProjectCompareMeta } from './patterns/ProjectCompare/meta'
 import { meta as ProjectTabsMeta } from './patterns/ProjectTabs/meta'
-import { meta as MemberGalleryMeta } from './patterns/MemberGallery/meta'
-import { meta as PricingMeta } from './patterns/Pricing/meta'
+import { meta as TeamShowcaseMeta } from './patterns/TeamShowcase/meta'
+import { meta as ContentPricingMeta } from './patterns/ContentPricing/meta'
+import { meta as AboutCollageMeta } from './patterns/AboutCollage/meta'
 
 // =============================================================================
 // Types
@@ -47,55 +49,56 @@ export interface SectionPatternEntry<T = unknown> {
  * Registry of all section patterns.
  * Maps pattern ID to metadata and lazy-loaded factory function.
  */
+/**
+ * Create a getFactory that auto-stamps patternId on the returned section.
+ * This ensures every section created through the registry is traceable
+ * back to its pattern — callers can never forget to set patternId.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function createEntry(id: string, meta: SectionMeta, importFactory: () => Promise<(props: any) => SectionSchema>): SectionPatternEntry {
+  return {
+    meta,
+    getFactory: async () => {
+      const rawFactory = await importFactory()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return (props: any) => {
+        const section = rawFactory(props)
+        section.patternId = id
+        return section
+      }
+    },
+  }
+}
+
 export const sectionRegistry: Record<string, SectionPatternEntry> = {
-  Hero: {
-    meta: HeroMeta as SectionMeta,
-    getFactory: async () => (await import('./patterns/Hero')).createHeroSection,
-  },
-  About: {
-    meta: AboutMeta as SectionMeta,
-    getFactory: async () => (await import('./patterns/About')).createAboutSection,
-  },
-  FeaturedProjects: {
-    meta: FeaturedProjectsMeta as SectionMeta,
-    getFactory: async () => (await import('./patterns/FeaturedProjects')).createFeaturedProjectsSection,
-  },
-  OtherProjects: {
-    meta: OtherProjectsMeta as SectionMeta,
-    getFactory: async () => (await import('./patterns/OtherProjects')).createOtherProjectsSection,
-  },
-  ProjectVideoGrid: {
-    meta: ProjectVideoGridMeta as SectionMeta,
-    getFactory: async () => (await import('./patterns/ProjectVideoGrid')).createProjectVideoGridSection,
-  },
-  ProjectExpand: {
-    meta: ProjectExpandMeta as SectionMeta,
-    getFactory: async () => (await import('./patterns/ProjectExpand')).createProjectExpandSection,
-  },
-  ProjectShowcase: {
-    meta: ProjectShowcaseMeta as SectionMeta,
-    getFactory: async () => (await import('./patterns/ProjectShowcase')).createProjectShowcaseSection,
-  },
-  ProjectGallery: {
-    meta: ProjectGalleryMeta as SectionMeta,
-    getFactory: async () => (await import('./patterns/ProjectGallery')).createProjectGallerySection,
-  },
-  ProjectCompare: {
-    meta: ProjectCompareMeta as SectionMeta,
-    getFactory: async () => (await import('./patterns/ProjectCompare')).createProjectCompareSection,
-  },
-  ProjectTabs: {
-    meta: ProjectTabsMeta as SectionMeta,
-    getFactory: async () => (await import('./patterns/ProjectTabs')).createProjectTabsSection,
-  },
-  MemberGallery: {
-    meta: MemberGalleryMeta as SectionMeta,
-    getFactory: async () => (await import('./patterns/MemberGallery')).createMemberGallerySection,
-  },
-  Pricing: {
-    meta: PricingMeta as SectionMeta,
-    getFactory: async () => (await import('./patterns/Pricing')).createPricingSection,
-  },
+  HeroVideo: createEntry('HeroVideo', HeroVideoMeta as SectionMeta,
+    async () => (await import('./patterns/HeroVideo')).createHeroVideoSection),
+  HeroTitle: createEntry('HeroTitle', HeroTitleMeta as SectionMeta,
+    async () => (await import('./patterns/HeroTitle')).createHeroTitleSection),
+  AboutBio: createEntry('AboutBio', AboutBioMeta as SectionMeta,
+    async () => (await import('./patterns/AboutBio')).createAboutBioSection),
+  ProjectFeatured: createEntry('ProjectFeatured', ProjectFeaturedMeta as SectionMeta,
+    async () => (await import('./patterns/ProjectFeatured')).createProjectFeaturedSection),
+  ProjectStrip: createEntry('ProjectStrip', ProjectStripMeta as SectionMeta,
+    async () => (await import('./patterns/ProjectStrip')).createProjectStripSection),
+  ProjectVideoGrid: createEntry('ProjectVideoGrid', ProjectVideoGridMeta as SectionMeta,
+    async () => (await import('./patterns/ProjectVideoGrid')).createProjectVideoGridSection),
+  ProjectExpand: createEntry('ProjectExpand', ProjectExpandMeta as SectionMeta,
+    async () => (await import('./patterns/ProjectExpand')).createProjectExpandSection),
+  ProjectShowcase: createEntry('ProjectShowcase', ProjectShowcaseMeta as SectionMeta,
+    async () => (await import('./patterns/ProjectShowcase')).createProjectShowcaseSection),
+  ProjectGallery: createEntry('ProjectGallery', ProjectGalleryMeta as SectionMeta,
+    async () => (await import('./patterns/ProjectGallery')).createProjectGallerySection),
+  ProjectCompare: createEntry('ProjectCompare', ProjectCompareMeta as SectionMeta,
+    async () => (await import('./patterns/ProjectCompare')).createProjectCompareSection),
+  ProjectTabs: createEntry('ProjectTabs', ProjectTabsMeta as SectionMeta,
+    async () => (await import('./patterns/ProjectTabs')).createProjectTabsSection),
+  TeamShowcase: createEntry('TeamShowcase', TeamShowcaseMeta as SectionMeta,
+    async () => (await import('./patterns/TeamShowcase')).createTeamShowcaseSection),
+  ContentPricing: createEntry('ContentPricing', ContentPricingMeta as SectionMeta,
+    async () => (await import('./patterns/ContentPricing')).createContentPricingSection),
+  AboutCollage: createEntry('AboutCollage', AboutCollageMeta as SectionMeta,
+    async () => (await import('./patterns/AboutCollage')).createAboutCollageSection),
 }
 
 // =============================================================================
@@ -142,29 +145,33 @@ export function getRepeatableSections(): SectionMeta[] {
 // =============================================================================
 
 // Re-export typed factory functions for type-safe usage
-export { createHeroSection } from './patterns/Hero'
-export { createAboutSection } from './patterns/About'
-export { createFeaturedProjectsSection } from './patterns/FeaturedProjects'
-export { createOtherProjectsSection } from './patterns/OtherProjects'
+export { createHeroVideoSection } from './patterns/HeroVideo'
+export { createHeroTitleSection } from './patterns/HeroTitle'
+export { createAboutBioSection } from './patterns/AboutBio'
+export { createProjectFeaturedSection } from './patterns/ProjectFeatured'
+export { createProjectStripSection } from './patterns/ProjectStrip'
 export { createProjectVideoGridSection } from './patterns/ProjectVideoGrid'
 export { createProjectExpandSection } from './patterns/ProjectExpand'
 export { createProjectShowcaseSection } from './patterns/ProjectShowcase'
 export { createProjectGallerySection } from './patterns/ProjectGallery'
 export { createProjectCompareSection } from './patterns/ProjectCompare'
 export { createProjectTabsSection } from './patterns/ProjectTabs'
-export { createMemberGallerySection } from './patterns/MemberGallery'
-export { createPricingSection } from './patterns/Pricing'
+export { createTeamShowcaseSection } from './patterns/TeamShowcase'
+export { createContentPricingSection } from './patterns/ContentPricing'
+export { createAboutCollageSection } from './patterns/AboutCollage'
 
 // Re-export types for convenience
-export type { HeroProps } from './patterns/Hero/types'
-export type { AboutProps } from './patterns/About/types'
-export type { FeaturedProjectsProps } from './patterns/FeaturedProjects/types'
-export type { OtherProjectsProps } from './patterns/OtherProjects/types'
+export type { HeroVideoProps } from './patterns/HeroVideo/types'
+export type { HeroTitleProps } from './patterns/HeroTitle/types'
+export type { AboutBioProps } from './patterns/AboutBio/types'
+export type { ProjectFeaturedProps } from './patterns/ProjectFeatured/types'
+export type { ProjectStripProps } from './patterns/ProjectStrip/types'
 export type { ProjectVideoGridProps } from './patterns/ProjectVideoGrid/types'
 export type { ProjectExpandProps } from './patterns/ProjectExpand/types'
 export type { ProjectShowcaseProps } from './patterns/ProjectShowcase/types'
 export type { ProjectGalleryProps } from './patterns/ProjectGallery/types'
 export type { ProjectCompareProps } from './patterns/ProjectCompare/types'
 export type { ProjectTabsProps } from './patterns/ProjectTabs/types'
-export type { MemberGalleryProps, MemberItem } from './patterns/MemberGallery/types'
-export type { PricingProps, PricingPlan, PricingFeature } from './patterns/Pricing/types'
+export type { TeamShowcaseProps, MemberItem } from './patterns/TeamShowcase/types'
+export type { ContentPricingProps, PricingPlan, PricingFeature } from './patterns/ContentPricing/types'
+export type { AboutCollageProps } from './patterns/AboutCollage/types'

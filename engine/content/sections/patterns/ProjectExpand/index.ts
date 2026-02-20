@@ -4,23 +4,22 @@
  *
  * Layout:
  * - Header: Project/client logo (centered or left-aligned)
- * - Gallery: ExpandableGalleryRow with coordinated hover
+ * - Gallery: ExpandRowImageRepeater with coordinated hover
  * - Footer: ContactBar with email
  *
- * Reference: Riot Games section from bishoy-gendi-portfolio
+ * Reference: Riot Games section from prism preset reference
  */
 
 import type { SectionSchema, WidgetSchema, SerializableValue } from '../../../../schema'
-import type { GalleryProject } from '../../../widgets/interactive/GalleryThumbnail'
-import { createContactBar } from '../../../widgets/patterns'
+import type { ExpandRowItem } from '../../../widgets/repeaters/ExpandRowImageRepeater/ExpandRowThumbnail/types'
 import type { ProjectExpandProps, ExpandableVideoItem } from './types'
 import { isBindingExpression } from '../utils'
 
 /**
- * Convert ExpandableVideoItem to GalleryProject format.
- * Fills in optional fields with defaults for ExpandableGalleryRow compatibility.
+ * Convert ExpandableVideoItem to ExpandRowItem format.
+ * Fills in optional fields with defaults for ExpandRowImageRepeater compatibility.
  */
-function toGalleryProject(item: ExpandableVideoItem): GalleryProject {
+function toExpandRowItem(item: ExpandableVideoItem): ExpandRowItem {
   return {
     id: item.id,
     thumbnailSrc: item.thumbnailSrc,
@@ -37,7 +36,8 @@ function toGalleryProject(item: ExpandableVideoItem): GalleryProject {
 
 /**
  * Creates a ProjectExpand section schema with expandable video gallery.
- * Dark background, full-height layout with logo header and contact footer.
+ * Full-height layout with logo header and expandable gallery.
+ * Background color and text color come from the preset via `style` prop or theme CSS variables.
  *
  * @param props - Project expand section configuration
  * @returns SectionSchema for the project expand section
@@ -72,48 +72,42 @@ export function createProjectExpandSection(props: ProjectExpandProps): SectionSc
     }],
   })
 
-  // Gallery: ExpandableGalleryRow with videos
+  // Gallery: ExpandRowImageRepeater with videos
   // Handle binding expressions: if videos is a binding, always render (platform will resolve)
   const hasVideos = isBindingExpression(props.videos) || props.videos.length > 0
 
   if (hasVideos) {
-    // Convert to GalleryProject array if not a binding expression
+    // Convert to ExpandRowItem array if not a binding expression
     const projects = isBindingExpression(props.videos)
       ? props.videos
-      : props.videos.map(toGalleryProject)
+      : props.videos.map(toExpandRowItem)
 
     widgets.push({
       id: `${sectionId}-gallery`,
-      type: 'ExpandableGalleryRow',
+      type: 'ExpandRowImageRepeater',
       className: 'project-expand__gallery',
+      style: {
+        marginTop: 'var(--spacing-lg, 2.25rem)',
+      },
       props: {
         projects: projects as unknown as SerializableValue,
-        height: '32rem',
-        gap: '4px',
+        height: props.galleryHeight ?? '32rem',
+        gap: 'var(--spacing-xs, 4px)',
         expandedWidth: '32rem',
         transitionDuration: 400,
-        cursorLabel: 'WATCH',
+        cursorLabel: props.cursorLabel ?? 'WATCH',
       },
-      style: {
-        backgroundColor: props.videoBackgroundColor ?? '#1F1F1F',
-      },
-      // Wire click to open-video-modal action for thumbnail clicks
-      on: { click: 'open-video-modal' },
+      // Event wiring from preset (e.g., click → modal.open)
+      ...(props.galleryOn ? { on: props.galleryOn } : {}),
     })
   }
 
-  // Footer: ContactBar
-  const contactBar = createContactBar({
-    id: `${sectionId}-contact`,
-    email: props.email,
-    prompt: props.contactPrompt,
-    textColor: 'light',
-    align: 'end',
-  })
-  widgets.push(contactBar)
-
   return {
     id: sectionId,
+    patternId: 'ProjectExpand',
+    label: props.label ?? 'Project Expand',
+    constrained: props.constrained,
+    colorMode: props.colorMode,
     layout: {
       type: 'flex',
       direction: 'column',
@@ -121,12 +115,14 @@ export function createProjectExpandSection(props: ProjectExpandProps): SectionSc
       align: 'stretch',
     },
     style: {
-      backgroundColor: props.backgroundColor ?? '#0B0A0A',
-      color: '#ffffff',
-      minHeight: '100dvh',
-      padding: '2rem',
+      ...props.style,
     },
-    className: 'project-expand',
+    className: props.className ?? 'section-project-expand',
+    paddingTop: props.paddingTop,
+    paddingBottom: props.paddingBottom,
+    paddingLeft: props.paddingLeft,
+    paddingRight: props.paddingRight,
+    sectionHeight: props.sectionHeight ?? 'viewport',
     widgets,
   }
 }

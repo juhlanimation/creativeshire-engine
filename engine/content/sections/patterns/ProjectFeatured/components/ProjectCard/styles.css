@@ -1,0 +1,210 @@
+/**
+ * ProjectCard factory composite styles.
+ * Styles for the widget tree produced by createProjectCard().
+ *
+ * Reversed state: Single source of truth via data-reversed attribute.
+ * - Set explicitly: data-reversed="true"
+ * - Computed from index: Flex widget computes from data-index
+ *
+ * Reference: bojuhl.com project-card.tsx
+ * - Thumbnail: w-full md:w-[55cqw] shrink-0 min-w-0
+ * - Gap: gap-4 md:gap-2 (16px / 8px)
+ * - Metadata: text-[10px] opacity-60 gap-x-8 gap-y-1 mt-2
+ * - Content: max-w-[280px]
+ * - Title: text-[10px] font-bold uppercase mb-3
+ * - Description: text-[10px] leading-relaxed opacity-80 text-justify
+ */
+
+/* ===========================================
+   BASE LAYOUT
+   =========================================== */
+
+.project-card {
+  width: 100%;
+}
+
+/* Mobile: Stack vertically */
+.project-card {
+  flex-direction: column;
+  gap: var(--spacing-md, 16px);
+}
+
+/* Tablet+: Horizontal layout */
+@container site (min-width: 768px) {
+  .project-card {
+    flex-direction: row;
+    gap: var(--spacing-sm, 14px);
+    justify-content: flex-start;
+  }
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card {
+  flex-direction: row;
+  gap: 14px;
+  justify-content: flex-start;
+}
+
+/* ===========================================
+   REVERSED LAYOUT (data-reversed="true")
+   =========================================== */
+
+/* Mobile: Force thumbnail first for reversed cards */
+.project-card[data-reversed="true"] .project-card__thumbnail-column {
+  order: -1;
+}
+
+/* Tablet+: Reversed layout */
+@container site (min-width: 768px) {
+  .project-card[data-reversed="true"] {
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+  }
+
+  .project-card[data-reversed="true"] .project-card__thumbnail-column {
+    order: unset;
+  }
+
+  .project-card[data-reversed="true"] .project-card__content {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .project-card[data-reversed="true"] .project-card__meta {
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  .project-card[data-reversed="true"] .project-card__description {
+    text-align-last: right;
+  }
+}
+
+/* Fallbacks for browsers without container query support */
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card[data-reversed="true"] {
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card[data-reversed="true"] .project-card__thumbnail-column {
+  order: unset;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card[data-reversed="true"] .project-card__content {
+  align-items: flex-end;
+  text-align: right;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card[data-reversed="true"] .project-card__meta {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card[data-reversed="true"] .project-card__description {
+  text-align-last: right;
+}
+
+/* ===========================================
+   THUMBNAIL COLUMN
+   =========================================== */
+
+.project-card__thumbnail-column {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+
+@container site (min-width: 768px) {
+  .project-card__thumbnail-column {
+    width: var(--card-width, 55cqw);
+    flex-shrink: 0;
+    min-width: 0;
+  }
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) .project-card__thumbnail-column {
+  width: var(--card-width, 55cqw);
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+/* ===========================================
+   METADATA (below thumbnail)
+   =========================================== */
+
+.project-card__meta {
+  margin-top: var(--spacing-sm, 14px);
+}
+
+.project-card__meta {
+  gap: var(--spacing-lg, 32px);
+  flex-wrap: wrap;
+  row-gap: var(--spacing-xs, 4px);
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.project-card__meta-item {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* ===========================================
+   CONTENT COLUMN
+   =========================================== */
+
+.project-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm, 0.5rem);
+  width: 100%;
+  max-width: 280px;
+  align-items: flex-start;
+  text-align: left;
+}
+
+/* ===========================================
+   TYPOGRAPHY
+   =========================================== */
+
+/* Extra specificity ([class]) ensures font-size beats .text-widget[data-scale] */
+.project-card .project-card__title[class] {
+  font-size: var(--font-size-xs, 0.625rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin: 0;
+  width: 100%;
+}
+
+.project-card .project-card__description {
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.625;
+  color: var(--text-primary);
+  margin: 0;
+  width: 100%;
+  text-align: justify;
+  text-align-last: left;
+  white-space: pre-line;
+}
+
+.project-card__footer {
+  display: flex;
+  flex-direction: column;
+}
+
+.project-card .project-card__year {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.project-card__role {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0;
+}

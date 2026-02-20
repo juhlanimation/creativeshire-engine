@@ -1,0 +1,144 @@
+/**
+ * About section pattern — structural CSS.
+ * Two-column layout with bio text and image, mobile background, logo marquee.
+ */
+
+#about {
+  position: relative;
+  box-sizing: border-box;
+  overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+}
+
+/* Mobile background image (30% opacity) */
+#about-mobile-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* Mobile bg image sizing is applied via factory style prop on about-mobile-bg-image widget */
+
+@container site (min-width: 768px) {
+  #about-mobile-bg {
+    display: none;
+  }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) #about-mobile-bg {
+  display: none;
+}
+
+/* Content wrapper - ScrollFade equivalent */
+#about-content {
+  position: relative;
+  display: flex;
+  min-height: var(--viewport-height, 100svh);
+}
+
+/* Bio column - vertically centered on mobile, top-aligned on desktop */
+#about-bio-column {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center horizontally on mobile */
+  padding: 0 var(--spacing-lg, 2rem);
+  min-height: var(--viewport-height, 100svh);
+}
+
+/* Bio inner max-width is applied via factory style prop on about-bio-inner widget */
+
+/* Bio text + signature styling is applied via factory style props on the Text widgets */
+
+/* Image column - hidden on mobile */
+#about-image-column {
+  display: none;
+}
+
+/* Image sizing is applied via factory style prop on about-image widget */
+
+/* Gradient overlay above logo marquee */
+#about-gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(var(--vh, 1svh) * 30);
+  background: linear-gradient(to top, var(--site-outer-bg, #000) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Logo marquee container - absolute positioned at bottom */
+#about-logos {
+  display: none; /* Hidden on mobile */
+  position: absolute;
+  bottom: var(--marquee-offset, 2%);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  overflow: hidden;
+}
+
+/* Tablet+ visibility */
+@container site (min-width: 768px) {
+  #about-logos {
+    display: block;
+  }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) #about-logos {
+  display: block;
+}
+
+/* Marquee track - contains duplicated content for seamless loop */
+#about-logos-track {
+  width: max-content; /* Size to content for accurate -50% translation */
+  will-change: transform;
+}
+
+/* Tablet (768px+) */
+@container site (min-width: 768px) {
+  #about-bio-column {
+    width: 50%;
+    align-items: flex-start;
+    justify-content: flex-start; /* Left-aligned on tablet+ (matches original) */
+    padding: calc(var(--spacing-section-y, 4rem) + var(--bio-offset, 0%)) var(--spacing-xl, 4rem) 0;
+    min-height: auto;
+  }
+
+  #about-image-column {
+    display: block;
+    width: 50%;
+    overflow: hidden;
+    height: var(--viewport-height, 100svh);
+  }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) #about-bio-column {
+  width: 50%;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: calc(var(--spacing-section-y, 4rem) + var(--bio-offset, 0%)) var(--spacing-xl, 4rem) 0;
+  min-height: auto;
+}
+
+:where([data-breakpoint="tablet"], [data-breakpoint="desktop"]) #about-image-column {
+  display: block;
+  width: 50%;
+  overflow: hidden;
+  height: var(--viewport-height, 100svh);
+}
+
+/* Desktop (1024px+) */
+@container site (min-width: 1024px) {
+  #about-bio-column {
+    padding: calc(var(--spacing-section-y, 4rem) + var(--bio-offset, 0%)) var(--spacing-2xl, 6rem) 0;
+  }
+}
+
+/* Fallback for browsers without container query support */
+:where([data-breakpoint="desktop"]) #about-bio-column {
+  padding: calc(var(--spacing-section-y, 4rem) + var(--bio-offset, 0%)) var(--spacing-2xl, 6rem) 0;
+}

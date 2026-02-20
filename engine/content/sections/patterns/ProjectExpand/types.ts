@@ -3,9 +3,12 @@
  * Expandable video gallery (Riot Games style).
  */
 
+import type { WidgetEventMap } from '../../../../schema/widget'
+import type { BaseSectionProps } from '../base'
+
 /**
  * Video item for the expandable gallery.
- * Compatible with GalleryProject interface used by ExpandableGalleryRow.
+ * Compatible with ExpandRowItem interface used by ExpandRowImageRepeater.
  */
 export interface ExpandableVideoItem {
   /** Unique item ID */
@@ -47,19 +50,15 @@ export interface LogoConfig {
 /**
  * Props for the createProjectExpandSection factory.
  */
-export interface ProjectExpandProps {
-  /** Section ID override (default: 'project-expand') */
-  id?: string
+export interface ProjectExpandProps extends BaseSectionProps {
   /** Project/client logo */
   logo: LogoConfig
   /** Videos for expandable gallery - supports binding expressions */
   videos: ExpandableVideoItem[] | string
-  /** Section background color (default: '#0B0A0A') */
-  backgroundColor?: string
-  /** Video area background color (default: '#1F1F1F') */
-  videoBackgroundColor?: string
-  /** Contact email */
-  email: string
-  /** Optional prompt text for contact bar */
-  contactPrompt?: string
+  /** Gallery height */
+  galleryHeight?: string
+  /** Cursor label text */
+  cursorLabel?: string
+  /** Event handlers for the gallery widget (e.g., { click: 'modal.open' }) */
+  galleryOn?: WidgetEventMap
 }

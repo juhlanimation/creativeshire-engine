@@ -1,0 +1,20 @@
+/**
+ * ProjectExpand section pattern — structural + themed CSS.
+ * Section-level colors and spacing use theme CSS variables.
+ * Preset overrides via inline `style` prop take precedence.
+ */
+
+/* Section container: themed padding and text color */
+.section-project-expand {
+  padding: var(--spacing-section-y, 2rem) var(--spacing-section-x, 2rem);
+  color: var(--text-primary, #fff);
+}
+
+/* Gallery area: subtle dark background for video thumbnails */
+.project-expand__gallery {
+  background-color: var(--color-secondary, rgba(255, 255, 255, 0.08));
+  border-radius: var(--radius-sm, 2px);
+}
+
+/* Gallery spacing — gap above the expand-row gallery.
+   margin-top is applied via factory style prop on the gallery widget. */

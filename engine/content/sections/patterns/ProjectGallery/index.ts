@@ -3,17 +3,23 @@
  * Main video with selectable thumbnails (Azuki style).
  */
 
-import type { SectionSchema, WidgetSchema } from '../../../../schema'
-import { createContactBar } from '../../../widgets/patterns'
+import type { SectionSchema, SerializableValue, WidgetSchema } from '../../../../schema'
+import type { SettingConfig } from '../../../../schema/settings'
+import { extractDefaults } from '../../../../schema/settings'
 import { isBindingExpression } from '../utils'
 import type { ProjectGalleryProps } from './types'
+import { meta } from './meta'
+import './components/FlexGalleryCardRepeater'  // scoped widget registration
+
+/** Meta-derived defaults — single source of truth for factory fallbacks. */
+const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
 
 /**
  * Creates a ProjectGallery section schema.
- * Layout: header with logo, main video, thumbnail selector, contact bar.
+ * Layout: header with logo, main video, thumbnail selector, footer.
  *
  * Note: Video switching requires client-side state coordination.
- * The ProjectSelector widget handles thumbnail UI and selection callbacks.
+ * The FlexGalleryCardRepeater widget handles thumbnail UI and selection callbacks.
  * Actual video source switching would be handled by a parent component
  * or behaviour that responds to selection changes.
  *
@@ -22,7 +28,7 @@ import type { ProjectGalleryProps } from './types'
  */
 export function createProjectGallerySection(props: ProjectGalleryProps): SectionSchema {
   const sectionId = props.id ?? 'project-gallery'
-  const defaultIndex = props.defaultActiveIndex ?? 0
+  const defaultIndex = props.defaultActiveIndex ?? (d.defaultActiveIndex as number)
 
   // Header with logo
   const header: WidgetSchema = {
@@ -41,6 +47,7 @@ export function createProjectGallerySection(props: ProjectGalleryProps): Section
           src: props.logo.src,
           alt: props.logo.alt,
           decorative: false,
+          ...(props.logoFilter ? { filter: props.logoFilter } : {}),
         },
         style: {
           width: props.logo.width ?? 300,
@@ -50,9 +57,24 @@ export function createProjectGallerySection(props: ProjectGalleryProps): Section
     ],
   }
 
-  // Build main content based on binding or concrete array
+  // Build video area with selector overlay
   let mainVideo: WidgetSchema
   let selector: WidgetSchema
+
+  // Build selector props with optional customizations
+  const selectorProps: Record<string, SerializableValue> = {
+    activeIndex: defaultIndex,
+    orientation: 'horizontal',
+    showInfo: true,
+    showPlayingIndicator: props.showPlayingIndicator ?? true,
+    showPlayIcon: props.showPlayIcon ?? true,
+    showOverlay: props.showOverlay ?? true,
+  }
+  if (props.thumbnailWidth != null) selectorProps.thumbnailWidth = props.thumbnailWidth
+  if (props.activeThumbnailWidth != null) selectorProps.activeThumbnailWidth = props.activeThumbnailWidth
+  if (props.accentColor != null) selectorProps.accentColor = props.accentColor
+  if (props.thumbnailBorder != null) selectorProps.thumbnailBorder = props.thumbnailBorder
+  if (props.thumbnailBorderRadius != null) selectorProps.thumbnailBorderRadius = props.thumbnailBorderRadius
 
   if (isBindingExpression(props.projects)) {
     // Binding expression: use template for platform expansion
@@ -62,23 +84,29 @@ export function createProjectGallerySection(props: ProjectGalleryProps): Section
       className: 'project-gallery__video',
       props: {
         src: '{{ projects[activeIndex].video }}',
-        autoplay: true,
-        loop: true,
-        muted: true,
         aspectRatio: '16/9',
       },
     }
 
     selector = {
       id: `${sectionId}-selector`,
-      type: 'ProjectSelector',
+      type: 'ProjectGallery__FlexGalleryCardRepeater',
       className: 'project-gallery__selector',
-      props: {
-        projects: props.projects, // Pass binding through
-        activeIndex: defaultIndex,
-        orientation: 'horizontal',
-        showInfo: true,
-      },
+      props: selectorProps,
+      widgets: [{
+        __repeat: props.projects,
+        id: `${sectionId}-selector-item`,
+        type: 'Box',
+        props: {
+          thumbnail: '{{ item.thumbnail }}',
+          title: '{{ item.title }}',
+          videoSrc: '{{ item.video }}',
+          year: '{{ item.year }}',
+          studio: '{{ item.studio }}',
+          role: '{{ item.role }}',
+          posterTime: '{{ item.posterTime }}',
+        },
+      }],
     }
   } else {
     // Concrete array: resolve default project
@@ -90,54 +118,61 @@ export function createProjectGallerySection(props: ProjectGalleryProps): Section
       className: 'project-gallery__video',
       props: {
         src: defaultProject?.video ?? '',
-        autoplay: true,
-        loop: true,
-        muted: true,
         aspectRatio: '16/9',
       },
     }
 
     selector = {
       id: `${sectionId}-selector`,
-      type: 'ProjectSelector',
+      type: 'ProjectGallery__FlexGalleryCardRepeater',
       className: 'project-gallery__selector',
-      props: {
-        projects: props.projects.map((p) => ({
-          id: p.id,
+      props: selectorProps,
+      widgets: props.projects.map((p) => ({
+        id: `${sectionId}-selector-item-${p.id}`,
+        type: 'Box',
+        props: {
           thumbnail: p.thumbnail,
           title: p.title,
+          videoSrc: p.video,
           year: p.year,
           studio: p.studio,
           url: p.url,
-        })),
-        activeIndex: defaultIndex,
-        orientation: 'horizontal',
-        showInfo: true,
-      },
+        },
+      })),
     }
   }
 
-  // ContactBar
-  const contactBar = createContactBar({
-    id: `${sectionId}-contact`,
-    email: props.email,
-    textColor: props.textColor ?? 'light',
-  })
+  // Video area wraps video + selector
+  const videoArea: WidgetSchema = {
+    id: `${sectionId}-video-area`,
+    type: 'Box',
+    className: 'project-gallery__video-area',
+    widgets: [mainVideo, selector],
+  }
+
+  const widgets: WidgetSchema[] = [header, videoArea]
 
   return {
     id: sectionId,
+    patternId: 'ProjectGallery',
+    label: props.label ?? 'Project Gallery',
+    constrained: props.constrained,
+    colorMode: props.colorMode,
     layout: {
       type: 'flex',
       direction: 'column',
       justify: 'between',
     },
     style: {
-      backgroundColor: props.backgroundColor ?? '#C03540',
-      color: props.textColor === 'dark' ? '#000' : '#fff',
-      minHeight: '100dvh',
-      padding: '2rem',
+      ...(props.backgroundColor ? { backgroundColor: props.backgroundColor } : {}),
+      ...props.style,
     },
-    className: 'project-gallery',
-    widgets: [header, mainVideo, selector, contactBar],
+    className: props.className ?? 'section-project-gallery',
+    paddingTop: props.paddingTop,
+    paddingBottom: props.paddingBottom,
+    paddingLeft: props.paddingLeft,
+    paddingRight: props.paddingRight,
+    sectionHeight: props.sectionHeight ?? 'viewport',
+    widgets,
   }
 }

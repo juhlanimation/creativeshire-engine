@@ -1,15 +1,23 @@
 /**
  * ProjectShowcase section pattern.
  * Single project display (The Boy, Mole, Fox & Horse style).
+ *
+ * Backgrounds: set via `style.backgroundColor` from the preset.
+ * Text colors: resolved from theme CSS variables in styles.css.
  */
 
 import type { SectionSchema, WidgetSchema } from '../../../../schema'
-import { createContactBar } from '../../../widgets/patterns'
+import type { SettingConfig } from '../../../../schema/settings'
+import { extractDefaults } from '../../../../schema/settings'
 import type { ProjectShowcaseProps } from './types'
+import { meta } from './meta'
+import './components/FlexButtonRepeater'  // scoped widget registration
+
+/** Meta-derived defaults — single source of truth for factory fallbacks. */
+const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
 
 export function createProjectShowcaseSection(props: ProjectShowcaseProps): SectionSchema {
   const sectionId = props.id ?? 'project-showcase'
-  const isDark = props.textColor !== 'dark'
 
   // Header with logo and info
   const header: WidgetSchema = {
@@ -33,16 +41,16 @@ export function createProjectShowcaseSection(props: ProjectShowcaseProps): Secti
       {
         id: `${sectionId}-info`,
         type: 'Flex',
-        props: { direction: 'column', align: 'end', gap: '0.25rem' },
+        props: { direction: 'column', align: 'end', gap: 'var(--spacing-xs, 0.25rem)' },
         widgets: [
           {
             type: 'Text',
-            props: { content: props.studio, as: 'span' },
+            props: { content: props.studio, as: props.studioScale ?? (d.studioScale as string) },
             className: 'project-showcase__studio'
           },
           {
             type: 'Text',
-            props: { content: props.role, as: 'span' },
+            props: { content: props.role, as: props.roleScale ?? (d.roleScale as string) },
             className: 'project-showcase__role'
           }
         ]
@@ -58,24 +66,42 @@ export function createProjectShowcaseSection(props: ProjectShowcaseProps): Secti
       props: {
         src: props.videoSrc,
         poster: props.videoPoster,
-        autoplay: true,
-        loop: true,
-        muted: true,
+        ...(props.posterTime != null ? { posterTime: props.posterTime } : {}),
         aspectRatio: '16/9'
       },
       className: 'project-showcase__video'
     }
   ]
 
-  // Add shot indicator if shots provided
-  if (props.shots && props.shots.length > 0) {
+  // Add shot indicator if shots provided (positioned via Box, not baked into widget)
+  if (props.shots) {
     videoWidgets.push({
-      id: `${sectionId}-shots`,
-      type: 'ShotIndicator',
-      props: {
-        shots: props.shots,
-        position: 'top-right'
-      }
+      id: `${sectionId}-shots-container`,
+      type: 'Box',
+      style: {
+        position: 'absolute',
+        top: 'var(--spacing-md, 1rem)',
+        right: 'var(--spacing-md, 1rem)',
+        zIndex: 10,
+      },
+      widgets: [{
+        id: `${sectionId}-shots`,
+        type: 'ProjectShowcase__FlexButtonRepeater',
+        props: {
+          prefix: 'sh',
+        },
+        ...(typeof props.shots === 'string' ? {
+          widgets: [{
+            __repeat: props.shots,
+            id: 'shot-marker',
+            type: 'Button',
+            props: {
+              label: '{{ item.frame }}',
+              'data-video-src': '{{ item.videoSrc }}',
+            },
+          }]
+        } : {})
+      }]
     })
   }
 
@@ -83,31 +109,32 @@ export function createProjectShowcaseSection(props: ProjectShowcaseProps): Secti
     id: `${sectionId}-video-container`,
     type: 'Box',
     className: 'project-showcase__video-container',
-    style: props.videoBorder ? { border: '1px solid currentColor' } : undefined,
+    style: { position: 'relative', ...(props.videoBorder ? { border: '1px solid currentColor' } : {}) },
     widgets: videoWidgets
   }
 
-  // ContactBar
-  const contactBar = createContactBar({
-    id: `${sectionId}-contact`,
-    email: props.email,
-    textColor: props.textColor ?? 'light'
-  })
+  const widgets: WidgetSchema[] = [header, videoContainer]
 
   return {
     id: sectionId,
+    patternId: 'ProjectShowcase',
+    label: props.label ?? 'Project Showcase',
+    constrained: props.constrained,
+    colorMode: props.colorMode,
     layout: {
       type: 'flex',
       direction: 'column',
       justify: 'between'
     },
     style: {
-      backgroundColor: props.backgroundColor ?? '#FAF6ED',
-      color: isDark ? '#fff' : '#000',
-      minHeight: '100dvh',
-      padding: '2rem'
+      ...props.style,
     },
-    className: 'project-showcase',
-    widgets: [header, videoContainer, contactBar]
+    className: ['section-project-showcase', props.className].filter(Boolean).join(' '),
+    paddingTop: props.paddingTop,
+    paddingBottom: props.paddingBottom,
+    paddingLeft: props.paddingLeft,
+    paddingRight: props.paddingRight,
+    sectionHeight: props.sectionHeight ?? 'viewport',
+    widgets
   }
 }

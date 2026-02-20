@@ -41,32 +41,5 @@ export const meta = defineSectionMeta<ProjectVideoGridProps>({
       description: 'Play videos on hover',
       group: 'Behavior',
     },
-    backgroundColor: {
-      type: 'color',
-      label: 'Background Color',
-      default: '#000000',
-      description: 'Section background color',
-      group: 'Style',
-    },
-    textColor: {
-      type: 'select',
-      label: 'Text Color',
-      default: 'light',
-      choices: [
-        { value: 'light', label: 'Light' },
-        { value: 'dark', label: 'Dark' },
-      ],
-      description: 'Text color mode',
-      group: 'Style',
-    },
-    email: {
-      type: 'text',
-      label: 'Contact Email',
-      default: '',
-      description: 'Email for contact bar',
-      validation: { required: true, maxLength: 320, pattern: '^[^@]+@[^@]+\\.[^@]+$', message: 'Please enter a valid email address' },
-      group: 'Contact',
-      bindable: true,
-    },
   },
 })

@@ -4,9 +4,14 @@
  */
 
 import type { SectionSchema, WidgetSchema } from '../../../../schema'
-import { createContactBar } from '../../../widgets/patterns'
+import type { SettingConfig } from '../../../../schema/settings'
+import { extractDefaults } from '../../../../schema/settings'
 import { isBindingExpression } from '../utils'
 import type { ProjectVideoGridProps, VideoGridItem } from './types'
+import { meta } from './meta'
+
+/** Meta-derived defaults — single source of truth for factory fallbacks. */
+const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
 
 /**
  * Creates a video widget from a VideoGridItem.
@@ -57,7 +62,9 @@ function createTemplateVideoWidget(
  * Layout:
  * - Header with project logo
  * - Two-column grid with mixed aspect ratio videos
- * - ContactBar at bottom
+ *
+ * Visual styles (padding, gap, colors) are in styles.css using theme variables.
+ * Background color should be set via `style.backgroundColor` from the preset.
  *
  * @param props - ProjectVideoGrid section configuration
  * @returns SectionSchema for the project video grid section
@@ -66,7 +73,7 @@ export function createProjectVideoGridSection(
   props: ProjectVideoGridProps
 ): SectionSchema {
   const sectionId = props.id ?? 'project-video-grid'
-  const hoverPlay = props.hoverPlay ?? true
+  const hoverPlay = props.hoverPlay ?? (d.hoverPlay as boolean)
 
   // Header with logo
   const header: WidgetSchema = {
@@ -106,7 +113,7 @@ export function createProjectVideoGridSection(
       id: `${sectionId}-left-col`,
       type: 'Flex',
       className: 'project-video-grid__column project-video-grid__column--left',
-      props: { direction: 'column', gap: '0.5rem' },
+      props: { direction: 'column' },
       widgets: [
         {
           ...templateVideo,
@@ -123,7 +130,7 @@ export function createProjectVideoGridSection(
       id: `${sectionId}-right-col`,
       type: 'Flex',
       className: 'project-video-grid__column project-video-grid__column--right',
-      props: { direction: 'column', gap: '0.5rem' },
+      props: { direction: 'column' },
       widgets: [
         {
           ...templateVideo,
@@ -139,7 +146,7 @@ export function createProjectVideoGridSection(
       id: `${sectionId}-grid`,
       type: 'Grid',
       className: 'project-video-grid__grid',
-      props: { columns: 2, gap: '0.5rem' },
+      props: { columns: 2 },
       widgets: [leftColumn, rightColumn],
     }
   } else {
@@ -151,7 +158,7 @@ export function createProjectVideoGridSection(
       id: `${sectionId}-left-col`,
       type: 'Flex',
       className: 'project-video-grid__column project-video-grid__column--left',
-      props: { direction: 'column', gap: '0.5rem' },
+      props: { direction: 'column' },
       widgets: leftVideos.map((v, i) =>
         createVideoWidget(v, i, 'left', sectionId, hoverPlay)
       ),
@@ -161,7 +168,7 @@ export function createProjectVideoGridSection(
       id: `${sectionId}-right-col`,
       type: 'Flex',
       className: 'project-video-grid__column project-video-grid__column--right',
-      props: { direction: 'column', gap: '0.5rem' },
+      props: { direction: 'column' },
       widgets: rightVideos.map((v, i) =>
         createVideoWidget(v, i, 'right', sectionId, hoverPlay)
       ),
@@ -171,32 +178,33 @@ export function createProjectVideoGridSection(
       id: `${sectionId}-grid`,
       type: 'Grid',
       className: 'project-video-grid__grid',
-      props: { columns: 2, gap: '0.5rem' },
+      props: { columns: 2 },
       widgets: [leftColumn, rightColumn],
     }
   }
 
-  // ContactBar
-  const contactBar = createContactBar({
-    id: `${sectionId}-contact`,
-    email: props.email,
-    textColor: props.textColor ?? 'light',
-  })
+  const widgets: WidgetSchema[] = [header, grid]
 
   return {
     id: sectionId,
+    patternId: 'ProjectVideoGrid',
+    label: props.label ?? 'Project Video Grid',
+    constrained: props.constrained,
+    colorMode: props.colorMode,
     layout: {
       type: 'flex',
       direction: 'column',
       justify: 'between',
     },
     style: {
-      backgroundColor: props.backgroundColor ?? '#000000',
-      color: props.textColor === 'dark' ? '#000' : '#fff',
-      minHeight: '100dvh',
-      padding: '2rem',
+      ...props.style,
     },
-    className: 'project-video-grid',
-    widgets: [header, grid, contactBar],
+    className: props.className ?? 'section-project-video-grid',
+    paddingTop: props.paddingTop,
+    paddingBottom: props.paddingBottom,
+    paddingLeft: props.paddingLeft,
+    paddingRight: props.paddingRight,
+    sectionHeight: props.sectionHeight ?? 'viewport',
+    widgets,
   }
 }

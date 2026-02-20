@@ -1,7 +1,13 @@
 /**
  * ProjectCompare section props.
- * Before/after video comparison (The 21 style).
+ * Before/after video comparison with draggable divider.
+ *
+ * Backgrounds: use `style.backgroundColor` (from BaseSectionProps).
+ * Text colors: resolved from theme CSS variables.
  */
+
+import type { TextElement } from '../../../widgets/primitives/Text/types'
+import type { BaseSectionProps } from '../base'
 
 export interface LogoConfig {
   src: string
@@ -9,9 +15,7 @@ export interface LogoConfig {
   width?: number
 }
 
-export interface ProjectCompareProps {
-  /** Section ID */
-  id?: string
+export interface ProjectCompareProps extends BaseSectionProps {
   /** Project logo */
   logo: LogoConfig
   /** "Before" video (breakdown/process) */
@@ -22,14 +26,12 @@ export interface ProjectCompareProps {
   beforeLabel?: string
   /** Label for after video (optional) */
   afterLabel?: string
-  /** Project description text (optional) */
+  /** Project description text (optional, supports HTML) */
   description?: string
-  /** Background color */
-  backgroundColor?: string
-  /** Video container background color */
-  videoBackgroundColor?: string
-  /** Description text color */
-  descriptionColor?: string
-  /** Contact email */
-  email: string
+  /** Whether description contains HTML */
+  descriptionHtml?: boolean
+
+  // === Typography scale ===
+  /** Scale for description text (default: 'p') */
+  descriptionScale?: TextElement
 }

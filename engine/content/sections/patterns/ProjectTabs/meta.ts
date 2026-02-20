@@ -3,6 +3,7 @@
  */
 
 import { defineSectionMeta } from '../../../../schema/meta'
+import { textScaleSetting } from '../../../../schema/settings-helpers'
 import type { ProjectTabsProps } from './types'
 
 export const meta = defineSectionMeta<ProjectTabsProps>({
@@ -42,19 +43,11 @@ export const meta = defineSectionMeta<ProjectTabsProps>({
       description: 'Optional external link in tab bar (e.g., Instagram)',
       group: 'Content',
     },
-    backgroundColor: {
-      type: 'color',
-      label: 'Background',
-      default: '#000000',
-      group: 'Style',
-    },
-    email: {
-      type: 'text',
-      label: 'Email',
-      default: '',
-      validation: { required: true, maxLength: 320, pattern: '^[^@]+@[^@]+\\.[^@]+$', message: 'Please enter a valid email address' },
-      group: 'Contact',
-      bindable: true,
-    },
+
+    // Typography
+    titleScale: textScaleSetting('Title Scale', 'h3'),
+    clientScale: textScaleSetting('Client Scale', 'body'),
+    studioScale: textScaleSetting('Studio Scale', 'body'),
+    roleScale: textScaleSetting('Role Scale', 'body'),
   },
 })

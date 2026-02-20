@@ -1,0 +1,27 @@
+/**
+ * ProjectVideoGrid section pattern — visual CSS using theme variables.
+ * Background color is set via the `style` prop from presets.
+ * Text color inherits from the theme's colorMode palette.
+ */
+
+/* Section container: padding via spacing tokens, text color via theme */
+.section.section-project-video-grid {
+  padding: var(--spacing-section-y, 2rem) var(--spacing-section-x, 2rem);
+  color: var(--text-primary, inherit);
+}
+
+/* Grid: gap between columns */
+.project-video-grid__grid {
+  gap: var(--spacing-xs, 0.5rem);
+}
+
+/* Columns: gap between stacked videos */
+.project-video-grid__column {
+  gap: var(--spacing-xs, 0.5rem);
+}
+
+/* Videos: border radius from theme */
+.project-video-grid__video {
+  border-radius: var(--radius-sm, 0);
+  overflow: hidden;
+}

@@ -10,7 +10,7 @@
 
 import type { ReactNode } from 'react'
 import type { SectionProps, LayoutConfig } from './types'
-import './styles.css'
+import { toCssGap, toCssPadding } from '../widgets/layout/utils'
 
 /**
  * Computes inline styles from layout configuration.
@@ -21,9 +21,14 @@ function getLayoutStyles(layout: LayoutConfig, style?: React.CSSProperties): Rea
     ...style,
   }
 
-  // Gap can be number or string
+  // Gap: supports numbers, raw strings, and layout preset names
   if (layout.gap !== undefined) {
-    styles.gap = typeof layout.gap === 'number' ? `${layout.gap}px` : layout.gap
+    styles.gap = toCssGap(layout.gap, layout.gapScale)
+  }
+
+  // Padding: supports layout preset names and raw CSS strings
+  if (layout.padding !== undefined) {
+    styles.padding = toCssPadding(layout.padding, layout.paddingScale)
   }
 
   // Grid-specific styles
@@ -51,9 +56,29 @@ export default function Section({
   style,
   className,
   constrained,
+  paddingTop,
+  paddingBottom,
+  paddingLeft,
+  paddingRight,
+  sectionHeight,
   children,
 }: SectionProps): ReactNode {
-  const computedStyle = getLayoutStyles(layout, style)
+  // Theme baseline: paint background + text color from CSS variables.
+  // Inline styles ensure these are in SSR HTML (zero FOUC) and override
+  // any CSS loading-order issues in Storybook HMR.
+  // Section-specific `style` overrides these defaults via spread order.
+  // Container settings (padding, sectionHeight) override factory styles last.
+  const computedStyle: React.CSSProperties = {
+    backgroundColor: 'var(--site-outer-bg)',
+    color: 'var(--text-primary)',
+    ...getLayoutStyles(layout, style),
+    ...(paddingTop ? { paddingTop: `${paddingTop}px` } : undefined),
+    ...(paddingBottom ? { paddingBottom: `${paddingBottom}px` } : undefined),
+    ...(paddingLeft ? { paddingLeft: `${paddingLeft}px` } : undefined),
+    ...(paddingRight ? { paddingRight: `${paddingRight}px` } : undefined),
+    ...(sectionHeight === 'viewport' && { minHeight: 'var(--viewport-height, 100dvh)' }),
+    ...(sectionHeight === 'viewport-fixed' && { height: 'var(--viewport-height, 100dvh)', overflow: 'hidden' }),
+  }
   const computedClassName = className ? `section ${className}` : 'section'
 
   return (
@@ -65,7 +90,7 @@ export default function Section({
       data-align={layout.align}
       data-justify={layout.justify}
       data-constrained={constrained ? '' : undefined}
-      style={Object.keys(computedStyle).length > 0 ? computedStyle : undefined}
+      style={computedStyle}
     >
       {children}
     </section>

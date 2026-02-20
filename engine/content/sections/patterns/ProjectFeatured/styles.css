@@ -1,0 +1,15 @@
+/**
+ * FeaturedProjects section pattern — structural CSS.
+ * Full-width container with centered, max-width content wrapper.
+ *
+ * Background color is handled by SectionRenderer via per-section
+ * colorMode palette (painted on [data-section-id] wrapper).
+ * Gap is set via layout preset on the Flex widget (gap prop).
+ */
+
+/* Content wrapper - matches content-container px-2 from reference */
+.featured-projects__content {
+  max-width: var(--site-max-width, 2400px);
+  margin: 0 auto; /* Centered horizontally */
+  padding: 0 var(--spacing-sm, 8px); /* px-2 horizontal padding only */
+}

@@ -1,0 +1,218 @@
+/**
+ * SelectorCard styles.
+ * Content Layer (L1) - structure only.
+ * Internal to FlexGalleryCardRepeater.
+ *
+ * Single thumbnail card with info overlay inside the card,
+ * playing indicator, play icon, and animated progress bar.
+ */
+
+/* Semantic accent color mapping */
+.selector-card[data-accent="accent"] { --sc-accent: var(--accent); }
+.selector-card[data-accent="interaction"] { --sc-accent: var(--interaction); }
+.selector-card[data-accent="primary"] { --sc-accent: var(--text-primary); }
+
+/* Semantic border radius mapping */
+.selector-card[data-radius="none"] { --sc-radius: 0; }
+.selector-card[data-radius="sm"] { --sc-radius: var(--radius-sm, 4px); }
+.selector-card[data-radius="md"] { --sc-radius: var(--radius-md, 8px); }
+.selector-card[data-radius="lg"] { --sc-radius: var(--radius-lg, 12px); }
+.selector-card[data-radius="full"] { --sc-radius: 9999px; }
+
+.selector-card {
+  position: relative;
+  cursor: pointer;
+  flex-shrink: 0;
+  overflow: hidden;
+  z-index: 1;
+  transition: all var(--duration-normal, 0.3s) var(--ease-out, ease-out);
+}
+
+.selector-card--hovered {
+  z-index: 10;
+}
+
+.selector-card--active {
+  z-index: 5;
+}
+
+.selector-card__thumbnail {
+  position: relative;
+  width: var(--ps-thumb-w, 192px);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--sc-radius, var(--ps-radius, 0));
+  border: var(--ps-border, 1px solid rgba(255, 255, 255, 0.8));
+  background: color-mix(in srgb, var(--site-outer-bg, #000) 20%, transparent);
+  transition: width var(--duration-normal, 0.3s) var(--ease-out, ease-out);
+}
+
+.selector-card--active .selector-card__thumbnail {
+  width: var(--ps-active-thumb-w, 220px);
+}
+
+.flex-gcr--vertical .selector-card__thumbnail {
+  width: 100%;
+}
+
+/* --- Media (image/video) --- */
+
+.selector-card__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity var(--duration-fast, 0.2s) var(--ease-default, ease);
+}
+
+.selector-card:not(.selector-card--active) .selector-card__media {
+  opacity: 0.7;
+}
+
+.selector-card:hover .selector-card__media {
+  opacity: 1;
+}
+
+/* --- Loading spinner --- */
+
+.selector-card__loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--site-outer-bg, #000) 30%, transparent);
+}
+
+.selector-card__spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid color-mix(in srgb, var(--text-primary, white) 30%, transparent);
+  border-top-color: color-mix(in srgb, var(--text-primary, white) 80%, transparent);
+  border-radius: 50%;
+  --spin-duration: 0.8s;
+}
+
+/* --- Dark overlay --- */
+
+.selector-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--site-outer-bg, #000) 30%, transparent);
+  pointer-events: none;
+  transition: opacity var(--duration-fast, 0.2s) var(--ease-default, ease);
+}
+
+.selector-card__overlay--active {
+  background: color-mix(in srgb, var(--site-outer-bg, #000) 30%, transparent);
+}
+
+/* --- Info overlay (centered inside the card) --- */
+
+.selector-card__info {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-xs, 0.5rem);
+  color: var(--text-primary, white);
+  text-align: center;
+  pointer-events: none;
+  transition: opacity var(--duration-normal, 0.3s) var(--ease-default, ease);
+  z-index: 3;
+}
+
+.selector-card__role {
+  font-family: var(--font-ui, system-ui, sans-serif);
+  font-size: var(--font-size-xs, 0.625rem);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+  margin-bottom: 2px;
+}
+
+.selector-card__title {
+  font-family: var(--font-ui, system-ui, sans-serif);
+  font-size: var(--font-size-small, 0.75rem);
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+
+.selector-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-family: var(--font-ui, system-ui, sans-serif);
+  font-size: var(--font-size-xs, 0.625rem);
+  opacity: 0.7;
+}
+
+.selector-card__meta-sep {
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.4;
+}
+
+/* --- Playing indicator (top-left, active card) --- */
+
+.selector-card__playing {
+  position: absolute;
+  top: var(--spacing-xs, 0.5rem);
+  left: var(--spacing-xs, 0.5rem);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.selector-card__playing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sc-accent, var(--ps-accent, #fff));
+  --pulse-duration: 1.5s;
+  flex-shrink: 0;
+}
+
+.selector-card__playing-label {
+  font-family: var(--font-ui, system-ui, sans-serif);
+  font-size: var(--font-size-xs, 0.625rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: color-mix(in srgb, var(--text-primary, white) 80%, transparent);
+  line-height: 1;
+}
+
+/* --- Play icon (top-left, inactive hover) --- */
+
+.selector-card__play-icon {
+  position: absolute;
+  top: var(--spacing-xs, 0.5rem);
+  left: var(--spacing-xs, 0.5rem);
+  color: var(--text-primary, white);
+  pointer-events: none;
+  z-index: 4;
+  filter: drop-shadow(var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.5)));
+}
+
+/* --- Progress bar (bottom edge, animated width) --- */
+
+.selector-card__progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: var(--sc-accent, var(--ps-accent, var(--accent, #fff)));
+  transition: width 100ms linear;
+  z-index: 4;
+}

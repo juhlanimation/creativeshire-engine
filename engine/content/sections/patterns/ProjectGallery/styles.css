@@ -1,0 +1,26 @@
+/**
+ * ProjectGallery section pattern — structural CSS.
+ * Video area with overlay selector positioned at bottom-center.
+ */
+
+.section-project-gallery {
+  padding: var(--spacing-section-y, 2rem) var(--spacing-section-x, 2rem);
+}
+
+/* Video area: relative container so selector can overlay */
+.project-gallery__video-area {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Selector overlays bottom-center of video area */
+.project-gallery__selector {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+}

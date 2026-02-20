@@ -1,0 +1,204 @@
+/* StackVideoShowcase - generic structural defaults.
+ * Presets override sizing, fonts, and spacing via section class selectors. */
+
+.stack-video-showcase {
+  position: relative;
+  width: 100%;
+}
+
+/* =============================================================================
+ * VIDEO LAYER (standard mode — position:fixed)
+ * Covers the viewport directly. Works because section containment is removed
+ * and no transform is applied to non-scroll-behaviour sections.
+ * ============================================================================= */
+
+.stack-video-showcase__video-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-slow, 500ms) var(--ease-default, ease);
+}
+
+.stack-video-showcase__video-layer--active {
+  opacity: 1;
+}
+
+/* z-index elevation for section wrapper lives in TeamShowcase/styles.css
+ * (section owns the relationship with [data-section-id]) */
+
+.stack-video-showcase__video-layer .stack-video-showcase__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--duration-slow, 500ms) var(--ease-default, ease);
+}
+
+.stack-video-showcase__video-layer .stack-video-showcase__video--active {
+  opacity: 1;
+}
+
+/* =============================================================================
+ * VIEWPORT OVERLAY (GSAP ScrollSmoother fallback)
+ * Portaled to foreground layer — outside #smooth-content's transform.
+ * Only used when GSAP ScrollSmoother is active.
+ * ============================================================================= */
+
+.stack-video-showcase__viewport-overlay {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--duration-slow, 500ms) var(--ease-default, ease);
+  pointer-events: none;
+}
+
+.stack-video-showcase__viewport-overlay--active {
+  opacity: 1;
+}
+
+.stack-video-showcase__viewport-videos {
+  position: absolute;
+  inset: 0;
+}
+
+.stack-video-showcase__viewport-videos .stack-video-showcase__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--duration-slow, 500ms) var(--ease-default, ease);
+}
+
+.stack-video-showcase__viewport-videos .stack-video-showcase__video--active {
+  opacity: 1;
+}
+
+/* Display names inside viewport overlay — centered, blend for contrast.
+ * Preset styles override font-size, padding, etc. */
+.stack-video-showcase__overlay-names {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  mix-blend-mode: difference;
+  color: white;
+}
+
+/* =============================================================================
+ * NAMES (shared base styles)
+ * In-section names handle interaction. Overlay names are display-only (GSAP).
+ * ============================================================================= */
+
+.stack-video-showcase__names {
+  position: relative;
+  z-index: 51;
+  display: flex;
+  flex-direction: column;
+  mix-blend-mode: difference;
+  color: white;
+  padding-top: var(--showcase-padding-y, 0);
+  padding-bottom: var(--showcase-padding-y, 0);
+}
+
+.stack-video-showcase__label {
+  margin-bottom: var(--spacing-sm, 0.5rem);
+  padding-left: var(--showcase-padding-x, 0);
+  padding-right: var(--showcase-padding-x, 0);
+}
+
+.stack-video-showcase__name {
+  font-weight: 900;
+  text-transform: uppercase;
+  margin: 0;
+  transition: opacity var(--duration-normal, 300ms) var(--ease-default, ease);
+  cursor: default;
+  user-select: none;
+  padding-left: var(--showcase-padding-x, 0);
+  padding-right: var(--showcase-padding-x, 0);
+}
+
+.stack-video-showcase__name--clickable {
+  cursor: pointer;
+}
+
+/* =============================================================================
+ * PRESET-DERIVED DEFAULTS
+ * Sizing, fonts, and spacing defaults (originally from preset section scopes).
+ * Presets can override via higher-specificity section class selectors.
+ * ============================================================================= */
+
+/* StackVideoShowcase fills the section */
+.stack-video-showcase {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Names wrapper: centered vertically */
+.stack-video-showcase__names {
+  flex: 1;
+  justify-content: center;
+}
+
+/* Label: responsive body text */
+.stack-video-showcase__label {
+  font-family: var(--font-paragraph, system-ui, sans-serif);
+  font-size: var(--font-size-body, 1rem);
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+
+/* Member names: responsive font sizes */
+.stack-video-showcase__name {
+  font-family: var(--font-heading, var(--font-title, system-ui, sans-serif));
+  font-size: 12cqw;
+  letter-spacing: -0.025em;
+  line-height: 0.9;
+}
+
+/* Gap between names */
+.stack-video-showcase__name + .stack-video-showcase__name {
+  margin-top: var(--spacing-md, 1rem);
+}
+
+/* sm breakpoint (640px) */
+@media (min-width: 640px) {
+  .stack-video-showcase__name {
+    font-size: 10cqw;
+  }
+}
+
+/* md breakpoint (768px) */
+@media (min-width: 768px) {
+  .stack-video-showcase__name {
+    font-size: 8cqw;
+  }
+}
+
+/* lg breakpoint (1024px) */
+@media (min-width: 1024px) {
+  .stack-video-showcase__name {
+    font-size: var(--font-size-display, 4.5rem);
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .stack-video-showcase__name + .stack-video-showcase__name {
+    margin-top: 0;
+  }
+}
+
+/* xl breakpoint (1280px) */
+@media (min-width: 1280px) {
+  .stack-video-showcase__name {
+    font-size: var(--font-size-display, 6rem);
+  }
+}

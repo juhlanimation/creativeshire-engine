@@ -1,0 +1,37 @@
+/**
+ * ProjectShowcase section pattern — structural + themed CSS.
+ * Backgrounds are set via `style.backgroundColor` from the preset.
+ * Text colors and spacing use theme CSS variables.
+ */
+
+.section.section-project-showcase {
+  padding: var(--spacing-section-y, 2rem) var(--spacing-section-x, 2rem);
+  color: var(--text-primary, inherit);
+}
+
+/* Header row: logo left, info right */
+.project-showcase__header {
+  width: 100%;
+}
+
+/* Studio name */
+.project-showcase__studio {
+  font-family: var(--font-ui, system-ui, sans-serif);
+  font-size: 0.875rem;
+  color: var(--text-secondary, currentColor);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Role text */
+.project-showcase__role {
+  font-family: var(--font-ui, system-ui, sans-serif);
+  font-size: 0.875rem;
+  color: var(--text-secondary, currentColor);
+}
+
+/* Video container */
+.project-showcase__video-container {
+  width: 100%;
+  margin-top: var(--spacing-lg, 2rem);
+}

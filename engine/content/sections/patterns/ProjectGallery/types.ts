@@ -3,6 +3,8 @@
  * Main video with selectable project thumbnails (Azuki style).
  */
 
+import type { BaseSectionProps } from '../base'
+
 export interface GalleryProject {
   /** Unique identifier */
   id: string
@@ -27,9 +29,7 @@ export interface LogoConfig {
   invert?: boolean
 }
 
-export interface ProjectGalleryProps {
-  /** Section ID */
-  id?: string
+export interface ProjectGalleryProps extends BaseSectionProps {
   /** Project logo */
   logo: LogoConfig
   /** Projects in gallery OR binding expression */
@@ -40,6 +40,22 @@ export interface ProjectGalleryProps {
   backgroundColor?: string
   /** Text color mode */
   textColor?: 'light' | 'dark'
-  /** Contact email */
-  email: string
+  /** Logo filter (e.g. binding expression for invert) */
+  logoFilter?: string
+  /** Thumbnail width in pixels for selector */
+  thumbnailWidth?: number
+  /** Active thumbnail width in pixels for selector */
+  activeThumbnailWidth?: number
+  /** Accent color for selector */
+  accentColor?: string
+  /** Show playing indicator on selector */
+  showPlayingIndicator?: boolean
+  /** Show play icon on selector */
+  showPlayIcon?: boolean
+  /** Show overlay on selector */
+  showOverlay?: boolean
+  /** Thumbnail border style */
+  thumbnailBorder?: string
+  /** Thumbnail border radius */
+  thumbnailBorderRadius?: string
 }

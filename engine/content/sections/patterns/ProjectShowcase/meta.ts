@@ -3,6 +3,7 @@
  */
 
 import { defineSectionMeta } from '../../../../schema/meta'
+import { textScaleSetting } from '../../../../schema/settings-helpers'
 import type { ProjectShowcaseProps } from './types'
 
 export const meta = defineSectionMeta<ProjectShowcaseProps>({
@@ -73,29 +74,9 @@ export const meta = defineSectionMeta<ProjectShowcaseProps>({
       description: 'Shot numbers for navigation (optional)',
       group: 'Content',
     },
-    backgroundColor: {
-      type: 'color',
-      label: 'Background',
-      default: '#FAF6ED',
-      group: 'Style',
-    },
-    textColor: {
-      type: 'select',
-      label: 'Text Color',
-      default: 'dark',
-      choices: [
-        { value: 'light', label: 'Light' },
-        { value: 'dark', label: 'Dark' }
-      ],
-      group: 'Style',
-    },
-    email: {
-      type: 'text',
-      label: 'Email',
-      default: '',
-      validation: { required: true, maxLength: 320, pattern: '^[^@]+@[^@]+\\.[^@]+$', message: 'Please enter a valid email address' },
-      group: 'Contact',
-      bindable: true,
-    },
+
+    // Typography
+    studioScale: textScaleSetting('Studio Scale', 'small'),
+    roleScale: textScaleSetting('Role Scale', 'small'),
   },
 })

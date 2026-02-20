@@ -1,11 +1,20 @@
 /**
  * ProjectCompare section pattern.
- * Before/after video comparison (The 21 style).
+ * Before/after video comparison with draggable divider.
+ *
+ * Backgrounds: set via `style.backgroundColor` from the preset.
+ * Text colors: resolved from theme CSS variables in styles.css.
  */
 
 import type { SectionSchema, WidgetSchema } from '../../../../schema'
-import { createContactBar } from '../../../widgets/patterns'
+import type { SettingConfig } from '../../../../schema/settings'
+import { extractDefaults } from '../../../../schema/settings'
 import type { ProjectCompareProps } from './types'
+import { meta } from './meta'
+import './components/VideoCompare'  // scoped widget registration
+
+/** Meta-derived defaults — single source of truth for factory fallbacks. */
+const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
 
 export function createProjectCompareSection(props: ProjectCompareProps): SectionSchema {
   const sectionId = props.id ?? 'project-compare'
@@ -31,7 +40,7 @@ export function createProjectCompareSection(props: ProjectCompareProps): Section
   // VideoCompare widget
   const videoCompare: WidgetSchema = {
     id: `${sectionId}-compare`,
-    type: 'VideoCompare',
+    type: 'ProjectCompare__VideoCompare',
     className: 'project-compare__video',
     props: {
       beforeSrc: props.beforeVideo,
@@ -40,9 +49,6 @@ export function createProjectCompareSection(props: ProjectCompareProps): Section
       afterLabel: props.afterLabel,
       aspectRatio: '16/9',
       initialPosition: 50
-    },
-    style: {
-      backgroundColor: props.videoBackgroundColor ?? '#3B3D2E'
     }
   }
 
@@ -56,34 +62,32 @@ export function createProjectCompareSection(props: ProjectCompareProps): Section
       className: 'project-compare__description',
       props: {
         content: props.description,
-        as: 'p'
-      },
-      style: {
-        color: props.descriptionColor ?? props.backgroundColor ?? '#FDF9F0'
+        ...(props.descriptionHtml !== false ? { html: true } : {}),
+        as: props.descriptionScale ?? (d.descriptionScale as string)
       }
     })
   }
 
-  // ContactBar
-  widgets.push(createContactBar({
-    id: `${sectionId}-contact`,
-    email: props.email,
-    textColor: 'dark'
-  }))
-
   return {
     id: sectionId,
+    patternId: 'ProjectCompare',
+    label: props.label ?? 'Project Compare',
+    constrained: props.constrained,
+    colorMode: props.colorMode,
     layout: {
       type: 'flex',
       direction: 'column',
       justify: 'between'
     },
     style: {
-      backgroundColor: props.backgroundColor ?? '#FDF9F0',
-      minHeight: '100dvh',
-      padding: '2rem'
+      ...props.style,
     },
-    className: 'project-compare',
+    className: ['section-project-compare', props.className].filter(Boolean).join(' '),
+    paddingTop: props.paddingTop,
+    paddingBottom: props.paddingBottom,
+    paddingLeft: props.paddingLeft,
+    paddingRight: props.paddingRight,
+    sectionHeight: props.sectionHeight ?? 'viewport',
     widgets
   }
 }

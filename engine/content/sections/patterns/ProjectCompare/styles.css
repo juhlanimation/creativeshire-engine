@@ -1,0 +1,39 @@
+/**
+ * ProjectCompare section pattern — structural + themed CSS.
+ * Backgrounds set via preset `style` prop (inline on section wrapper).
+ * All visual tokens use theme CSS variables with sensible fallbacks.
+ */
+
+/* Section: padding via spacing tokens, flex column layout */
+.section.section-project-compare {
+  padding: var(--spacing-section-y, 4rem) var(--spacing-section-x, 2rem);
+  gap: var(--spacing-lg, 2rem);
+}
+
+@container site (min-width: 640px) {
+  .section.section-project-compare {
+    padding: var(--spacing-section-y, 4rem) var(--spacing-section-x, 3rem);
+  }
+}
+
+/* Header: logo area */
+.project-compare__header {
+  padding-bottom: var(--spacing-md, 1rem);
+}
+
+/* Video compare container: fill width, rounded corners */
+.project-compare__video {
+  width: 100%;
+  border-radius: var(--radius-md, 0.5rem);
+  overflow: hidden;
+}
+
+/* Description: theme-aware text styling */
+.project-compare__description {
+  color: var(--text-secondary, currentColor);
+  font-family: var(--font-paragraph, system-ui, sans-serif);
+  font-size: var(--font-size-body, 1rem);
+  line-height: 1.625;
+  max-width: 48rem;
+  padding-top: var(--spacing-md, 1rem);
+}

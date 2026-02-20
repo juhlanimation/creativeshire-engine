@@ -1,0 +1,169 @@
+/**
+ * PhotoCollage section pattern — structural CSS.
+ * Mobile: vertical stack with alternating image alignment.
+ * Desktop (1024px+): absolute-positioned scattered layout using container query units.
+ */
+
+.section.photo-collage {
+  position: relative;
+  overflow: hidden;
+  padding: var(--spacing-2xl, 4rem) var(--spacing-md, 1.5rem);
+  gap: var(--spacing-lg, 2rem);
+}
+
+@media (min-width: 640px) {
+  .section.photo-collage {
+    padding: var(--spacing-2xl, 4rem) var(--spacing-xl, 3rem);
+  }
+}
+
+@media (min-width: 768px) {
+  .section.photo-collage {
+    padding: var(--spacing-section-y, 6rem) var(--spacing-section-x, 5rem);
+    gap: var(--spacing-section-y, 6rem);
+  }
+}
+
+/* Text: constrained width, centered, justified */
+.photo-collage__text {
+  font-family: var(--font-paragraph, system-ui, sans-serif);
+  max-width: 28rem;
+  margin: 0 auto var(--spacing-lg, 2rem);
+  padding: var(--spacing-md, 1rem);
+  text-align: justify;
+  font-size: var(--font-size-body, 1rem);
+  line-height: 1.625;
+}
+
+@media (min-width: 768px) {
+  .photo-collage__text {
+    max-width: 32rem;
+    margin-bottom: var(--spacing-xl, 3rem);
+  }
+}
+
+/* Mobile images: per-image widths, aspect ratios, alternating alignment, object-cover */
+.photo-collage__image {
+  object-fit: cover;
+}
+
+.photo-collage__image:nth-of-type(odd) {
+  align-self: flex-end;
+}
+
+.photo-collage__image:nth-of-type(even) {
+  align-self: flex-start;
+}
+
+.photo-collage__image:nth-of-type(1) {
+  width: 65%;
+  aspect-ratio: 3/4;
+}
+
+.photo-collage__image:nth-of-type(2) {
+  width: 70%;
+  aspect-ratio: 3/2;
+}
+
+.photo-collage__image:nth-of-type(3) {
+  width: 60%;
+  aspect-ratio: 3/4;
+}
+
+.photo-collage__image:nth-of-type(4) {
+  width: 65%;
+  aspect-ratio: 3/2;
+}
+
+/* Desktop scattered layout (lg+) — all sizes in cqw for container-relative scaling */
+@container site-content (min-width: 1024px) {
+  /* Height only on inner section, not wrapper */
+  .section.photo-collage {
+    min-height: 74cqw;
+    padding: 0;
+  }
+
+  /* Text: absolute positioned, cqw-scaled font, vertically centered */
+  .photo-collage__text {
+    position: absolute;
+    width: 28cqw;
+    height: 16cqw;
+    left: 20cqw;
+    top: 5cqw;
+    max-width: none;
+    padding: 1cqw;
+    margin: 0;
+    font-size: 1.1cqw;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Images: absolute positioned, contain fit, reset mobile properties */
+  .photo-collage__image {
+    position: absolute;
+    max-width: none;
+    object-fit: contain;
+    aspect-ratio: auto;
+  }
+
+  .photo-collage__image:nth-of-type(odd),
+  .photo-collage__image:nth-of-type(even) {
+    align-self: auto;
+  }
+
+  /* Image 1 (top right - portrait) */
+  .photo-collage__image:nth-of-type(1) {
+    width: 32cqw;
+    height: 23cqw;
+    left: 56cqw;
+    top: 6cqw;
+    object-position: top;
+  }
+
+  /* Image 2 (below paragraph, left) */
+  .photo-collage__image:nth-of-type(2) {
+    width: 28cqw;
+    height: 18cqw;
+    left: 8cqw;
+    top: 30cqw;
+    object-position: left;
+  }
+
+  /* Image 3 (center-right) */
+  .photo-collage__image:nth-of-type(3) {
+    width: 26cqw;
+    height: 17cqw;
+    left: 52cqw;
+    top: 38cqw;
+    object-position: left;
+  }
+
+  /* Image 4 (bottom left) */
+  .photo-collage__image:nth-of-type(4) {
+    width: 24cqw;
+    height: 18cqw;
+    left: 14cqw;
+    top: 56cqw;
+    object-position: left;
+  }
+}
+
+/* Corner bracket decoration — 4 corners via background gradients */
+.corner-border {
+  --corner-size: 12px;
+  --corner-thickness: var(--border-width, 2px);
+  --corner-color: var(--border-color, currentColor);
+  background:
+    linear-gradient(var(--corner-color), var(--corner-color)) 0 0,
+    linear-gradient(var(--corner-color), var(--corner-color)) 0 0,
+    linear-gradient(var(--corner-color), var(--corner-color)) 100% 0,
+    linear-gradient(var(--corner-color), var(--corner-color)) 100% 0,
+    linear-gradient(var(--corner-color), var(--corner-color)) 0 100%,
+    linear-gradient(var(--corner-color), var(--corner-color)) 0 100%,
+    linear-gradient(var(--corner-color), var(--corner-color)) 100% 100%,
+    linear-gradient(var(--corner-color), var(--corner-color)) 100% 100%;
+  background-size:
+    var(--corner-thickness) var(--corner-size),
+    var(--corner-size) var(--corner-thickness);
+  background-repeat: no-repeat;
+}

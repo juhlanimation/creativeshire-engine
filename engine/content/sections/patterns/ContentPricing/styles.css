@@ -1,0 +1,395 @@
+/**
+ * Pricing section pattern — structural + themed CSS.
+ * Backgrounds set via preset `style` prop (inline on section wrapper).
+ * All visual tokens use theme CSS variables with sensible fallbacks.
+ */
+
+/* ============================================================
+ * Section
+ * ============================================================ */
+
+.section.pricing-section {
+  padding: var(--spacing-section-y, 4rem) var(--spacing-section-x, 2rem);
+  gap: var(--spacing-lg, 2rem);
+}
+
+/* ============================================================
+ * Header
+ * ============================================================ */
+
+.pricing-section__header {
+  margin-bottom: var(--spacing-xl, 3rem);
+}
+
+.pricing-section__title {
+  font-family: var(--font-title, system-ui, sans-serif);
+  font-size: var(--font-size-display, clamp(2rem, 5cqw, 3.5rem));
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.pricing-section__subtitle {
+  font-family: var(--font-paragraph, system-ui, sans-serif);
+  font-size: var(--font-size-h3, 1.125rem);
+  font-weight: 400;
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 40ch;
+  margin-inline: auto;
+  margin-top: var(--spacing-md, 1rem);
+}
+
+/* ============================================================
+ * Cards
+ * ============================================================ */
+
+.pricing-card {
+  position: relative;
+  padding: var(--spacing-lg, 2rem);
+  background-color: var(--pricing-card-bg, var(--site-outer-bg, #fff));
+  border-radius: var(--radius-lg, 1rem);
+  border: var(--border-width, 1px) var(--border-style, solid) var(--border-color, rgba(0,0,0,0.1));
+}
+
+.pricing-card--highlighted {
+  background-color: var(--pricing-card-highlighted-bg, var(--color-secondary, #fafafa));
+  border: calc(var(--border-width, 1px) * 2) var(--border-style, solid) var(--accent);
+  transform: scale(1.02);
+  z-index: 1;
+}
+
+.pricing-card--shadow {
+  box-shadow: var(--shadow-md, 0 4px 20px rgba(0,0,0,0.08));
+}
+
+.pricing-card--shadow.pricing-card--highlighted {
+  box-shadow: var(--shadow-lg, 0 20px 40px rgba(0,0,0,0.15));
+}
+
+/* ============================================================
+ * Plan name
+ * ============================================================ */
+
+.pricing-card__name {
+  font-family: var(--font-title, system-ui, sans-serif);
+  font-size: var(--font-size-h2, 1.5rem);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ============================================================
+ * Price row
+ * ============================================================ */
+
+.pricing-card__price-row {
+  margin-top: var(--spacing-md, 1rem);
+}
+
+.pricing-card__price {
+  font-family: var(--font-title, system-ui, sans-serif);
+  font-size: var(--font-size-display, 3rem);
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.pricing-card__period {
+  font-family: var(--font-paragraph, system-ui, sans-serif);
+  font-size: var(--font-size-body, 1rem);
+  font-weight: 400;
+  color: var(--text-secondary);
+  align-self: flex-end;
+  margin-bottom: var(--spacing-sm, 0.5rem);
+}
+
+/* ============================================================
+ * Description
+ * ============================================================ */
+
+.pricing-card__description {
+  font-family: var(--font-paragraph, system-ui, sans-serif);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-top: var(--spacing-sm, 0.75rem);
+}
+
+/* ============================================================
+ * Features list
+ * ============================================================ */
+
+.pricing-card__features {
+  margin-top: var(--spacing-lg, 1.5rem);
+  padding-top: var(--spacing-lg, 1.5rem);
+  border-top: var(--border-width, 1px) var(--border-style, solid) var(--border-color, rgba(0,0,0,0.1));
+}
+
+.pricing-card__feature-icon {
+  font-size: var(--font-size-body, 1rem);
+  font-weight: 600;
+  flex-shrink: 0;
+  width: 1.25rem;
+  text-align: center;
+}
+
+.pricing-card__feature-icon--included {
+  color: var(--status-success, #22c55e);
+}
+
+.pricing-card__feature-icon--excluded {
+  color: var(--status-error, #ef4444);
+}
+
+.pricing-card__feature-icon--partial {
+  color: var(--text-secondary);
+}
+
+.pricing-card__feature-label {
+  font-family: var(--font-paragraph, system-ui, sans-serif);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--text-primary);
+}
+
+.pricing-card__feature-label--excluded {
+  opacity: 0.5;
+}
+
+/* ============================================================
+ * CTA
+ * ============================================================ */
+
+.pricing-card__cta {
+  margin-top: auto;
+  padding-top: var(--spacing-lg, 1.5rem);
+  width: 100%;
+}
+
+.pricing-card__cta-button {
+  font-family: var(--font-ui, var(--font-paragraph, system-ui, sans-serif));
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ============================================================
+ * Badge
+ * ============================================================ */
+
+.pricing-card__badge {
+  position: absolute;
+  top: calc(-1 * var(--spacing-sm, 0.75rem));
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: var(--font-ui, var(--font-paragraph, system-ui, sans-serif));
+  font-size: var(--font-size-small);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-primary-contrast, #fff);
+  background-color: var(--accent);
+  padding: var(--spacing-xs, 0.25rem) var(--spacing-sm, 0.75rem);
+  border-radius: var(--radius-full, 999px);
+}
+
+/* ============================================================
+ * Footer
+ * ============================================================ */
+
+.pricing-section__footer {
+  font-family: var(--font-paragraph, system-ui, sans-serif);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: var(--spacing-lg, 2rem);
+}
+
+/* ============================================================
+ * Plan Card — Illustration-based variant (Loft/Medlemskab)
+ *
+ * Used when presets pass custom `planWidgets` with the
+ * `.plan-card` class structure instead of the default
+ * `.pricing-card` cards.
+ * ============================================================ */
+
+.plan-card {
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.plan-card__illustration {
+  width: 12rem;
+  height: 12rem;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+.plan-card__name {
+  font-family: var(--font-heading, system-ui, sans-serif);
+  font-size: var(--font-size-h1, 2.25rem);
+  font-weight: var(--font-weight-black, 900);
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+}
+
+.plan-card__price {
+  font-family: var(--font-paragraph, system-ui, sans-serif);
+  font-size: var(--font-size-body, 1.125rem);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--text-primary);
+}
+
+.plan-card__subtitle {
+  font-size: var(--font-size-xs, 0.625rem);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+  color: var(--text-primary);
+}
+
+.plan-card__description {
+  font-family: var(--font-paragraph, system-ui, sans-serif);
+  font-size: var(--font-size-small, 0.875rem);
+  line-height: 1.6;
+  opacity: 0.8;
+  color: var(--text-primary);
+  white-space: pre-line;
+}
+
+/* Margins scoped under .plan-card to beat .text-widget { margin: 0 } */
+.plan-card .plan-card__price {
+  margin-top: 0.25rem;
+}
+
+.plan-card .plan-card__description {
+  margin: 0.75rem 0 1rem;
+}
+
+.plan-card__divider {
+  width: 8rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.2;
+  margin-bottom: 1rem;
+}
+
+@container (min-width: 48rem) {
+  .plan-card__divider {
+    width: 100%;
+  }
+}
+
+.plan-card__features {
+  width: auto;
+  text-align: left;
+}
+
+.plan-card__feature-icon {
+  flex-shrink: 0;
+}
+
+.plan-card__feature-icon > * {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: currentColor;
+}
+
+.plan-card__feature-name {
+  font-family: var(--font-paragraph, system-ui, sans-serif);
+  font-size: var(--font-size-xs, 0.6875rem);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+/* ============================================================
+ * Pricing Grid — Constrained width for 2-column layouts
+ * ============================================================ */
+
+.pricing-grid {
+  max-width: 42rem;
+  margin-inline: auto;
+  width: 100%;
+}
+
+@container (max-width: 30rem) {
+  .pricing-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ============================================================
+ * Contact Sub-Section — Below pricing cards
+ * ============================================================ */
+
+.pricing-contact {
+  margin-top: 3.5rem;
+  text-align: center;
+  max-width: 24rem;
+}
+
+@container (min-width: 48rem) {
+  .pricing-contact {
+    margin-top: 6rem;
+  }
+}
+
+.pricing-contact__illustration {
+  width: 9rem;
+  height: 9rem;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+.pricing-contact__title {
+  font-family: var(--font-heading, system-ui, sans-serif);
+  font-size: var(--font-size-h2, 1.875rem);
+  font-weight: var(--font-weight-black, 900);
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+}
+
+.pricing-contact__line {
+  font-family: var(--font-paragraph, system-ui, sans-serif);
+  font-size: var(--font-size-small, 0.875rem);
+  line-height: 1.6;
+  opacity: 0.8;
+  color: var(--text-primary);
+}
+
+.pricing-contact__email {
+  font-size: var(--font-size-small, 0.875rem);
+}
+
+/* Scoped to beat .text-widget/.email-copy-widget { margin: 0 } */
+.pricing-contact .pricing-contact__email {
+  margin-top: 1.5rem;
+}
+
+/* ============================================================
+ * Section-Medlemskab — Section-level overrides for Loft preset
+ * ============================================================ */
+
+.section.section-medlemskab {
+  padding: 0 1.5rem 4rem;
+}
+
+@container (min-width: 40rem) {
+  .section.section-medlemskab {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+@container (min-width: 48rem) {
+  .section.section-medlemskab {
+    padding-left: 5rem;
+    padding-right: 5rem;
+  }
+}

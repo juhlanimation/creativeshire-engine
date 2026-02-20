@@ -1,0 +1,82 @@
+/**
+ * TeamShowcase section pattern — structural + visual CSS.
+ * Relative container with hidden overflow for team showcase content.
+ * Uses theme CSS variables for spacing, colors, and typography.
+ */
+
+.team-showcase {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Elevate the parent section wrapper when video is active.
+ * Presentation modes (cover-scroll) set position+z-index on [data-section-id],
+ * creating stacking contexts that trap position:fixed. When the video is active,
+ * the section must sit above sibling sections so the fixed video covers them.
+ *
+ * transition-delay keeps z-index elevated during the 500ms video fade-out.
+ * Without it, the wrapper drops to z-index:10 the instant --active is removed,
+ * and the fading video gets clipped behind subsequent sections. */
+[data-section-id]:has(.stack-video-showcase__video-layer) {
+  transition: z-index 0s 500ms;
+}
+
+[data-section-id]:has(.stack-video-showcase__video-layer--active) {
+  z-index: 50 !important;
+  transition: z-index 0s 0s;
+}
+
+/* Individual member name wrapper — small gap between name and subtitle */
+.team-showcase__member {
+  gap: var(--spacing-xs, 0.25rem);
+}
+
+/* Section title — spacing below before member list */
+.team-showcase__title {
+  margin-bottom: var(--spacing-lg, 2rem);
+}
+
+/* Names list — default gap between member name items */
+.team-showcase__names {
+  gap: var(--spacing-md, 1rem);
+}
+
+/* =============================================================================
+ * LAYOUT PADDING — set CSS variables consumed by StackVideoShowcase.
+ * Section defines the values; widget consumes them via --showcase-padding-*.
+ * ============================================================================= */
+
+.team-showcase {
+  --showcase-padding-y: var(--spacing-xl, 4rem);
+  --showcase-padding-x: var(--spacing-section-x, 1.5rem);
+}
+
+/* sm breakpoint (640px) */
+@media (min-width: 640px) {
+  .team-showcase {
+    --showcase-padding-x: var(--spacing-section-x, 3rem);
+  }
+}
+
+/* md breakpoint (768px) */
+@media (min-width: 768px) {
+  .team-showcase {
+    --showcase-padding-y: var(--spacing-2xl, 6rem);
+    --showcase-padding-x: var(--spacing-section-x, 6rem);
+  }
+}
+
+/* lg breakpoint (1024px) */
+@media (min-width: 1024px) {
+  .team-showcase {
+    --showcase-padding-y: var(--spacing-2xl, 8rem);
+    --showcase-padding-x: var(--spacing-section-x, 8rem);
+  }
+}
+
+/* xl breakpoint (1280px) */
+@media (min-width: 1280px) {
+  .team-showcase {
+    --showcase-padding-x: var(--spacing-section-x, 12rem);
+  }
+}
