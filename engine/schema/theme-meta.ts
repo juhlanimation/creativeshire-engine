@@ -38,15 +38,18 @@ export const themeMeta = defineMeta<Record<string, unknown>>({
     },
 
     // ── Scrollbar ──────────────────────────────────────────────────────────
-    'scrollbar.width': {
-      type: 'number',
-      label: 'Scrollbar Width',
-      default: 6,
-      description: 'Scrollbar width in pixels',
-      min: 0,
-      max: 20,
-      step: 1,
+    'scrollbar.type': {
+      type: 'select',
+      label: 'Scrollbar Style',
+      description: 'Scrollbar shape',
       group: 'Scrollbar',
+      default: '',
+      choices: [
+        { value: '', label: 'Theme Default' },
+        { value: 'thin', label: 'Thin' },
+        { value: 'pill', label: 'Pill' },
+        { value: 'hidden', label: 'Hidden' },
+      ],
     },
     'scrollbar.thumb': {
       type: 'color',
@@ -210,20 +213,28 @@ export const themeMeta = defineMeta<Record<string, unknown>>({
 
     // ── Section Transitions ────────────────────────────────────────────────
     'sectionTransition.fadeDuration': {
-      type: 'text',
+      type: 'number',
       label: 'Fade Duration',
-      default: '0.15s',
-      description: 'Section fade transition duration (e.g., "0.15s", "150ms")',
-      validation: { maxLength: 50 },
+      default: 0.15,
+      description: 'Section fade transition duration in seconds',
+      min: 0,
+      max: 1,
+      step: 0.05,
       editorHint: 'structural',
       group: 'Section Transitions',
     },
     'sectionTransition.fadeEasing': {
-      type: 'text',
+      type: 'select',
       label: 'Fade Easing',
       default: 'ease-out',
-      description: 'Section fade transition easing (e.g., "ease-out", "cubic-bezier(...)")',
-      validation: { maxLength: 50 },
+      description: 'Section fade transition easing',
+      choices: [
+        { value: 'ease', label: 'Ease' },
+        { value: 'ease-in', label: 'Ease In' },
+        { value: 'ease-out', label: 'Ease Out' },
+        { value: 'ease-in-out', label: 'Ease In Out' },
+        { value: 'linear', label: 'Linear' },
+      ],
       editorHint: 'structural',
       group: 'Section Transitions',
     },
@@ -243,6 +254,29 @@ export const themeMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Background color outside the container',
       group: 'Container',
+    },
+    'container.sectionGap': {
+      type: 'select',
+      label: 'Section Gap',
+      description: 'Gap between sections (layout preset)',
+      group: 'Container',
+      default: 'none',
+      choices: [
+        { value: 'none', label: 'None' },
+        { value: 'tight', label: 'Tight' },
+        { value: 'normal', label: 'Normal' },
+        { value: 'loose', label: 'Loose' },
+      ],
+    },
+    'container.sectionGapScale': {
+      type: 'number',
+      label: 'Section Gap Scale',
+      description: 'Multiplier for the section gap value',
+      group: 'Container',
+      default: 1,
+      min: 0.25,
+      max: 10,
+      step: 0.25,
     },
   },
 })
