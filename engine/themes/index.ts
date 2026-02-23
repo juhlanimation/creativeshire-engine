@@ -46,6 +46,7 @@ export {
 
 // Utilities
 export { createTheme, paletteToCSS, typographyToCSS, tokensToCSS } from './utils'
+export { getRequiredFontVariables } from './fonts'
 
 /**
  * Ensures all built-in themes are registered.

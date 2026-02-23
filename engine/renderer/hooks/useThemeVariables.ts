@@ -184,6 +184,10 @@ export function useThemeVariables(theme: ThemeSchema | undefined): void {
       const id = loadFont(typography.title, provider)
       if (id) fontLinkIds.push(id)
     }
+    if (typography.heading) {
+      const id = loadFont(typography.heading, provider)
+      if (id) fontLinkIds.push(id)
+    }
     if (typography.paragraph) {
       const id = loadFont(typography.paragraph, provider)
       if (id) fontLinkIds.push(id)
