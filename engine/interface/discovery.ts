@@ -271,6 +271,85 @@ export async function createChromeFromPattern<T extends object>(
 }
 
 // =============================================================================
+// Action Discovery
+// =============================================================================
+
+import { getWidgetMeta, getAllWidgetMeta } from '../content/widgets/meta-registry'
+import { collectSectionActions } from '../content/actions/scanner'
+import { resolveRequiredOverlays } from '../content/actions/resolver'
+
+/** An action a chrome overlay pattern can provide (for CMS dropdown). */
+export interface ActionAvailability {
+  verb: string
+  patternId: string
+  label: string
+  templated: boolean
+  actionTemplate: string
+}
+
+/** Widget type's available trigger events. */
+export interface WidgetTriggerInfo {
+  widgetType: string
+  name: string
+  triggers: string[]
+}
+
+/** Result of resolving action dependencies. */
+export interface ActionDependencyResult {
+  missingOverlays: Array<{ key: string; patternId: string }>
+  allResolved: boolean
+}
+
+/** Get all actions chrome patterns can provide (populates CMS dropdown). */
+export function getAvailableActions(): ActionAvailability[] {
+  const result: ActionAvailability[] = []
+  for (const meta of getOverlayPatternMetas()) {
+    if (!meta.providesActions) continue
+    for (const actionTemplate of meta.providesActions) {
+      const templated = actionTemplate.includes('{key}')
+      // Extract verb: '{key}.open' → 'open', 'literal.show' → 'show'
+      const dotIdx = actionTemplate.lastIndexOf('.')
+      const verb = dotIdx >= 0 ? actionTemplate.slice(dotIdx + 1) : actionTemplate
+      const label = `${meta.name} - ${verb.charAt(0).toUpperCase() + verb.slice(1)}`
+      result.push({ verb, patternId: meta.id, label, templated, actionTemplate })
+    }
+  }
+  return result
+}
+
+/** Get trigger info for a widget type. Null if no triggers. */
+export function getWidgetTriggers(widgetType: string): WidgetTriggerInfo | null {
+  const meta = getWidgetMeta(widgetType)
+  if (!meta?.triggers?.length) return null
+  return { widgetType, name: meta.name, triggers: meta.triggers }
+}
+
+/** Get all widget types that support triggers. */
+export function getWidgetsWithTriggers(): WidgetTriggerInfo[] {
+  const result: WidgetTriggerInfo[] = []
+  for (const meta of getAllWidgetMeta()) {
+    if (meta.triggers?.length) {
+      result.push({ widgetType: meta.id, name: meta.name, triggers: meta.triggers })
+    }
+  }
+  return result
+}
+
+/** Resolve which overlays are needed for given action IDs. */
+export function resolveActionDependencies(
+  actionIds: string[],
+  existingOverlayKeys: string[],
+): ActionDependencyResult {
+  const missingOverlays = resolveRequiredOverlays(new Set(actionIds), existingOverlayKeys)
+  return { missingOverlays, allResolved: missingOverlays.length === 0 }
+}
+
+/** Scan a section for all action IDs in its widget tree. */
+export function getSectionActionIds(section: SectionSchema): string[] {
+  return Array.from(collectSectionActions(section))
+}
+
+// =============================================================================
 // Setting Visibility Resolution
 // =============================================================================
 

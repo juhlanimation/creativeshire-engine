@@ -31,6 +31,27 @@ export {
   type SectionAvailability,
 } from './discovery'
 
+// Chrome pattern discovery API
+export {
+  getAvailableChromePatterns,
+  getAvailableOverlayPatterns,
+  getChromePatternsBySlotGrouped,
+  createChromeFromPattern,
+  type ChromePatternAvailability,
+} from './discovery'
+
+// Action discovery API
+export {
+  getAvailableActions,
+  getWidgetTriggers,
+  getWidgetsWithTriggers,
+  resolveActionDependencies,
+  getSectionActionIds,
+  type ActionAvailability,
+  type WidgetTriggerInfo,
+  type ActionDependencyResult,
+} from './discovery'
+
 // Types
 export type {
   EngineInput,

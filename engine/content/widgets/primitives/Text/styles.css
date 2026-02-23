@@ -83,7 +83,7 @@
  * matching the Link widget's theme-driven grow effect.
  * Controlled by data-link-hover: none | underline | hover-underline */
 .text-widget a {
-  color: var(--interaction, currentColor);
+  color: var(--color-link, var(--interaction, currentColor));
   text-decoration: none;
   position: relative;
 }

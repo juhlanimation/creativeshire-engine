@@ -299,7 +299,7 @@
   width: 100%;
 }
 
-@container (max-width: 30rem) {
+@container (max-width: 48rem) {
   .pricing-grid {
     grid-template-columns: 1fr;
   }

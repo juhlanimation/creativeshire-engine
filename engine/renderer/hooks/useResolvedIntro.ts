@@ -5,7 +5,7 @@
  * Handles: dev override, overlay component resolution.
  */
 
-import type { ComponentType } from 'react'
+import { type ComponentType, useMemo } from 'react'
 import { getIntroOverride, getIntroSequence, resolvePresetIntro } from '../../intro'
 import type { IntroConfig, PresetIntroConfig } from '../../intro'
 import type { Experience } from '../../experience/experiences/types'
@@ -44,14 +44,20 @@ export function useResolvedIntro(
       : (raw as IntroConfig | null)
   }
 
+  // Stabilize introConfig reference by structural content so CMS content edits
+  // (which create new schema object references with identical intro values)
+  // don't cause the IntroProvider store to recreate and re-lock the page.
+  const stableKey = JSON.stringify(introConfig)
+  const stableConfig = useMemo(() => introConfig, [stableKey])
+
   // Resolve intro overlay component from chrome registry
-  const overlayComponent = introConfig?.overlay
-    ? getChromeComponent(introConfig.overlay.component) ?? null
+  const overlayComponent = stableConfig?.overlay
+    ? getChromeComponent(stableConfig.overlay.component) ?? null
     : null
 
   return {
-    introConfig,
+    introConfig: stableConfig,
     overlayComponent,
-    overlayProps: introConfig?.overlay?.props,
+    overlayProps: stableConfig?.overlay?.props,
   }
 }

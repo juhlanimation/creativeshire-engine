@@ -257,13 +257,15 @@ footer.chrome-header--overlay {
 
 /* Mobile: hide overlays */
 @container site (max-width: 767px) {
-  .chrome-overlay {
+  .chrome-overlay,
+  .chrome-header--overlay {
     display: none;
   }
 }
 
 /* Fallback for browsers without container query support */
-:where([data-breakpoint="mobile"]) .chrome-overlay {
+:where([data-breakpoint="mobile"]) .chrome-overlay,
+:where([data-breakpoint="mobile"]) .chrome-header--overlay {
   display: none;
 }
 

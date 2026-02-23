@@ -4,6 +4,10 @@
  */
 
 .grid-widget {
+  /* Grid template via CSS variables — allows container-query overrides */
+  grid-template-columns: var(--grid-cols, initial);
+  grid-template-rows: var(--grid-rows, initial);
+
   /* Animation CSS variables with fallbacks (set by behaviours) */
   transform: translateY(var(--y, 0px));
   opacity: var(--opacity, 1);

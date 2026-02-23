@@ -22,8 +22,6 @@ import { WidgetRenderer } from './WidgetRenderer'
 import { BehaviourWrapper } from '../experience/behaviours'
 import { SectionLifecycleProvider } from '../experience/lifecycle'
 import { useExperience, useSmoothScrollContainer } from '../experience'
-// PinnedBackdrop infrastructure preserved for potential future use
-// import { usePinnedBackdrop } from './PinnedBackdropContext'
 import { useDevSectionBehaviourAssignments, useDevSectionPinned } from './dev/devSettingsStore'
 import { useSectionChrome } from './SectionChromeContext'
 import { useThemeContext } from './ThemeProvider'
@@ -134,9 +132,7 @@ export function SectionRenderer({ section, index, totalSections }: SectionRender
   )
 
   // ── Pinned section handling ──────────────────────────────────────
-  // Cover-scroll: CSS position:sticky handles pinning (rendered inline below).
-  // All other experiences: pinned: true is ignored — sections render normally.
-  // The portal-to-backdrop approach (PinnedSection) is no longer used.
+  // Cover-scroll: CSS position:sticky handles pinning.
   const isCoverScroll = experience.presentation?.model === 'cover-scroll'
 
   // ── Normal section rendering ───────────────────────────────────────

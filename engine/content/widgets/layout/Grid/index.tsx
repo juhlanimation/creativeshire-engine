@@ -31,11 +31,11 @@ function gridToStyle(props: GridProps): CSSProperties {
   }
 
   if (props.columns !== undefined) {
-    styles.gridTemplateColumns = toGridTemplate(props.columns)
+    (styles as Record<string, string>)['--grid-cols'] = toGridTemplate(props.columns)!
   }
 
   if (props.rows !== undefined) {
-    styles.gridTemplateRows = toGridTemplate(props.rows)
+    (styles as Record<string, string>)['--grid-rows'] = toGridTemplate(props.rows)!
   }
 
   if (props.gap !== undefined) {

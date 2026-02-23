@@ -244,6 +244,25 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       ],
       group: 'Section',
     },
+    constrained: {
+      type: 'toggle',
+      label: 'Constrained',
+      default: false,
+      description: 'Limit section width to --site-max-width',
+      group: 'Section',
+    },
+    colorMode: {
+      type: 'select',
+      label: 'Color Mode',
+      default: '',
+      description: 'Force a color mode on this section, overriding the site-level palette',
+      choices: [
+        { value: '', label: 'Inherit' },
+        { value: 'dark', label: 'Dark' },
+        { value: 'light', label: 'Light' },
+      ],
+      group: 'Section',
+    },
 
     // ── Advanced ───────────────────────────────────────────────────────────
     className: {

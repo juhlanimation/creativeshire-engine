@@ -128,11 +128,6 @@ html:has([data-site-renderer]) {
   transform: translateZ(0);
 }
 
-/* Pinned backdrop: full-width, pinned sections constrain their own content */
-[data-pinned-backdrop] {
-  /* No max-width — sections own their constraint via .section max-width */
-}
-
 /* =============================================================================
  * CONTAINED MODE
  * Same styles for iframe/preview rendering

@@ -179,8 +179,8 @@ export function createContactFooterRegion(rawProps: ContactFooterProps): PresetR
             {
               id: 'footer-studio-socials',
               type: 'Flex' as const,
-              // Gap needed here — no CSS rule for __socials gap
-              props: { gap: 8 },
+              // No direction/gap props — CSS .footer-chrome__socials handles layout
+              props: {},
               className: 'footer-chrome__socials',
               widgets: [
                 {

@@ -39,7 +39,6 @@ import {
 import { PageRenderer } from './PageRenderer'
 import { ChromeRenderer } from './ChromeRenderer'
 import { SiteContainerProvider, SiteContainerRegistrar } from './SiteContainerContext'
-import { PinnedBackdropProvider, PinnedBackdropRegistrar } from './PinnedBackdropContext'
 import { ViewportPortalProvider, ViewportPortalRegistrar } from './ViewportPortalContext'
 import { ThemeProvider } from './ThemeProvider'
 import { ExperienceChromeRenderer } from './ExperienceChromeRenderer'
@@ -203,9 +202,6 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
   // Overlays portal here to maintain container query context
   const siteContainerRef = useRef<HTMLDivElement>(null)
 
-  // Ref for pinned section backdrop (outside ScrollSmoother's transform context)
-  const pinnedBackdropRef = useRef<HTMLDivElement>(null)
-
   // Refs for viewport portal layers (outside all containment)
   const backgroundLayerRef = useRef<HTMLDivElement>(null)
   const chromeLayerRef = useRef<HTMLDivElement>(null)
@@ -218,7 +214,6 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
 
   return (
     <SiteContainerProvider>
-    <PinnedBackdropProvider>
     <ViewportPortalProvider>
     <div data-engine-root style={themeStyle}>
       {/* Background viewport layer — between page bg and site content (z-index: 0) */}
@@ -251,14 +246,6 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
         <ExperienceProvider experience={experience} store={store}>
           <TransitionProvider config={pageTransitionConfig}>
             <TriggerInitializer>
-            {/* Backdrop for pinned sections — outside ScrollSmoother to avoid transforms.
-                position:fixed puts it behind #smooth-wrapper (DOM order stacking). */}
-            <div
-              ref={pinnedBackdropRef}
-              data-pinned-backdrop
-              style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}
-            />
-            <PinnedBackdropRegistrar backdropRef={pinnedBackdropRef} />
             {/* Smooth scroll wrapper for main content (disabled for slideshow) */}
             <SmoothScrollProvider config={smoothScrollConfig}>
               <div data-site-content>
@@ -358,7 +345,6 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
       )}
     </div>
     </ViewportPortalProvider>
-    </PinnedBackdropProvider>
     </SiteContainerProvider>
   )
 }
