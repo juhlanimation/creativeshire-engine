@@ -6,8 +6,8 @@
  */
 
 import type { ComponentType } from 'react'
-import { getIntroOverride, getIntroSequence } from '../../intro'
-import type { IntroConfig } from '../../intro'
+import { getIntroOverride, getIntroSequence, resolvePresetIntro } from '../../intro'
+import type { IntroConfig, PresetIntroConfig } from '../../intro'
 import type { Experience } from '../../experience/experiences/types'
 import { getChromeComponent } from '../../content/chrome/registry'
 import { useDevOverride } from './useDevOverride'
@@ -35,9 +35,13 @@ export function useResolvedIntro(
   } else if (introOverrideId) {
     introConfig = getIntroSequence(introOverrideId) ?? null
   } else {
-    introConfig = page.intro === 'disabled'
+    const raw = page.intro === 'disabled'
       ? null
       : (page.intro ?? site.intro ?? experience.intro) ?? null
+    // Resolve PresetIntroConfig (sequence ref) to IntroConfig
+    introConfig = raw && 'sequence' in raw
+      ? resolvePresetIntro(raw as PresetIntroConfig)
+      : (raw as IntroConfig | null)
   }
 
   // Resolve intro overlay component from chrome registry

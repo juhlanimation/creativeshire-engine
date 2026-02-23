@@ -102,6 +102,7 @@ export function getSectionsGroupedByCategory(
     contact: [],
     content: [],
     gallery: [],
+    team: [],
   }
 
   // Group sections by category

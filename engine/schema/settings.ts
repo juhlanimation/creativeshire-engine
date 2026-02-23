@@ -162,6 +162,8 @@ interface RangeSetting extends BaseSettingConfig {
   max: number
   /** Step increment */
   step?: number
+  /** Display unit hint for platform UI (e.g., 'rem', 'px', '%') */
+  unit?: string
 }
 
 /** Dropdown selection */

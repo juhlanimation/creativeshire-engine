@@ -23,6 +23,7 @@ export type ComponentCategory =
   | 'region'         // Chrome regions (Header, Footer)
   | 'overlay'        // Chrome overlays (Modal, Tooltip)
   | 'behaviour'      // Experience behaviours
+  | 'chrome-pattern'  // Chrome pattern factories
   | 'theme'          // Site-wide theme configuration
   | 'page'           // Page-level configuration
 
@@ -36,6 +37,7 @@ export type SectionCategory =
   | 'contact'    // Forms, CTAs
   | 'content'    // General content blocks
   | 'gallery'    // Media showcases
+  | 'team'       // Team/people sections
 
 // =============================================================================
 // Component Metadata

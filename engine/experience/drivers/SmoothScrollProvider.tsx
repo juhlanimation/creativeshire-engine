@@ -276,8 +276,8 @@ function GsapSmoothScrollProvider({ config, children }: SmoothScrollProviderProp
       smooth: deviceSmoothValue,
       effects: effectsValue,
       smoothTouch: false, // Never smooth touch input
-      paused: isScrollLocked,
-    })
+      ...(isScrollLocked && { paused: true }),
+    } as ScrollSmoother.Vars)
 
     smootherRef.current = smoother
     setIsReady(true)

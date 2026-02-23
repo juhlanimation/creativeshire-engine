@@ -57,7 +57,7 @@ export const loftPreset: SitePreset = {
       }],
     },
     intro: {
-      pattern: 'video-gate',
+      sequence: 'video-gate',
       settings: {
         targetTime: 3.2,
         revealDuration: 50,

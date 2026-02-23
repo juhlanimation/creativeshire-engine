@@ -12,6 +12,7 @@
     "./experience/behaviours": "./engine/experience/behaviours/index.ts",
     "./presets": "./engine/presets/index.ts",
     "./presets/*": "./engine/presets/*/index.ts",
+    "./presets/*/styles.css": "./engine/presets/*/styles.css",
     "./intro": "./engine/intro/index.ts",
     "./validation": "./engine/validation/index.ts",
     "./config": "./engine/config/index.ts",

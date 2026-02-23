@@ -654,9 +654,6 @@ function SectionBehaviourRow({ section, experience }: SectionBehaviourRowProps) 
       <button className="dt-row-toggle" onClick={() => setOpen((v) => !v)}>
         <span className="dt-collapsible__arrow" data-open={open}>&#9656;</span>
         <span className="dt-row-toggle__label">{section.id}</span>
-        {section.layout?.pattern && (
-          <span className="dt-row-toggle__sub">({section.layout.pattern})</span>
-        )}
         <span className="dt-row-toggle__count">{activeAssignments.length}</span>
       </button>
 

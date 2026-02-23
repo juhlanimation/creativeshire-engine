@@ -377,8 +377,9 @@ export interface Experience {
   // Intro sequence (optional — runs before experience is interactive)
 
   /** Intro configuration — gate, overlay, and reveal settings.
-   *  Preset or schema can override the experience default. */
-  intro?: IntroConfig
+   *  Preset or schema can override the experience default.
+   *  Accepts PresetIntroConfig (sequence ref) or IntroConfig (inline). */
+  intro?: IntroConfig | import('../../intro/types').PresetIntroConfig
 
   // Structural configuration (optional - for experiences like slideshow)
 

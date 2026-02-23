@@ -73,4 +73,6 @@ export interface ExperienceConfig {
   sectionBehaviours?: Record<string, import('../experience/experiences/types').BehaviourAssignment[]>
   /** Per-chrome-region behaviour overrides. Keys are region IDs (header, footer). */
   chromeBehaviours?: Record<string, import('../experience/experiences/types').BehaviourAssignment[]>
+  /** Intro sequence overrides (merged into preset intro config at runtime) */
+  intro?: import('../intro/types').PresetIntroConfig | import('../intro/types').IntroConfig
 }

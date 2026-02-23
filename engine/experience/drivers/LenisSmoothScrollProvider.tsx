@@ -163,8 +163,8 @@ export function LenisSmoothScrollProvider({ config, children }: LenisSmoothScrol
 
     // Handle anchor link clicks
     const scrollContainer = isContained ? containerRef?.current : document
-    const handleAnchorClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement
+    const handleAnchorClick = (e: Event) => {
+      const target = (e as MouseEvent).target as HTMLElement
       const anchor = target.closest('a[href^="#"]')
       if (anchor) {
         const href = anchor.getAttribute('href')

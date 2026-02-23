@@ -300,10 +300,10 @@ export class ScrollDriver implements Driver {
       }
 
       for (const key in vars) {
-        let value = String(vars[key])
+        let value = String(vars[key as keyof typeof vars])
         // Prerasterize: clamp opacity vars to minimum paint threshold
         if (behaviour.prerasterize && key.includes('opacity')) {
-          const num = Number(vars[key])
+          const num = Number(vars[key as keyof typeof vars])
           if (num < MIN_PAINT_OPACITY) value = String(MIN_PAINT_OPACITY)
         }
         if (cached[key] !== value) {
@@ -371,9 +371,9 @@ export class ScrollDriver implements Driver {
     const vars = behaviour.compute(initialState, options, element)
     const cached: Record<string, string> = {}
     for (const key in vars) {
-      let value = String(vars[key])
+      let value = String(vars[key as keyof typeof vars])
       if (behaviour.prerasterize && key.includes('opacity')) {
-        const num = Number(vars[key])
+        const num = Number(vars[key as keyof typeof vars])
         if (num < MIN_PAINT_OPACITY) value = String(MIN_PAINT_OPACITY)
       }
       cached[key] = value
