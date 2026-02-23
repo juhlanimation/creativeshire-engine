@@ -108,6 +108,8 @@ const crossroad = createTheme({
     },
   },
 
+  scrollbar: { type: 'thin' },
+
   dark: {
     background: '#141413',
     text: '#E2DEDC',

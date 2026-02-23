@@ -52,6 +52,7 @@ export function createFixedNavRegion(props: FixedNavProps): PresetRegionConfig {
       props: {
         href: '/',
         children: props.siteTitle,
+        variant: 'default',
       },
       className: 'header-chrome__title',
     })

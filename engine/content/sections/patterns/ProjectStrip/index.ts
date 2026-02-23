@@ -10,14 +10,10 @@
  */
 
 import type { SectionSchema, WidgetSchema, SerializableValue } from '../../../../schema'
-import type { SettingConfig } from '../../../../schema/settings'
-import { extractDefaults } from '../../../../schema/settings'
+import { applyMetaDefaults } from '../../../../schema/settings'
 import type { ProjectStripProps } from './types'
 import { isBindingExpression } from '../utils'
 import { meta } from './meta'
-
-/** Meta-derived defaults — single source of truth for factory fallbacks. */
-const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
 
 /**
  * Creates an OtherProjectsSection schema with expandable gallery.
@@ -26,16 +22,18 @@ const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
  * @param props - Other projects section configuration
  * @returns SectionSchema for the other projects section
  */
-export function createProjectStripSection(props?: ProjectStripProps): SectionSchema {
-  const p = props ?? {}
+export function createProjectStripSection(rawProps?: ProjectStripProps): SectionSchema {
+  const p = applyMetaDefaults(meta, rawProps ?? {})
 
-  // Resolve content with default bindings
-  const heading = p.heading ?? '{{ content.projects.otherHeading }}'
-  const yearRange = p.yearRange ?? '{{ content.projects.yearRange }}'
-  const projects = p.projects ?? '{{ content.projects.other }}'
+  // Content bindings: check rawProps to avoid meta defaults suppressing bindings
+  const heading = rawProps?.heading ?? '{{ content.projects.otherHeading }}'
+  const yearRange = rawProps?.yearRange ?? '{{ content.projects.yearRange }}'
+  const projects = rawProps?.projects ?? '{{ content.projects.other }}'
   const galleryOn = p.galleryOn ?? { click: 'modal.open' }
-  const headingScale = p.headingScale ?? (d.headingScale as string)
-  const yearRangeScale = p.yearRangeScale ?? (d.yearRangeScale as string)
+
+  // Settings: auto-filled by applyMetaDefaults
+  const headingScale = p.headingScale as string
+  const yearRangeScale = p.yearRangeScale as string
 
   const widgets: WidgetSchema[] = []
 

@@ -40,10 +40,6 @@
   transition: opacity var(--duration-fast, 150ms) var(--ease-default, ease);
 }
 
-.minimal-nav__link:hover,
-.minimal-nav__link:focus-visible {
-  opacity: var(--hover-opacity, 0.7);
-}
 
 /* Vertical divider line */
 .minimal-nav__divider {
@@ -70,18 +66,6 @@
   transition: opacity var(--duration-fast, 150ms) var(--ease-default, ease);
 }
 
-.minimal-nav__email:hover,
-.minimal-nav__email:focus-visible {
-  opacity: var(--hover-opacity, 0.7);
-}
-
-/* When Link variant handles hover underline, disable opacity hover */
-.minimal-nav--hover-underline .minimal-nav__link:hover,
-.minimal-nav--hover-underline .minimal-nav__link:focus-visible,
-.minimal-nav--hover-underline .minimal-nav__email:hover,
-.minimal-nav--hover-underline .minimal-nav__email:focus-visible {
-  opacity: 1;
-}
 
 /* Hide on mobile */
 @container site (max-width: 767px) {

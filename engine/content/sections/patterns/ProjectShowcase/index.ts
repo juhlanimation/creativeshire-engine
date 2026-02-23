@@ -7,16 +7,13 @@
  */
 
 import type { SectionSchema, WidgetSchema } from '../../../../schema'
-import type { SettingConfig } from '../../../../schema/settings'
-import { extractDefaults } from '../../../../schema/settings'
+import { applyMetaDefaults } from '../../../../schema/settings'
 import type { ProjectShowcaseProps } from './types'
 import { meta } from './meta'
 import './components/FlexButtonRepeater'  // scoped widget registration
 
-/** Meta-derived defaults — single source of truth for factory fallbacks. */
-const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
-
-export function createProjectShowcaseSection(props: ProjectShowcaseProps): SectionSchema {
+export function createProjectShowcaseSection(rawProps: ProjectShowcaseProps): SectionSchema {
+  const props = applyMetaDefaults(meta, rawProps)
   const sectionId = props.id ?? 'project-showcase'
 
   // Header with logo and info
@@ -45,12 +42,12 @@ export function createProjectShowcaseSection(props: ProjectShowcaseProps): Secti
         widgets: [
           {
             type: 'Text',
-            props: { content: props.studio, as: props.studioScale ?? (d.studioScale as string) },
+            props: { content: props.studio, as: props.studioScale },
             className: 'project-showcase__studio'
           },
           {
             type: 'Text',
-            props: { content: props.role, as: props.roleScale ?? (d.roleScale as string) },
+            props: { content: props.role, as: props.roleScale },
             className: 'project-showcase__role'
           }
         ]

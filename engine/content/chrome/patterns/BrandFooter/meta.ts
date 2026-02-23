@@ -81,7 +81,7 @@ export const meta = defineChromeMeta<BrandFooterProps>({
     paddingTop: {
       type: 'range',
       label: 'Padding Top',
-      default: 1,
+      default: 1.5,
       min: 0,
       max: 12,
       step: 0.5,

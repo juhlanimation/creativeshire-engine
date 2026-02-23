@@ -34,6 +34,18 @@ export const meta = defineChromeMeta<FloatingContactProps>({
       group: 'Content',
       bindable: true,
     },
+    hoverColor: {
+      type: 'select',
+      label: 'Hover Color',
+      default: 'accent',
+      description: 'Color the widget changes to on hover and copy confirmation',
+      choices: [
+        { value: 'accent', label: 'Accent' },
+        { value: 'interaction', label: 'Interaction' },
+        { value: 'primary', label: 'Primary' },
+      ],
+      group: 'Style',
+    },
     blendMode: {
       type: 'select',
       label: 'Blend Mode',

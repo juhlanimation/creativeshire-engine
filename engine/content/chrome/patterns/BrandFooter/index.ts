@@ -20,7 +20,9 @@
 
 import type { PresetRegionConfig } from '../../../../presets/types'
 import type { WidgetSchema } from '../../../../schema/widget'
+import { applyMetaDefaults } from '../../../../schema/settings'
 import type { BrandFooterProps } from './types'
+import { meta } from './meta'
 
 /**
  * Creates a BrandFooter region configuration.
@@ -28,7 +30,8 @@ import type { BrandFooterProps } from './types'
  * @param props - Footer configuration with brand, nav, and contact info
  * @returns PresetRegionConfig for the footer region
  */
-export function createBrandFooterRegion(props: BrandFooterProps): PresetRegionConfig {
+export function createBrandFooterRegion(rawProps: BrandFooterProps): PresetRegionConfig {
+  const props = applyMetaDefaults(meta, rawProps)
   // ── Nav column (left on desktop) ────────────────────────────
   // navLinks can be a binding expression (string) for platform resolution,
   // or a direct array for Storybook/preview rendering.
@@ -156,10 +159,10 @@ export function createBrandFooterRegion(props: BrandFooterProps): PresetRegionCo
     widgets: contactWidgets,
   }
 
-  // Build inline style for optional spacing overrides (CSS custom properties)
+  // Build inline style for spacing (CSS custom properties)
   const rootStyle: Record<string, string> = {}
-  if (props.paddingTop) rootStyle['--footer-padding-top'] = `${props.paddingTop}rem`
-  if (props.paddingBottom) rootStyle['--footer-padding-bottom'] = `${props.paddingBottom}rem`
+  if (props.paddingTop != null) rootStyle['--footer-padding-top'] = `${props.paddingTop}rem`
+  if (props.paddingBottom != null) rootStyle['--footer-padding-bottom'] = `${props.paddingBottom}rem`
 
   // ── Root: 3-column responsive layout ────────────────────────
   return {

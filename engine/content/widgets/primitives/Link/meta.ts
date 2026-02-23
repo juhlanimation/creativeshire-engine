@@ -37,7 +37,7 @@ export const meta = defineMeta<LinkProps>({
     variant: {
       type: 'select',
       label: 'Variant',
-      default: 'default',
+      default: 'hover-underline',
       description: 'Visual style variant',
       choices: [
         { value: 'default', label: 'Default' },

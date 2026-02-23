@@ -3,10 +3,14 @@
  * Global visual tokens that can be configured per site.
  */
 
+import type { ScrollbarType } from '../themes/types'
+
 /**
  * Scrollbar styling configuration.
  */
 export interface ScrollbarConfig {
+  /** Scrollbar shape: thin (sharp), pill (rounded), hidden (none). Default: theme definition or 'thin'. */
+  type?: ScrollbarType
   /** Scrollbar width in pixels (default: 6) */
   width?: number
   /** Thumb (handle) color */

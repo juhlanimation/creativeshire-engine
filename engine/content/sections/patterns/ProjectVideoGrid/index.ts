@@ -4,14 +4,10 @@
  */
 
 import type { SectionSchema, WidgetSchema } from '../../../../schema'
-import type { SettingConfig } from '../../../../schema/settings'
-import { extractDefaults } from '../../../../schema/settings'
+import { applyMetaDefaults } from '../../../../schema/settings'
 import { isBindingExpression } from '../utils'
 import type { ProjectVideoGridProps, VideoGridItem } from './types'
 import { meta } from './meta'
-
-/** Meta-derived defaults — single source of truth for factory fallbacks. */
-const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
 
 /**
  * Creates a video widget from a VideoGridItem.
@@ -70,10 +66,11 @@ function createTemplateVideoWidget(
  * @returns SectionSchema for the project video grid section
  */
 export function createProjectVideoGridSection(
-  props: ProjectVideoGridProps
+  rawProps: ProjectVideoGridProps
 ): SectionSchema {
+  const props = applyMetaDefaults(meta, rawProps)
   const sectionId = props.id ?? 'project-video-grid'
-  const hoverPlay = props.hoverPlay ?? (d.hoverPlay as boolean)
+  const hoverPlay = props.hoverPlay as boolean
 
   // Header with logo
   const header: WidgetSchema = {

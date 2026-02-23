@@ -104,6 +104,8 @@ const editorial = createTheme({
     },
   },
 
+  scrollbar: { type: 'pill' },
+
   light: {
     background: '#F5F2ED',
     text: '#1A1A1A',

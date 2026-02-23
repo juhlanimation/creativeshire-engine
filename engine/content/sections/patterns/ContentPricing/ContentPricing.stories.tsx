@@ -1,8 +1,8 @@
 import { sectionStoryConfig, sectionStoryArgs } from '../../../../../.storybook/helpers/auto-story'
 import { meta } from './meta'
 import { createContentPricingSection } from './index'
-import { previewProps, medlemskabPreviewProps } from './preview'
+import { medlemskabPreviewProps } from './preview'
 
-export default { ...sectionStoryConfig(meta, createContentPricingSection, previewProps), title: 'Content/Content Pricing' }
-export const Default = { args: sectionStoryArgs(meta, previewProps, createContentPricingSection) }
+export default { ...sectionStoryConfig(meta, createContentPricingSection), title: 'Content/Content Pricing' }
+export const Default = { args: sectionStoryArgs(meta, undefined, createContentPricingSection) }
 export const Medlemskab = { args: sectionStoryArgs(meta, medlemskabPreviewProps, createContentPricingSection) }

@@ -104,6 +104,8 @@ const contrast = createTheme({
     },
   },
 
+  scrollbar: { type: 'thin' },
+
   dark: {
     background: '#0a0a0a',
     text: '#ededed',

@@ -8,15 +8,11 @@
  */
 
 import type { SectionSchema, WidgetSchema } from '../../../../schema'
-import type { SettingConfig } from '../../../../schema/settings'
-import { extractDefaults } from '../../../../schema/settings'
+import { applyMetaDefaults } from '../../../../schema/settings'
 import type { AboutBioProps, LogoItem } from './types'
 import { isBindingExpression } from '../utils'
 import { meta } from './meta'
 import './components/MarqueeImageRepeater'  // scoped widget registration
-
-/** Meta-derived defaults — single source of truth for factory fallbacks. */
-const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
 
 /**
  * Creates an AboutSection schema.
@@ -24,17 +20,19 @@ const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
  * @param props - About section configuration
  * @returns SectionSchema for the about section
  */
-export function createAboutBioSection(props?: AboutBioProps): SectionSchema {
-  const p = props ?? {}
+export function createAboutBioSection(rawProps?: AboutBioProps): SectionSchema {
+  const p = applyMetaDefaults(meta, rawProps ?? {})
 
-  // Resolve content with default bindings
-  const bioParagraphs = p.bioParagraphs ?? '{{ content.about.bioParagraphs }}'
-  const signature = p.signature ?? '{{ content.about.signature }}'
-  const photoSrc = p.photoSrc ?? '{{ content.about.photoSrc }}'
-  const photoAlt = p.photoAlt ?? '{{ content.about.photoAlt }}'
-  const clientLogos = p.clientLogos ?? '{{ content.about.clientLogos }}'
-  const bioTextScale = p.bioTextScale ?? (d.bioTextScale as string)
-  const signatureScale = p.signatureScale ?? (d.signatureScale as string)
+  // Content bindings: check rawProps to avoid meta defaults suppressing bindings
+  const bioParagraphs = rawProps?.bioParagraphs ?? '{{ content.about.bioParagraphs }}'
+  const signature = rawProps?.signature ?? '{{ content.about.signature }}'
+  const photoSrc = rawProps?.photoSrc ?? '{{ content.about.photoSrc }}'
+  const photoAlt = rawProps?.photoAlt ?? '{{ content.about.photoAlt }}'
+  const clientLogos = rawProps?.clientLogos ?? '{{ content.about.clientLogos }}'
+
+  // Settings: auto-filled by applyMetaDefaults
+  const bioTextScale = p.bioTextScale as string
+  const signatureScale = p.signatureScale as string
 
   const widgets: WidgetSchema[] = []
 
@@ -165,10 +163,10 @@ export function createAboutBioSection(props?: AboutBioProps): SectionSchema {
     : clientLogos && (clientLogos as LogoItem[]).length > 0
 
   if (hasLogos) {
-    const duration = p.marqueeDuration ?? (d.marqueeDuration as number)
+    const duration = p.marqueeDuration as number
     const logoWidth = 120
     const logoGap = 96
-    const invertLogos = p.invertLogos ?? (d.invertLogos as boolean)
+    const invertLogos = p.invertLogos as boolean
 
     if (isBindingExpression(clientLogos)) {
       // Binding expression: MarqueeImageRepeater handles runtime resolution
@@ -230,9 +228,9 @@ export function createAboutBioSection(props?: AboutBioProps): SectionSchema {
   }
 
   // Merge layout CSS variables into section style
-  const marqueeOffset = p.marqueeOffset ?? (d.marqueeOffset as number)
-  const bioMaxWidth = p.bioMaxWidth ?? (d.bioMaxWidth as number)
-  const bioOffset = p.bioOffset ?? (d.bioOffset as number)
+  const marqueeOffset = p.marqueeOffset as number
+  const bioMaxWidth = p.bioMaxWidth as number
+  const bioOffset = p.bioOffset as number
   const sectionStyle: React.CSSProperties = {
     ...p.style,
     '--marquee-offset': `${marqueeOffset}%`,

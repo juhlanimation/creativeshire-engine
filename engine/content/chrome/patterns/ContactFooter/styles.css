@@ -77,9 +77,6 @@
   text-transform: uppercase;
 }
 
-.footer-chrome__nav-link:hover {
-  color: var(--interaction);
-}
 
 /* Contact/Studio links - uses body font */
 /* MOVED TO L2: data-effect="color-shift" */
@@ -91,9 +88,6 @@
   text-decoration: none;
 }
 
-.footer-chrome__link:hover {
-  color: var(--interaction);
-}
 
 /* Social links - uses body font */
 /* MOVED TO L2: data-effect="color-shift" */
@@ -106,9 +100,6 @@
   text-transform: lowercase;
 }
 
-.footer-chrome__social-link:hover {
-  color: var(--interaction);
-}
 
 /* Copyright */
 .footer-chrome__copyright {

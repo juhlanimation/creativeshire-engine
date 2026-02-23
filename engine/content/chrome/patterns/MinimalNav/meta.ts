@@ -44,16 +44,5 @@ export const meta = defineChromeMeta<MinimalNavProps>({
       description: 'Mix-blend-mode for automatic contrast against backgrounds',
       group: 'Style',
     },
-    linkHoverStyle: {
-      type: 'select',
-      label: 'Link Hover Style',
-      default: 'opacity',
-      choices: [
-        { value: 'opacity', label: 'Opacity Fade' },
-        { value: 'underline', label: 'Underline' },
-      ],
-      description: 'Hover effect for navigation links',
-      group: 'Style',
-    },
   },
 })

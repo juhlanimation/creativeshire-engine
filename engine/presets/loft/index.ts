@@ -45,20 +45,15 @@ export const loftPreset: SitePreset = {
   experience: {
     id: 'cover-scroll',
     sectionBehaviours: {
-      hero: [{
+      'hero-title': [{
         behaviour: 'scroll/cover-progress',
         options: {
           propagateToRoot: '--hero-cover-progress',
           propagateContentEdge: '--hero-content-edge',
-          targetSelector: '#hero-title',
+          targetTop: 0,
+          targetBottom: 0.5,
         },
         pinned: true,
-      }],
-    },
-    chromeBehaviours: {
-      header: [{
-        behaviour: 'scroll/reveal',
-        options: { sourceVar: '--hero-cover-progress' },
       }],
     },
     intro: {
@@ -86,6 +81,10 @@ export const loftPreset: SitePreset = {
             type: 'Text',
             props: { content: '{{ content.header.brandName }}', as: 'div' },
             className: 'brand-text',
+            behaviour: {
+              id: 'scroll/reveal',
+              options: { sourceVar: '--hero-cover-progress' },
+            },
           },
           {
             id: 'minimal-nav',

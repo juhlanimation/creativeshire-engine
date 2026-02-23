@@ -6,15 +6,11 @@
 import './components/TabbedContent'  // scoped widget registration
 
 import type { SectionSchema, WidgetSchema, SerializableValue } from '../../../../schema'
-import type { SettingConfig } from '../../../../schema/settings'
-import { extractDefaults } from '../../../../schema/settings'
+import { applyMetaDefaults } from '../../../../schema/settings'
 import type { TextElement } from '../../../widgets/primitives/Text/types'
 import { isBindingExpression } from '../utils'
 import type { ProjectTabsProps, ProjectTab } from './types'
 import { meta } from './meta'
-
-/** Meta-derived defaults — single source of truth for factory fallbacks. */
-const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
 
 /**
  * Creates content widgets for a standard layout tab.
@@ -91,15 +87,16 @@ function createCompactTabContent(tab: ProjectTab, sectionId: string): WidgetSche
   }]
 }
 
-export function createProjectTabsSection(props: ProjectTabsProps): SectionSchema {
+export function createProjectTabsSection(rawProps: ProjectTabsProps): SectionSchema {
+  const props = applyMetaDefaults(meta, rawProps)
   const sectionId = props.id ?? 'project-tabs'
 
   // Resolve text scales
   const tabScales = {
-    title: props.titleScale ?? (d.titleScale as TextElement),
-    client: props.clientScale ?? (d.clientScale as TextElement),
-    studio: props.studioScale ?? (d.studioScale as TextElement),
-    role: props.roleScale ?? (d.roleScale as TextElement),
+    title: props.titleScale as TextElement,
+    client: props.clientScale as TextElement,
+    studio: props.studioScale as TextElement,
+    role: props.roleScale as TextElement,
   }
 
   const tabBarWidgets: WidgetSchema[] = []

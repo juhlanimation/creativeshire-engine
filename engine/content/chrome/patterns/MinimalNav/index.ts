@@ -27,8 +27,6 @@ import { isBindingExpression } from '../../../sections/patterns/utils'
  * @returns PresetRegionConfig for the header region
  */
 export function createMinimalNavRegion(props: MinimalNavProps): PresetRegionConfig {
-  const linkVariant = props.linkHoverStyle === 'underline' ? 'hover-underline' : 'default'
-
   const navLinkWidgets: WidgetSchema[] = isBindingExpression(props.navLinks)
     ? [
         {
@@ -39,7 +37,6 @@ export function createMinimalNavRegion(props: MinimalNavProps): PresetRegionConf
           props: {
             href: '{{ item.href }}',
             children: '{{ item.label }}',
-            variant: linkVariant,
           },
           className: 'minimal-nav__link',
         },
@@ -50,7 +47,6 @@ export function createMinimalNavRegion(props: MinimalNavProps): PresetRegionConf
         props: {
           href: link.href,
           children: link.label,
-          variant: linkVariant,
         },
         className: 'minimal-nav__link',
       }))
@@ -77,14 +73,10 @@ export function createMinimalNavRegion(props: MinimalNavProps): PresetRegionConf
       props: {
         href: `mailto:${props.email}`,
         children: props.email,
-        variant: 'default',
       },
       className: 'minimal-nav__email',
     },
   ]
-
-  const hoverClass =
-    props.linkHoverStyle === 'underline' ? ' minimal-nav--hover-underline' : ''
 
   const style: CSSProperties | undefined =
     props.blendMode && props.blendMode !== 'normal'
@@ -105,7 +97,7 @@ export function createMinimalNavRegion(props: MinimalNavProps): PresetRegionConf
         type: 'Flex',
         // No direction/align/justify/gap props — CSS .minimal-nav handles layout
         props: {},
-        className: `minimal-nav${hoverClass}`,
+        className: 'minimal-nav',
         widgets,
       },
     ],

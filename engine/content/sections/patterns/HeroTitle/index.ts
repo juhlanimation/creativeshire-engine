@@ -10,15 +10,11 @@
 
 import type { CSSProperties } from 'react'
 import type { SectionSchema, WidgetSchema, SerializableValue } from '../../../../schema'
-import type { SettingConfig } from '../../../../schema/settings'
-import { extractDefaults } from '../../../../schema/settings'
+import { applyMetaDefaults } from '../../../../schema/settings'
 import type { TextElement } from '../../../widgets/primitives/Text/types'
 import type { HeroTitleProps } from './types'
 import { DEFAULT_HERO_TITLE_STYLES } from './types'
 import { meta } from './meta'
-
-/** Meta-derived defaults — single source of truth for factory fallbacks. */
-const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
 
 /**
  * Merge two style objects.
@@ -35,14 +31,14 @@ function mergeStyles(base?: CSSProperties, override?: CSSProperties): CSSPropert
  * @param props - Hero title section configuration (content + optional styles)
  * @returns SectionSchema for the hero title section
  */
-export function createHeroTitleSection(props?: HeroTitleProps): SectionSchema {
-  const p = props ?? {}
+export function createHeroTitleSection(rawProps?: HeroTitleProps): SectionSchema {
+  const p = applyMetaDefaults(meta, rawProps ?? {})
 
-  // Resolve content with default bindings
-  const title = p.title ?? '{{ content.hero.title }}'
+  // Content bindings: check rawProps to avoid meta defaults suppressing bindings
+  const title = rawProps?.title ?? '{{ content.hero.title }}'
   const tagline = p.tagline
-  const videoSrc = p.videoSrc ?? '{{ content.hero.videoSrc }}'
-  const scrollIndicatorText = p.scrollIndicatorText ?? '{{ content.hero.scrollIndicatorText }}'
+  const videoSrc = rawProps?.videoSrc ?? '{{ content.hero.videoSrc }}'
+  const scrollIndicatorText = rawProps?.scrollIndicatorText ?? '{{ content.hero.scrollIndicatorText }}'
 
   // Merge provided styles with defaults
   const styles = {
@@ -51,11 +47,11 @@ export function createHeroTitleSection(props?: HeroTitleProps): SectionSchema {
     scrollIndicator: mergeStyles(DEFAULT_HERO_TITLE_STYLES.scrollIndicator, p.styles?.scrollIndicator),
   }
 
-  // Resolve text scales with defaults from meta.ts
-  const titleScale = p.titleScale ?? (d.titleScale as TextElement)
-  const taglineScale = p.taglineScale ?? (d.taglineScale as TextElement)
-  const scrollIndicatorScale = p.scrollIndicatorScale ?? (d.scrollIndicatorScale as TextElement)
-  const titleSizeMultiplier = p.titleSizeMultiplier ?? (d.titleSizeMultiplier as number)
+  // Settings: auto-filled by applyMetaDefaults
+  const titleScale = p.titleScale as TextElement
+  const taglineScale = p.taglineScale as TextElement
+  const scrollIndicatorScale = p.scrollIndicatorScale as TextElement
+  const titleSizeMultiplier = p.titleSizeMultiplier as number
 
   // When introVideo is enabled, text visibility is gated by --intro-complete CSS variable
   const introGateStyle = p.introVideo

@@ -4,15 +4,20 @@
  * Two variants:
  *
  * FLIP (.email-copy--flip):
- * Structure:
- * .email-copy.email-copy--flip (button)
- *   .email-copy__text-stack (overflow hidden, 2 texts — when label)
- *     .email-copy__text--prompt (primary - visible by default)
- *     .email-copy__text--email (secondary - flips in on hover)
- *   OR .email-copy__text (plain email text — when no label)
- *   .email-copy__icon-stack (overflow hidden, 2 icons)
- *     .email-copy__icon--copy (primary - visible on hover)
- *     .email-copy__icon--check (secondary - flips in on click)
+ * Structure (with label):
+ * .email-copy.email-copy--flip (button, flex)
+ *   .email-copy__text-stack (overflow:hidden, height-locked to 1 row)
+ *     .email-copy__row (flex row — prompt, in-flow, slides up on hover)
+ *       .email-copy__text "How can I help you?"
+ *     .email-copy__row.email-copy__row--email (in-flow below, slides in on hover)
+ *       .email-copy__text "hello@example.com"
+ *       .email-copy__icon-stack (inline copy→check sub-flip)
+ *
+ * Structure (no label):
+ * .email-copy.email-copy--flip (button, flex)
+ *   .email-copy__row.email-copy__row--email.email-copy__row--static (always visible)
+ *     .email-copy__text "hello@example.com"
+ *     .email-copy__icon-stack (inline copy→check sub-flip)
  *
  * REVEAL (.email-copy--reveal):
  * Structure:
@@ -74,10 +79,11 @@
   font-size: var(--font-size-h3, 1.125rem);
 }
 
-/* Text stack - contains prompt and email stacked vertically */
+/* Text stack - contains two in-flow rows, clips height to show one at a time.
+   Width stretches to the wider row so long emails + icon never clip. */
 .email-copy__text-stack {
   position: relative;
-  height: 1.75rem; /* 28px */
+  height: 1.75rem; /* 28px — shows exactly one row */
   overflow: hidden;
   text-align: left;
 }
@@ -88,34 +94,33 @@
   line-height: 1.75rem; /* 28px - matches container */
 }
 
-/* Prompt text - visible by default, slides up on hover */
-.email-copy__text--prompt {
+/* Row — flex container for text + optional icon, carries translateY.
+   Both rows are in normal flow so the text-stack width = max(row widths).
+   Height clip on text-stack shows only one row; translateY flips between them. */
+.email-copy__row {
+  display: flex;
+  align-items: center;
+  height: 1.75rem; /* match text-stack visible height */
   transform: translateY(var(--text-reveal-y, 0));
   transition: transform var(--flip-duration, var(--duration-normal, 400ms)) var(--ease-default, cubic-bezier(0.4, 0, 0.2, 1));
   will-change: transform;
 }
 
-/* Email text - positioned below, slides in on hover */
-.email-copy__text--email {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  transform: translateY(var(--text-reveal-y, 0));
-  transition: transform var(--flip-duration, var(--duration-normal, 400ms)) var(--ease-default, cubic-bezier(0.4, 0, 0.2, 1));
-  will-change: transform;
+/* Static row — no-label case: always visible, no flip */
+.email-copy__row--static {
+  transform: none;
+  transition: none;
+  will-change: auto;
 }
 
-/* Icon stack - inline to right of text */
+/* Icon stack — inline with email text, copy→check sub-flip */
 .email-copy__icon-stack {
   position: relative;
+  flex-shrink: 0;
   margin-left: var(--spacing-sm, 0.5rem);
   width: 1rem;
   height: 1rem;
   overflow: hidden;
-  /* Fade in on hover */
-  opacity: var(--icon-opacity, 0);
-  transition: opacity var(--fade-duration, var(--duration-fast, 200ms)) var(--ease-out, ease-out);
-  will-change: opacity;
 }
 
 /* Shared icon styles */
@@ -146,12 +151,11 @@
 
 /* Fallback hover when no behaviour wrapper parent (e.g. Storybook, footer).
    When BehaviourWrapper wraps this widget, its parent div has [data-behaviour]
-   and the behaviour handles --text-reveal-y, --icon-opacity, --shift-color.
+   and the behaviour handles --text-reveal-y, --shift-color.
    Using parent check avoids green flash: CSS :hover fires instantly but React
    data-hovered (which toggles mix-blend-mode) lags by one frame. */
 :not([data-behaviour]) > .email-copy--flip:hover {
   --text-reveal-y: -100%;
-  --icon-opacity: 1;
   color: var(--ec-hover, var(--accent, currentColor));
 }
 
@@ -287,9 +291,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   /* Flip variant */
-  .email-copy__text--prompt,
-  .email-copy__text--email,
-  .email-copy__icon-stack,
+  .email-copy__row,
   .email-copy__icon--copy,
   .email-copy__icon--check {
     transition: none;

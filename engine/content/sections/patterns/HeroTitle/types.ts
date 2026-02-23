@@ -29,7 +29,7 @@ export const DEFAULT_HERO_TITLE_STYLES: HeroTitleStyles = {
     letterSpacing: '0.05em',
     textTransform: 'uppercase',
     textAlign: 'center',
-    color: 'var(--text-primary, white)',
+    color: 'white',
     mixBlendMode: 'difference'
   },
   tagline: {
@@ -37,7 +37,7 @@ export const DEFAULT_HERO_TITLE_STYLES: HeroTitleStyles = {
     letterSpacing: '0.3em',
     textTransform: 'uppercase',
     marginTop: 'var(--spacing-md, 1rem)',
-    color: 'var(--text-primary, white)',
+    color: 'white',
     mixBlendMode: 'difference'
   },
   scrollIndicator: {

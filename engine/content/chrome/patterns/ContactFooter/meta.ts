@@ -90,7 +90,7 @@ export const meta = defineChromeMeta<ContactFooterProps>({
     paddingTop: {
       type: 'range',
       label: 'Padding Top',
-      default: 1.5,
+      default: 2,
       min: 0,
       max: 12,
       step: 0.5,

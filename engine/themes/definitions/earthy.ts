@@ -104,6 +104,8 @@ const earthy = createTheme({
     },
   },
 
+  scrollbar: { type: 'pill' },
+
   light: {
     background: '#FAF7F2',
     text: '#1C1F1A',

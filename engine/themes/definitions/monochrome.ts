@@ -104,6 +104,8 @@ const monochrome = createTheme({
     },
   },
 
+  scrollbar: { type: 'thin' },
+
   dark: {
     background: '#000000',
     text: '#ffffff',

@@ -7,5 +7,4 @@ export interface MinimalNavProps {
   navLinks: Array<{ label: string; href: string }> | string
   email: string
   blendMode?: 'normal' | 'difference'
-  linkHoverStyle?: 'opacity' | 'underline'
 }

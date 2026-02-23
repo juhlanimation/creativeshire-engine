@@ -8,59 +8,6 @@ const CHECK_SVG = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" st
 const CROSS_SVG = '<svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="4" r="1.5"/><rect x="3" y="7" width="10" height="2" rx="1"/><circle cx="8" cy="12" r="1.5"/></svg>'
 const PLUS_SVG = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 3V13M3 8H13"/></svg>'
 
-export const previewProps: Partial<ContentPricingProps> = {
-  title: 'Pricing',
-  subtitle: 'Choose the plan that fits your project scope.',
-  plans: [
-    {
-      id: 'basic',
-      name: 'Basic',
-      price: '$500',
-      period: '/project',
-      description: 'Ideal for quick edits and short-form content.',
-      features: [
-        { label: 'Up to 2 revisions', included: true },
-        { label: 'Basic color correction', included: true },
-        { label: 'Custom motion graphics', included: false },
-        { label: 'Dedicated project manager', included: false },
-      ],
-      ctaText: 'Get Started',
-      ctaHref: '#contact',
-    },
-    {
-      id: 'pro',
-      name: 'Professional',
-      price: '$1,500',
-      period: '/project',
-      description: 'Full production support for commercial work.',
-      features: [
-        { label: 'Unlimited revisions', included: true },
-        { label: 'Advanced color grading', included: true },
-        { label: 'Custom motion graphics', included: true },
-        { label: 'Dedicated project manager', included: false },
-      ],
-      ctaText: 'Choose Pro',
-      ctaHref: '#contact',
-      highlighted: true,
-      badge: 'Popular',
-    },
-    {
-      id: 'enterprise',
-      name: 'Enterprise',
-      price: 'Custom',
-      description: 'Tailored solutions for studios and agencies.',
-      features: [
-        { label: 'Unlimited revisions', included: true },
-        { label: 'Advanced color grading', included: true },
-        { label: 'Custom motion graphics', included: true },
-        { label: 'Dedicated project manager', included: true },
-      ],
-      ctaText: 'Contact Us',
-      ctaHref: '#contact',
-    },
-  ],
-}
-
 // =====================================================================
 // Membership — Illustration-based plan cards + contact section
 // =====================================================================
@@ -153,7 +100,6 @@ const PRICE_SUBTITLE = 'ex moms / måned'
 export const medlemskabPreviewProps: Partial<ContentPricingProps> = {
   id: 'medlemskab',
   label: 'Medlemskab',
-  title: '',
   subtitle: '',
   className: 'section-medlemskab',
   plans: [],

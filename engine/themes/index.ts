@@ -26,6 +26,8 @@ export type {
   ThemeTextDecoration,
   ThemeInteraction,
   ThemeLayout,
+  ScrollbarType,
+  ThemeScrollbar,
   ThemeDefinition,
 } from './types'
 

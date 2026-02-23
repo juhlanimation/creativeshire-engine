@@ -21,14 +21,6 @@
   margin-bottom: var(--spacing-xl, 3rem);
 }
 
-.pricing-section__title {
-  font-family: var(--font-title, system-ui, sans-serif);
-  font-size: var(--font-size-display, clamp(2rem, 5cqw, 3.5rem));
-  font-weight: 700;
-  color: var(--text-primary);
-  text-align: center;
-}
-
 .pricing-section__subtitle {
   font-family: var(--font-paragraph, system-ui, sans-serif);
   font-size: var(--font-size-h3, 1.125rem);
@@ -219,7 +211,6 @@
 .plan-card {
   padding: 1.5rem;
   text-align: center;
-  gap: 1rem;
 }
 
 .plan-card__illustration {

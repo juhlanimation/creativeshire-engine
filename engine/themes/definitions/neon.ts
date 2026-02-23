@@ -104,6 +104,8 @@ const neon = createTheme({
     },
   },
 
+  scrollbar: { type: 'pill' },
+
   dark: {
     background: '#0A0A0A',
     text: '#E0E0E0',

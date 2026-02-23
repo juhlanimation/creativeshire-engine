@@ -66,8 +66,6 @@ export interface PricingIcons {
  */
 export interface ContentPricingProps extends BaseSectionProps {
   // === Content (what to display) ===
-  /** Section title */
-  title?: string
   /** Section subtitle/description */
   subtitle?: string
   /** Array of pricing plans - supports binding expressions */
@@ -104,8 +102,6 @@ export interface ContentPricingProps extends BaseSectionProps {
   extraWidgets?: WidgetSchema[]
 
   // === Typography scale ===
-  /** Scale for section title (default: 'h2') */
-  titleScale?: TextElement
   /** Scale for section subtitle (default: 'p') */
   subtitleScale?: TextElement
   /** Scale for plan name (default: 'h3') */

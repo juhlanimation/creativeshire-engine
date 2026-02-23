@@ -74,6 +74,72 @@ export const Surfaces: Story = {
             <div style={s.spacingValue}>opacity: {theme.borders.dividerOpacity}</div>
           </div>
         </div>
+
+        {/* Scrollbar */}
+        <div style={{ ...s.sectionTitle, fontFamily: uiFont, marginTop: '48px' }}>Scrollbar</div>
+        {(() => {
+          const scrollbarType = theme.scrollbar?.type ?? 'thin'
+          const thumbRadius = scrollbarType === 'pill' ? '9999px' : '0'
+          const thumbColor = palette.scrollbarThumb
+          const trackColor = palette.scrollbarTrack
+
+          return (
+            <div style={s.bordersGrid}>
+              <div style={s.borderCard}>
+                <div style={{ ...s.fontRole, fontFamily: uiFont }}>Type</div>
+                <div style={{ fontSize: '18px', fontWeight: 600, fontFamily: uiFont }}>{scrollbarType}</div>
+                <div style={s.spacingValue}>scrollbar-width: {scrollbarType === 'hidden' ? 'none' : 'thin'}</div>
+              </div>
+              <div style={s.borderCard}>
+                <div style={{ ...s.fontRole, fontFamily: uiFont }}>Thumb</div>
+                <div style={{
+                  width: '6px',
+                  height: '48px',
+                  borderRadius: thumbRadius,
+                  backgroundColor: thumbColor,
+                }} />
+                <div style={s.spacingValue}>{thumbColor}</div>
+              </div>
+              <div style={s.borderCard}>
+                <div style={{ ...s.fontRole, fontFamily: uiFont }}>Track</div>
+                <div style={{
+                  width: '6px',
+                  height: '48px',
+                  borderRadius: thumbRadius,
+                  backgroundColor: trackColor,
+                  border: '1px solid rgba(128,128,128,0.2)',
+                }} />
+                <div style={s.spacingValue}>{trackColor}</div>
+              </div>
+              <div style={s.borderCard}>
+                <div style={{ ...s.fontRole, fontFamily: uiFont }}>Preview</div>
+                {scrollbarType === 'hidden' ? (
+                  <div style={{ fontSize: '12px', opacity: 0.5, fontFamily: uiFont }}>Hidden — no scrollbar</div>
+                ) : (
+                  <div style={{
+                    width: '10px',
+                    height: '64px',
+                    backgroundColor: trackColor,
+                    borderRadius: thumbRadius,
+                    position: 'relative' as const,
+                    border: '1px solid rgba(128,128,128,0.1)',
+                  }}>
+                    <div style={{
+                      position: 'absolute' as const,
+                      top: '8px',
+                      left: '1px',
+                      right: '1px',
+                      height: '24px',
+                      backgroundColor: thumbColor,
+                      borderRadius: thumbRadius,
+                    }} />
+                  </div>
+                )}
+                <div style={s.spacingValue}>border-radius: {thumbRadius}</div>
+              </div>
+            </div>
+          )
+        })()}
       </ShowcaseRoot>
     )
   },

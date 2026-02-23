@@ -7,15 +7,11 @@
  */
 
 import type { SectionSchema } from '../../../../schema'
-import type { SettingConfig } from '../../../../schema/settings'
-import { extractDefaults } from '../../../../schema/settings'
+import { applyMetaDefaults } from '../../../../schema/settings'
 import type { AboutCollageImage, AboutCollageProps } from './types'
 import { meta } from './meta'
 
-/** Meta-derived defaults — single source of truth for factory fallbacks. */
-const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
-
-export function createAboutCollageSection(props: AboutCollageProps): SectionSchema {
+export function createAboutCollageSection(rawProps: AboutCollageProps): SectionSchema {
   const {
     id = 'photo-collage',
     label = 'Photo Collage',
@@ -32,8 +28,8 @@ export function createAboutCollageSection(props: AboutCollageProps): SectionSche
     textClassName = '',
     images,
     imageClassName = '',
-    textScale = d.textScale as string,
-  } = props
+    textScale,
+  } = applyMetaDefaults(meta, rawProps)
 
   return {
     id,

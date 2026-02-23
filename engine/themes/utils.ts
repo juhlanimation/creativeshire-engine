@@ -153,6 +153,10 @@ export function tokensToCSS(def: ThemeDefinition): React.CSSProperties {
     vars[`--layout-padding-${preset}`] = l.padding[preset]
   }
 
+  // Scrollbar thumb-radius (consumed by ::-webkit-scrollbar-thumb)
+  const scrollbarType = def.scrollbar?.type ?? 'thin'
+  vars['--scrollbar-thumb-radius'] = scrollbarType === 'pill' ? '9999px' : '0'
+
   return vars as React.CSSProperties
 }
 

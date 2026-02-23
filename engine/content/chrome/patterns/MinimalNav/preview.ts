@@ -7,5 +7,4 @@ export const previewProps: Partial<MinimalNavProps> = {
     { label: 'Contact', href: '/contact' },
   ],
   email: 'hello@example.com',
-  linkHoverStyle: 'underline',
 }

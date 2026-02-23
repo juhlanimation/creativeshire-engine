@@ -3,7 +3,7 @@
  * Grid of pricing cards with feature lists and CTAs.
  *
  * Structure:
- * - Section header (title + subtitle)
+ * - Optional section header (subtitle)
  * - Grid of pricing cards
  *   - Plan name
  *   - Price + period
@@ -19,15 +19,11 @@
  */
 
 import type { SectionSchema, WidgetSchema, SerializableValue } from '../../../../schema'
-import type { SettingConfig } from '../../../../schema/settings'
-import { extractDefaults } from '../../../../schema/settings'
+import { applyMetaDefaults } from '../../../../schema/settings'
 import type { TextElement } from '../../../widgets/primitives/Text/types'
 import type { ContentPricingProps, PricingPlan, PricingIcons } from './types'
 import { isBindingExpression } from '../utils'
 import { meta } from './meta'
-
-/** Meta-derived defaults — single source of truth for factory fallbacks. */
-const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
 
 /** Resolved scale values for pricing card text elements. */
 interface PricingScales {
@@ -256,7 +252,8 @@ function buildPricingCard(
  * @param props - Pricing section configuration (content + optional styles)
  * @returns SectionSchema for the pricing section
  */
-export function createContentPricingSection(props: ContentPricingProps): SectionSchema {
+export function createContentPricingSection(rawProps: ContentPricingProps): SectionSchema {
+  const props = applyMetaDefaults(meta, rawProps)
   const sectionId = props.id ?? 'pricing'
 
   const icons: PricingIcons = {
@@ -265,20 +262,19 @@ export function createContentPricingSection(props: ContentPricingProps): Section
     partial: props.icons?.partial ?? '+'
   }
 
-  const cardShadow = props.cardShadow ?? (d.cardShadow as boolean)
+  const cardShadow = props.cardShadow as boolean
 
   // Resolve text scales
-  const titleScale = props.titleScale ?? (d.titleScale as string)
-  const subtitleScale = props.subtitleScale ?? (d.subtitleScale as string)
-  const footerScale = props.footerScale ?? (d.footerScale as string)
+  const subtitleScale = props.subtitleScale as string
+  const footerScale = props.footerScale as string
   const scales: PricingScales = {
-    planName: props.planNameScale ?? (d.planNameScale as TextElement),
-    price: props.priceScale ?? (d.priceScale as TextElement),
-    period: props.periodScale ?? (d.periodScale as TextElement),
-    description: props.descriptionScale ?? (d.descriptionScale as TextElement),
-    badge: props.badgeScale ?? (d.badgeScale as TextElement),
-    featureIcon: props.featureIconScale ?? (d.featureIconScale as TextElement),
-    featureLabel: props.featureLabelScale ?? (d.featureLabelScale as TextElement),
+    planName: props.planNameScale as TextElement,
+    price: props.priceScale as TextElement,
+    period: props.periodScale as TextElement,
+    description: props.descriptionScale as TextElement,
+    badge: props.badgeScale as TextElement,
+    featureIcon: props.featureIconScale as TextElement,
+    featureLabel: props.featureLabelScale as TextElement,
   }
 
   // Check if using binding expression
@@ -288,33 +284,7 @@ export function createContentPricingSection(props: ContentPricingProps): Section
   const widgets: WidgetSchema[] = []
 
   // Section header
-  if (props.title || props.subtitle) {
-    const headerWidgets: WidgetSchema[] = []
-
-    if (props.title) {
-      headerWidgets.push({
-        id: `${sectionId}-title`,
-        type: 'Text',
-        props: {
-          content: props.title,
-          as: titleScale
-        },
-        className: 'pricing-section__title'
-      })
-    }
-
-    if (props.subtitle) {
-      headerWidgets.push({
-        id: `${sectionId}-subtitle`,
-        type: 'Text',
-        props: {
-          content: props.subtitle,
-          as: subtitleScale
-        },
-        className: 'pricing-section__subtitle'
-      })
-    }
-
+  if (props.subtitle) {
     widgets.push({
       id: `${sectionId}-header`,
       type: 'Flex',
@@ -323,7 +293,17 @@ export function createContentPricingSection(props: ContentPricingProps): Section
         align: 'center'
       },
       className: 'pricing-section__header',
-      widgets: headerWidgets
+      widgets: [
+        {
+          id: `${sectionId}-subtitle`,
+          type: 'Text',
+          props: {
+            content: props.subtitle,
+            as: subtitleScale
+          },
+          className: 'pricing-section__subtitle'
+        }
+      ]
     })
   }
 
@@ -338,7 +318,7 @@ export function createContentPricingSection(props: ContentPricingProps): Section
       props: {
         plans: props.plans as SerializableValue,
         columns: props.columns,
-        gap: props.gap ?? (d.gap as string),
+        gap: props.gap as string,
         icons: icons as SerializableValue,
         cardShadow,
       },
@@ -346,14 +326,14 @@ export function createContentPricingSection(props: ContentPricingProps): Section
   } else {
     // Static array - build card widgets
     const plans = props.plans as PricingPlan[]
-    const columns = props.columns ?? (d.columns as number)
+    const columns = props.columns as number
 
     widgets.push({
       id: `${sectionId}-plans-grid`,
       type: 'Grid',
       props: {
         columns,
-        gap: props.gap ?? (d.gap as string)
+        gap: props.gap as string
       },
       style: {
         alignItems: 'stretch'

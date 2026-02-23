@@ -92,7 +92,7 @@ const Link = memo(forwardRef<HTMLAnchorElement, LinkProps>(function Link(
     children,
     target,
     rel,
-    variant = 'default',
+    variant = 'hover-underline',
     style,
     className,
     'data-behaviour': dataBehaviour,

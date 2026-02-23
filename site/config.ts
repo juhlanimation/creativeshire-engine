@@ -5,6 +5,8 @@
 
 import type { SiteSchema } from '../engine/schema'
 import { noirPreset } from '../engine/presets/noir'
+import { noirSampleContent } from '../engine/presets/noir'
+import { buildSiteSchemaFromPreset } from '../engine/presets/resolve'
 
 /**
  * Toggle experience mode for testing.
@@ -14,21 +16,18 @@ import { noirPreset } from '../engine/presets/noir'
  */
 const EXPERIENCE_MODE: 'default' | 'slideshow' | 'infinite-carousel' = 'default'
 
+const experienceOverride = (EXPERIENCE_MODE as string) === 'slideshow'
+  ? { id: 'slideshow' }
+  : (EXPERIENCE_MODE as string) === 'infinite-carousel'
+  ? { id: 'infinite-carousel' }
+  : undefined
+
 /**
  * Main site configuration.
  * Easy to swap: change noirPreset to another preset.
  * Sites inherit from presets and can override specific values.
  */
-export const siteConfig: SiteSchema = {
-  id: 'noir',
-  theme: noirPreset.theme,
-  experience: (EXPERIENCE_MODE as string) === 'slideshow'
-    ? { id: 'slideshow' }
-    : (EXPERIENCE_MODE as string) === 'infinite-carousel'
-    ? { id: 'infinite-carousel' }
-    : noirPreset.experience,
-  chrome: noirPreset.chrome,
-  pages: [
-    { id: 'home', slug: '/' }
-  ]
-}
+export const siteConfig: SiteSchema = buildSiteSchemaFromPreset('noir', noirPreset, {
+  content: noirSampleContent,
+  ...(experienceOverride && { experienceOverride }),
+})

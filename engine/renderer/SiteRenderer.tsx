@@ -113,6 +113,11 @@ export function buildThemeStyle(theme?: ThemeSchema): React.CSSProperties {
   vars['--scrollbar-track'] = theme?.scrollbar?.track ?? vars['--scrollbar-track'] ?? d.scrollbar.track
   vars['--scrollbar-thumb-dark'] = theme?.scrollbar?.thumbDark ?? vars['--scrollbar-thumb-dark'] ?? d.scrollbar.thumbDark
   vars['--scrollbar-track-dark'] = theme?.scrollbar?.trackDark ?? vars['--scrollbar-track-dark'] ?? d.scrollbar.trackDark
+  // Scrollbar thumb-radius: explicit site override > theme definition (via tokensToCSS)
+  // --scrollbar-thumb-radius is consumed by ::-webkit-scrollbar-thumb in scrollbar.css
+  if (theme?.scrollbar?.type) {
+    vars['--scrollbar-thumb-radius'] = theme.scrollbar.type === 'pill' ? '9999px' : '0'
+  }
 
   if (theme?.typography?.ui) vars['--font-ui'] = theme.typography.ui
   if (theme?.container?.maxWidth) vars['--site-max-width'] = theme.container.maxWidth

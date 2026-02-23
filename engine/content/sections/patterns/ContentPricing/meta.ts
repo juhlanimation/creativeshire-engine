@@ -19,19 +19,11 @@ export const meta = defineSectionMeta<ContentPricingProps>({
   ownedFields: ['layout', 'className'],
 
   settings: {
-    title: {
-      type: 'text',
-      label: 'Section Title',
-      default: 'Pricing',
-      description: 'Section heading',
-      validation: { maxLength: 100 },
-      group: 'Content',
-    },
     subtitle: {
       type: 'text',
       label: 'Subtitle',
       default: '',
-      description: 'Optional subtitle below title',
+      description: 'Optional subtitle above pricing cards',
       validation: { maxLength: 150 },
       group: 'Content',
     },
@@ -92,7 +84,6 @@ export const meta = defineSectionMeta<ContentPricingProps>({
     },
 
     // Typography — main
-    titleScale: textScaleSetting('Title Scale', 'h2'),
     subtitleScale: textScaleSetting('Subtitle Scale', 'body'),
     planNameScale: textScaleSetting('Plan Name Scale', 'h3'),
     priceScale: textScaleSetting('Price Scale', 'body'),

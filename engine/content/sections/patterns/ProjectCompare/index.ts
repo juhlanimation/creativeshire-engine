@@ -7,16 +7,13 @@
  */
 
 import type { SectionSchema, WidgetSchema } from '../../../../schema'
-import type { SettingConfig } from '../../../../schema/settings'
-import { extractDefaults } from '../../../../schema/settings'
+import { applyMetaDefaults } from '../../../../schema/settings'
 import type { ProjectCompareProps } from './types'
 import { meta } from './meta'
 import './components/VideoCompare'  // scoped widget registration
 
-/** Meta-derived defaults — single source of truth for factory fallbacks. */
-const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
-
-export function createProjectCompareSection(props: ProjectCompareProps): SectionSchema {
+export function createProjectCompareSection(rawProps: ProjectCompareProps): SectionSchema {
+  const props = applyMetaDefaults(meta, rawProps)
   const sectionId = props.id ?? 'project-compare'
 
   // Header with logo
@@ -63,7 +60,7 @@ export function createProjectCompareSection(props: ProjectCompareProps): Section
       props: {
         content: props.description,
         ...(props.descriptionHtml !== false ? { html: true } : {}),
-        as: props.descriptionScale ?? (d.descriptionScale as string)
+        as: props.descriptionScale
       }
     })
   }

@@ -47,17 +47,6 @@
   letter-spacing: 0.05em;
   text-decoration: none;
   color: inherit;
-  opacity: 0.8;
-  transition: opacity var(--duration-fast, 200ms) var(--ease-default, ease);
-}
-
-.header-chrome__nav-link:hover,
-.header-chrome__nav-link:focus-visible {
-  opacity: 1;
-}
-
-.header-chrome__nav-link[data-active="true"] {
-  opacity: 1;
 }
 
 /* Responsive: mobile */

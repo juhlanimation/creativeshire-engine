@@ -41,12 +41,6 @@
   font-size: var(--font-size-xs, 0.75rem);
 }
 
-/* ── Hover — opacity shift for links (theme-driven) ──────────── */
-.brand-footer__nav .link-widget:hover,
-.brand-footer__contact .link-widget:hover {
-  opacity: var(--hover-opacity, 0.7);
-}
-
 /* ── Desktop: 3-column row ───────────────────────────────────── */
 @container site (min-width: 768px) {
   .brand-footer {

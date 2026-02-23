@@ -23,9 +23,8 @@ import { isBindingExpression } from '../utils'
 export function createTeamShowcaseSection(props: TeamShowcaseProps): SectionSchema {
   const sectionId = props.id ?? 'team-showcase'
 
-  const showcaseProps: Record<string, SerializableValue> = {
-    actionPrefix: sectionId,
-  }
+  const showcaseProps: Record<string, SerializableValue> = {}
+  if (props.actionPrefix) showcaseProps.actionPrefix = props.actionPrefix
   if (props.labelText != null) showcaseProps.labelText = props.labelText
   if (props.inactiveOpacity != null) showcaseProps.inactiveOpacity = props.inactiveOpacity
 

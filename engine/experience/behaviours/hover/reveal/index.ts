@@ -12,6 +12,9 @@
  * - --shift-color: Color shift value (for text color changes)
  * - --flip-duration: Animation duration for flips
  * - --fade-duration: Animation duration for fades
+ *
+ * Note: --icon-opacity was removed — flip variant icons are now inline
+ * with the email row and flip in together via --text-reveal-y.
  */
 
 import type { Behaviour } from '../../types'
@@ -57,7 +60,6 @@ const hoverReveal: Behaviour<HoverRevealSettings> = {
         '--hover-reveal-icon-opacity': isHovered ? 1 : 0,
         '--hover-reveal-scale': 1,
         '--text-reveal-y': isHovered ? '-100%' : '0',
-        '--icon-opacity': isHovered ? 1 : 0,
         '--shift-color': defaultColor,
         '--flip-duration': '0ms',
         '--fade-duration': '0ms',
@@ -79,8 +81,6 @@ const hoverReveal: Behaviour<HoverRevealSettings> = {
       '--hover-reveal-scale': scale,
       // Text flip - controlled by hover
       '--text-reveal-y': isHovered ? '-100%' : '0',
-      // Icon visibility - fade in on hover
-      '--icon-opacity': isHovered ? 1 : 0,
       // Color - changes on hover
       '--shift-color': isHovered ? hoverColor : defaultColor,
       // Animation durations

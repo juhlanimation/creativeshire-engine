@@ -38,10 +38,16 @@ const scrollCoverProgress: Behaviour<CoverProgressSettings> = {
   compute: (_state, options, element) => {
     if (!element || typeof window === 'undefined') return { '--cover-progress': 0 }
 
-    // Content edge: bottom of this section's spacer in viewport coordinates.
-    // Uses getBoundingClientRect() which reflects ScrollSmoother transforms,
-    // giving the smoothed visual position (not raw window.scrollY).
-    const contentEdge = element.getBoundingClientRect().bottom
+    // Content edge: where the "covering" content meets the pinned section in viewport coords.
+    // For pinned (sticky) sections, offsetTop tracks the stuck visual position (≈ scrollY),
+    // not the flow position — so offsetTop + offsetHeight - scrollY is always constant.
+    // Instead, use the next sibling's top edge: it's the actual covering element scrolling
+    // over the pinned section, equivalent to port12's (viewportHeight - scrollY) formula.
+    const pinnedAncestor = element.closest('[data-section-pinned]') as HTMLElement | null
+    const contentEdge = pinnedAncestor
+      ? (pinnedAncestor.nextElementSibling?.getBoundingClientRect().top
+          ?? element.getBoundingClientRect().bottom)
+      : element.getBoundingClientRect().bottom
 
     // Determine target zone — either from a real DOM element or viewport fractions.
     let targetTop: number

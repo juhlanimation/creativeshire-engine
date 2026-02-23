@@ -1,34 +1,32 @@
 /**
- * Site scrollbar styles.
+ * Site scrollbar styles — ::-webkit-scrollbar only.
  * Part of the site's visual design, not the platform's.
  *
- * Uses CSS variables set by ThemeProvider:
- * - --scrollbar-width (default: 6px)
- * - --scrollbar-thumb (default: #000)
- * - --scrollbar-track (default: #fff)
- * - --scrollbar-thumb-dark (default: #fff)
- * - --scrollbar-track-dark (default: #0a0a0a)
+ * CSS custom properties (set on scroll target by useThemeVariables):
+ * - --scrollbar-thumb-radius — '0' (square) or '9999px' (pill)
+ * - --scrollbar-width — e.g. '6px'
+ * - --scrollbar-thumb / --scrollbar-track — colors
+ *
+ * Standard properties (scrollbar-width, scrollbar-color) are NOT in CSS —
+ * Chrome 121+ uses them over ::-webkit-scrollbar when present. useThemeVariables
+ * sets them as inline styles only for non-webkit browsers (Firefox).
  *
  * Container-aware:
- * - Fullpage mode: styles html scrollbar
- * - Contained mode: styles [data-engine-container] scrollbar
+ * - Fullpage mode: styles html scrollbar (vars on document.documentElement)
+ * - Contained mode: styles [data-engine-container] scrollbar (vars on container)
  */
 
 /* =============================================================================
  * FULLPAGE MODE - styles the document scrollbar
  * Applied when SiteRenderer is the main page content
+ *
+ * scrollbar-width / scrollbar-color are NOT set here — Chrome 121+ uses
+ * standard properties when present and ignores ::-webkit-scrollbar entirely.
+ * useThemeVariables sets them as inline styles only for non-webkit browsers.
  * ============================================================================= */
 
 html:has([data-site-renderer]) {
   scrollbar-gutter: stable;
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb, #000000) var(--scrollbar-track, #ffffff);
-}
-
-@media (prefers-color-scheme: dark) {
-  html:has([data-site-renderer]) {
-    scrollbar-color: var(--scrollbar-thumb-dark, #ffffff) var(--scrollbar-track-dark, #0a0a0a);
-  }
 }
 
 /* Webkit browsers (Chrome, Safari, Edge) */
@@ -42,33 +40,18 @@ html:has([data-site-renderer])::-webkit-scrollbar-track {
 
 html:has([data-site-renderer])::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb, #000000);
-  border-radius: 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  html:has([data-site-renderer])::-webkit-scrollbar-track {
-    background: var(--scrollbar-track-dark, #0a0a0a);
-  }
-  html:has([data-site-renderer])::-webkit-scrollbar-thumb {
-    background: var(--scrollbar-thumb-dark, #ffffff);
-  }
+  border-radius: var(--scrollbar-thumb-radius, 0);
 }
 
 /* =============================================================================
  * CONTAINED MODE - styles the container scrollbar
  * Applied when SiteRenderer is inside an iframe/preview container
+ *
+ * Same Chrome 121+ caveat as fullpage — standard properties set via JS only.
  * ============================================================================= */
 
 [data-engine-container] {
   scrollbar-gutter: stable;
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb, #000000) var(--scrollbar-track, #ffffff);
-}
-
-@media (prefers-color-scheme: dark) {
-  [data-engine-container] {
-    scrollbar-color: var(--scrollbar-thumb-dark, #ffffff) var(--scrollbar-track-dark, #0a0a0a);
-  }
 }
 
 /* Webkit browsers (Chrome, Safari, Edge) */
@@ -82,14 +65,5 @@ html:has([data-site-renderer])::-webkit-scrollbar-thumb {
 
 [data-engine-container]::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb, #000000);
-  border-radius: 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  [data-engine-container]::-webkit-scrollbar-track {
-    background: var(--scrollbar-track-dark, #0a0a0a);
-  }
-  [data-engine-container]::-webkit-scrollbar-thumb {
-    background: var(--scrollbar-thumb-dark, #ffffff);
-  }
+  border-radius: var(--scrollbar-thumb-radius, 0);
 }

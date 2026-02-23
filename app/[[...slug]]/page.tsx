@@ -18,10 +18,8 @@ import { siteConfig } from '@/site/config'
 import { getAllPages, getPageBySlug } from '@/site/pages'
 import { getPreset, DEV_PRESET_PARAM } from '../../engine/presets'
 import {
-  transformPresetChrome,
-  resolveChromeBindings,
-  resolveIntroBindings,
-  resolvePageBindings,
+  buildSiteSchemaFromPreset,
+  buildPageFromPreset,
 } from '../../engine/presets/resolve'
 import type { SiteSchema, PageSchema } from '../../engine/schema'
 
@@ -64,33 +62,13 @@ function getSiteConfigForPreset(presetId: string | undefined): {
   if (process.env.NODE_ENV === 'development' && presetId) {
     const preset = getPreset(presetId)
     if (preset) {
-      // Get sample content for this preset (if available)
       const sampleContent = PRESET_SAMPLE_CONTENT[presetId]
+      const presetConfig = buildSiteSchemaFromPreset(presetId, preset, {
+        content: sampleContent,
+      })
 
-      // Build a SiteSchema from the preset
-      const chrome = transformPresetChrome(preset.chrome)
-      const presetConfig: SiteSchema = {
-        id: presetId,
-        theme: preset.theme,
-        intro: sampleContent ? resolveIntroBindings(preset.intro, sampleContent) : preset.intro,
-        experience: preset.experience,
-        transition: preset.transition,
-        chrome: sampleContent ? resolveChromeBindings(chrome, sampleContent) : chrome,
-        pages: Object.values(preset.pages).map(p => ({ id: p.id, slug: p.slug })),
-      }
-
-      // Page lookup from preset - resolve bindings if sample content available
-      const getPage = (slug: string): PageSchema | undefined => {
-        const page = Object.values(preset.pages).find(p => p.slug === slug)
-        if (!page) return undefined
-
-        // Resolve bindings using sample content
-        if (sampleContent) {
-          return resolvePageBindings(page, sampleContent)
-        }
-
-        return page
-      }
+      const getPage = (slug: string): PageSchema | undefined =>
+        buildPageFromPreset(preset, slug, sampleContent)
 
       return { config: presetConfig, getPage, presetId }
     }

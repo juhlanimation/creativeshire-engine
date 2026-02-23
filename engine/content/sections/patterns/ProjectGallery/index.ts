@@ -4,15 +4,11 @@
  */
 
 import type { SectionSchema, SerializableValue, WidgetSchema } from '../../../../schema'
-import type { SettingConfig } from '../../../../schema/settings'
-import { extractDefaults } from '../../../../schema/settings'
+import { applyMetaDefaults } from '../../../../schema/settings'
 import { isBindingExpression } from '../utils'
 import type { ProjectGalleryProps } from './types'
 import { meta } from './meta'
 import './components/FlexGalleryCardRepeater'  // scoped widget registration
-
-/** Meta-derived defaults — single source of truth for factory fallbacks. */
-const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
 
 /**
  * Creates a ProjectGallery section schema.
@@ -26,9 +22,10 @@ const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
  * @param props - Project gallery section configuration
  * @returns SectionSchema for the project gallery section
  */
-export function createProjectGallerySection(props: ProjectGalleryProps): SectionSchema {
+export function createProjectGallerySection(rawProps: ProjectGalleryProps): SectionSchema {
+  const props = applyMetaDefaults(meta, rawProps)
   const sectionId = props.id ?? 'project-gallery'
-  const defaultIndex = props.defaultActiveIndex ?? (d.defaultActiveIndex as number)
+  const defaultIndex = props.defaultActiveIndex as number
 
   // Header with logo
   const header: WidgetSchema = {

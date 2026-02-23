@@ -22,10 +22,9 @@
 import React, { useContext, useLayoutEffect } from 'react'
 import { SiteRenderer } from '../../engine/renderer/SiteRenderer'
 import {
-  transformPresetChrome,
-  resolveChromeBindings,
+  buildSiteSchemaFromPreset,
+  buildPageFromPreset,
   resolveIntroBindings,
-  resolvePageBindings,
 } from '../../engine/presets/resolve'
 import {
   resolvePresetIntro,
@@ -42,7 +41,7 @@ import type { BehaviourAssignment } from '../../engine/experience'
 import { ensurePresetsRegistered, getAllPresets } from '../../engine/presets'
 import type { SitePreset } from '../../engine/presets/types'
 import type { PresetIntroConfig } from '../../engine/intro/types'
-import type { SiteSchema, IntroConfig, ExperienceConfig } from '../../engine/schema'
+import type { IntroConfig, ExperienceConfig } from '../../engine/schema'
 import { getTheme } from '../../engine/themes'
 import type { SettingConfig } from '../../engine/schema/settings'
 import { settingsToConditionalArgTypes } from './controls-adapter'
@@ -197,9 +196,6 @@ export function PresetPageStory({
   sectionGap,
   sectionGapScale,
 }: PresetPageStoryProps) {
-  const page = preset.pages[pageKey]
-  if (!page) return <div>Page &quot;{pageKey}&quot; not found in preset</div>
-
   // Read colorTheme from Storybook globals (provided by StoryGlobalsDecorator)
   const { colorTheme: globalColorTheme } = useContext(StoryGlobalsContext)
   const colorTheme = globalColorTheme ?? preset.theme?.colorTheme ?? 'contrast'
@@ -218,8 +214,6 @@ export function PresetPageStory({
     if (bgColor) document.body.style.backgroundColor = bgColor
     return () => { document.body.style.backgroundColor = '' }
   }, [bgColor])
-
-  const chrome = transformPresetChrome(preset.chrome)
 
   // Build experience config from selected arg
   let experience: ExperienceConfig | undefined
@@ -245,19 +239,26 @@ export function PresetPageStory({
     experience = { ...experience, sectionBehaviours: patched }
   }
 
-  // Build cover-scroll sectionBehaviours from pinnedSections checkboxes
+  // Build cover-scroll sectionBehaviours from pinnedSections checkboxes.
+  // Prefer the preset's own behaviour assignments (correct variable names + target selectors).
+  // Only auto-generate generic defaults for sections without preset config.
   if (experienceArg === 'cover-scroll' && pinnedSections) {
+    const presetBehaviours = experience?.sectionBehaviours ?? {}
     const autoBehaviours: Record<string, BehaviourAssignment[]> = {}
     for (const sectionId of pinnedSections) {
-      autoBehaviours[sectionId] = [{
-        behaviour: 'scroll/cover-progress',
-        pinned: true,
-        options: {
-          propagateToRoot: `--${sectionId}-cover-progress`,
-          propagateContentEdge: `--${sectionId}-content-edge`,
-          targetSelector: `#${sectionId}-title`,
-        },
-      }]
+      if (presetBehaviours[sectionId]) {
+        autoBehaviours[sectionId] = presetBehaviours[sectionId]
+      } else {
+        autoBehaviours[sectionId] = [{
+          behaviour: 'scroll/cover-progress',
+          pinned: true,
+          options: {
+            propagateToRoot: `--${sectionId}-cover-progress`,
+            propagateContentEdge: `--${sectionId}-content-edge`,
+            targetSelector: `#${sectionId}`,
+          },
+        }]
+      }
     }
     experience = { ...experience!, sectionBehaviours: autoBehaviours }
   }
@@ -306,16 +307,17 @@ export function PresetPageStory({
     } : {}),
   }
 
-  const site: SiteSchema = {
-    id: presetId,
-    theme: themeOverride,
-    chrome: sampleContent ? resolveChromeBindings(chrome, sampleContent) : chrome,
-    pages: Object.values(preset.pages).map(p => ({ id: p.id, slug: p.slug })),
-    ...(experience && { experience }),
-    ...(intro && { intro }),
-  }
+  // Build SiteSchema via shared function (single code path for all consumers)
+  const site = buildSiteSchemaFromPreset(presetId, preset, {
+    content: sampleContent,
+    themeOverride,
+    experienceOverride: experience,
+    introOverride: intro ?? null, // null = omit intro (Storybook controls it above)
+    includeTransition: false, // Storybook doesn't use page transitions
+  })
 
-  const resolvedPage = sampleContent ? resolvePageBindings(page, sampleContent) : page
+  const resolvedPage = buildPageFromPreset(preset, pageKey, sampleContent)
+  if (!resolvedPage) return <div>Page &quot;{pageKey}&quot; not found in preset</div>
 
   // Key on experience + intro + settings forces full remount on change
   // (intros replay cleanly, experience structural changes take effect)

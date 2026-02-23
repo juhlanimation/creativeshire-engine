@@ -138,20 +138,10 @@ const Modal = memo(function Modal() {
     if (!scrollTarget) return
 
     const originalOverflow = scrollTarget.style.overflow
-    const originalPaddingRight = scrollTarget.style.paddingRight
-
-    // Calculate scrollbar width to prevent layout shift (only relevant for fullpage)
-    const scrollbarWidth = mode === 'contained'
-      ? 0
-      : window.innerWidth - document.documentElement.clientWidth
     scrollTarget.style.overflow = 'hidden'
-    if (scrollbarWidth > 0) {
-      scrollTarget.style.paddingRight = `${scrollbarWidth}px`
-    }
 
     return () => {
       scrollTarget.style.overflow = originalOverflow
-      scrollTarget.style.paddingRight = originalPaddingRight
     }
   }, [transitionPhase, mode, containerRef, siteContainer])
 

@@ -13,16 +13,12 @@
 
 import type { CSSProperties } from 'react'
 import type { SectionSchema, WidgetSchema, SerializableValue } from '../../../../schema'
-import type { SettingConfig } from '../../../../schema/settings'
-import { extractDefaults } from '../../../../schema/settings'
+import { applyMetaDefaults } from '../../../../schema/settings'
 import type { TextElement } from '../../../widgets/primitives/Text/types'
 import type { HeroVideoProps } from './types'
 import { DEFAULT_HERO_STYLES } from './types'
 import { isBindingExpression } from '../utils'
 import { meta } from './meta'
-
-/** Meta-derived defaults — single source of truth for factory fallbacks. */
-const d = extractDefaults(meta.settings as Record<string, SettingConfig>)
 
 /**
  * Merge two style objects.
@@ -39,14 +35,14 @@ function mergeStyles(base?: CSSProperties, override?: CSSProperties): CSSPropert
  * @param props - Hero section configuration (content + optional styles)
  * @returns SectionSchema for the hero section
  */
-export function createHeroVideoSection(props?: HeroVideoProps): SectionSchema {
-  const p = props ?? {}
+export function createHeroVideoSection(rawProps?: HeroVideoProps): SectionSchema {
+  const p = applyMetaDefaults(meta, rawProps ?? {})
 
-  // Resolve content with default bindings
-  const introText = p.introText ?? '{{ content.hero.introText }}'
-  const roles = p.roles ?? '{{ content.hero.roles }}'
-  const videoSrc = p.videoSrc ?? '{{ content.hero.videoSrc }}'
-  const scrollIndicatorText = p.scrollIndicatorText ?? '{{ content.hero.scrollIndicatorText }}'
+  // Content bindings: check rawProps to avoid meta defaults suppressing bindings
+  const introText = rawProps?.introText ?? '{{ content.hero.introText }}'
+  const roles = rawProps?.roles ?? '{{ content.hero.roles }}'
+  const videoSrc = rawProps?.videoSrc ?? '{{ content.hero.videoSrc }}'
+  const scrollIndicatorText = rawProps?.scrollIndicatorText ?? '{{ content.hero.scrollIndicatorText }}'
 
   // Merge provided styles with defaults
   const styles = {
@@ -55,13 +51,11 @@ export function createHeroVideoSection(props?: HeroVideoProps): SectionSchema {
     scrollIndicator: mergeStyles(DEFAULT_HERO_STYLES.scrollIndicator, p.styles?.scrollIndicator),
   }
 
-  // Resolve bottom offset (% of viewport height)
-  const bottomOffset = p.bottomOffset ?? (d.bottomOffset as number)
-
-  // Resolve text scales with defaults from meta.ts
-  const introScale = p.introScale ?? (d.introScale as TextElement)
-  const roleTitleScale = p.roleTitleScale ?? (d.roleTitleScale as TextElement)
-  const scrollIndicatorScale = p.scrollIndicatorScale ?? (d.scrollIndicatorScale as TextElement)
+  // Settings: auto-filled by applyMetaDefaults
+  const bottomOffset = p.bottomOffset as number
+  const introScale = p.introScale as TextElement
+  const roleTitleScale = p.roleTitleScale as TextElement
+  const scrollIndicatorScale = p.scrollIndicatorScale as TextElement
 
   // Build content widgets
   const contentWidgets: WidgetSchema[] = [

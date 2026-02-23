@@ -106,6 +106,8 @@ const muted = createTheme({
     },
   },
 
+  scrollbar: { type: 'pill' },
+
   light: {
     background: '#d8d8d5',
     text: '#27272A',

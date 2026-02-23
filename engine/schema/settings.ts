@@ -334,3 +334,18 @@ export function extractDefaults(
   }
   return defaults
 }
+
+/**
+ * Merge meta setting defaults under explicit props.
+ * Factories call this once at the top so that meta defaults
+ * automatically apply when a caller (e.g. preset) omits a setting.
+ *
+ * Props always win — meta defaults only fill in missing keys.
+ */
+export function applyMetaDefaults<T>(
+  meta: { settings?: Record<string, SettingConfig> },
+  props: T,
+): T {
+  const defaults = extractDefaults((meta.settings ?? {}) as Record<string, SettingConfig>)
+  return { ...defaults, ...props } as T
+}

@@ -7,8 +7,8 @@
  *
  * Structure rules per component type:
  *   Primitive/Interactive widget  → uses widgetStoryConfig, imports ./meta, has title, has Default export
- *   Section pattern               → uses sectionStoryConfig, imports ./meta + factory from ./index, has preview.ts
- *   Chrome pattern                → uses chromePatternStoryConfig, imports ./meta + factory from ./index, has preview.ts
+ *   Section pattern               → uses sectionStoryConfig, imports ./meta + factory from ./index
+ *   Chrome pattern                → uses chromePatternStoryConfig, imports ./meta + factory from ./index
  *   Preset                        → uses presetStoryConfig, has title
  */
 
@@ -79,7 +79,7 @@ const SECTION_RULE: StoryRule = {
   requiresMeta: true,
   requiresFactory: true,
   factoryPattern: /create\w+Section/,
-  requiresPreview: true,
+  requiresPreview: false,
 }
 
 const CHROME_PATTERN_RULE: StoryRule = {
@@ -87,7 +87,7 @@ const CHROME_PATTERN_RULE: StoryRule = {
   requiresMeta: true,
   requiresFactory: true,
   factoryPattern: /create\w+(Region|Overlay)/,
-  requiresPreview: true,
+  requiresPreview: false,
 }
 
 const PRESET_RULE: StoryRule = {

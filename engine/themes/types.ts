@@ -236,6 +236,16 @@ export interface ThemeLayout {
 }
 
 // =============================================================================
+// Scrollbar
+// =============================================================================
+
+export type ScrollbarType = 'thin' | 'pill' | 'hidden'
+
+export interface ThemeScrollbar {
+  type: ScrollbarType
+}
+
+// =============================================================================
 // Theme Definition
 // =============================================================================
 
@@ -253,6 +263,7 @@ export interface ThemeDefinition {
   textDecoration: ThemeTextDecoration
   interaction: ThemeInteraction
   layout: ThemeLayout
+  scrollbar?: ThemeScrollbar
   dark: ColorPalette
   light: ColorPalette
 }

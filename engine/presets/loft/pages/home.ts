@@ -76,7 +76,8 @@ function createPlanCard(planKey: string): WidgetSchema {
   return {
     id: `plan-${planKey}`,
     type: 'Flex',
-    props: { direction: 'column', align: 'center', gap: '0' },
+    props: { direction: 'column', align: 'center', gap: '0.5rem' },
+    style: { gap: '1rem' },
     className: 'plan-card',
     widgets: [
       { id: `${planKey}-illustration`, type: 'Image', props: { src: `{{ ${p}.illustration }}`, alt: `{{ ${p}.name }} illustration`, decorative: true }, className: 'plan-card__illustration' },

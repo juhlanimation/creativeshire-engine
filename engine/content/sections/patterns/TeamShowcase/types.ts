@@ -37,4 +37,6 @@ export interface TeamShowcaseProps extends BaseSectionProps {
   inactiveOpacity?: number
   /** Section background color */
   backgroundColor?: string
+  /** Action prefix for select/deselect events (only set when Chrome consumes them) */
+  actionPrefix?: string
 }

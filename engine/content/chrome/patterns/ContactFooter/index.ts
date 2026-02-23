@@ -29,7 +29,9 @@
 
 import type { PresetRegionConfig } from '../../../../presets/types'
 import type { WidgetSchema } from '../../../../schema/widget'
+import { applyMetaDefaults } from '../../../../schema/settings'
 import type { ContactFooterProps, NavLink } from './types'
+import { meta } from './meta'
 
 /**
  * Build nav link widgets from either a binding expression or a direct array.
@@ -69,7 +71,9 @@ function buildNavWidgets(navLinks: string | NavLink[]): WidgetSchema[] {
  * @param props - Footer configuration with nav links, contact, and studio info
  * @returns PresetRegionConfig for the footer region
  */
-export function createContactFooterRegion(props: ContactFooterProps): PresetRegionConfig {
+export function createContactFooterRegion(rawProps: ContactFooterProps): PresetRegionConfig {
+  const props = applyMetaDefaults(meta, rawProps)
+
   // Nav column — wrapped in __left for CSS layout grouping
   const hasNavLinks = Array.isArray(props.navLinks) ? props.navLinks.length > 0 : !!props.navLinks
   const navWidget: WidgetSchema | null = hasNavLinks
@@ -217,10 +221,10 @@ export function createContactFooterRegion(props: ContactFooterProps): PresetRegi
     className: 'footer-chrome__copyright',
   }
 
-  // Build inline style for optional spacing overrides (CSS custom properties)
+  // Build inline style for spacing (CSS custom properties)
   const rootStyle: Record<string, string> = {}
-  if (props.paddingTop) rootStyle['--footer-padding-top'] = `${props.paddingTop}rem`
-  if (props.paddingBottom) rootStyle['--footer-padding-bottom'] = `${props.paddingBottom}rem`
+  if (props.paddingTop != null) rootStyle['--footer-padding-top'] = `${props.paddingTop}rem`
+  if (props.paddingBottom != null) rootStyle['--footer-padding-bottom'] = `${props.paddingBottom}rem`
 
   return {
     widgets: [

@@ -7,4 +7,5 @@ export interface FloatingContactProps {
   label: string
   email: string
   blendMode?: 'normal' | 'difference'
+  hoverColor?: 'accent' | 'interaction' | 'primary'
 }

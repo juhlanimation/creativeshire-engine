@@ -12,6 +12,19 @@
 import { describe, it, expect } from 'vitest'
 import { getFiles, readFile, relativePath } from './helpers'
 import { sectionRegistry } from '../../engine/content/sections/registry'
+import { getAllPresets, ensurePresetsRegistered } from '../../engine/presets'
+import { buildSiteSchemaFromPreset, buildPageFromPreset } from '../../engine/presets/resolve'
+import { noirSampleContent } from '../../engine/presets/noir'
+import { prismSampleContent } from '../../engine/presets/prism'
+import { loftSampleContent } from '../../engine/presets/loft'
+
+ensurePresetsRegistered()
+
+const PRESET_SAMPLE_CONTENT: Record<string, Record<string, unknown>> = {
+  'noir': noirSampleContent,
+  'prism': prismSampleContent,
+  'loft': loftSampleContent,
+}
 
 describe('Preset Binding Expressions', () => {
   // Get all preset TypeScript files (excluding sample-content and content-contract which are metadata)
@@ -233,5 +246,61 @@ describe('Preset Binding Expressions', () => {
       violations,
       `Factory patternId violations:\n${violations.join('\n')}`
     ).toHaveLength(0)
+  })
+})
+
+describe('Preset Resolution Parity', () => {
+  /** Recursively scan for raw binding expressions in a value. */
+  function findRawBindings(value: unknown, path: string): string[] {
+    if (value == null) return []
+    if (typeof value === 'string') {
+      return value.includes('{{') ? [`${path}: "${value}"`] : []
+    }
+    if (Array.isArray(value)) {
+      return value.flatMap((item, i) => findRawBindings(item, `${path}[${i}]`))
+    }
+    if (typeof value === 'object') {
+      return Object.entries(value).flatMap(([key, val]) => findRawBindings(val, `${path}.${key}`))
+    }
+    return []
+  }
+
+  it('buildSiteSchemaFromPreset produces no raw {{ }} bindings in chrome', () => {
+    const violations: string[] = []
+    for (const { id, preset } of getAllPresets()) {
+      const content = PRESET_SAMPLE_CONTENT[id]
+      if (!content) continue // Skip presets without sample content
+      const site = buildSiteSchemaFromPreset(id, preset, { content })
+      violations.push(...findRawBindings(site.chrome, `${id}.chrome`))
+    }
+    expect(violations, `Raw bindings in chrome:\n${violations.join('\n')}`).toHaveLength(0)
+  })
+
+  it('buildPageFromPreset produces no raw {{ }} bindings in pages', () => {
+    const violations: string[] = []
+    for (const { id, preset } of getAllPresets()) {
+      const content = PRESET_SAMPLE_CONTENT[id]
+      if (!content) continue
+      for (const pageKey of Object.keys(preset.pages)) {
+        const page = buildPageFromPreset(preset, pageKey, content)
+        if (page) {
+          violations.push(...findRawBindings(page, `${id}.pages.${pageKey}`))
+        }
+      }
+    }
+    expect(violations, `Raw bindings in pages:\n${violations.join('\n')}`).toHaveLength(0)
+  })
+
+  it('buildSiteSchemaFromPreset produces no raw {{ }} bindings in intro', () => {
+    const violations: string[] = []
+    for (const { id, preset } of getAllPresets()) {
+      const content = PRESET_SAMPLE_CONTENT[id]
+      if (!content) continue
+      const site = buildSiteSchemaFromPreset(id, preset, { content })
+      if (site.intro) {
+        violations.push(...findRawBindings(site.intro, `${id}.intro`))
+      }
+    }
+    expect(violations, `Raw bindings in intro:\n${violations.join('\n')}`).toHaveLength(0)
   })
 })

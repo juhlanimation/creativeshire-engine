@@ -156,11 +156,36 @@ footer.chrome-header--overlay {
 .chrome-overlay:has([data-blend-mode="difference"]):hover,
 .chrome-header--overlay:has([data-blend-mode="difference"]):has([data-hovered]) {
   mix-blend-mode: normal;
+  /* Reset color overrides so theme values (e.g. --accent: #9933FF) are visible
+     instead of the white overrides needed for difference blend mode. */
+  color: inherit;
+  --text-primary: inherit;
+  --text-secondary: inherit;
+  --color-link: inherit;
+  --accent: inherit;
+  --interaction: inherit;
+  --color-primary: inherit;
+  --color-primary-contrast: inherit;
+  --color-secondary: inherit;
+  --color-secondary-contrast: inherit;
+  --color-focus: inherit;
 }
 
 .chrome-overlay:has([data-blend-mode="difference"]):hover:has([data-copy-state]),
 .chrome-header--overlay:has([data-blend-mode="difference"]):has([data-hovered]):has([data-copy-state]) {
   mix-blend-mode: difference;
+  /* Re-apply white overrides — back in difference blend during copy feedback */
+  color: white;
+  --text-primary: white;
+  --text-secondary: white;
+  --color-link: white;
+  --accent: white;
+  --interaction: white;
+  --color-primary: white;
+  --color-primary-contrast: white;
+  --color-secondary: white;
+  --color-secondary-contrast: white;
+  --color-focus: white;
 }
 
 /* Position variants — max-width aware.
@@ -243,13 +268,24 @@ footer.chrome-header--overlay {
 }
 
 /* ── Brand text — typography-only class for header brand logos ──── */
-/* No animation or positioning — that's handled by behaviours.
-   Just the visual identity: weight, case, spacing, size. */
+/* Visual identity only: display font at fixed size.
+   Visible by default (Storybook, no behaviour context). */
 .brand-text {
   color: white;
-  font-weight: 700;
+  font-family: var(--font-title);
+  font-weight: var(--font-weight-display, 700);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-size: 1.25rem;
   pointer-events: none;
+  will-change: transform;
+}
+
+/* When scroll/reveal behaviour is active: clip-path + translateY driven by CSS vars.
+   data-behaviour is set in JSX (no useEffect delay), so this applies from first paint.
+   --hero-content-edge: viewport px of the covering content edge.
+   --reveal-progress: 0→1 as scroll progresses (from scroll/reveal behaviour). */
+[data-behaviour="scroll/reveal"] .brand-text {
+  transform: translateY(max(0px, calc(var(--hero-content-edge, 0) * 1px)));
+  clip-path: inset(0 calc((1 - var(--reveal-progress, 0)) * 100%) 0 0);
 }

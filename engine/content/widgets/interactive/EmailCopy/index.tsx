@@ -7,16 +7,24 @@
  *
  * FLIP (default):
  *   label controls content, not styling:
- *   - provided:  text-stack (label flips to email on hover)
- *   - omitted:   plain email text (no flip)
+ *   - provided:  text-stack with two rows (label flips to email+icon on hover)
+ *   - omitted:   single static row with email+icon (no flip)
  *   Visual props (blendMode, color) apply uniformly.
- *   Hover is handled by CSS: behaviour sets --icon-opacity/--text-reveal-y,
+ *   Hover is handled by CSS: behaviour sets --text-reveal-y,
  *   or the :not([data-behaviour]):hover fallback does it.
+ *
+ *   Structure (with label):
+ *     button.email-copy--flip (flex)
+ *       div.text-stack (overflow:hidden, height = 1 row)
+ *         div.row (prompt — in-flow, slides up on hover)
+ *           span.text "How can I help you?"
+ *         div.row.row--email (in-flow below, slides in on hover)
+ *           span.text "hello@example.com"
+ *           div.icon-stack (inline, copy→check sub-flip)
  *
  *   CSS Variables (from hover/reveal behaviour):
  *   - --text-reveal-y: Text flip position (hover-controlled)
  *   - --icon-reveal-y: Icon flip position (click-controlled, set by widget)
- *   - --icon-opacity: Icon visibility (hover-controlled)
  *   - --shift-color: Text color (effect-controlled)
  *
  *   data-blend-mode drives mix-blend-mode on parent .chrome-overlay (see chrome.css).
@@ -229,6 +237,17 @@ const FlipVariant = forwardRef<HTMLButtonElement, FlipVariantProps>(function Fli
     ...(textColor && { color: textColor }),
   } as CSSProperties
 
+  const iconStack = (
+    <div className="email-copy__icon-stack">
+      <div className="email-copy__icon email-copy__icon--copy">
+        <CopyIcon />
+      </div>
+      <div className="email-copy__icon email-copy__icon--check">
+        {isCopied ? <CheckIcon /> : <FailIcon />}
+      </div>
+    </div>
+  )
+
   return (
     <button
       ref={ref}
@@ -245,27 +264,20 @@ const FlipVariant = forwardRef<HTMLButtonElement, FlipVariantProps>(function Fli
     >
       {hasLabel ? (
         <div className="email-copy__text-stack">
-          <span className="email-copy__text email-copy__text--prompt" data-reveal="text-primary">
-            {label}
-          </span>
-          <span className="email-copy__text email-copy__text--email" data-reveal="text-secondary">
-            {isFailed ? 'Failed to copy' : email}
-          </span>
+          <div className="email-copy__row">
+            <span className="email-copy__text">{label}</span>
+          </div>
+          <div className="email-copy__row email-copy__row--email">
+            <span className="email-copy__text">{isFailed ? 'Failed to copy' : email}</span>
+            {iconStack}
+          </div>
         </div>
       ) : (
-        <span className="email-copy__text">
-          {isFailed ? 'Failed to copy' : email}
-        </span>
+        <div className="email-copy__row email-copy__row--email email-copy__row--static">
+          <span className="email-copy__text">{isFailed ? 'Failed to copy' : email}</span>
+          {iconStack}
+        </div>
       )}
-
-      <div className="email-copy__icon-stack" data-reveal="icon-container">
-        <div className="email-copy__icon email-copy__icon--copy" data-reveal="icon-primary">
-          <CopyIcon />
-        </div>
-        <div className="email-copy__icon email-copy__icon--check" data-reveal="icon-secondary">
-          {isCopied ? <CheckIcon /> : <FailIcon />}
-        </div>
-      </div>
     </button>
   )
 })
