@@ -66,6 +66,10 @@ export interface IntroConfig {
     component: string
     props?: Record<string, unknown>
   }
+  /** Optional effect primitive ID for the reveal animation (e.g., 'wipe-left', 'fade').
+   *  When set, usePhaseController uses createEffectTrack() instead of the RAF opacity loop.
+   *  When not set, existing CSS variable bridge behavior is preserved. */
+  revealEffect?: string
 }
 
 // =============================================================================

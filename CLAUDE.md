@@ -149,7 +149,9 @@ engine/
 │   ├── timeline/          Discrete: play → complete
 │   │   ├── EffectTimeline Parallel/sequential track orchestration
 │   │   ├── animateElement CSS class-based animation Promise wrapper
-│   │   └── gsap/          GSAP reveal transitions (wipe, expand, fade)
+│   │   ├── effect-track   Bridge: EffectPrimitive → EffectTimeline track
+│   │   ├── effects/       Shared effect primitives (wipe, expand, fade, overlay-fade)
+│   │   └── gsap/          GSAP reveal hook + RevealTransition component
 │   ├── experiences/       stacking, slideshow, infinite-carousel...
 │   ├── lifecycle/         SectionLifecycleProvider
 │   ├── navigation/        Page transitions, keyboard/swipe/wheel nav
@@ -191,6 +193,8 @@ Variable mapping reference: [theme-contract.spec.md](.claude/skills/engine/specs
 
 ### Browser Tools: When to Use
 
+Use **Playwright MCP** (`mcp__next-devtools__browser_eval`) for browser automation — NOT the Chrome extension (`mcp__claude-in-chrome__*`). Playwright is the available tool for screenshots, navigation, and console checks.
+
 Browser automation captures **screenshots** (static snapshots). It cannot perceive motion.
 
 | ✅ Use browser for | ❌ Don't use browser for |
@@ -200,6 +204,22 @@ Browser automation captures **screenshots** (static snapshots). It cannot percei
 | Responsive breakpoints | Scroll-based effects |
 | Reference site analysis | Hover state "feel" |
 | Console error checking | Any 60fps experience work |
+
+**Playwright quick reference:**
+```
+# Start browser
+browser_eval(action: "start")
+
+# Navigate + screenshot
+browser_eval(action: "navigate", url: "http://localhost:3000")
+browser_eval(action: "screenshot")
+
+# Check console errors
+browser_eval(action: "console_messages", errorsOnly: true)
+
+# Close when done
+browser_eval(action: "close")
+```
 
 **For L2 work:** Verify through code review (CSS variables set? behaviour wired?) and ask user for feedback on motion feel. Screenshots of animations are meaningless.
 

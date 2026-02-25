@@ -99,15 +99,20 @@ export const prismContentContract: ContentContract = {
     },
 
     // ── THE 21 ─────────────────────────────────────────────────────────────
-    { path: 'the21.backgroundColor', type: 'text', label: 'Background Color', section: 'the21', default: '#FDF9F0' },
+    { path: 'the21.backgroundColor', type: 'text', label: 'Background Color', section: 'the21', default: '#3B3D2E' },
     { path: 'the21.logo.src', type: 'image', label: 'Logo Image', section: 'the21', required: true },
     { path: 'the21.logo.alt', type: 'text', label: 'Logo Alt Text', section: 'the21', default: 'The 21' },
     { path: 'the21.logo.width', type: 'number', label: 'Logo Width', section: 'the21', default: 120 },
+    { path: 'the21.studio', type: 'text', label: 'Studio', section: 'the21', default: 'WellHello Productions' },
+    { path: 'the21.role', type: 'text', label: 'Role', section: 'the21', default: 'Character Animator' },
     { path: 'the21.beforeVideo', type: 'text', label: 'Before Video URL', section: 'the21', required: true },
     { path: 'the21.afterVideo', type: 'text', label: 'After Video URL', section: 'the21', required: true },
-    { path: 'the21.beforeLabel', type: 'text', label: 'Before Label', section: 'the21', default: 'Tie-down' },
-    { path: 'the21.afterLabel', type: 'text', label: 'After Label', section: 'the21', default: 'Final' },
+    { path: 'the21.beforeLabel', type: 'text', label: 'Before Label', section: 'the21', default: 'Final' },
+    { path: 'the21.afterLabel', type: 'text', label: 'After Label', section: 'the21', default: 'Tiedown' },
+    { path: 'the21.videoBackground', type: 'text', label: 'Video Frame Color', section: 'the21', default: '#232416' },
     { path: 'the21.description', type: 'textarea', label: 'Description (HTML)', section: 'the21', default: 'The 21 is an animated film inspired by neo-Coptic iconography.' },
+    { path: 'the21.contentBackground', type: 'text', label: 'Content Area Background', section: 'the21', default: '#3B3D2E' },
+    { path: 'the21.descriptionColor', type: 'text', label: 'Description Text Color', section: 'the21', default: '#FDF9F0' },
 
     // ── Clash Royale ───────────────────────────────────────────────────────
     { path: 'clashRoyale.backgroundColor', type: 'text', label: 'Background Color', section: 'clashRoyale', default: '#000000' },
@@ -124,7 +129,8 @@ export const prismContentContract: ContentContract = {
         { path: 'src', type: 'text', label: 'Video URL', section: 'clashRoyale', required: true },
         { path: 'title', type: 'text', label: 'Video Title', section: 'clashRoyale', required: true },
         { path: 'aspectRatio', type: 'text', label: 'Aspect Ratio', section: 'clashRoyale', required: true },
-        { path: 'column', type: 'text', label: 'Grid Column', section: 'clashRoyale', required: true },
+        { path: 'poster', type: 'image', label: 'Thumbnail', section: 'clashRoyale' },
+        { path: 'posterTime', type: 'number', label: 'Poster Frame Time (s)', section: 'clashRoyale' },
       ],
     },
 

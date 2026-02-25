@@ -103,6 +103,7 @@ export function createProjectStripSection(rawProps?: ProjectStripProps): Section
     label: p.label ?? 'Other Projects',
     constrained: p.constrained ?? true,
     colorMode: p.colorMode,
+    sectionTheme: p.sectionTheme,
     layout: {
       type: 'stack',
       direction: 'column',

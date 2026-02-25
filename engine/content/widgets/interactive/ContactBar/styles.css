@@ -1,0 +1,110 @@
+/**
+ * ContactBar widget styles.
+ *
+ * Structure:
+ * nav.contact-bar
+ *   a.contact-bar__link (external links)
+ *   button.contact-bar__link.contact-bar__link--email
+ *     span.contact-bar__icon-swap
+ *       svg.contact-bar__icon (email icon)
+ *       svg.contact-bar__icon (check icon)
+ */
+
+.contact-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--contact-bar-gap, 16px);
+  font-family: var(--font-ui, system-ui, sans-serif);
+}
+
+/* Shared link/button reset */
+.contact-bar__link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+  transition: opacity var(--duration-fast, 200ms) var(--ease-out, ease-out);
+}
+
+.contact-bar__link:hover {
+  opacity: 1;
+}
+
+.contact-bar__link:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 4px;
+  border-radius: var(--radius-sm, 2px);
+}
+
+/* Icon sizing */
+.contact-bar__icon {
+  display: block;
+  width: var(--contact-bar-icon-size, 20px);
+  height: var(--contact-bar-icon-size, 20px);
+}
+
+/* Color schemes */
+.contact-bar[data-text-color="light"] {
+  color: white;
+}
+
+.contact-bar[data-text-color="dark"] {
+  color: black;
+}
+
+/* =============================================================================
+ * Email icon swap (email ↔ checkmark)
+ * ============================================================================= */
+
+.contact-bar__icon-swap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--contact-bar-icon-size, 20px);
+  height: var(--contact-bar-icon-size, 20px);
+}
+
+/* Email icon — visible by default */
+.contact-bar__icon-swap > .contact-bar__icon:first-child {
+  transition: opacity var(--duration-normal, 300ms) var(--ease-out, ease-out),
+              transform var(--duration-normal, 300ms) var(--ease-out, ease-out);
+}
+
+.contact-bar__icon-swap--copied > .contact-bar__icon:first-child {
+  opacity: 0;
+  transform: scale(0.75);
+}
+
+/* Check icon — hidden by default, overlaid */
+.contact-bar__icon-swap > .contact-bar__icon:last-child {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(0.75);
+  transition: opacity var(--duration-normal, 300ms) var(--ease-out, ease-out),
+              transform var(--duration-normal, 300ms) var(--ease-out, ease-out);
+}
+
+.contact-bar__icon-swap--copied > .contact-bar__icon:last-child {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* =============================================================================
+ * REDUCED MOTION
+ * ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-bar__link,
+  .contact-bar__icon-swap > .contact-bar__icon {
+    transition: none;
+  }
+}

@@ -130,6 +130,7 @@ export function createHeroTitleSection(rawProps?: HeroTitleProps): SectionSchema
     label: p.label ?? 'Hero',
     constrained: p.constrained,
     colorMode: p.colorMode,
+    sectionTheme: p.sectionTheme,
     layout: {
       type: 'stack',
       direction: 'column',

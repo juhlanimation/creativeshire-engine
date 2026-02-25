@@ -1,14 +1,30 @@
 import type { ProjectVideoGridProps } from './types'
 
+const VIDEO_BASE = '/videos/bishoy-gendi'
+const IMAGE_BASE = '/images/bishoy-gendi'
+
+const socialLinks = [
+  { platform: 'instagram', url: 'https://instagram.com/bishoygendi' },
+  { platform: 'linkedin', url: 'https://www.linkedin.com/in/bishoy-gendi-a48b4944/' },
+  { platform: 'email', url: 'bishoygendi@yahoo.co.uk' },
+]
+
 export const previewProps: Partial<ProjectVideoGridProps> = {
+  sectionTheme: 'supercell',
+  colorMode: 'dark',
+  textColor: 'light',
   logo: {
-    src: 'https://picsum.photos/seed/pvg-logo/200/60',
-    alt: 'Studio logo',
+    src: `${IMAGE_BASE}/Supercell-logo-alpha.webp`,
+    alt: 'Supercell',
+    width: 200,
+    invert: true,
   },
+  hoverPlay: true,
   videos: [
-    { src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', title: 'Brand Film', aspectRatio: '16:9', column: 'left' },
-    { src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4', title: 'Social Spot', aspectRatio: '9:16', column: 'right' },
-    { src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4', title: 'Product Reel', aspectRatio: '1:1', column: 'left' },
-    { src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4', title: 'Event Recap', aspectRatio: '16:9', column: 'right' },
+    { src: `${VIDEO_BASE}/clash-royale/bigboi-green.webm`, title: 'BigBoi Green', aspectRatio: '9/16', posterTime: 1 },
+    { src: `${VIDEO_BASE}/clash-royale/goblin-machine.webm`, title: 'Goblin Machine', aspectRatio: '9/16', posterTime: 1 },
+    { src: `${VIDEO_BASE}/clash-royale/dagger-duchess.webm`, title: 'Dagger Duchess', aspectRatio: '16/9', posterTime: 1 },
+    { src: `${VIDEO_BASE}/clash-royale/rune-giant.webm`, title: 'Rune Giant', aspectRatio: '16/9', posterTime: 1 },
   ],
+  socialLinks,
 }

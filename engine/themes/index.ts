@@ -11,6 +11,11 @@ import './definitions/neon'
 import './definitions/earthy'
 import './definitions/monochrome'
 import './definitions/crossroad'
+import './definitions/azuki'
+import './definitions/boy-mole'
+import './definitions/the21'
+import './definitions/supercell'
+import './definitions/riot-games'
 
 // Types
 export type {

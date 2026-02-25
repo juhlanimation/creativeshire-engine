@@ -3,6 +3,7 @@
  * Grid layout with mixed aspect ratio videos (Clash Royale style).
  */
 
+import type { SocialLink } from '../../../widgets/interactive/ContactBar/types'
 import type { BaseSectionProps } from '../base'
 
 export interface VideoGridItem {
@@ -10,10 +11,12 @@ export interface VideoGridItem {
   src: string
   /** Video title (for hover display) */
   title: string
-  /** Aspect ratio: '16:9' (horizontal), '9:16' (vertical), '1:1' (square) */
-  aspectRatio: '16:9' | '9:16' | '1:1'
-  /** Grid column assignment */
-  column: 'left' | 'right'
+  /** Aspect ratio in CSS-native format */
+  aspectRatio: '16/9' | '9/16' | '1/1'
+  /** Poster/thumbnail image shown when not hovering */
+  poster?: string
+  /** Time in seconds to seek to for initial frame display (when no poster image) */
+  posterTime?: number
 }
 
 export interface LogoConfig {
@@ -34,4 +37,8 @@ export interface ProjectVideoGridProps extends BaseSectionProps {
   videos: VideoGridItem[] | string
   /** Enable hover-to-play on videos */
   hoverPlay?: boolean
+  /** Social links for footer bar (array or binding expression) */
+  socialLinks?: SocialLink[] | string
+  /** Text/icon color scheme for footer */
+  textColor?: 'light' | 'dark'
 }

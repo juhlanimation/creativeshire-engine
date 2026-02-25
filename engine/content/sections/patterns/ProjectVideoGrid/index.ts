@@ -1,6 +1,9 @@
 /**
  * ProjectVideoGrid section pattern.
  * Mixed aspect ratio video grid (Clash Royale style).
+ *
+ * Layout: vertical (9/16) videos side-by-side on the left,
+ * horizontal (16/9) videos stacked on the right.
  */
 
 import type { SectionSchema, WidgetSchema } from '../../../../schema'
@@ -9,24 +12,32 @@ import { isBindingExpression } from '../utils'
 import type { ProjectVideoGridProps, VideoGridItem } from './types'
 import { meta } from './meta'
 
+/** Returns true for vertical (portrait) aspect ratios. */
+function isVertical(aspectRatio: string): boolean {
+  return aspectRatio === '9/16'
+}
+
 /**
  * Creates a video widget from a VideoGridItem.
  */
 function createVideoWidget(
   video: VideoGridItem,
   index: number,
-  columnId: string,
+  groupId: string,
   sectionId: string,
   hoverPlay: boolean
 ): WidgetSchema {
   return {
-    id: `${sectionId}-${columnId}-video-${index}`,
+    id: `${sectionId}-${groupId}-video-${index}`,
     type: 'Video',
     props: {
       src: video.src,
+      poster: video.poster,
+      posterTime: video.posterTime,
       hoverPlay,
-      aspectRatio: video.aspectRatio.replace(':', '/'),
+      aspectRatio: video.aspectRatio,
       alt: video.title,
+      overlayTitle: video.title,
     },
     className: 'project-video-grid__video',
   }
@@ -44,9 +55,12 @@ function createTemplateVideoWidget(
     type: 'Video',
     props: {
       src: '{{ item.src }}',
+      poster: '{{ item.poster }}',
+      posterTime: '{{ item.posterTime }}',
       hoverPlay,
       aspectRatio: '{{ item.aspectRatio }}',
       alt: '{{ item.title }}',
+      overlayTitle: '{{ item.title }}',
     },
     className: 'project-video-grid__video',
   }
@@ -57,13 +71,10 @@ function createTemplateVideoWidget(
  *
  * Layout:
  * - Header with project logo
- * - Two-column grid with mixed aspect ratio videos
+ * - Flex row: vertical group (9/16 side-by-side) + horizontal group (16/9 stacked)
  *
  * Visual styles (padding, gap, colors) are in styles.css using theme variables.
  * Background color should be set via `style.backgroundColor` from the preset.
- *
- * @param props - ProjectVideoGrid section configuration
- * @returns SectionSchema for the project video grid section
  */
 export function createProjectVideoGridSection(
   rawProps: ProjectVideoGridProps
@@ -76,7 +87,7 @@ export function createProjectVideoGridSection(
   const header: WidgetSchema = {
     id: `${sectionId}-header`,
     type: 'Flex',
-    className: 'project-video-grid__header',
+    className: 'project-frame__header project-video-grid__header',
     props: { direction: 'row', align: 'center' },
     widgets: [
       {
@@ -100,87 +111,105 @@ export function createProjectVideoGridSection(
   let grid: WidgetSchema
 
   if (isBindingExpression(props.videos)) {
-    // Binding expression: use __repeat pattern for platform expansion
-    // Platform will expand this template for each item in the array
-    // Use condition to filter by column
+    // Binding expression: use __repeat pattern with conditions for grouping
     const templateVideo = createTemplateVideoWidget(sectionId, hoverPlay)
 
-    // Left column - only renders videos where column === 'left'
-    const leftColumn: WidgetSchema = {
-      id: `${sectionId}-left-col`,
+    // Vertical group — 9/16 videos side-by-side in a row
+    const verticalGroup: WidgetSchema = {
+      id: `${sectionId}-vertical-group`,
       type: 'Flex',
-      className: 'project-video-grid__column project-video-grid__column--left',
-      props: { direction: 'column' },
+      className: 'project-video-grid__vertical-group',
+      props: { direction: 'row' },
       widgets: [
         {
           ...templateVideo,
-          id: `${sectionId}-left-video`,
+          id: `${sectionId}-vertical-video`,
           __repeat: props.videos,
-          // Condition filters to only left column items
-          condition: "{{ item.column === 'left' }}",
+          condition: "{{ item.aspectRatio === '9/16' }}",
         },
       ],
     }
 
-    // Right column - only renders videos where column === 'right'
-    const rightColumn: WidgetSchema = {
-      id: `${sectionId}-right-col`,
+    // Horizontal group — 16/9 videos stacked in a column
+    const horizontalGroup: WidgetSchema = {
+      id: `${sectionId}-horizontal-group`,
       type: 'Flex',
-      className: 'project-video-grid__column project-video-grid__column--right',
+      className: 'project-video-grid__horizontal-group',
       props: { direction: 'column' },
       widgets: [
         {
           ...templateVideo,
-          id: `${sectionId}-right-video`,
+          id: `${sectionId}-horizontal-video`,
           __repeat: props.videos,
-          // Condition filters to only right column items
-          condition: "{{ item.column === 'right' }}",
+          condition: "{{ item.aspectRatio !== '9/16' }}",
         },
       ],
     }
 
     grid = {
       id: `${sectionId}-grid`,
-      type: 'Grid',
+      type: 'Flex',
       className: 'project-video-grid__grid',
-      props: { columns: 2 },
-      widgets: [leftColumn, rightColumn],
+      props: { direction: 'row' },
+      widgets: [verticalGroup, horizontalGroup],
     }
   } else {
-    // Real array: generate video widgets at definition time
-    const leftVideos = props.videos.filter((v) => v.column === 'left')
-    const rightVideos = props.videos.filter((v) => v.column === 'right')
+    // Real array: group by aspect ratio
+    const verticalVideos = props.videos.filter((v) => isVertical(v.aspectRatio))
+    const horizontalVideos = props.videos.filter((v) => !isVertical(v.aspectRatio))
 
-    const leftColumn: WidgetSchema = {
-      id: `${sectionId}-left-col`,
+    const verticalGroup: WidgetSchema = {
+      id: `${sectionId}-vertical-group`,
       type: 'Flex',
-      className: 'project-video-grid__column project-video-grid__column--left',
-      props: { direction: 'column' },
-      widgets: leftVideos.map((v, i) =>
-        createVideoWidget(v, i, 'left', sectionId, hoverPlay)
+      className: 'project-video-grid__vertical-group',
+      props: { direction: 'row' },
+      widgets: verticalVideos.map((v, i) =>
+        createVideoWidget(v, i, 'vertical', sectionId, hoverPlay)
       ),
     }
 
-    const rightColumn: WidgetSchema = {
-      id: `${sectionId}-right-col`,
+    const horizontalGroup: WidgetSchema = {
+      id: `${sectionId}-horizontal-group`,
       type: 'Flex',
-      className: 'project-video-grid__column project-video-grid__column--right',
+      className: 'project-video-grid__horizontal-group',
       props: { direction: 'column' },
-      widgets: rightVideos.map((v, i) =>
-        createVideoWidget(v, i, 'right', sectionId, hoverPlay)
+      widgets: horizontalVideos.map((v, i) =>
+        createVideoWidget(v, i, 'horizontal', sectionId, hoverPlay)
       ),
     }
 
     grid = {
       id: `${sectionId}-grid`,
-      type: 'Grid',
+      type: 'Flex',
       className: 'project-video-grid__grid',
-      props: { columns: 2 },
-      widgets: [leftColumn, rightColumn],
+      props: { direction: 'row' },
+      widgets: [verticalGroup, horizontalGroup],
     }
   }
 
-  const widgets: WidgetSchema[] = [header, grid]
+  // Content area wraps grid for shared frame centering
+  const content: WidgetSchema = {
+    id: `${sectionId}-content`,
+    type: 'Box',
+    className: 'project-frame__content',
+    widgets: [grid],
+  }
+
+  const widgets: WidgetSchema[] = [header, content]
+
+  // Footer social links bar (optional)
+  const socialLinks = rawProps.socialLinks
+  if (socialLinks && (typeof socialLinks === 'string' || socialLinks.length > 0)) {
+    widgets.push({
+      id: `${sectionId}-contact-bar`,
+      type: 'ContactBar',
+      className: 'project-frame__footer',
+      props: {
+        links: socialLinks,
+        textColor: props.textColor,
+      },
+    })
+  }
 
   return {
     id: sectionId,
@@ -188,6 +217,7 @@ export function createProjectVideoGridSection(
     label: props.label ?? 'Project Video Grid',
     constrained: props.constrained,
     colorMode: props.colorMode,
+    sectionTheme: props.sectionTheme,
     layout: {
       type: 'flex',
       direction: 'column',
@@ -196,7 +226,7 @@ export function createProjectVideoGridSection(
     style: {
       ...props.style,
     },
-    className: props.className ?? 'section-project-video-grid',
+    className: ['project-frame', props.className].filter(Boolean).join(' '),
     paddingTop: props.paddingTop,
     paddingBottom: props.paddingBottom,
     paddingLeft: props.paddingLeft,

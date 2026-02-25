@@ -1,6 +1,6 @@
 'use client'
 
-import React, { memo, forwardRef, useState, useCallback, useMemo } from 'react'
+import React, { memo, forwardRef, useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import type { FlexGalleryCardRepeaterProps, FlexGalleryCardRepeaterItem } from './types'
 import type { WidgetSchema } from '../../../../../../schema'
 import SelectorCard from './SelectorCard'
@@ -55,9 +55,41 @@ const FlexGalleryCardRepeater = memo(forwardRef<HTMLDivElement, FlexGalleryCardR
 
   const [activeIndex, setActiveIndex] = useState(controlledIndex)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [progress, setProgress] = useState(0)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const videoElRef = useRef<HTMLVideoElement | null>(null)
+
+  // Find sibling <video> in the video area and track playback progress
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const videoArea = el.closest('.project-gallery__video-area')
+    if (!videoArea) return
+    const video = videoArea.querySelector(':scope > .video-widget video, :scope > [class*="video"] video, :scope video') as HTMLVideoElement | null
+    if (!video) return
+    videoElRef.current = video
+
+    const onTimeUpdate = () => {
+      if (video.duration > 0) {
+        setProgress((video.currentTime / video.duration) * 100)
+      }
+    }
+    video.addEventListener('timeupdate', onTimeUpdate)
+    return () => video.removeEventListener('timeupdate', onTimeUpdate)
+  }, [])
 
   const handleClick = useCallback((index: number, project: FlexGalleryCardRepeaterItem) => {
     setActiveIndex(index)
+    setProgress(0)
+
+    // Switch main video source
+    const video = videoElRef.current
+    if (video && project.url) {
+      video.src = project.url
+      video.load()
+      video.play().catch(() => { /* autoplay may be blocked */ })
+    }
+
     onClick?.({
       index,
       videoSrc: project.url,
@@ -73,23 +105,13 @@ const FlexGalleryCardRepeater = memo(forwardRef<HTMLDivElement, FlexGalleryCardR
     if (e.key === prevKey) {
       e.preventDefault()
       const newIndex = Math.max(0, activeIndex - 1)
-      setActiveIndex(newIndex)
-      onClick?.({
-        index: newIndex,
-        videoSrc: projects[newIndex]?.url,
-        title: projects[newIndex]?.title,
-      })
+      handleClick(newIndex, projects[newIndex])
     } else if (e.key === nextKey) {
       e.preventDefault()
       const newIndex = Math.min(projects.length - 1, activeIndex + 1)
-      setActiveIndex(newIndex)
-      onClick?.({
-        index: newIndex,
-        videoSrc: projects[newIndex]?.url,
-        title: projects[newIndex]?.title,
-      })
+      handleClick(newIndex, projects[newIndex])
     }
-  }, [orientation, activeIndex, projects, onClick])
+  }, [orientation, activeIndex, projects, handleClick])
 
   // Empty state
   if (projects.length === 0) {
@@ -103,14 +125,21 @@ const FlexGalleryCardRepeater = memo(forwardRef<HTMLDivElement, FlexGalleryCardR
   ].filter(Boolean).join(' ')
 
   // CSS custom properties for configurable sizing
+  const SEMANTIC_ACCENTS = ['accent', 'interaction', 'primary']
+  const isDirectColor = accentColor && !SEMANTIC_ACCENTS.includes(accentColor)
   const cssVars: Record<string, string | undefined> = {}
   if (thumbnailWidth) cssVars['--ps-thumb-w'] = `${thumbnailWidth}px`
   if (activeThumbnailWidth) cssVars['--ps-active-thumb-w'] = `${activeThumbnailWidth}px`
   if (thumbnailBorder) cssVars['--ps-border'] = thumbnailBorder
+  if (isDirectColor) cssVars['--ps-accent'] = accentColor
 
   return (
     <div
-      ref={ref}
+      ref={(node) => {
+        containerRef.current = node
+        if (typeof ref === 'function') ref(node)
+        else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node
+      }}
       className={classNames}
       style={Object.keys(cssVars).length > 0 ? cssVars as React.CSSProperties : undefined}
       data-accent={accentColor}
@@ -138,6 +167,7 @@ const FlexGalleryCardRepeater = memo(forwardRef<HTMLDivElement, FlexGalleryCardR
             videoSrc={project.url}
             posterTime={project.posterTime}
             isActive={index === activeIndex}
+            progress={index === activeIndex ? progress : 0}
             showInfo={cardShowInfo}
             accentColor={accentColor}
             showPlayingIndicator={showPlayingIndicator}

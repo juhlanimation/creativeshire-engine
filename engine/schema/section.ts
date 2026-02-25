@@ -55,6 +55,8 @@ export interface SectionSchema {
   constrained?: boolean
   /** Per-section color mode override — resolves palette from the active theme */
   colorMode?: ColorMode
+  /** Per-section theme override — resolves full palette from a different theme */
+  sectionTheme?: string
 
   /** Container padding overrides in px (CMS-editable, 0 = no override) */
   paddingTop?: number

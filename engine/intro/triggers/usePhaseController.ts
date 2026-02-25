@@ -5,17 +5,25 @@
  *
  * Manages the lifecycle: locked → revealing → ready
  * Coordinates reveal animation timing and chrome visibility.
+ *
+ * When revealEffect is set, uses createEffectTrack() for GSAP-powered reveals.
+ * When not set, uses the default RAF opacity loop (CSS variable bridge).
  */
 
 import { useEffect, useRef, useCallback } from 'react'
 import type { StoreApi } from 'zustand'
 import type { IntroStore } from '../IntroContext'
+import { createEffectTrack } from '../../experience/timeline/effect-track'
 
 export interface UsePhaseControllerOptions {
   /** Reveal animation duration (ms) */
   revealDuration: number
   /** Whether the intro has a blocking gate (video-time, timer, sequence) */
   hasBlockingGate: boolean
+  /** Optional effect primitive ID for the reveal animation */
+  revealEffect?: string
+  /** Target element ref for effect-based reveals */
+  revealTargetRef?: React.RefObject<HTMLElement | null>
 }
 
 /**
@@ -26,7 +34,7 @@ export function usePhaseController(
   store: StoreApi<IntroStore>,
   options: UsePhaseControllerOptions
 ): { triggerReveal: () => void } {
-  const { revealDuration, hasBlockingGate } = options
+  const { revealDuration, hasBlockingGate, revealEffect, revealTargetRef } = options
   const isRevealing = useRef(false)
 
   /**
@@ -52,6 +60,23 @@ export function usePhaseController(
     // Animated reveal: transition through revealing → ready
     state.setPhase('revealing')
 
+    // Effect-based reveal: use createEffectTrack for GSAP-powered animation
+    if (revealEffect && revealTargetRef?.current) {
+      const trackFn = createEffectTrack(revealEffect, {
+        target: revealTargetRef.current,
+        viewport: { width: window.innerWidth, height: window.innerHeight },
+      }, {
+        duration: revealDuration / 1000,
+      }, 'gsap')
+
+      trackFn().then(() => {
+        store.getState().setRevealProgress(1)
+        store.getState().completeIntro()
+      })
+      return
+    }
+
+    // Default: RAF-based opacity loop (CSS variable bridge)
     const startTime = performance.now()
 
     const animateReveal = () => {
@@ -69,7 +94,7 @@ export function usePhaseController(
     }
 
     requestAnimationFrame(animateReveal)
-  }, [store, revealDuration])
+  }, [store, revealDuration, revealEffect, revealTargetRef])
 
   // Auto-complete if no blocking gate (e.g., scroll-reveal with visibility trigger)
   useEffect(() => {

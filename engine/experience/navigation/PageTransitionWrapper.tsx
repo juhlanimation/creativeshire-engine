@@ -12,6 +12,9 @@
  * - Link plays timeline before navigation
  * - Uses animationend events for reliable completion detection
  *
+ * Supports effect primitives: when exitEffect/entryEffect are set,
+ * uses createEffectTrack() instead of hardcoded CSS classes.
+ *
  * @example
  * ```tsx
  * <PageTransitionProvider>
@@ -25,6 +28,8 @@
 import { type ReactNode, type CSSProperties, useRef, useEffect, useLayoutEffect } from 'react'
 import { usePageTransition } from './PageTransitionContext'
 import { animateElement } from '../timeline/animateElement'
+import { createEffectTrack } from '../timeline/effect-track'
+import { resolveEffect } from '../timeline/effects/registry'
 
 // =============================================================================
 // Types
@@ -43,6 +48,12 @@ export interface PageTransitionWrapperProps {
   className?: string
   /** Additional styles for the wrapper */
   style?: CSSProperties
+  /** Effect primitive ID for exit animation (overrides default CSS class) */
+  exitEffect?: string
+  /** Effect primitive ID for entry animation (overrides default CSS class) */
+  entryEffect?: string
+  /** Which realization to use for effect primitives (default: 'css') */
+  effectMode?: 'gsap' | 'css'
 }
 
 // =============================================================================
@@ -70,9 +81,20 @@ export function PageTransitionWrapper({
   pageId,
   className,
   style,
+  exitEffect,
+  entryEffect,
+  effectMode = 'css',
 }: PageTransitionWrapperProps) {
   const ref = useRef<HTMLDivElement>(null)
   const transitionContext = usePageTransition()
+
+  // Resolve exit/entry effects to determine actual CSS classes
+  const resolvedExitEffect = exitEffect ? resolveEffect(exitEffect) : null
+  const resolvedEntryEffect = entryEffect ? resolveEffect(entryEffect) : null
+
+  // Determine CSS classes: effect primitive CSS class overrides defaults
+  const exitClass = resolvedExitEffect?.css?.forwardClass ?? EXIT_CLASS
+  const entryClass = resolvedEntryEffect?.css?.reverseClass ?? resolvedEntryEffect?.css?.forwardClass ?? ENTRY_CLASS
 
   // Register exit track on timeline
   useEffect(() => {
@@ -88,10 +110,21 @@ export function PageTransitionWrapper({
     // overlay stays opaque during navigation (prevents blink from --entering
     // fill snapping back to 0).
     exitTimeline.addTrack(TRACK_ID, () => {
+      // If exit effect is set and GSAP mode requested, use createEffectTrack
+      if (exitEffect && effectMode === 'gsap' && ref.current) {
+        return createEffectTrack(exitEffect, {
+          target: ref.current,
+          viewport: { width: window.innerWidth, height: window.innerHeight },
+        }, {
+          duration: duration / 1000,
+        }, 'gsap')()
+      }
+
+      // Default: CSS class-based animation
       const overlay = ref.current?.querySelector('.page-transition__overlay') as HTMLElement | null
 
       return animateElement(ref.current, {
-        className: EXIT_CLASS,
+        className: exitClass,
         timeout: animationDuration,
         removeClassOnComplete: false,
         animationTarget: overlay,
@@ -102,7 +135,7 @@ export function PageTransitionWrapper({
     return () => {
       exitTimeline.removeTrack(TRACK_ID)
     }
-  }, [enabled, transitionContext, duration])
+  }, [enabled, transitionContext, duration, exitEffect, effectMode, exitClass])
 
   // Play entry animation on mount and when page changes.
   // pageId triggers re-entry without remounting the wrapper, so the exit
@@ -121,7 +154,7 @@ export function PageTransitionWrapper({
     // After exit: --exiting fill holds opacity 1. Removing it + --entering
     // falls back to --enabled base (opacity 1). No visual change.
     // Runs before paint → no blink.
-    element.classList.remove(EXIT_CLASS, ENTRY_CLASS)
+    element.classList.remove(exitClass, entryClass)
 
     // Double requestAnimationFrame ensures content is painted before we reveal it:
     // 1st RAF: schedules before next paint
@@ -131,8 +164,20 @@ export function PageTransitionWrapper({
 
     const raf1 = requestAnimationFrame(() => {
       raf2 = requestAnimationFrame(() => {
+        // If entry effect is set and GSAP mode requested, use createEffectTrack
+        if (entryEffect && effectMode === 'gsap' && element) {
+          createEffectTrack(entryEffect, {
+            target: element,
+            viewport: { width: window.innerWidth, height: window.innerHeight },
+          }, {
+            duration: duration / 1000,
+          }, 'gsap')()
+          return
+        }
+
+        // Default: CSS class-based animation
         animateElement(element, {
-          className: ENTRY_CLASS,
+          className: entryClass,
           timeout: duration + 100,
           removeClassOnComplete: false,
           animationTarget: overlay,
@@ -144,7 +189,7 @@ export function PageTransitionWrapper({
       cancelAnimationFrame(raf1)
       cancelAnimationFrame(raf2)
     }
-  }, [enabled, duration, pageId])
+  }, [enabled, duration, pageId, entryEffect, effectMode, exitClass, entryClass])
 
   const wrapperStyle: CSSProperties = {
     '--page-transition-duration': `${duration}ms`,

@@ -69,3 +69,30 @@
 .video-widget__video--visible {
   opacity: 1;
 }
+
+/* Title overlay - gradient scrim at bottom of hover-play container */
+.video-widget__overlay-title {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem 1rem 1rem;
+  background: linear-gradient(to top, var(--overlay-scrim, rgba(0, 0, 0, 0.7)) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity var(--duration-normal, 300ms) var(--ease-default, ease);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.video-widget__overlay-title--visible {
+  opacity: 1;
+}
+
+.video-widget__overlay-title span {
+  font-family: var(--font-heading, sans-serif);
+  font-weight: 700;
+  color: var(--text-primary, #fff);
+  text-transform: uppercase;
+  font-size: var(--font-size-small, 0.875rem);
+  letter-spacing: 0.05em;
+}

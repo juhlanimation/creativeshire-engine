@@ -29,7 +29,7 @@ export const meta = defineSectionMeta<ProjectVideoGridProps>({
       type: 'custom',
       label: 'Videos',
       default: [],
-      description: 'Videos with aspect ratios and column assignments',
+      description: 'Videos with aspect ratios (grouped by orientation)',
       validation: { required: true },
       group: 'Content',
       bindable: true,
@@ -40,6 +40,26 @@ export const meta = defineSectionMeta<ProjectVideoGridProps>({
       default: true,
       description: 'Play videos on hover',
       group: 'Behavior',
+    },
+
+    // Footer
+    socialLinks: {
+      type: 'custom',
+      label: 'Social Links',
+      default: [],
+      description: 'Social platform links for footer bar',
+      group: 'Footer',
+      bindable: true,
+    },
+    textColor: {
+      type: 'select',
+      label: 'Text Color',
+      default: 'light',
+      choices: [
+        { value: 'light', label: 'Light' },
+        { value: 'dark', label: 'Dark' },
+      ],
+      group: 'Style',
     },
   },
 })

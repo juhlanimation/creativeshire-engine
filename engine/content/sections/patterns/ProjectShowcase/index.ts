@@ -16,12 +16,13 @@ export function createProjectShowcaseSection(rawProps: ProjectShowcaseProps): Se
   const props = applyMetaDefaults(meta, rawProps)
   const sectionId = props.id ?? 'project-showcase'
 
-  // Header with logo and info
+  // Header with logo and info — paddingBottom matches ProjectGallery
   const header: WidgetSchema = {
     id: `${sectionId}-header`,
     type: 'Flex',
-    className: 'project-showcase__header',
+    className: 'project-frame__header project-showcase__header',
     props: { direction: 'row', align: 'center', justify: 'between' },
+    style: { paddingBottom: 16 },
     widgets: [
       // Logo
       {
@@ -55,7 +56,7 @@ export function createProjectShowcaseSection(rawProps: ProjectShowcaseProps): Se
     ]
   }
 
-  // Video container with optional border and shot indicator
+  // Video — no aspectRatio so it fills the entire content area
   const videoWidgets: WidgetSchema[] = [
     {
       id: `${sectionId}-video`,
@@ -64,40 +65,52 @@ export function createProjectShowcaseSection(rawProps: ProjectShowcaseProps): Se
         src: props.videoSrc,
         poster: props.videoPoster,
         ...(props.posterTime != null ? { posterTime: props.posterTime } : {}),
-        aspectRatio: '16/9'
       },
       className: 'project-showcase__video'
     }
   ]
 
-  // Add shot indicator if shots provided (positioned via Box, not baked into widget)
-  if (props.shots) {
+  // Shot nav — vertical, centered on right edge of video container
+  // Frame counter is created by FlexButtonRepeater via DOM (bottom-right)
+  const hasShots = typeof props.shots === 'string'
+    ? props.shots.length > 0
+    : Array.isArray(props.shots) && props.shots.length > 0
+
+  if (hasShots) {
+    const shotChildren: WidgetSchema[] = typeof props.shots === 'string'
+      ? [{
+          __repeat: props.shots,
+          id: 'shot-marker',
+          type: 'Button',
+          props: {
+            label: '{{ item.id }}',
+            'data-video-src': '{{ item.videoSrc }}',
+          },
+        }]
+      : (props.shots as Array<{ id: number; videoSrc: string }>).map((shot, i) => ({
+          id: `${sectionId}-shot-${i}`,
+          type: 'Button' as const,
+          props: {
+            label: String(shot.id),
+            'data-video-src': shot.videoSrc,
+          },
+        }))
+
     videoWidgets.push({
       id: `${sectionId}-shots-container`,
       type: 'Box',
       style: {
         position: 'absolute',
-        top: 'var(--spacing-md, 1rem)',
         right: 'var(--spacing-md, 1rem)',
+        top: '50%',
+        transform: 'translateY(-50%)',
         zIndex: 10,
       },
       widgets: [{
         id: `${sectionId}-shots`,
         type: 'ProjectShowcase__FlexButtonRepeater',
-        props: {
-          prefix: 'sh',
-        },
-        ...(typeof props.shots === 'string' ? {
-          widgets: [{
-            __repeat: props.shots,
-            id: 'shot-marker',
-            type: 'Button',
-            props: {
-              label: '{{ item.frame }}',
-              'data-video-src': '{{ item.videoSrc }}',
-            },
-          }]
-        } : {})
+        props: { prefix: 'sh', direction: 'column' },
+        widgets: shotChildren,
       }]
     })
   }
@@ -105,12 +118,26 @@ export function createProjectShowcaseSection(rawProps: ProjectShowcaseProps): Se
   const videoContainer: WidgetSchema = {
     id: `${sectionId}-video-container`,
     type: 'Box',
-    className: 'project-showcase__video-container',
+    className: 'project-frame__content project-showcase__video-container',
     style: { position: 'relative', ...(props.videoBorder ? { border: '1px solid currentColor' } : {}) },
     widgets: videoWidgets
   }
 
   const widgets: WidgetSchema[] = [header, videoContainer]
+
+  // Footer social links bar (optional)
+  const socialLinks = rawProps.socialLinks
+  if (socialLinks && (typeof socialLinks === 'string' || socialLinks.length > 0)) {
+    widgets.push({
+      id: `${sectionId}-contact-bar`,
+      type: 'ContactBar',
+      className: 'project-frame__footer',
+      props: {
+        links: socialLinks,
+        textColor: props.textColor,
+      },
+    })
+  }
 
   return {
     id: sectionId,
@@ -118,6 +145,7 @@ export function createProjectShowcaseSection(rawProps: ProjectShowcaseProps): Se
     label: props.label ?? 'Project Showcase',
     constrained: props.constrained,
     colorMode: props.colorMode,
+    sectionTheme: props.sectionTheme,
     layout: {
       type: 'flex',
       direction: 'column',
@@ -126,7 +154,7 @@ export function createProjectShowcaseSection(rawProps: ProjectShowcaseProps): Se
     style: {
       ...props.style,
     },
-    className: ['section-project-showcase', props.className].filter(Boolean).join(' '),
+    className: ['project-frame', props.className].filter(Boolean).join(' '),
     paddingTop: props.paddingTop,
     paddingBottom: props.paddingBottom,
     paddingLeft: props.paddingLeft,

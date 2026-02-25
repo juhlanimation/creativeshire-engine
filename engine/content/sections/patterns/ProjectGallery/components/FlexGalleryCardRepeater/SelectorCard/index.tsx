@@ -75,17 +75,12 @@ const SelectorCard = memo(function SelectorCard({
         {thumbnailSrc ? (
           isVideoSrc(thumbnailSrc) ? (
             <video
-              src={thumbnailSrc}
+              src={`${thumbnailSrc}${posterTime != null ? `#t=${posterTime}` : ''}`}
               muted
               playsInline
               preload="auto"
               className="selector-card__media"
               aria-label={thumbnailAlt ?? title}
-              onLoadedData={(e) => {
-                const v = e.currentTarget
-                const t = posterTime ?? 0.001
-                if (v.currentTime === 0) v.currentTime = t
-              }}
             />
           ) : (
             // eslint-disable-next-line @next/next/no-img-element
@@ -144,6 +139,14 @@ const SelectorCard = memo(function SelectorCard({
               <path d="M8 5v14l11-7z" />
             </svg>
           </div>
+        )}
+
+        {/* Vertical playhead — sweeps left to right as video plays */}
+        {isActive && progress > 0 && (
+          <div
+            className="selector-card__playhead"
+            style={{ left: `${Math.min(100, Math.max(0, progress))}%` }}
+          />
         )}
 
         {/* Progress bar — bottom edge, width driven by progress prop */}

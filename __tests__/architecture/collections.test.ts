@@ -50,7 +50,8 @@ const COLLECTION_WIDGETS: Record<string, string> = {
  * Exempt from the "use __repeat children" schema validation.
  */
 const SELF_MANAGED_COLLECTIONS = new Set<string>([
-  // StackVideoShowcase now reads from child widgets via __repeat, not self-managed
+  // ContactBar renders social link icons internally — not a repeater pattern
+  'ContactBar',
 ])
 
 /**
@@ -258,7 +259,7 @@ describe('Collection Widgets Architecture', () => {
       // Report any widgets with array props not in our registry
       const unregistered: string[] = []
       for (const [widget, props] of Object.entries(detectedArrayWidgets)) {
-        if (!COLLECTION_WIDGETS[widget]) {
+        if (!COLLECTION_WIDGETS[widget] && !SELF_MANAGED_COLLECTIONS.has(widget)) {
           unregistered.push(`${widget}: ${props.join(', ')}`)
         }
       }

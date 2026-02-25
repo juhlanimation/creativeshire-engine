@@ -3,14 +3,14 @@
 /**
  * useGsapReveal - GSAP-powered reveal animations.
  *
- * Uses the transition registry for pluggable animations.
- * Supports any registered transition type (wipe-left, wipe-right, expand, fade, etc).
+ * Uses the effect primitives registry for pluggable animations.
+ * Supports any registered effect type (wipe-left, wipe-right, expand, fade, etc).
  *
  * Features:
  * - GSAP timeline for precise control
  * - Sequenced content fade (content fades in after main animation)
  * - timeline.reverse() for smooth close animations
- * - Registry-based: add new transitions without modifying this file
+ * - Registry-based: add new effects without modifying this file
  *
  * Container-aware:
  * In contained mode, uses container dimensions instead of window dimensions.
@@ -18,29 +18,29 @@
 
 import { useRef, useLayoutEffect, useEffect } from 'react'
 import { gsap } from 'gsap'
-import { resolveTransition } from './transitions/resolve'
-import type { TransitionContext, TransitionOptions } from './transitions/types'
+import { resolveEffect } from '../effects/registry'
+import type { EffectContext, EffectOptions } from '../effects/types'
 import { useContainer } from '../../../interface/ContainerContext'
 
-// Import transitions barrel to ensure auto-registration
-import './transitions'
+// Import effects barrel to ensure auto-registration
+import '../effects'
 
-// Default durations (used when transition doesn't specify)
+// Default durations (used when effect doesn't specify)
 const DEFAULT_DURATIONS = {
   standard: 0.8,
   fade: 0.3,
 }
 
 /**
- * Reveal type - now accepts any registered transition ID.
- * @deprecated Use string directly for type safety with custom transitions
+ * Reveal type - now accepts any registered effect ID.
+ * @deprecated Use string directly for type safety with custom effects
  */
 export type RevealType = string
 
 export interface UseGsapRevealOptions {
-  /** Duration in seconds (overrides transition default) */
+  /** Duration in seconds (overrides effect default) */
   duration?: number
-  /** GSAP easing (overrides transition default) */
+  /** GSAP easing (overrides effect default) */
   ease?: string
   /** For expand: source element bounds */
   sourceRect?: DOMRect | null
@@ -51,11 +51,11 @@ export interface UseGsapRevealOptions {
 }
 
 interface UseGsapRevealProps {
-  /** Transition type ID (e.g., 'wipe-left', 'expand', 'fade') */
+  /** Effect type ID (e.g., 'wipe-left', 'expand', 'fade') */
   type: string
   /** Whether content is revealed (true) or hidden (false) */
   revealed: boolean
-  /** Animation options (override transition defaults) */
+  /** Animation options (override effect defaults) */
   options?: UseGsapRevealOptions
   /** Called when reveal animation completes */
   onComplete?: () => void
@@ -78,13 +78,13 @@ export function useGsapReveal({
   // Get container context for contained mode
   const { getViewportWidth, getViewportHeight } = useContainer()
 
-  // Resolve transition from registry
-  const transition = resolveTransition(type)
+  // Resolve effect from registry
+  const effect = resolveEffect(type)
 
-  // Merge user options with transition defaults
+  // Merge user options with effect defaults
   const {
-    duration = transition?.defaults.duration ?? DEFAULT_DURATIONS.standard,
-    ease = transition?.defaults.ease ?? 'power3.inOut',
+    duration = effect?.defaults.duration ?? DEFAULT_DURATIONS.standard,
+    ease = effect?.defaults.ease ?? 'power3.inOut',
     sourceRect,
     sequenceContentFade = false,
     contentFadeDuration = DEFAULT_DURATIONS.fade,
@@ -97,21 +97,28 @@ export function useGsapReveal({
     const content = contentRef.current
     if (!container) return
 
-    // If transition not found, log warning and skip animation
-    if (!transition) {
-      console.warn(`Transition "${type}" not found in registry`)
+    // If effect not found or has no GSAP realization, log warning and skip
+    if (!effect) {
+      console.warn(`Effect "${type}" not found in registry`)
       return
     }
+
+    if (!effect.gsap) {
+      console.warn(`Effect "${type}" has no GSAP realization`)
+      return
+    }
+
+    const gsapRealization = effect.gsap
 
     // Kill existing timeline to prevent conflicts
     timelineRef.current?.kill()
 
-    // Build transition context
+    // Build effect context
     // Use container-aware viewport dimensions for contained mode support.
     // In fullpage mode, getViewportWidth/Height returns window dimensions.
     // In contained mode, returns container dimensions.
-    const context: TransitionContext = {
-      container,
+    const context: EffectContext = {
+      target: container,
       content: content ?? undefined,
       viewport: {
         width: getViewportWidth(),
@@ -121,7 +128,7 @@ export function useGsapReveal({
     }
 
     // Build merged options
-    const mergedOptions: TransitionOptions = {
+    const mergedOptions: EffectOptions = {
       duration,
       ease,
       sequenceContentFade,
@@ -132,8 +139,8 @@ export function useGsapReveal({
     if (revealed) {
       // === OPENING ANIMATION ===
 
-      // Get initial state from transition
-      const initialState = transition.getInitialState(context, mergedOptions)
+      // Get initial state from effect
+      const initialState = gsapRealization.getInitialState(context, mergedOptions)
 
       // Hide content for sequenced fade
       if (sequenceContentFade && content) {
@@ -158,15 +165,15 @@ export function useGsapReveal({
       })
 
       // Use custom buildTimeline if provided, otherwise interpolate states
-      if (transition.buildTimeline) {
+      if (gsapRealization.buildTimeline) {
         // Custom timelines manage their own initial state
         gsap.set(container, initialState)
-        transition.buildTimeline(timelineRef.current, context, mergedOptions)
+        gsapRealization.buildTimeline(timelineRef.current, context, mergedOptions)
       } else {
         // Get final state and animate from initial to final
         // Using fromTo() instead of set() + to() to avoid race conditions
         // where to() might read the old value before set() is applied
-        const finalState = transition.getFinalState(context, mergedOptions)
+        const finalState = gsapRealization.getFinalState(context, mergedOptions)
         timelineRef.current.fromTo(container,
           initialState,
           {
@@ -203,7 +210,7 @@ export function useGsapReveal({
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps -- getViewportHeight/getViewportWidth are stable refs from useContainer
-  }, [revealed, type, transition, duration, ease, sourceRect, sequenceContentFade, contentFadeDuration, onComplete, onReverseComplete])
+  }, [revealed, type, effect, duration, ease, sourceRect, sequenceContentFade, contentFadeDuration, onComplete, onReverseComplete])
 
   // Cleanup on unmount
   useEffect(() => {

@@ -4,6 +4,7 @@
  */
 
 import type { WidgetEventMap } from '../../../../schema/widget'
+import type { SocialLink } from '../../../widgets/interactive/ContactBar/types'
 import type { BaseSectionProps } from '../base'
 
 /**
@@ -61,4 +62,8 @@ export interface ProjectExpandProps extends BaseSectionProps {
   cursorLabel?: string
   /** Event handlers for the gallery widget (e.g., { click: 'modal.open' }) */
   galleryOn?: WidgetEventMap
+  /** Social links for footer bar (array or binding expression) */
+  socialLinks?: SocialLink[] | string
+  /** Text/icon color scheme for footer */
+  textColor?: 'light' | 'dark'
 }

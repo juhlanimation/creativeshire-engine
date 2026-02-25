@@ -33,6 +33,7 @@ import { meta as MarqueeMeta } from './layout/Marquee/meta'
 import { meta as VideoMeta } from './interactive/Video/meta'
 import { meta as VideoPlayerMeta } from './interactive/VideoPlayer/meta'
 import { meta as EmailCopyMeta } from './interactive/EmailCopy/meta'
+import { meta as ContactBarMeta } from './interactive/ContactBar/meta'
 
 // Repeaters (array-to-widget)
 import { meta as ExpandRowImageRepeaterMeta } from './repeaters/ExpandRowImageRepeater/meta'
@@ -59,6 +60,7 @@ export const widgetMetaRegistry = {
   Video: VideoMeta,
   VideoPlayer: VideoPlayerMeta,
   EmailCopy: EmailCopyMeta,
+  ContactBar: ContactBarMeta,
   // Repeaters
   ExpandRowImageRepeater: ExpandRowImageRepeaterMeta,
 } as const

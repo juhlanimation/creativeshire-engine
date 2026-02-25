@@ -4,6 +4,7 @@
  */
 
 import type { BaseSectionProps } from '../base'
+import type { SocialLink } from '../../../widgets/interactive/ContactBar/types'
 
 export interface GalleryProject {
   /** Unique identifier */
@@ -20,6 +21,10 @@ export interface GalleryProject {
   studio: string
   /** External URL (optional) */
   url?: string
+  /** Role in the project (e.g. "Animation Lead") */
+  role?: string
+  /** Time in seconds to seek to for video poster frame */
+  posterTime?: number
 }
 
 export interface LogoConfig {
@@ -58,4 +63,8 @@ export interface ProjectGalleryProps extends BaseSectionProps {
   thumbnailBorder?: string
   /** Thumbnail border radius */
   thumbnailBorderRadius?: string
+  /** Border around the content canvas (video area) */
+  contentBorder?: string
+  /** Social links for footer bar (array or binding expression) */
+  socialLinks?: SocialLink[] | string
 }

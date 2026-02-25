@@ -108,6 +108,13 @@ export const PREVIEW_DEFAULTS: Record<string, Record<string, unknown>> = {
     poster: 'https://picsum.photos/seed/videoplayer/800/450',
   },
   EmailCopy: { email: 'hello@example.com', variant: 'flip', label: 'How can I help you?' },
+  ContactBar: {
+    links: [
+      { platform: 'instagram', url: 'https://instagram.com/example' },
+      { platform: 'linkedin', url: 'https://linkedin.com/in/example' },
+      { platform: 'email', url: 'hello@example.com' },
+    ],
+  },
   Marquee: {
     duration: 30,
     gap: 24,
@@ -141,10 +148,10 @@ export const PREVIEW_DEFAULTS: Record<string, Record<string, unknown>> = {
     afterPoster: 'https://picsum.photos/seed/vc-after/800/450',
   },
   'ProjectGallery__FlexGalleryCardRepeater': {
-    projects: [
-      { id: 'p1', title: 'Project Alpha', thumbnail: 'https://picsum.photos/seed/proj1/200/120' },
-      { id: 'p2', title: 'Project Beta', thumbnail: 'https://picsum.photos/seed/proj2/200/120' },
-      { id: 'p3', title: 'Project Gamma', thumbnail: 'https://picsum.photos/seed/proj3/200/120' },
+    widgets: [
+      { type: 'Box', id: 'preview-gcr-1', props: { thumbnail: '/videos/bishoy-gendi/azuki-elementals/azuki-reel-vimeo.webm', title: 'Azuki Reel', year: '2024', studio: 'Crossroad', role: 'Animation Lead', posterTime: 4 } },
+      { type: 'Box', id: 'preview-gcr-2', props: { thumbnail: '/videos/bishoy-gendi/azuki-elementals/proof-of-skate.webm', title: 'Proof of Skate', year: '2022', studio: 'Juhl Animation', role: 'Animation Lead', posterTime: 3 } },
+      { type: 'Box', id: 'preview-gcr-3', props: { thumbnail: '/videos/bishoy-gendi/azuki-elementals/azukimoser.webm', title: 'H. Moser & Cie', year: '2025', studio: 'Crossroad', role: 'Animation Lead', posterTime: 2 } },
     ],
   },
   'ProjectShowcase__FlexButtonRepeater': {

@@ -80,6 +80,7 @@
 @import './content/sections/patterns/ProjectCompare/components/VideoCompare/styles.css' layer(widgets);
 @import './content/sections/patterns/ProjectGallery/components/FlexGalleryCardRepeater/styles.css' layer(widgets);
 @import './content/sections/patterns/ProjectGallery/components/FlexGalleryCardRepeater/SelectorCard/styles.css' layer(widgets);
+@import './content/sections/patterns/ProjectShowcase/components/FlexButtonRepeater/styles.css' layer(widgets);
 @import './content/sections/patterns/ProjectShowcase/components/FlexButtonRepeater/IndexNav/styles.css' layer(widgets);
 @import './content/sections/patterns/ProjectTabs/components/TabbedContent/styles.css' layer(widgets);
 @import './content/sections/patterns/TeamShowcase/components/StackVideoShowcase/styles.css' layer(widgets);
@@ -88,6 +89,9 @@
  * CONTENT - Sections
  * ============================================================================= */
 @import './content/sections/styles.css' layer(sections);
+
+/* Shared project frame */
+@import './content/sections/patterns/project-frame.css' layer(sections);
 
 /* Section Patterns */
 @import './content/sections/patterns/HeroVideo/styles.css' layer(sections);

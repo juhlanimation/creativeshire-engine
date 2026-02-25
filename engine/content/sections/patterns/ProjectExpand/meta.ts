@@ -35,5 +35,25 @@ export const meta = defineSectionMeta<ProjectExpandProps>({
       group: 'Content',
       bindable: true,
     },
+
+    // Footer
+    socialLinks: {
+      type: 'custom',
+      label: 'Social Links',
+      default: [],
+      description: 'Social platform links for footer bar',
+      group: 'Footer',
+      bindable: true,
+    },
+    textColor: {
+      type: 'select',
+      label: 'Text Color',
+      default: 'light',
+      choices: [
+        { value: 'light', label: 'Light' },
+        { value: 'dark', label: 'Dark' },
+      ],
+      group: 'Style',
+    },
   },
 })

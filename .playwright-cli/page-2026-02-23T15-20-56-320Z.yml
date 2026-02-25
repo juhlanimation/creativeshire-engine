@@ -1,0 +1,212 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e6]:
+      - generic [ref=e8]:
+        - generic [ref=e9]:
+          - button "Love, Death & Robots" [ref=e10]
+          - button "Diablo IV x Berserk" [ref=e11]
+          - button "Peter and the Wolf" [ref=e12]
+          - button "Marvel's Midnight Suns" [ref=e13]
+          - button "Bapbap" [ref=e14]
+          - button "Chobani" [ref=e15]
+          - button "Other Projects" [ref=e16]
+          - button "All Projects↗" [ref=e17]
+        - generic [ref=e20]:
+          - generic [ref=e22]:
+            - heading "Ice" [level=3] [ref=e23]
+            - generic [ref=e24]:
+              - paragraph [ref=e25]: "Client: Netflix"
+              - paragraph [ref=e26]: "Production: Passion Pictures"
+              - paragraph [ref=e27]: "Role: Character Animator"
+          - generic [ref=e31] [cursor=pointer]: Colony Sequence
+          - generic [ref=e35] [cursor=pointer]: Dolphin Run
+          - generic [ref=e39] [cursor=pointer]: Rule Sequence
+      - generic [ref=e41]:
+        - link [ref=e42] [cursor=pointer]:
+          - /url: https://instagram.com/bishoygendi
+          - img [ref=e43]
+        - link [ref=e45] [cursor=pointer]:
+          - /url: https://www.linkedin.com/in/bishoy-gendi-a48b4944/
+          - img [ref=e46]
+        - button "Copy bishoygendi@yahoo.co.uk" [ref=e48] [cursor=pointer]:
+          - img [ref=e49]
+          - img [ref=e51]
+    - generic [ref=e60]:
+      - img "Project Logo" [ref=e62]
+      - generic [ref=e66]:
+        - generic [ref=e67] [cursor=pointer]:
+          - img "Azuki Reel" [ref=e284]
+          - generic [ref=e71]:
+            - generic [ref=e72]: Animation Lead
+            - heading "Azuki Reel" [level=3] [ref=e73]
+            - generic [ref=e74]:
+              - generic [ref=e75]: "2024"
+              - generic [ref=e76]: •
+              - generic [ref=e77]: Crossroad
+          - generic [ref=e80]: Playing
+        - generic [ref=e82] [cursor=pointer]:
+          - img "Proof of Skate" [ref=e286]
+          - generic [ref=e85]:
+            - generic [ref=e86]: Animation Lead
+            - heading "Proof of Skate" [level=3] [ref=e87]
+            - generic [ref=e88]:
+              - generic [ref=e89]: "2022"
+              - generic [ref=e90]: •
+              - generic [ref=e91]: Juhl Animation
+        - generic [ref=e92] [cursor=pointer]:
+          - img "H. Moser & Cie" [ref=e287]
+          - generic [ref=e95]:
+            - generic [ref=e96]: Animation Lead
+            - heading "H. Moser & Cie" [level=3] [ref=e97]
+            - generic [ref=e98]:
+              - generic [ref=e99]: "2025"
+              - generic [ref=e100]: •
+              - generic [ref=e101]: Crossroad
+        - generic [ref=e102] [cursor=pointer]:
+          - img "AnimeCoin" [ref=e288]
+          - generic [ref=e105]:
+            - generic [ref=e106]: Animation Lead
+            - heading "AnimeCoin" [level=3] [ref=e107]
+            - generic [ref=e108]:
+              - generic [ref=e109]: "2025"
+              - generic [ref=e110]: •
+              - generic [ref=e111]: Crossroad
+      - generic [ref=e113]:
+        - link [ref=e114] [cursor=pointer]:
+          - /url: https://instagram.com/bishoygendi
+          - img [ref=e115]
+        - link [ref=e117] [cursor=pointer]:
+          - /url: https://www.linkedin.com/in/bishoy-gendi-a48b4944/
+          - img [ref=e118]
+        - button "Copy bishoygendi@yahoo.co.uk" [ref=e120] [cursor=pointer]:
+          - img [ref=e121]
+          - img [ref=e123]
+    - generic [ref=e127]:
+      - generic [ref=e128]:
+        - img "Project Logo" [ref=e129]
+        - generic [ref=e130]:
+          - generic [ref=e131]: WellHello Productions
+          - generic [ref=e132]: Character Animator
+      - generic [ref=e136]:
+        - generic [ref=e137]: sh
+        - button "275" [ref=e138] [cursor=pointer]
+        - button "300" [ref=e139] [cursor=pointer]
+        - button "310" [ref=e140] [cursor=pointer]
+        - button "330" [ref=e141] [cursor=pointer]
+        - button "490" [ref=e142] [cursor=pointer]
+        - button "500" [ref=e143] [cursor=pointer]
+        - button "510" [ref=e144] [cursor=pointer]
+        - button "520" [ref=e145] [cursor=pointer]
+      - generic [ref=e147]:
+        - link [ref=e148] [cursor=pointer]:
+          - /url: https://instagram.com/bishoygendi
+          - img [ref=e149]
+        - link [ref=e151] [cursor=pointer]:
+          - /url: https://www.linkedin.com/in/bishoy-gendi-a48b4944/
+          - img [ref=e152]
+        - button "Copy bishoygendi@yahoo.co.uk" [ref=e154] [cursor=pointer]:
+          - img [ref=e155]
+          - img [ref=e157]
+    - generic [ref=e161]:
+      - img "Project Logo" [ref=e163]
+      - generic [ref=e172]: The 21 is a short animated film shaped by neo-Coptic iconography, produced in collaboration with the global Coptic Community by a team of 70+ artists from more than 24 countries.
+      - generic [ref=e174]:
+        - link [ref=e175] [cursor=pointer]:
+          - /url: https://instagram.com/bishoygendi
+          - img [ref=e176]
+        - link [ref=e178] [cursor=pointer]:
+          - /url: https://www.linkedin.com/in/bishoy-gendi-a48b4944/
+          - img [ref=e179]
+        - button "Copy bishoygendi@yahoo.co.uk" [ref=e181] [cursor=pointer]:
+          - img [ref=e182]
+          - img [ref=e184]
+    - generic [ref=e188]:
+      - img "Project Logo" [ref=e190]
+      - generic [ref=e192]:
+        - generic [ref=e193]:
+          - generic [ref=e197] [cursor=pointer]: BigBoi Green
+          - generic [ref=e201] [cursor=pointer]: Goblin Machine
+        - generic [ref=e202]:
+          - generic [ref=e206] [cursor=pointer]: Dagger Duchess
+          - generic [ref=e210] [cursor=pointer]: Rune Giant
+      - generic [ref=e212]:
+        - link [ref=e213] [cursor=pointer]:
+          - /url: https://instagram.com/bishoygendi
+          - img [ref=e214]
+        - link [ref=e216] [cursor=pointer]:
+          - /url: https://www.linkedin.com/in/bishoy-gendi-a48b4944/
+          - img [ref=e217]
+        - button "Copy bishoygendi@yahoo.co.uk" [ref=e219] [cursor=pointer]:
+          - img [ref=e220]
+          - img [ref=e222]
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - img
+        - generic:
+          - img
+      - generic:
+        - generic:
+          - generic: azuki-elementals
+      - generic:
+        - generic:
+          - generic: the-boy-mole-fox-horse
+      - generic:
+        - generic:
+          - generic: "02"
+      - generic:
+        - generic:
+          - generic: "03"
+  - generic [ref=e224]:
+    - generic [ref=e225]:
+      - generic [ref=e226]: Dev Panel
+      - button "✕" [ref=e227]
+    - generic [ref=e228]:
+      - generic [ref=e229]: Current
+      - generic [ref=e230]:
+        - generic [ref=e231]: "2"
+        - generic [ref=e232]: →
+        - generic [ref=e233]: azuki-elementals
+    - generic [ref=e234]:
+      - generic [ref=e235]: Next
+      - generic [ref=e236]:
+        - generic [ref=e237]: "3"
+        - generic [ref=e238]: →
+        - generic [ref=e239]: the-boy-mole-fox-horse
+    - generic [ref=e240]:
+      - generic [ref=e241]: Progress
+      - generic [ref=e244]: 0.0%
+    - generic [ref=e245]:
+      - generic [ref=e246]: Speed
+      - generic [ref=e249]: 0%
+    - generic [ref=e250]:
+      - generic [ref=e251]: Direction
+      - text: ↓ Down
+    - generic [ref=e252]:
+      - generic [ref=e253]: Can Loop Back
+      - text: ✓ Yes
+    - generic [ref=e254]:
+      - generic [ref=e255]: Timeline Autohide
+      - text: ⏱ On (2s)
+    - generic [ref=e256]:
+      - generic [ref=e257]: Scroll Speed Multiplier
+      - generic [ref=e258]:
+        - slider [ref=e259] [cursor=pointer]: "1"
+        - generic [ref=e260]: 1x
+      - generic [ref=e261]:
+        - button "0.5x" [ref=e262]
+        - button "1x" [ref=e263]
+        - button "2x" [ref=e264]
+    - generic [ref=e265]:
+      - generic [ref=e266]: Snap Threshold
+      - generic [ref=e267]:
+        - slider [ref=e268] [cursor=pointer]: "25"
+        - generic [ref=e269]: 25%
+      - generic [ref=e270]:
+        - button "10%" [ref=e271]
+        - button "25%" [ref=e272]
+        - button "40%" [ref=e273]
+  - button "Open Next.js Dev Tools" [ref=e279] [cursor=pointer]:
+    - img [ref=e280]
+  - alert [ref=e283]

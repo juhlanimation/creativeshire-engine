@@ -263,6 +263,24 @@ export const sectionMeta = defineMeta<Record<string, unknown>>({
       ],
       group: 'Section',
     },
+    sectionTheme: {
+      type: 'select',
+      label: 'Section Theme',
+      default: '',
+      description: 'Override the site theme for this section',
+      choices: [
+        { value: '', label: 'Inherit' },
+        { value: 'contrast', label: 'Contrast' },
+        { value: 'muted', label: 'Muted' },
+        { value: 'editorial', label: 'Editorial' },
+        { value: 'neon', label: 'Neon' },
+        { value: 'earthy', label: 'Earthy' },
+        { value: 'monochrome', label: 'Monochrome' },
+        { value: 'crossroad', label: 'Crossroad' },
+        { value: 'azuki', label: 'Azuki' },
+      ],
+      group: 'Section',
+    },
 
     // ── Advanced ───────────────────────────────────────────────────────────
     className: {
@@ -343,6 +361,37 @@ export function getSectionContainerSettings(): Record<string, SettingConfig> {
         { value: 'auto', label: 'Auto' },
         { value: 'viewport', label: 'Viewport (flexible)' },
         { value: 'viewport-fixed', label: 'Viewport (locked)' },
+      ],
+      group: 'Section',
+    },
+
+    colorMode: {
+      type: 'select',
+      label: 'Color Mode',
+      default: '',
+      description: 'Force a color mode on this section, overriding the site-level palette',
+      choices: [
+        { value: '', label: 'Inherit' },
+        { value: 'dark', label: 'Dark' },
+        { value: 'light', label: 'Light' },
+      ],
+      group: 'Section',
+    },
+    sectionTheme: {
+      type: 'select',
+      label: 'Section Theme',
+      default: '',
+      description: 'Override the site theme for this section',
+      choices: [
+        { value: '', label: 'Inherit' },
+        { value: 'contrast', label: 'Contrast' },
+        { value: 'muted', label: 'Muted' },
+        { value: 'editorial', label: 'Editorial' },
+        { value: 'neon', label: 'Neon' },
+        { value: 'earthy', label: 'Earthy' },
+        { value: 'monochrome', label: 'Monochrome' },
+        { value: 'crossroad', label: 'Crossroad' },
+        { value: 'azuki', label: 'Azuki' },
       ],
       group: 'Section',
     },

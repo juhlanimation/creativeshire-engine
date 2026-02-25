@@ -64,6 +64,7 @@ export function createTeamShowcaseSection(props: TeamShowcaseProps): SectionSche
     label: props.label ?? 'Team Showcase',
     constrained: props.constrained,
     colorMode: props.colorMode,
+    sectionTheme: props.sectionTheme,
     layout: { type: 'stack', direction: 'column', padding: props.padding ?? 'none' },
     style: {
       backgroundColor: props.backgroundColor,

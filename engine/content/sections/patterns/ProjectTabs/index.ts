@@ -203,6 +203,7 @@ export function createProjectTabsSection(rawProps: ProjectTabsProps): SectionSch
     label: props.label ?? 'Project Tabs',
     constrained: props.constrained,
     colorMode: props.colorMode,
+    sectionTheme: props.sectionTheme,
     layout: {
       type: 'flex',
       direction: 'column',

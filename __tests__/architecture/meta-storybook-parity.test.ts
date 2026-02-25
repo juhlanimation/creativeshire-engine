@@ -427,7 +427,7 @@ describe('Meta → CMS/Storybook Parity', () => {
      * Preview files are EXPECTED to populate these with sample content — not a divergence.
      * Only flag settings with non-trivial design-intent defaults (select, range, toggle, etc.).
      */
-    const CONTENT_SLOT_TYPES = new Set(['text', 'textarea', 'video', 'image', 'custom', 'icon'])
+    const CONTENT_SLOT_TYPES = new Set(['text', 'textarea', 'video', 'image', 'custom', 'icon', 'color'])
 
     function isEmptyValue(v: unknown): boolean {
       if (v === '' || v === 0 || v === false || v === null || v === undefined) return true

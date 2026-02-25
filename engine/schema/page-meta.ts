@@ -32,7 +32,8 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       label: 'Page Title',
       default: '',
       description: 'Document title displayed in browser tab and search results',
-      validation: { required: true, maxLength: 70 },
+      validation: { maxLength: 70 },
+      editorHint: 'derived',
       group: 'SEO',
     },
     'head.description': {
@@ -41,6 +42,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Meta description for search engine results',
       validation: { maxLength: 5000 },
+      editorHint: 'derived',
       group: 'SEO',
     },
     'head.canonical': {
@@ -60,6 +62,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Open Graph title for social sharing (falls back to page title)',
       validation: { maxLength: 70 },
+      editorHint: 'derived',
       group: 'Open Graph',
     },
     'head.ogDescription': {
@@ -68,6 +71,7 @@ export const pageMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Open Graph description for social sharing',
       validation: { maxLength: 5000 },
+      editorHint: 'derived',
       group: 'Open Graph',
     },
     'head.ogImage': {

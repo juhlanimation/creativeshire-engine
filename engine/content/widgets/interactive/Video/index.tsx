@@ -55,6 +55,7 @@ const Video = memo(forwardRef<HTMLElement, VideoProps>(function Video({
   onClick,
   onMouseEnter: onMouseEnterProp,
   onMouseLeave: onMouseLeaveProp,
+  overlayTitle,
   'data-behaviour': dataBehaviour,
 }, ref) {
   const [isHovered, setIsHovered] = useState(false)
@@ -157,9 +158,32 @@ const Video = memo(forwardRef<HTMLElement, VideoProps>(function Video({
       })
     } else {
       video.pause()
-      video.currentTime = 0
+      // Reset to poster frame (or start) when unhovered
+      video.currentTime = posterTime ?? 0
     }
-  }, [isHovered, hoverPlay])
+  }, [isHovered, hoverPlay, posterTime])
+
+  // Hover-play mode: seek to posterTime on load when no poster image is set.
+  // This forces the browser to decode and display a frame so the video isn't black.
+  useEffect(() => {
+    if (!hoverPlay || poster) return
+    const video = videoRef.current
+    if (!video) return
+
+    const targetTime = posterTime ?? 0.001
+    const showFrame = () => {
+      if (video.paused && video.currentTime === 0) {
+        video.currentTime = targetTime
+      }
+    }
+
+    if (video.readyState >= 2) {
+      showFrame()
+    } else {
+      video.addEventListener('loadeddata', showFrame, { once: true })
+      return () => video.removeEventListener('loadeddata', showFrame)
+    }
+  }, [hoverPlay, poster, posterTime])
 
   // Custom loop point: restart from loopStartTime when video ends
   // When loopStartTime > 0, native loop is disabled and we use ended event instead
@@ -277,7 +301,7 @@ const Video = memo(forwardRef<HTMLElement, VideoProps>(function Video({
         />
       )}
 
-      {/* Video - visible and playing when hovering */}
+      {/* Video - visible when hovering (or always visible when no poster for frame preview) */}
       <video
         ref={videoRef}
         src={src || undefined}
@@ -285,11 +309,18 @@ const Video = memo(forwardRef<HTMLElement, VideoProps>(function Video({
         muted={muted}
         playsInline
         preload={preload ?? 'metadata'}
-        className={`video-widget__video ${isHovered ? 'video-widget__video--visible' : ''}`}
+        className={`video-widget__video ${(isHovered || !poster) ? 'video-widget__video--visible' : ''}`}
         style={{ objectFit }}
         data-effect="media-crossfade"
         data-intro-video={introVideo || undefined}
       />
+
+      {/* Title overlay - fades in with hover */}
+      {overlayTitle && (
+        <div className={`video-widget__overlay-title ${isHovered ? 'video-widget__overlay-title--visible' : ''}`}>
+          <span>{overlayTitle}</span>
+        </div>
+      )}
     </div>
   )
 }))

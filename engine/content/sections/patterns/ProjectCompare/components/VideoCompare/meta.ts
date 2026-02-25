@@ -16,7 +16,7 @@ export const meta = defineMeta<VideoCompareProps>({
     initialPosition: {
       type: 'number',
       label: 'Initial Position',
-      default: 50,
+      default: 0,
       description: 'Initial divider position (0-100)',
       min: 0,
       max: 100,

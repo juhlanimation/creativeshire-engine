@@ -379,6 +379,7 @@ export function createContentPricingSection(rawProps: ContentPricingProps): Sect
     label: props.label ?? 'Pricing',
     constrained: props.constrained,
     colorMode: props.colorMode,
+    sectionTheme: props.sectionTheme,
     layout: {
       type: 'flex',
       direction: 'column',

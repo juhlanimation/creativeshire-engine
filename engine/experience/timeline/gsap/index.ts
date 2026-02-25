@@ -6,40 +6,44 @@
  *
  * Unlike CSS-based behaviours that compute CSS variables, these provide
  * direct GSAP control for:
- * - Modal/overlay reveal transitions
+ * - Modal/overlay reveal animations
  * - Sequenced animations (wipe -> then content fade)
  * - Element-to-fullscreen expand animations
  * - Timeline reversal for close animations
  *
- * Transitions are registry-based. To add a new transition:
- * 1. Create a file in ./transitions/ (e.g., slide-up.ts)
- * 2. Import it in ./transitions/index.ts
+ * Effects are registry-based. To add a new effect:
+ * 1. Create a file in ../effects/ (e.g., slide-up.ts)
+ * 2. Import it in ../effects/index.ts
  * 3. Use it anywhere: type="slide-up"
  */
 
-// Transitions (import first for registration)
+// Effect primitives (import first for registration)
 export {
   // Registry
-  transitionRegistry,
-  registerTransition,
-  unregisterTransition,
+  effectRegistry,
+  registerEffect,
+  unregisterEffect,
   // Resolution
-  resolveTransition,
-  getTransitionIds,
-  // Individual transitions (for explicit imports)
+  resolveEffect,
+  getEffectIds,
+  getAllEffects,
+  // Individual effects (for explicit imports)
   wipeLeft,
   wipeRight,
   expand,
   fade,
-} from './transitions'
+  overlayFade,
+} from '../effects'
 
 export type {
-  Transition,
-  TransitionRegistry,
-  TransitionContext,
-  TransitionOptions,
-  TransitionCssConfig,
-} from './transitions'
+  EffectPrimitive,
+  EffectRegistry,
+  EffectContext,
+  EffectOptions,
+  GsapRealization,
+  CssRealization,
+  TweenVars,
+} from '../effects'
 
 // GSAP-powered reveal component and hook
 export { RevealTransition } from './reveal-transition'

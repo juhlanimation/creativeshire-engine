@@ -88,6 +88,8 @@ const SECTION_CONTAINER_KEYS = new Set([
   'paddingLeft',
   'paddingRight',
   'sectionHeight',
+  'colorMode',
+  'sectionTheme',
   'layout.type',
   'layout.direction',
   'layout.align',
@@ -299,6 +301,8 @@ function createSectionComponent(
       ...(sectionContainerArgs.paddingLeft !== undefined && { paddingLeft: sectionContainerArgs.paddingLeft as number }),
       ...(sectionContainerArgs.paddingRight !== undefined && { paddingRight: sectionContainerArgs.paddingRight as number }),
       ...(sectionContainerArgs.sectionHeight !== undefined && { sectionHeight: sectionContainerArgs.sectionHeight as string }),
+      ...(sectionContainerArgs.colorMode !== undefined && { colorMode: (sectionContainerArgs.colorMode as string) || undefined }),
+      ...(sectionContainerArgs.sectionTheme !== undefined && { sectionTheme: (sectionContainerArgs.sectionTheme as string) || undefined }),
     }
 
     // Apply layout.* overrides
@@ -338,6 +342,8 @@ function extractFactoryDefaults(
     if (section.paddingLeft != null) defaults.paddingLeft = section.paddingLeft
     if (section.paddingRight != null) defaults.paddingRight = section.paddingRight
     if (section.sectionHeight) defaults.sectionHeight = section.sectionHeight
+    if (section.colorMode) defaults.colorMode = section.colorMode
+    if (section.sectionTheme) defaults.sectionTheme = section.sectionTheme
 
     // Section layout fields
     const layout = section.layout

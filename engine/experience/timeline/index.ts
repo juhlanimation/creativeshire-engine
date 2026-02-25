@@ -5,7 +5,12 @@
  * - Page transitions: play() for parallel exit/entry tracks
  * - Intro sequences: playSequential() for sequential steps with delays
  *
- * GSAP-powered reveal transitions (wipe, expand, fade):
+ * Effect primitives (shared across orchestrators):
+ * - Define visual transformations once (wipe, expand, fade)
+ * - GSAP and CSS realizations in one definition
+ * - Registry-based: resolveEffect() / registerEffect()
+ *
+ * GSAP-powered reveal animations (wipe, expand, fade):
  * - Modal/overlay animations
  * - Reversible open/close timelines
  *
@@ -23,29 +28,33 @@ export {
   type AnimateElementOptions,
 } from './animateElement'
 
-// GSAP-powered reveal transitions
+// Effect primitives (shared definitions)
 export {
-  // Registry
-  transitionRegistry,
-  registerTransition,
-  unregisterTransition,
-  // Resolution
-  resolveTransition,
-  getTransitionIds,
-  // Individual transitions
+  effectRegistry,
+  registerEffect,
+  unregisterEffect,
+  resolveEffect,
+  getEffectIds,
+  getAllEffects,
   wipeLeft,
   wipeRight,
   expand,
   fade,
-} from './gsap'
+  overlayFade,
+} from './effects'
 
 export type {
-  Transition,
-  TransitionRegistry,
-  TransitionContext,
-  TransitionOptions,
-  TransitionCssConfig,
-} from './gsap'
+  EffectPrimitive,
+  EffectRegistry,
+  EffectContext,
+  EffectOptions,
+  GsapRealization,
+  CssRealization,
+  TweenVars,
+} from './effects'
+
+// Effect-to-track bridge
+export { createEffectTrack } from './effect-track'
 
 // GSAP-powered reveal component and hook
 export { RevealTransition, useGsapReveal } from './gsap'

@@ -45,7 +45,10 @@ interface SectionStoryRendererProps {
 export function SectionStoryRenderer({ section }: SectionStoryRendererProps) {
   const { colorTheme: globalColorTheme, colorMode: globalColorMode } = useContext(StoryGlobalsContext)
 
-  const colorTheme = globalColorTheme ?? 'contrast'
+  // "none" = no theme bg — sections own their background.
+  // CSS variables still come from 'contrast' so widgets render correctly.
+  const isNoTheme = globalColorTheme === 'none'
+  const colorTheme = isNoTheme ? 'contrast' : (globalColorTheme ?? 'contrast')
 
   // Resolve palette for body bg sync + outerBackground default
   const themeDef = getTheme(colorTheme)
@@ -53,18 +56,18 @@ export function SectionStoryRenderer({ section }: SectionStoryRendererProps) {
   const effectiveMode = globalColorMode ?? defaultMode
   const palette = themeDef?.[effectiveMode === 'light' ? 'light' : 'dark']
 
-  // Sync body bg so Storybook iframe matches the theme
+  // Sync body bg so Storybook iframe matches the theme (black when no theme)
   useLayoutEffect(() => {
-    if (palette?.background) document.body.style.backgroundColor = palette.background
+    document.body.style.backgroundColor = isNoTheme ? '#000' : (palette?.background ?? '')
     return () => { document.body.style.backgroundColor = '' }
-  }, [palette?.background])
+  }, [palette?.background, isNoTheme])
 
   // Build a production-realistic theme from the active colorTheme.
   const theme = useMemo((): ThemeSchema => ({
     colorTheme,
     colorMode: effectiveMode as 'dark' | 'light',
     container: {
-      outerBackground: palette?.background,
+      outerBackground: isNoTheme ? 'transparent' : palette?.background,
     },
     sectionTransition: {
       fadeDuration: '0.15s',
@@ -73,7 +76,7 @@ export function SectionStoryRenderer({ section }: SectionStoryRendererProps) {
     smoothScroll: {
       enabled: true,
     },
-  }), [colorTheme, effectiveMode, palette?.background])
+  }), [colorTheme, effectiveMode, palette?.background, isNoTheme])
 
   const site: SiteSchema = {
     id: 'storybook',

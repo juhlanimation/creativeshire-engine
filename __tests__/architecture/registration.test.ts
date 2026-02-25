@@ -20,7 +20,7 @@ import {
 import { widgetRegistry } from '../../engine/content/widgets/registry'
 import { getChromeComponent, getAllChromeMetas, getChromeComponentIds } from '../../engine/content/chrome/registry'
 import { behaviourRegistry, getBehaviourIds, getAllBehaviourMetas } from '../../engine/experience/behaviours/registry'
-import { transitionRegistry } from '../../engine/experience/timeline/gsap/transitions/registry'
+import { effectRegistry } from '../../engine/experience/timeline/effects/registry'
 import { sectionRegistry } from '../../engine/content/sections/registry'
 import { getThemeIds, getAllThemeMetas } from '../../engine/themes'
 import { widgetMetaRegistry } from '../../engine/content/widgets/meta-registry'
@@ -381,11 +381,11 @@ describe('Registration Validation', () => {
     })
   })
 
-  describe('Transition Registry', () => {
-    const EXCLUDED_FILES = ['index.ts', 'registry.ts', 'types.ts', 'resolve.ts']
+  describe('Effect Primitives Registry', () => {
+    const EXCLUDED_FILES = ['index.ts', 'registry.ts', 'types.ts']
 
-    it('all transition files are registered', async () => {
-      const files = await getFiles('experience/timeline/gsap/transitions/*.ts')
+    it('all effect files are registered', async () => {
+      const files = await getFiles('experience/timeline/effects/*.ts')
       const violations: string[] = []
 
       for (const file of files) {
@@ -396,25 +396,25 @@ describe('Registration Validation', () => {
         const id = extractTransitionId(content)
 
         if (!id) {
-          violations.push(`${relativePath(file)}: No transition ID found in file`)
+          violations.push(`${relativePath(file)}: No effect ID found in file`)
           continue
         }
 
-        if (!transitionRegistry[id]) {
-          violations.push(`${relativePath(file)}: Transition "${id}" not registered in transitionRegistry`)
+        if (!effectRegistry[id]) {
+          violations.push(`${relativePath(file)}: Effect "${id}" not registered in effectRegistry`)
         }
       }
 
       if (violations.length > 0) {
-        console.log('Unregistered transitions:')
+        console.log('Unregistered effects:')
         violations.forEach((v) => console.log(`  - ${v}`))
       }
 
       expect(violations).toHaveLength(0)
     })
 
-    it('transition IDs match filename', async () => {
-      const files = await getFiles('experience/timeline/gsap/transitions/*.ts')
+    it('effect IDs match filename', async () => {
+      const files = await getFiles('experience/timeline/effects/*.ts')
       const violations: string[] = []
 
       for (const file of files) {
@@ -429,12 +429,12 @@ describe('Registration Validation', () => {
         // ID should match filename (without .ts)
         const expectedId = filename.replace('.ts', '')
         if (id !== expectedId) {
-          violations.push(`${relativePath(file)}: Transition ID "${id}" doesn't match filename "${expectedId}"`)
+          violations.push(`${relativePath(file)}: Effect ID "${id}" doesn't match filename "${expectedId}"`)
         }
       }
 
       if (violations.length > 0) {
-        console.log('Mismatched transition IDs:')
+        console.log('Mismatched effect IDs:')
         violations.forEach((v) => console.log(`  - ${v}`))
       }
 

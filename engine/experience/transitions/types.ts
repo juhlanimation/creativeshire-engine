@@ -52,4 +52,10 @@ export interface PageTransition extends PageTransitionMeta {
   exitClass: string
   /** CSS class applied during entry phase */
   entryClass: string
+  /** Effect primitive ID for exit animation (overrides exitClass when set) */
+  exitEffect?: string
+  /** Effect primitive ID for entry animation (overrides entryClass when set) */
+  entryEffect?: string
+  /** Which realization to use for effect primitives (default: 'css') */
+  effectMode?: 'gsap' | 'css'
 }

@@ -2,26 +2,43 @@
  * ProjectVideoGrid section pattern — visual CSS using theme variables.
  * Background color is set via the `style` prop from presets.
  * Text color inherits from the theme's colorMode palette.
+ *
+ * Layout: flex row with vertical group (9/16 side-by-side) + horizontal group (16/9 stacked).
  */
 
-/* Section container: padding via spacing tokens, text color via theme */
-.section.section-project-video-grid {
-  padding: var(--spacing-section-y, 2rem) var(--spacing-section-x, 2rem);
-  color: var(--text-primary, inherit);
+/* Section padding handled by shared .project-frame */
+
+/* Header: equal top padding to match the gap below it */
+.project-video-grid__header {
+  padding-top: var(--spacing-md, 1rem);
 }
 
-/* Grid: gap between columns */
+/* Grid: flex row container, fills available height */
 .project-video-grid__grid {
   gap: var(--spacing-xs, 0.5rem);
+  height: 100%;
 }
 
-/* Columns: gap between stacked videos */
-.project-video-grid__column {
+/* Vertical group: 9/16 videos side-by-side, stretch to fill height */
+.project-video-grid__vertical-group {
   gap: var(--spacing-xs, 0.5rem);
+  flex: 1;
+  min-width: 0;
+  height: 100%;
 }
 
-/* Videos: border radius from theme */
+/* Horizontal group: 16/9 videos stacked, stretch to fill height */
+.project-video-grid__horizontal-group {
+  gap: var(--spacing-xs, 0.5rem);
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
+/* Individual videos: fill available space equally */
 .project-video-grid__video {
   border-radius: var(--radius-sm, 0);
   overflow: hidden;
+  min-height: 0;
+  flex: 1;
 }

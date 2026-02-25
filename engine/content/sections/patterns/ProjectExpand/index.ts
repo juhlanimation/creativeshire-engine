@@ -11,9 +11,11 @@
  */
 
 import type { SectionSchema, WidgetSchema, SerializableValue } from '../../../../schema'
+import { applyMetaDefaults } from '../../../../schema/settings'
 import type { ExpandRowItem } from '../../../widgets/repeaters/ExpandRowImageRepeater/ExpandRowThumbnail/types'
 import type { ProjectExpandProps, ExpandableVideoItem } from './types'
 import { isBindingExpression } from '../utils'
+import { meta } from './meta'
 
 /**
  * Convert ExpandableVideoItem to ExpandRowItem format.
@@ -42,7 +44,8 @@ function toExpandRowItem(item: ExpandableVideoItem): ExpandRowItem {
  * @param props - Project expand section configuration
  * @returns SectionSchema for the project expand section
  */
-export function createProjectExpandSection(props: ProjectExpandProps): SectionSchema {
+export function createProjectExpandSection(rawProps: ProjectExpandProps): SectionSchema {
+  const props = applyMetaDefaults(meta, rawProps)
   const sectionId = props.id ?? 'project-expand'
   const widgets: WidgetSchema[] = []
 
@@ -50,7 +53,7 @@ export function createProjectExpandSection(props: ProjectExpandProps): SectionSc
   widgets.push({
     id: `${sectionId}-header`,
     type: 'Flex',
-    className: 'project-expand__header',
+    className: 'project-frame__header project-expand__header',
     props: {
       direction: 'row',
       align: 'center',
@@ -82,13 +85,10 @@ export function createProjectExpandSection(props: ProjectExpandProps): SectionSc
       ? props.videos
       : props.videos.map(toExpandRowItem)
 
-    widgets.push({
+    const gallery: WidgetSchema = {
       id: `${sectionId}-gallery`,
       type: 'ExpandRowImageRepeater',
       className: 'project-expand__gallery',
-      style: {
-        marginTop: 'var(--spacing-lg, 2.25rem)',
-      },
       props: {
         projects: projects as unknown as SerializableValue,
         height: props.galleryHeight ?? '32rem',
@@ -99,6 +99,28 @@ export function createProjectExpandSection(props: ProjectExpandProps): SectionSc
       },
       // Event wiring from preset (e.g., click → modal.open)
       ...(props.galleryOn ? { on: props.galleryOn } : {}),
+    }
+
+    // Content area wraps gallery for shared frame centering
+    widgets.push({
+      id: `${sectionId}-content`,
+      type: 'Box',
+      className: 'project-frame__content',
+      widgets: [gallery],
+    })
+  }
+
+  // Footer social links bar (optional)
+  const socialLinks = rawProps.socialLinks
+  if (socialLinks && (typeof socialLinks === 'string' || socialLinks.length > 0)) {
+    widgets.push({
+      id: `${sectionId}-contact-bar`,
+      type: 'ContactBar',
+      className: 'project-frame__footer',
+      props: {
+        links: socialLinks,
+        textColor: props.textColor,
+      },
     })
   }
 
@@ -108,6 +130,7 @@ export function createProjectExpandSection(props: ProjectExpandProps): SectionSc
     label: props.label ?? 'Project Expand',
     constrained: props.constrained,
     colorMode: props.colorMode,
+    sectionTheme: props.sectionTheme,
     layout: {
       type: 'flex',
       direction: 'column',
@@ -117,7 +140,7 @@ export function createProjectExpandSection(props: ProjectExpandProps): SectionSc
     style: {
       ...props.style,
     },
-    className: props.className ?? 'section-project-expand',
+    className: ['project-frame', props.className].filter(Boolean).join(' '),
     paddingTop: props.paddingTop,
     paddingBottom: props.paddingBottom,
     paddingLeft: props.paddingLeft,

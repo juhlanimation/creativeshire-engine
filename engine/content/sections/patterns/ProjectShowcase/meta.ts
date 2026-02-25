@@ -63,7 +63,7 @@ export const meta = defineSectionMeta<ProjectShowcaseProps>({
     videoBorder: {
       type: 'toggle',
       label: 'Show Border',
-      default: false,
+      default: true,
       description: 'Show border around video',
       group: 'Style',
     },
@@ -73,6 +73,26 @@ export const meta = defineSectionMeta<ProjectShowcaseProps>({
       default: [],
       description: 'Shot numbers for navigation (optional)',
       group: 'Content',
+    },
+
+    // Footer
+    socialLinks: {
+      type: 'custom',
+      label: 'Social Links',
+      default: [],
+      description: 'Social platform links for footer bar',
+      group: 'Footer',
+      bindable: true,
+    },
+    textColor: {
+      type: 'select',
+      label: 'Text Color',
+      default: 'dark',
+      choices: [
+        { value: 'light', label: 'Light' },
+        { value: 'dark', label: 'Dark' },
+      ],
+      group: 'Style',
     },
 
     // Typography

@@ -95,4 +95,7 @@ export interface VideoProps extends WidgetBaseProps {
    * Forwarded alongside internal hover-play state management.
    */
   onMouseLeave?: () => void
+
+  /** Title overlay shown at bottom of hover-play container (fades with hover) */
+  overlayTitle?: string
 }

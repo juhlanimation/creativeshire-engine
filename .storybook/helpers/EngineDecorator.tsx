@@ -30,8 +30,12 @@ export const EngineDecorator: Decorator = (Story, context) => {
   const store = useMemo(() => createNoopStore(), [])
 
   const globals = context.globals as Record<string, unknown>
-  const themeId = (globals.colorTheme as string) ?? 'contrast'
+  const rawThemeId = (globals.colorTheme as string) ?? 'contrast'
   const mode = (globals.colorMode as string) ?? 'dark'
+
+  // "none" = no theme bg — use 'contrast' for CSS variables only
+  const isNoTheme = rawThemeId === 'none'
+  const themeId = isNoTheme ? 'contrast' : rawThemeId
 
   const { themeStyle, palette } = useMemo(() => {
     const themeDef = getTheme(themeId)
@@ -47,29 +51,29 @@ export const EngineDecorator: Decorator = (Story, context) => {
   const rootStyle = useMemo(() => ({
     ...themeStyle,
     minHeight: '100vh',
-    ...(palette?.background && { backgroundColor: palette.background }),
+    backgroundColor: isNoTheme ? '#000' : (palette?.background ?? 'transparent'),
     ...(palette?.text && { color: palette.text }),
-  } as React.CSSProperties), [themeStyle, palette])
+  } as React.CSSProperties), [themeStyle, palette, isNoTheme])
 
   // Sync Storybook iframe body to active palette (supplements CSS default in reset.css).
   // Cleanup resets to empty string so CSS rules from reset.css take over when
   // navigating to preset stories (which don't use EngineDecorator).
   useLayoutEffect(() => {
-    if (palette?.background) document.body.style.backgroundColor = palette.background
+    document.body.style.backgroundColor = isNoTheme ? '#000' : (palette?.background ?? '')
     if (palette?.text) document.body.style.color = palette.text
     return () => {
       document.body.style.backgroundColor = ''
       document.body.style.color = ''
     }
-  }, [palette?.background, palette?.text])
+  }, [palette?.background, palette?.text, isNoTheme])
 
   // Explicit background/color on data-site-content prevents preset CSS contamination.
   // Preset stories side-effect import their CSS which sets
   // `[data-site-content] { background-color }` globally. Inline styles override this.
   const contentStyle = useMemo(() => ({
-    backgroundColor: palette?.background ?? 'transparent',
+    backgroundColor: isNoTheme ? 'transparent' : (palette?.background ?? 'transparent'),
     color: palette?.text ?? 'inherit',
-  } as React.CSSProperties), [palette])
+  } as React.CSSProperties), [palette, isNoTheme])
 
   return (
     <div data-engine-root style={rootStyle}>

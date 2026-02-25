@@ -14,6 +14,8 @@ export interface IndexNavItem {
   label: string
   /** Optional value associated with this item */
   value?: string | number
+  /** Optional video source for shot switching */
+  videoSrc?: string
 }
 
 export interface IndexNavProps extends WidgetBaseProps {

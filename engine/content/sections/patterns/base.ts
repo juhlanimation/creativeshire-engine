@@ -16,6 +16,8 @@ export interface BaseSectionProps {
   constrained?: boolean
   /** Per-section color mode — resolves palette from the active theme */
   colorMode?: 'dark' | 'light'
+  /** Per-section theme override — resolves full palette from a different theme */
+  sectionTheme?: string
   /** Section-level inline styles (merged over factory defaults) */
   style?: CSSProperties
   /** CSS class names */

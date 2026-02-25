@@ -1,0 +1,41 @@
+/**
+ * Shared project frame layout.
+ * All project section patterns share this vertical flex structure:
+ *
+ *   section.project-frame  (padding: 0 16px — sides only)
+ *     .project-frame__header   (logo row — fixed height, no shrink)
+ *     .project-frame__content  (fills remaining space, centers children)
+ *     .project-frame__footer   (social links — fixed 3rem, no shrink)
+ *
+ * The section itself is flex-column + justify: between + viewport height.
+ * Schema paddingTop/Left/Right/Bottom inline styles override these defaults.
+ */
+
+/* Section-level frame: consistent padding for all project patterns */
+.project-frame {
+  padding: 0 16px;
+}
+
+/* Header: logo row, sizes to content, never shrinks */
+.project-frame__header {
+  flex-shrink: 0;
+}
+
+/* Content area: fills remaining space, centers children vertically */
+.project-frame__content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+
+  /* Center content vertically + stretch full width */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Footer social links — fixed height, no shrink */
+.project-frame__footer {
+  flex-shrink: 0;
+  height: 3rem;
+}

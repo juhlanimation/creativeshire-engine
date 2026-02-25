@@ -34,6 +34,7 @@ import Marquee from './layout/Marquee'
 import Video from './interactive/Video'
 import VideoPlayer from './interactive/VideoPlayer'
 import EmailCopy from './interactive/EmailCopy'
+import ContactBar from './interactive/ContactBar'
 // Repeaters (array-to-widget)
 import ExpandRowImageRepeater from './repeaters/ExpandRowImageRepeater'
 
@@ -62,6 +63,7 @@ export const widgetRegistry: Record<string, WidgetComponent> = {
   Video,
   VideoPlayer,
   EmailCopy,
+  ContactBar,
   // Repeaters
   ExpandRowImageRepeater,
 }

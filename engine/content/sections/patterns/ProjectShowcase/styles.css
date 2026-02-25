@@ -4,10 +4,7 @@
  * Text colors and spacing use theme CSS variables.
  */
 
-.section.section-project-showcase {
-  padding: var(--spacing-section-y, 2rem) var(--spacing-section-x, 2rem);
-  color: var(--text-primary, inherit);
-}
+/* Section padding handled by shared .project-frame */
 
 /* Header row: logo left, info right */
 .project-showcase__header {
@@ -30,8 +27,13 @@
   color: var(--text-secondary, currentColor);
 }
 
-/* Video container */
+/* Video container — fills content area, sizing via .project-frame__content */
 .project-showcase__video-container {
   width: 100%;
-  margin-top: var(--spacing-lg, 2rem);
+}
+
+/* Video fills the entire content container */
+.project-showcase__video {
+  position: absolute;
+  inset: 0;
 }

@@ -17,6 +17,9 @@ export const fadePageTransition: PageTransition = {
   respectReducedMotion: true,
   exitClass: 'page-transition--exiting',
   entryClass: 'page-transition--entering',
+  exitEffect: 'overlay-fade',
+  entryEffect: 'overlay-fade',
+  effectMode: 'css',
 }
 
 // Auto-register on module load

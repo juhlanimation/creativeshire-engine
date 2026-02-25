@@ -109,6 +109,7 @@ export function createProjectFeaturedSection(props?: ProjectFeaturedProps): Sect
     label: p.label ?? 'Featured Projects',
     constrained: p.constrained ?? true,
     colorMode: p.colorMode,
+    sectionTheme: p.sectionTheme,
     layout: {
       type: 'stack',
       direction: 'column',

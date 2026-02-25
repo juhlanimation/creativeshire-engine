@@ -37,6 +37,7 @@ const preview: Preview = {
       toolbar: {
         title: 'Theme',
         items: [
+          { value: 'none', title: 'No Theme' },
           { value: 'contrast', title: 'Contrast' },
           { value: 'muted', title: 'Muted' },
           { value: 'editorial', title: 'Editorial' },

@@ -58,5 +58,21 @@ export const meta = defineSectionMeta<ProjectGalleryProps>({
       ],
       group: 'Style',
     },
+    contentBorder: {
+      type: 'text',
+      label: 'Content Border',
+      default: '',
+      description: 'CSS border around the content canvas (e.g. "2px solid #C03540")',
+      group: 'Style',
+      validation: { maxLength: 100 },
+    },
+    socialLinks: {
+      type: 'custom',
+      label: 'Social Links',
+      default: [],
+      description: 'Social platform links for footer bar',
+      group: 'Footer',
+      bindable: true,
+    },
   },
 })

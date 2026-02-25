@@ -167,7 +167,7 @@ describe('Public API Validation', () => {
         // timeline sub-barrels
         'experience/timeline': './experience',
         'experience/timeline/gsap': './experience',
-        'experience/timeline/gsap/transitions': './experience',
+        'experience/timeline/effects': './experience',
         'experience/transitions/configs': './experience',
       }
 

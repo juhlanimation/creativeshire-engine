@@ -244,6 +244,7 @@ export function createAboutBioSection(rawProps?: AboutBioProps): SectionSchema {
     label: p.label ?? 'About',
     constrained: p.constrained ?? true,
     colorMode: p.colorMode,
+    sectionTheme: p.sectionTheme,
     layout: {
       type: 'stack',
       direction: 'column',

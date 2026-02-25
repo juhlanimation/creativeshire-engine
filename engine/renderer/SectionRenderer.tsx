@@ -137,22 +137,26 @@ export function SectionRenderer({ section, index, totalSections }: SectionRender
 
   // ── Normal section rendering ───────────────────────────────────────
 
-  // Per-section color palette: resolve from colorMode + active theme
+  // Per-section color palette: resolve from sectionTheme/colorMode + active theme
   const { colorTheme } = useThemeContext()
   const sectionPaletteVars = useMemo(() => {
-    if (!section.colorMode || !colorTheme) return undefined
-    const themeDef = getTheme(colorTheme)
+    const themeToUse = section.sectionTheme || colorTheme
+    // Activate when section overrides theme OR colorMode
+    if (!section.sectionTheme && !section.colorMode) return undefined
+    if (!themeToUse) return undefined
+    const themeDef = getTheme(themeToUse)
     if (!themeDef) return undefined
-    const palette = themeDef[section.colorMode]
+    const mode = section.colorMode ?? themeDef.defaultMode ?? 'dark'
+    const palette = themeDef[mode]
     return {
       ...paletteToCSS(palette),
       // Paint section background directly from palette.
       // paletteToCSS sets --site-outer-bg (variable) but not backgroundColor (property).
       // Without this, the section wrapper stays transparent and the site-level
-      // background shows through — wrong color for sections with different colorMode.
+      // background shows through — wrong color for sections with different colorMode/theme.
       ...(palette.background && { backgroundColor: palette.background }),
     }
-  }, [section.colorMode, colorTheme])
+  }, [section.sectionTheme, section.colorMode, colorTheme])
 
   // Inherit background from section to prevent white flash during fade.
   // For cover-scroll, assign ascending z-indexes so later sections stack on top.

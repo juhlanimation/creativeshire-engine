@@ -22,6 +22,7 @@ export const siteMetadataMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Default page title (used when page doesn\'t specify one)',
       validation: { maxLength: 70 },
+      editorHint: 'derived',
       group: 'SEO',
     },
     description: {
@@ -30,6 +31,7 @@ export const siteMetadataMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Default meta description for the site',
       validation: { maxLength: 5000 },
+      editorHint: 'derived',
       group: 'SEO',
     },
     language: {
@@ -61,7 +63,7 @@ export const siteMetadataMeta = defineMeta<Record<string, unknown>>({
       label: 'Site Name',
       default: '',
       description: 'Site or brand name',
-      validation: { maxLength: 100 },
+      validation: { required: true, maxLength: 100 },
       group: 'Identity',
     },
     tagline: {
@@ -119,6 +121,7 @@ export const siteMetadataMeta = defineMeta<Record<string, unknown>>({
       default: '',
       description: 'Twitter/X handle (e.g., "@handle")',
       validation: { maxLength: 16, pattern: '^@?[a-zA-Z0-9_]{1,15}$', message: 'Enter a valid Twitter/X handle (e.g., @handle)' },
+      editorHint: 'derived',
       group: 'Social',
     },
   },

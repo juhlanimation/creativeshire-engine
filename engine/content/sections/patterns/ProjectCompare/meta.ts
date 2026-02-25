@@ -21,6 +21,24 @@ export const meta = defineSectionMeta<ProjectCompareProps>({
       default: { src: '', alt: '' },
       group: 'Header',
     },
+    studio: {
+      type: 'text',
+      label: 'Studio',
+      default: '',
+      description: 'Production studio name',
+      validation: { maxLength: 100 },
+      group: 'Header',
+      bindable: true,
+    },
+    role: {
+      type: 'text',
+      label: 'Role',
+      default: '',
+      description: 'Your role on the project',
+      validation: { maxLength: 100 },
+      group: 'Header',
+      bindable: true,
+    },
     beforeVideo: {
       type: 'video',
       label: 'Before Video',
@@ -55,6 +73,30 @@ export const meta = defineSectionMeta<ProjectCompareProps>({
       validation: { maxLength: 100 },
       group: 'Content',
     },
+    videoBackground: {
+      type: 'color',
+      label: 'Video Frame Color',
+      default: '',
+      description: 'Background color for the container around the video',
+      group: 'Style',
+      bindable: true,
+    },
+    contentBackground: {
+      type: 'color',
+      label: 'Content Area Background',
+      default: '',
+      description: 'Background for the content zone behind the video frame',
+      group: 'Style',
+      bindable: true,
+    },
+    descriptionColor: {
+      type: 'color',
+      label: 'Description Text Color',
+      default: '',
+      description: 'Override color for description text',
+      group: 'Style',
+      bindable: true,
+    },
     description: {
       type: 'textarea',
       label: 'Description',
@@ -63,6 +105,26 @@ export const meta = defineSectionMeta<ProjectCompareProps>({
       validation: { maxLength: 5000 },
       group: 'Content',
       bindable: true,
+    },
+
+    // Footer
+    socialLinks: {
+      type: 'custom',
+      label: 'Social Links',
+      default: [],
+      description: 'Social platform links for footer bar',
+      group: 'Footer',
+      bindable: true,
+    },
+    textColor: {
+      type: 'select',
+      label: 'Text Color',
+      default: 'dark',
+      choices: [
+        { value: 'light', label: 'Light' },
+        { value: 'dark', label: 'Dark' },
+      ],
+      group: 'Style',
     },
 
     // Typography

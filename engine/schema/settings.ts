@@ -15,8 +15,10 @@
  * Visibility hint for platform editors.
  * - 'structural': implementation detail, hidden from content editors by default.
  * - 'content': user-facing, always shown (same as omitting editorHint).
+ * - 'derived': auto-populated by the platform at save/render time.
+ *   Hidden from wizard; visible in inspector for power-user overrides.
  */
-export type EditorHint = 'structural' | 'content'
+export type EditorHint = 'structural' | 'content' | 'derived'
 
 // =============================================================================
 // Validation

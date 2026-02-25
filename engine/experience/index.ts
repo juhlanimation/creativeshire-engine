@@ -89,8 +89,26 @@ export type {
 } from './drivers'
 
 // Timeline (discrete animation orchestration)
-export { EffectTimeline, animateElement, prefersReducedMotion } from './timeline'
+export { EffectTimeline, animateElement, prefersReducedMotion, createEffectTrack } from './timeline'
 export type { Track, SequentialTrack, AnimateElementOptions } from './timeline'
+
+// Effect primitives (shared across orchestrators)
+export {
+  effectRegistry,
+  registerEffect,
+  unregisterEffect,
+  resolveEffect,
+  getEffectIds,
+  getAllEffects,
+} from './timeline'
+export type {
+  EffectPrimitive,
+  EffectRegistry,
+  EffectContext,
+  EffectOptions,
+  GsapRealization,
+  CssRealization,
+} from './timeline'
 
 // Navigation (page transitions, section navigation)
 export {

@@ -92,6 +92,7 @@ const aboutSection: SectionSchema = {
 const azukiElementalsSection = createProjectGallerySection({
   id: 'azuki-elementals',
   label: 'Azuki Elementals',
+  sectionTheme: 'azuki',
   logo: {
     src: '{{ content.azukiElementals.logo.src }}',
     alt: '{{ content.azukiElementals.logo.alt }}',
@@ -102,8 +103,11 @@ const azukiElementalsSection = createProjectGallerySection({
   thumbnailWidth: 192,
   activeThumbnailWidth: 220,
   accentColor: '{{ content.azukiElementals.accentColor }}',
-  thumbnailBorder: '1px solid rgba(255,255,255,0.3)',
+  thumbnailBorder: '2px solid #ffffff',
   thumbnailBorderRadius: 'none',
+  contentBorder: '2px solid #ffffff',
+  socialLinks: '{{ content.azukiElementals.socialLinks }}',
+  textColor: 'light',
 })
 
 // =============================================================================
@@ -113,6 +117,7 @@ const azukiElementalsSection = createProjectGallerySection({
 const boyMoleFoxHorseSection = createProjectShowcaseSection({
   id: 'boy-mole-fox-horse',
   label: 'Boy Mole Fox Horse',
+  sectionTheme: 'boy-mole',
   logo: {
     src: '{{ content.boyMoleFoxHorse.logo.src }}',
     alt: '{{ content.boyMoleFoxHorse.logo.alt }}',
@@ -125,7 +130,8 @@ const boyMoleFoxHorseSection = createProjectShowcaseSection({
   posterTime: '{{ content.boyMoleFoxHorse.posterTime }}',
   shots: '{{ content.boyMoleFoxHorse.shots }}',
   colorMode: 'light',
-  style: { backgroundColor: '{{ content.boyMoleFoxHorse.backgroundColor }}' as unknown as string },
+  socialLinks: '{{ content.boyMoleFoxHorse.socialLinks }}',
+  textColor: 'dark',
 })
 
 // =============================================================================
@@ -135,20 +141,25 @@ const boyMoleFoxHorseSection = createProjectShowcaseSection({
 const the21Section = createProjectCompareSection({
   id: 'the21-seq1',
   label: 'THE 21',
+  sectionTheme: 'the21',
   logo: {
     src: '{{ content.the21.logo.src }}',
     alt: '{{ content.the21.logo.alt }}',
     width: '{{ content.the21.logo.width }}' as unknown as number,
   },
+  studio: '{{ content.the21.studio }}',
+  role: '{{ content.the21.role }}',
   beforeVideo: '{{ content.the21.beforeVideo }}',
   afterVideo: '{{ content.the21.afterVideo }}',
   beforeLabel: '{{ content.the21.beforeLabel }}',
   afterLabel: '{{ content.the21.afterLabel }}',
+  videoBackground: '{{ content.the21.videoBackground }}',
   description: '{{ content.the21.description }}',
-  colorMode: 'dark',
-  style: {
-    backgroundColor: '{{ content.the21.backgroundColor }}' as unknown as string,
-  },
+  colorMode: 'light',
+  contentBackground: '{{ content.the21.contentBackground }}',
+  descriptionColor: '{{ content.the21.descriptionColor }}',
+  socialLinks: '{{ content.the21.socialLinks }}',
+  textColor: 'dark',
 })
 
 // =============================================================================
@@ -158,6 +169,7 @@ const the21Section = createProjectCompareSection({
 const clashRoyaleSection = createProjectVideoGridSection({
   id: 'clash-royale',
   label: 'Clash Royale',
+  sectionTheme: 'supercell',
   colorMode: 'dark',
   logo: {
     src: '{{ content.clashRoyale.logo.src }}',
@@ -165,9 +177,8 @@ const clashRoyaleSection = createProjectVideoGridSection({
     width: '{{ content.clashRoyale.logo.width }}' as unknown as number,
   },
   videos: '{{ content.clashRoyale.videos }}',
-  style: {
-    backgroundColor: '{{ content.clashRoyale.backgroundColor }}' as unknown as string,
-  },
+  socialLinks: '{{ content.clashRoyale.socialLinks }}',
+  textColor: 'light',
 })
 
 // =============================================================================
@@ -177,18 +188,18 @@ const clashRoyaleSection = createProjectVideoGridSection({
 const riotGamesSection = createProjectExpandSection({
   id: 'riot-games',
   label: 'Riot Games',
+  sectionTheme: 'riot-games',
   logo: {
     src: '{{ content.riotGames.logo.src }}',
     alt: '{{ content.riotGames.logo.alt }}',
     width: '{{ content.riotGames.logo.width }}' as unknown as number,
   },
   videos: '{{ content.riotGames.videos }}',
-  style: {
-    backgroundColor: '{{ content.riotGames.backgroundColor }}',
-  },
   galleryHeight: '24rem',
   cursorLabel: 'PLAY',
   galleryOn: { click: 'modal.open' },
+  socialLinks: '{{ content.riotGames.socialLinks }}',
+  textColor: 'light',
 })
 
 // =============================================================================

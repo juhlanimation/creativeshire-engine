@@ -7,6 +7,7 @@
  */
 
 import type { TextElement } from '../../../widgets/primitives/Text/types'
+import type { SocialLink } from '../../../widgets/interactive/ContactBar/types'
 import type { BaseSectionProps } from '../base'
 
 export interface LogoConfig {
@@ -18,6 +19,10 @@ export interface LogoConfig {
 export interface ProjectCompareProps extends BaseSectionProps {
   /** Project logo */
   logo: LogoConfig
+  /** Studio name */
+  studio?: string
+  /** Role in project */
+  role?: string
   /** "Before" video (breakdown/process) */
   beforeVideo: string
   /** "After" video (final result) */
@@ -30,6 +35,20 @@ export interface ProjectCompareProps extends BaseSectionProps {
   description?: string
   /** Whether description contains HTML */
   descriptionHtml?: boolean
+
+  // === Video frame ===
+  /** Background color for the frame container around the video */
+  videoBackground?: string
+  /** Background color for the content area (behind video frame + description) */
+  contentBackground?: string
+  /** Explicit color override for description text */
+  descriptionColor?: string
+
+  // === Footer ===
+  /** Social links for footer bar (array or binding expression) */
+  socialLinks?: SocialLink[] | string
+  /** Text/icon color scheme for footer */
+  textColor?: 'light' | 'dark'
 
   // === Typography scale ===
   /** Scale for description text (default: 'p') */

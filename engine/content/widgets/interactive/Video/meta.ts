@@ -139,6 +139,15 @@ export const meta = defineMeta<VideoProps>({
       description: 'Mark as intro video for the intro timing system (adds data-intro-video attribute)',
       advanced: true,
     },
+    overlayTitle: {
+      type: 'text',
+      label: 'Overlay Title',
+      default: '',
+      description: 'Title shown at bottom of video on hover (hover-play mode only)',
+      validation: { maxLength: 100 },
+      condition: 'hoverPlay === true',
+      bindable: true,
+    },
     videoUrl: {
       type: 'video',
       label: 'Modal Video URL',
