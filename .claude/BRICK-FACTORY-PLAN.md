@@ -82,6 +82,18 @@ Widgets are the **reuse layer**. Sections are the **composition layer**.
 
 **Never** make an existing section "flexible enough" to serve a different purpose. Create a new pattern.
 
+### Migration Policy: Strangler Fig
+
+Builders and raw `WidgetSchema` produce identical output — they coexist.
+
+| Code | Action |
+|---|---|
+| **New** sections/chrome | Always use builders |
+| **Existing** sections/chrome | Leave as-is — do NOT mass-migrate |
+| **Touching** an existing factory for other reasons | Migrate to builders while you're in there |
+
+**Never** do a big-bang migration of existing factories. Each rewrite is a chance to regress a hosted site. Let old factories age out naturally as you touch them for real work.
+
 ---
 
 ## Implementation Phases
