@@ -1,7 +1,9 @@
 import React from 'react'
 import { behaviourStoryConfig, behaviourStoryArgs } from '../../../../../.storybook/helpers/auto-story'
-import { BehaviourPreview } from '../../../../../.storybook/helpers/BehaviourPreview'
-import { AnimationSample } from '../../../../../.storybook/helpers/behaviour-samples'
+import { SectionBehaviourPreview } from '../../../../../.storybook/helpers/SectionBehaviourPreview'
+import { content } from '../../../../content/sections/patterns/AboutBio/content'
+import { createAboutBioSection } from '../../../../content/sections/patterns/AboutBio'
+import type { AboutBioProps } from '../../../../content/sections/patterns/AboutBio/types'
 import behaviour from './index'
 
 export default {
@@ -12,8 +14,10 @@ export default {
 export const Default = {
   args: behaviourStoryArgs(behaviour),
   render: (args: Record<string, unknown>) => (
-    <BehaviourPreview behaviour={behaviour} args={args}>
-      <AnimationSample />
-    </BehaviourPreview>
+    <SectionBehaviourPreview
+      behaviour={behaviour}
+      args={args}
+      section={createAboutBioSection(content.sampleContent as AboutBioProps)}
+    />
   ),
 }

@@ -28,7 +28,7 @@ import type {
   NavigableExperienceState,
   NavigationConfig,
   ExperienceActions,
-} from '../experiences/types'
+} from '../compositions/types'
 
 /**
  * Hook that returns programmatic navigation actions.

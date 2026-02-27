@@ -27,7 +27,7 @@ import type {
   NavigationConfig,
   NavigationInput,
   NavigationInputOptions,
-} from '../experiences/types'
+} from '../compositions/types'
 import { useContainer } from '../../interface/ContainerContext'
 
 export interface WheelNavigationOptions {

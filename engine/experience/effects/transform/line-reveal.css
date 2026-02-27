@@ -1,0 +1,20 @@
+/**
+ * transform/line-reveal effect.
+ *
+ * Consumes --visible CSS variable from visibility/fade-in behaviour.
+ * Scales a horizontal line from 0 to full width on visibility.
+ */
+
+[data-effect~="line-reveal"] {
+  transform: scaleX(var(--visible, 0));
+  transform-origin: left center;
+  transition: transform var(--motion-slow, 800ms) var(--ease-expressive, cubic-bezier(0.22, 1, 0.36, 1));
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-effect~="line-reveal"] {
+    transition: none;
+    transform: scaleX(1);
+  }
+}

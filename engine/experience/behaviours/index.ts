@@ -62,6 +62,7 @@ export { resolveBehaviour, resolveBehavioursWithDependencies } from './resolve'
 // ============================================
 export { BehaviourWrapper } from './BehaviourWrapper'
 export type { BehaviourWrapperProps } from './BehaviourWrapper'
+export { ComposedBehaviourWrapper } from './ComposedBehaviourWrapper'
 
 // ============================================
 // Re-exports for explicit imports
@@ -74,6 +75,10 @@ export {
   scrollProgress,
   scrollColorShift,
   scrollImageCycle,
+  scrollReveal,
+  scrollCoverProgress,
+  scrollCollapse,
+  scrollGlass,
 } from './scroll'
 
 // Hover behaviours

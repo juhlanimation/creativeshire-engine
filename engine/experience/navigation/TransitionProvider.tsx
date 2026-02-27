@@ -18,7 +18,7 @@ import {
   type ReactNode,
 } from 'react'
 import { TransitionStack } from './TransitionStack'
-import type { TransitionTask, PageTransitionConfig } from '../experiences/types'
+import type { TransitionTask, PageTransitionConfig } from '../compositions/types'
 
 // =============================================================================
 // Types

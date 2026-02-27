@@ -15,7 +15,7 @@
  */
 
 import type { ReactNode } from 'react'
-import { useExperience } from '../experiences'
+import { useExperience } from '../compositions'
 import { useContainer } from '../../interface/ContainerContext'
 import {
   useScrollProgress,

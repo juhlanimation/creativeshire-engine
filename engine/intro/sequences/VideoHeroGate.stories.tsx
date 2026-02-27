@@ -4,6 +4,7 @@ import { PresetPageStory } from '../../../.storybook/helpers/preset-story'
 import { meta, config } from './video-hero-gate'
 import { loftPreset } from '../../presets/loft'
 import { loftSampleContent } from '../../presets/loft/sample-content'
+import { isExperienceRef } from '../../experience/compositions/types'
 
 export default {
   title: 'Video Hero Gate',
@@ -14,6 +15,10 @@ export const Documentation = {
   render: () => <IntroShowcase meta={meta} config={config} />,
 }
 
+const loftExperienceId = isExperienceRef(loftPreset.experience)
+  ? loftPreset.experience.base
+  : loftPreset.experience.id
+
 export const OnPreset = {
   render: () => (
     <PresetPageStory
@@ -21,7 +26,7 @@ export const OnPreset = {
       preset={loftPreset}
       pageKey="home"
       sampleContent={loftSampleContent}
-      experience={loftPreset.experience?.id}
+      experience={loftExperienceId}
       intro="(preset default)"
     />
   ),

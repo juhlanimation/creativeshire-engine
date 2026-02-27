@@ -13,8 +13,8 @@ import type { StoreApi } from 'zustand'
 import type {
   NavigationConfig,
   NavigableExperienceState,
-} from '../experiences/types'
-import { useExperience } from '../experiences/ExperienceProvider'
+} from '../compositions/types'
+import { useExperience } from '../compositions/ExperienceProvider'
 import { useContainer } from '../../interface/ContainerContext'
 import { useWheelNavigation } from './useWheelNavigation'
 import { useKeyboardNavigation } from './useKeyboardNavigation'

@@ -27,7 +27,7 @@
 
 import { useEffect, useRef } from 'react'
 import { useTransitionOptional } from './TransitionProvider'
-import type { TransitionTask } from '../experiences/types'
+import type { TransitionTask } from '../compositions/types'
 
 export interface UseExitTaskOptions {
   /** Whether this task is enabled (default: true) */

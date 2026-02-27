@@ -1,0 +1,22 @@
+/**
+ * transform/glass effect.
+ *
+ * Consumes CSS variables set by scroll/glass behaviour.
+ * Defines smooth transition for glass morphism activation.
+ */
+
+[data-effect~="glass"] {
+  background: rgba(var(--glass-bg-rgb, 5, 7, 6), var(--glass-opacity, 0));
+  backdrop-filter: blur(var(--glass-blur, 0px));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 0px));
+  transition: background var(--motion-normal, 400ms) var(--ease-default, ease),
+              backdrop-filter var(--motion-normal, 400ms) var(--ease-default, ease),
+              -webkit-backdrop-filter var(--motion-normal, 400ms) var(--ease-default, ease);
+  will-change: backdrop-filter;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-effect~="glass"] {
+    transition: none;
+  }
+}

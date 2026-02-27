@@ -21,7 +21,7 @@
 import type { StoreApi } from 'zustand'
 import gsap from 'gsap'
 import type { MomentumDriverConfig } from './types'
-import type { InfiniteCarouselState } from '../experiences/types'
+import type { InfiniteCarouselState } from '../compositions/types'
 
 /**
  * Default configuration for momentum physics.

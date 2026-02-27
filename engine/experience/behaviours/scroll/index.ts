@@ -14,6 +14,7 @@ import './image-cycle'
 import './cover-progress'
 import './collapse'
 import './reveal'
+import './glass'
 
 // Re-export for explicit imports
 export { default as scrollFade } from './fade'
@@ -24,3 +25,4 @@ export { default as scrollImageCycle } from './image-cycle'
 export { default as scrollCoverProgress } from './cover-progress'
 export { default as scrollCollapse } from './collapse'
 export { default as scrollReveal } from './reveal'
+export { default as scrollGlass } from './glass'

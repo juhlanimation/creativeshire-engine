@@ -29,7 +29,7 @@ import { type ReactNode, type CSSProperties, useRef, useEffect, useLayoutEffect 
 import { usePageTransition } from './PageTransitionContext'
 import { animateElement } from '../timeline/animateElement'
 import { createEffectTrack } from '../timeline/effect-track'
-import { resolveEffect } from '../timeline/effects/registry'
+import { resolveEffect } from '../timeline/primitives/registry'
 
 // =============================================================================
 // Types

@@ -5,7 +5,7 @@
  * Tasks can be duration-based (setTimeout) or promise-based (async).
  */
 
-import type { TransitionTask } from '../experiences/types'
+import type { TransitionTask } from '../compositions/types'
 
 /**
  * Execute a single transition task.

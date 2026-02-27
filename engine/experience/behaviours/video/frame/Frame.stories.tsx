@@ -1,7 +1,9 @@
 import React from 'react'
 import { behaviourStoryConfig, behaviourStoryArgs } from '../../../../../.storybook/helpers/auto-story'
-import { BehaviourPreview } from '../../../../../.storybook/helpers/BehaviourPreview'
-import { VideoSample } from '../../../../../.storybook/helpers/behaviour-samples'
+import { SectionBehaviourPreview } from '../../../../../.storybook/helpers/SectionBehaviourPreview'
+import { content } from '../../../../content/sections/patterns/HeroVideo/content'
+import { createHeroVideoSection } from '../../../../content/sections/patterns/HeroVideo'
+import type { HeroVideoProps } from '../../../../content/sections/patterns/HeroVideo/types'
 import behaviour from './index'
 
 export default {
@@ -12,8 +14,10 @@ export default {
 export const Default = {
   args: behaviourStoryArgs(behaviour),
   render: (args: Record<string, unknown>) => (
-    <BehaviourPreview behaviour={behaviour} args={args}>
-      <VideoSample />
-    </BehaviourPreview>
+    <SectionBehaviourPreview
+      behaviour={behaviour}
+      args={args}
+      section={createHeroVideoSection(content.sampleContent as HeroVideoProps)}
+    />
   ),
 }

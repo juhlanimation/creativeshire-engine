@@ -23,7 +23,7 @@ import type {
   NavigationConfig,
   NavigationInput,
   NavigationInputOptions,
-} from '../experiences/types'
+} from '../compositions/types'
 import type { ContainerMode } from '../../interface/ContainerContext'
 
 export interface KeyboardNavigationOptions {

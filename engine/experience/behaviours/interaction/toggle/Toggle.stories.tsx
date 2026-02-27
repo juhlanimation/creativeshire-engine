@@ -1,7 +1,9 @@
 import React from 'react'
 import { behaviourStoryConfig, behaviourStoryArgs } from '../../../../../.storybook/helpers/auto-story'
-import { BehaviourPreview } from '../../../../../.storybook/helpers/BehaviourPreview'
-import { InteractionSample } from '../../../../../.storybook/helpers/behaviour-samples'
+import { SectionBehaviourPreview } from '../../../../../.storybook/helpers/SectionBehaviourPreview'
+import { content } from '../../../../content/sections/patterns/ProjectTabs/content'
+import { createProjectTabsSection } from '../../../../content/sections/patterns/ProjectTabs'
+import type { ProjectTabsProps } from '../../../../content/sections/patterns/ProjectTabs/types'
 import behaviour from './index'
 
 export default {
@@ -12,8 +14,10 @@ export default {
 export const Default = {
   args: behaviourStoryArgs(behaviour),
   render: (args: Record<string, unknown>) => (
-    <BehaviourPreview behaviour={behaviour} args={args}>
-      <InteractionSample />
-    </BehaviourPreview>
+    <SectionBehaviourPreview
+      behaviour={behaviour}
+      args={args}
+      section={createProjectTabsSection(content.sampleContent as ProjectTabsProps)}
+    />
   ),
 }

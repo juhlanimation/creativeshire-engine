@@ -1,14 +1,14 @@
 import React from 'react'
 import { behaviourStoryConfig, behaviourStoryArgs } from '../../../../../.storybook/helpers/auto-story'
 import { SectionBehaviourPreview } from '../../../../../.storybook/helpers/SectionBehaviourPreview'
-import { content } from '../../../../content/sections/patterns/AboutBio/content'
-import { createAboutBioSection } from '../../../../content/sections/patterns/AboutBio'
-import type { AboutBioProps } from '../../../../content/sections/patterns/AboutBio/types'
+import { content } from '../../../../content/sections/patterns/AboutCollage/content'
+import { createAboutCollageSection } from '../../../../content/sections/patterns/AboutCollage'
+import type { AboutCollageProps } from '../../../../content/sections/patterns/AboutCollage/types'
 import behaviour from './index'
 
 export default {
   ...behaviourStoryConfig(behaviour),
-  title: 'Scroll/Color Shift',
+  title: 'Scroll/Reveal',
 }
 
 export const Default = {
@@ -17,7 +17,7 @@ export const Default = {
     <SectionBehaviourPreview
       behaviour={behaviour}
       args={args}
-      section={createAboutBioSection(content.sampleContent as AboutBioProps)}
+      section={createAboutCollageSection(content.sampleContent as AboutCollageProps)}
     />
   ),
 }
