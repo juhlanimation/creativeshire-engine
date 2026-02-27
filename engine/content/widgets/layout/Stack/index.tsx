@@ -8,7 +8,7 @@
  */
 
 import React, { memo, forwardRef, type CSSProperties } from 'react'
-import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
+import { useWidgetRenderer } from '../../../../renderer/WidgetRendererContext'
 import { ALIGN_MAP, toCssGap } from '../utils'
 import type { StackProps } from './types'
 
@@ -51,6 +51,7 @@ const Stack = memo(forwardRef<HTMLDivElement, StackProps>(function Stack(
   },
   ref
 ) {
+  const WidgetRenderer = useWidgetRenderer()
   const computedStyle = stackToStyle({ gap, gapScale, align, style })
 
   return (

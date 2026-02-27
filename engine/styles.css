@@ -40,7 +40,7 @@
 @import './experience/effects/index.css' layer(effects);
 
 /* Presentation - experience containers (slideshow, carousel) */
-@import './experience/experiences/presentation.css' layer(effects);
+@import './experience/compositions/presentation.css' layer(effects);
 
 /* Page transitions - fade-to-black navigation transitions */
 @import './experience/navigation/page-transition.css' layer(effects);
@@ -72,6 +72,7 @@
 @import './content/widgets/interactive/Video/styles.css' layer(widgets);
 @import './content/widgets/interactive/VideoPlayer/styles.css' layer(widgets);
 @import './content/widgets/interactive/EmailCopy/styles.css' layer(widgets);
+@import './content/widgets/interactive/ArrowLink/styles.css' layer(widgets);
 @import './content/widgets/repeaters/ExpandRowImageRepeater/ExpandRowThumbnail/styles.css' layer(widgets);
 @import './content/widgets/repeaters/ExpandRowImageRepeater/styles.css' layer(widgets);
 
@@ -84,6 +85,7 @@
 @import './content/sections/patterns/ProjectShowcase/components/FlexButtonRepeater/IndexNav/styles.css' layer(widgets);
 @import './content/sections/patterns/ProjectTabs/components/TabbedContent/styles.css' layer(widgets);
 @import './content/sections/patterns/TeamShowcase/components/StackVideoShowcase/styles.css' layer(widgets);
+@import './content/sections/patterns/ProjectScroll/components/ScrollCard/styles.css' layer(widgets);
 
 /* =============================================================================
  * CONTENT - Sections
@@ -108,6 +110,18 @@
 @import './content/sections/patterns/ProjectTabs/styles.css' layer(sections);
 @import './content/sections/patterns/ProjectExpand/styles.css' layer(sections);
 @import './content/sections/patterns/AboutCollage/styles.css' layer(sections);
+@import './content/sections/patterns/HeroImage/styles.css' layer(sections);
+@import './content/sections/patterns/IntroStatement/styles.css' layer(sections);
+@import './content/sections/patterns/CtaSplit/styles.css' layer(sections);
+@import './content/sections/patterns/HeroStatement/styles.css' layer(sections);
+@import './content/sections/patterns/TeamBio/styles.css' layer(sections);
+@import './content/sections/patterns/ProjectScroll/styles.css' layer(sections);
+@import './content/sections/patterns/ReactSection/styles.css' layer(sections);
+@import './content/sections/patterns/HaubjergHome/styles.css' layer(sections);
+@import './content/sections/patterns/HaubjergPeople/styles.css' layer(sections);
+@import './content/sections/patterns/HaubjergWorkshops/styles.css' layer(sections);
+@import './content/sections/patterns/HaubjergContact/styles.css' layer(sections);
+@import './content/sections/patterns/HaubjergProject/styles.css' layer(sections);
 
 /* =============================================================================
  * CONTENT - Chrome
@@ -118,6 +132,9 @@
 @import './content/chrome/patterns/MinimalNav/styles.css' layer(chrome);
 @import './content/chrome/patterns/ContactFooter/styles.css' layer(chrome);
 @import './content/chrome/patterns/BrandFooter/styles.css' layer(chrome);
+@import './content/chrome/patterns/GlassNav/styles.css' layer(chrome);
+@import './content/chrome/patterns/ColumnFooter/styles.css' layer(chrome);
+@import './content/chrome/patterns/HaubjergNav/styles.css' layer(chrome);
 
 /* Overlays */
 @import './content/chrome/overlays/Modal/styles.css' layer(chrome);
@@ -132,3 +149,8 @@
 @import './renderer/chrome.css' layer(renderer);
 @import './renderer/base.css' layer(renderer);
 @import './renderer/scrollbar.css' layer(renderer);
+
+/* =============================================================================
+ * TAILWIND - Utility layer (highest priority, can override engine defaults)
+ * ============================================================================= */
+@import './styles/tailwind.css';

@@ -6,7 +6,7 @@
  */
 
 import React, { memo, forwardRef, useRef, useImperativeHandle, type CSSProperties } from 'react'
-import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
+import { useWidgetRenderer } from '../../../../renderer/WidgetRendererContext'
 import { ALIGN_MAP, JUSTIFY_MAP, toCssGap } from '../utils'
 import type { FlexProps } from './types'
 
@@ -65,6 +65,7 @@ const Flex = memo(forwardRef<HTMLDivElement, FlexProps>(function Flex(
   },
   forwardedRef
 ) {
+  const WidgetRenderer = useWidgetRenderer()
   // Internal ref for computing data-reversed
   const internalRef = useRef<HTMLDivElement>(null)
 

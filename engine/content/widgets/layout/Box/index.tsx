@@ -6,7 +6,7 @@
  */
 
 import React, { memo, forwardRef, type CSSProperties } from 'react'
-import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
+import { useWidgetRenderer } from '../../../../renderer/WidgetRendererContext'
 import { toCssValue } from '../utils'
 import type { BoxProps } from './types'
 
@@ -49,6 +49,7 @@ const Box = memo(forwardRef<HTMLDivElement, BoxProps>(function Box(
   },
   ref
 ) {
+  const WidgetRenderer = useWidgetRenderer()
   const computedStyle = boxToStyle({ width, height, minWidth, maxWidth, flexGrow, flexShrink, style })
 
   return (

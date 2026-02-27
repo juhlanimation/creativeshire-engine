@@ -14,7 +14,7 @@
 'use client'
 
 import React, { memo, forwardRef, type CSSProperties } from 'react'
-import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
+import { useWidgetRenderer } from '../../../../renderer/WidgetRendererContext'
 import { toCssGap, toCssValue } from '../utils'
 import type { MarqueeProps } from './types'
 
@@ -36,6 +36,7 @@ const Marquee = memo(forwardRef<HTMLDivElement, MarqueeProps>(function Marquee(
   },
   ref,
 ) {
+  const WidgetRenderer = useWidgetRenderer()
   if (!widgets || widgets.length === 0) return null
 
   // Repeat widget set so each group fills the viewport even with few items

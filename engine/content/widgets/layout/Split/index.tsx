@@ -8,7 +8,7 @@
  */
 
 import React, { memo, forwardRef, type CSSProperties } from 'react'
-import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
+import { useWidgetRenderer } from '../../../../renderer/WidgetRendererContext'
 import { toCssGap, GRID_ALIGN_MAP } from '../utils'
 import type { SplitProps, SplitRatio } from './types'
 
@@ -83,6 +83,7 @@ const Split = memo(forwardRef<HTMLDivElement, SplitProps>(function Split(
   },
   ref
 ) {
+  const WidgetRenderer = useWidgetRenderer()
   const computedStyle = splitToStyle({ ratio, gap, gapScale, reverse, align, style })
 
   return (

@@ -6,7 +6,7 @@
  */
 
 import React, { memo, forwardRef, type CSSProperties } from 'react'
-import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
+import { useWidgetRenderer } from '../../../../renderer/WidgetRendererContext'
 import { toCssGap } from '../utils'
 import type { GridProps } from './types'
 
@@ -74,6 +74,7 @@ const Grid = memo(forwardRef<HTMLDivElement, GridProps>(function Grid(
   },
   ref
 ) {
+  const WidgetRenderer = useWidgetRenderer()
   const computedStyle = gridToStyle({ columns, rows, gap, gapScale, columnGap, rowGap, style })
 
   return (

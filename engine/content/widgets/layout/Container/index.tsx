@@ -8,7 +8,7 @@
  */
 
 import React, { memo, forwardRef, type CSSProperties } from 'react'
-import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
+import { useWidgetRenderer } from '../../../../renderer/WidgetRendererContext'
 import { toCssPadding, toCssValue } from '../utils'
 import type { ContainerProps } from './types'
 
@@ -55,6 +55,7 @@ const Container = memo(forwardRef<HTMLDivElement, ContainerProps>(function Conta
   },
   ref
 ) {
+  const WidgetRenderer = useWidgetRenderer()
   const computedStyle = containerToStyle({ maxWidth, padding, center, style })
 
   return (

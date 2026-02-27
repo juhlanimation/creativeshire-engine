@@ -1,0 +1,85 @@
+/**
+ * Tailwind v4 Theme Bridge
+ *
+ * Maps engine CSS custom properties → Tailwind theme tokens.
+ * Engine variables are set as inline styles by buildThemeStyle() at runtime.
+ * Tailwind utilities resolve to these live values when themes change.
+ *
+ * NAMING CONVENTION: Uses shadcn/ui-style names (foreground, background, muted, etc.)
+ * to avoid collision with engine CSS variables (--text-primary, --color-primary, etc.).
+ * Engine variables are set as inline styles (highest specificity) — any @theme variable
+ * with the same name would either collide or create a circular reference.
+ *
+ * Preflight is excluded — engine has its own resets in resets.css.
+ *
+ * DEFAULT UTILITIES: Tailwind's built-in utilities (text-white, bg-black, p-4, gap-8,
+ * flex, grid, etc.) work out of the box. The @theme block only ADDS engine-specific
+ * tokens as additional named values.
+ */
+
+@import "tailwindcss/theme";
+@import "tailwindcss/utilities";
+
+/* Source scanning: engine components + Storybook + imported React components */
+@source "../../engine/**/*.{ts,tsx}";
+@source "../../.storybook/**/*.{ts,tsx}";
+@source "../../engine/presets/haubjerg/**/*.{ts,tsx}";
+
+@theme {
+  /* ====================================================================
+   * Colors — Engine palette as Tailwind utilities
+   *
+   * Usage: text-foreground, bg-background, border-accent, etc.
+   * These resolve to the active engine theme's CSS variables at runtime.
+   * ==================================================================== */
+
+  /* Text colors */
+  --color-foreground: var(--text-primary);
+  --color-muted-foreground: var(--text-secondary);
+
+  /* Background colors */
+  --color-background: var(--theme-bg, var(--site-outer-bg));
+  --color-surface: var(--bg-secondary, var(--theme-bg));
+
+  /* Accent & interaction */
+  --color-accent-color: var(--accent);
+  --color-interaction-color: var(--interaction);
+
+  /* Semantic */
+  --color-destructive: var(--status-error);
+  --color-success-color: var(--status-success);
+
+  /* ====================================================================
+   * Typography — Engine font families as Tailwind utilities
+   *
+   * Usage: font-display, font-heading, font-body, font-ui
+   * ==================================================================== */
+  --font-display: var(--font-title);
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-paragraph);
+  --font-ui: var(--font-ui);
+
+  /* ====================================================================
+   * Font sizes — Engine typographic scale as Tailwind utilities
+   *
+   * Usage: text-display, text-h1, text-h2, text-h3, text-body, text-sm, text-xs
+   * (These extend Tailwind's default text-xs/sm/base/lg/xl/... scale)
+   * ==================================================================== */
+  --text-display: var(--font-size-display);
+  --text-h1: var(--font-size-h1);
+  --text-h2: var(--font-size-h2);
+  --text-h3: var(--font-size-h3);
+  --text-body: var(--font-size-body);
+}
+
+/*
+ * NOTE: Spacing, radius, shadows, and motion are intentionally NOT mapped here.
+ *
+ * Why:
+ * - Engine variables (--spacing-xs, --radius-sm, --ease-default) are set as inline styles.
+ *   Declaring them in @theme would create circular references (same name on both sides).
+ * - Figma Make components use Tailwind's default spacing (p-4, gap-8, rounded-lg),
+ *   which already works via the tailwindcss/theme import above.
+ * - For engine-specific values, use arbitrary value syntax:
+ *   p-[var(--spacing-md)], rounded-[var(--radius-lg)], duration-[var(--motion-fast)]
+ */

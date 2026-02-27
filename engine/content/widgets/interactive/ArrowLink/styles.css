@@ -1,0 +1,103 @@
+/**
+ * ArrowLink widget styles.
+ *
+ * Two variants: swap (text swap on hover) and slide (shift right on hover).
+ * Three arrow sizes: small (24px), medium (38px), large (92px).
+ */
+
+.arrow-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm, 0.5rem);
+  text-decoration: none;
+  color: currentColor;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ── Arrow Icon ── */
+
+.arrow-link__icon {
+  flex-shrink: 0;
+  transition: transform var(--motion-normal, 400ms) var(--ease-default, ease);
+}
+
+.arrow-link__icon--down {
+  transform: rotate(90deg);
+}
+
+/* ── Size variants ── */
+
+.arrow-link__icon--small {
+  width: 24px;
+  height: 24px;
+}
+
+.arrow-link__icon--medium {
+  width: 38px;
+  height: 20px;
+}
+
+.arrow-link__icon--large {
+  width: 92px;
+  height: 38px;
+}
+
+/* ── Swap Variant ── */
+
+.arrow-link--swap {
+  overflow: hidden;
+}
+
+.arrow-link--swap .arrow-link__strip {
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--motion-normal, 400ms) var(--ease-expressive, cubic-bezier(0.22, 1, 0.36, 1));
+  line-height: 1.4;
+}
+
+.arrow-link--swap .arrow-link__label,
+.arrow-link--swap .arrow-link__email {
+  white-space: nowrap;
+}
+
+/* Only show the label row by default; email is below, hidden by overflow */
+.arrow-link--swap .arrow-link__email {
+  /* Sits below the label, clipped by parent overflow: hidden */
+}
+
+.arrow-link--swap:hover .arrow-link__strip,
+.arrow-link--swap:focus-visible .arrow-link__strip {
+  transform: translateY(-50%);
+}
+
+.arrow-link--swap:hover .arrow-link__icon,
+.arrow-link--swap:focus-visible .arrow-link__icon {
+  transform: rotate(-45deg);
+}
+
+/* ── Slide Variant ── */
+
+.arrow-link--slide .arrow-link__text {
+  transition: transform var(--motion-normal, 400ms) var(--ease-default, ease);
+}
+
+.arrow-link--slide:hover .arrow-link__icon,
+.arrow-link--slide:focus-visible .arrow-link__icon {
+  transform: translateX(4px);
+}
+
+.arrow-link--slide:hover .arrow-link__text,
+.arrow-link--slide:focus-visible .arrow-link__text {
+  transform: translateX(4px);
+}
+
+/* ── Reduced Motion ── */
+
+@media (prefers-reduced-motion: reduce) {
+  .arrow-link__icon,
+  .arrow-link--swap .arrow-link__strip,
+  .arrow-link--slide .arrow-link__text {
+    transition: none;
+  }
+}
