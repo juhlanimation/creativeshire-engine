@@ -41,7 +41,7 @@ export {
   expand,
   fade,
   overlayFade,
-} from './effects'
+} from './primitives'
 
 export type {
   EffectPrimitive,
@@ -51,7 +51,7 @@ export type {
   GsapRealization,
   CssRealization,
   TweenVars,
-} from './effects'
+} from './primitives'
 
 // Effect-to-track bridge
 export { createEffectTrack } from './effect-track'

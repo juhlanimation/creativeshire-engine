@@ -414,6 +414,33 @@ export interface Experience {
    * When true, SectionRenderer ignores behaviour prop and uses 'none'.
    */
   bareMode?: boolean
+
+  /** Page transition configuration (moved from SitePreset for L2 composition). */
+  transition?: import('../../schema/transition').TransitionConfig
+}
+
+/**
+ * Canonical name for the L2 container type.
+ * An ExperienceComposition bundles all motion, interaction, and orchestration config.
+ * Named experiences (slideshow, cover-scroll, etc.) are pre-built instances.
+ */
+export type ExperienceComposition = Experience
+
+/**
+ * Reference to a registered experience with per-slot overrides.
+ * Mode A: Start from a named base experience and customize specific slots.
+ * Mode B: Use a full inline ExperienceComposition (no ExperienceRef needed).
+ */
+export interface ExperienceRef {
+  /** Registered experience ID to use as base (e.g., 'cover-scroll', 'slideshow') */
+  base: string
+  /** Per-slot overrides merged on top of the base experience */
+  overrides?: Partial<ExperienceComposition>
+}
+
+/** Type guard: check if an experience input is a reference (vs inline composition) */
+export function isExperienceRef(input: ExperienceComposition | ExperienceRef): input is ExperienceRef {
+  return 'base' in input && typeof (input as ExperienceRef).base === 'string'
 }
 
 // Re-export provider types from parent

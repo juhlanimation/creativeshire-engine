@@ -1,16 +1,37 @@
 /**
  * Experience layer barrel export.
  *
- * Experiences control how sites behave and present content:
+ * Compositions control how sites behave and present content:
  * - Presentation model (stacking, slideshow, parallax, horizontal)
  * - Navigation (wheel, keyboard, swipe)
  * - Behaviours and effects
  */
 
-// Experiences (context, registry, definitions)
+// Compositions (context, registry, definitions)
 export {
   ExperienceProvider,
   useExperience,
+  // Canonical composition API
+  getComposition,
+  getCompositionAsync,
+  preloadComposition,
+  getCompositionIds,
+  getAllCompositions,
+  getAllCompositionMetas,
+  registerComposition,
+  registerLazyComposition,
+  ensureCompositionsRegistered,
+  simpleComposition,
+  cinematicPortfolioComposition,
+  slideshowComposition,
+  infiniteCarouselComposition,
+  coverScrollComposition,
+  PresentationWrapper,
+  InfiniteCarouselController,
+  DEV_COMPOSITION_PARAM,
+  getCompositionOverride,
+  setCompositionOverride,
+  // Deprecated aliases (kept for consumers)
   getExperience,
   getExperienceAsync,
   preloadExperience,
@@ -24,15 +45,16 @@ export {
   cinematicPortfolioExperience,
   slideshowExperience,
   infiniteCarouselExperience,
-  PresentationWrapper,
-  InfiniteCarouselController,
   DEV_EXPERIENCE_PARAM,
   getExperienceOverride,
   setExperienceOverride,
-} from './experiences'
-export type { ExperienceMeta } from './experiences'
+} from './compositions'
+export type { CompositionMeta, CompositionCategory } from './compositions'
+/** @deprecated Use CompositionMeta */
+export type { ExperienceMeta } from './compositions'
 export type {
   Experience,
+  ExperienceComposition,
   ExperienceContextValue,
   ExperienceProviderProps,
   BehaviourAssignment,
@@ -47,9 +69,9 @@ export type {
   ExperienceActions,
   ExperienceChrome,
   ExperienceConstraints,
-} from './experiences'
+} from './compositions'
 
-export { createExperienceStore } from './experiences'
+export { createExperienceStore } from './compositions'
 
 // Triggers (write browser events to store)
 export {
@@ -170,12 +192,15 @@ export {
   resolveBehaviour,
   resolveBehavioursWithDependencies,
   BehaviourWrapper,
+  ComposedBehaviourWrapper,
 } from './behaviours'
 export type {
   Behaviour,
   BehaviourMeta,
   BehaviourCategory,
   BehaviourWrapperProps,
+  ComposedBehaviourWrapperProps,
+  ComposedBehaviourEntry,
 } from './behaviours'
 
 // State types

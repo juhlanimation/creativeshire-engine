@@ -15,9 +15,9 @@
  */
 
 import { useMemo, type ReactNode, type CSSProperties } from 'react'
-import { useExperience } from './experiences/ExperienceProvider'
-import { PresentationWrapper } from './experiences/PresentationWrapper'
-import type { ExperienceConstraints } from './experiences/types'
+import { useExperience } from './ExperienceProvider'
+import { PresentationWrapper } from './PresentationWrapper'
+import type { ExperienceConstraints } from './types'
 
 /**
  * Generates CSS properties from experience constraints.

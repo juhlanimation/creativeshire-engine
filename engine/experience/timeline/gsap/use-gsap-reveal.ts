@@ -18,12 +18,12 @@
 
 import { useRef, useLayoutEffect, useEffect } from 'react'
 import { gsap } from 'gsap'
-import { resolveEffect } from '../effects/registry'
-import type { EffectContext, EffectOptions } from '../effects/types'
+import { resolveEffect } from '../primitives/registry'
+import type { EffectContext, EffectOptions } from '../primitives/types'
 import { useContainer } from '../../../interface/ContainerContext'
 
-// Import effects barrel to ensure auto-registration
-import '../effects'
+// Import primitives barrel to ensure auto-registration
+import '../primitives'
 
 // Default durations (used when effect doesn't specify)
 const DEFAULT_DURATIONS = {

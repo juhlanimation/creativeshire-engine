@@ -12,8 +12,8 @@
  * - Timeline reversal for close animations
  *
  * Effects are registry-based. To add a new effect:
- * 1. Create a file in ../effects/ (e.g., slide-up.ts)
- * 2. Import it in ../effects/index.ts
+ * 1. Create a file in ../primitives/ (e.g., slide-up.ts)
+ * 2. Import it in ../primitives/index.ts
  * 3. Use it anywhere: type="slide-up"
  */
 
@@ -33,7 +33,7 @@ export {
   expand,
   fade,
   overlayFade,
-} from '../effects'
+} from '../primitives'
 
 export type {
   EffectPrimitive,
@@ -43,7 +43,7 @@ export type {
   GsapRealization,
   CssRealization,
   TweenVars,
-} from '../effects'
+} from '../primitives'
 
 // GSAP-powered reveal component and hook
 export { RevealTransition } from './reveal-transition'

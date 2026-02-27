@@ -11,8 +11,8 @@
  * Falls back to the other realization if the requested one is missing.
  */
 
-import type { EffectContext, EffectOptions } from './effects/types'
-import { resolveEffect } from './effects/registry'
+import type { EffectContext, EffectOptions } from './primitives/types'
+import { resolveEffect } from './primitives/registry'
 import { animateElement } from './animateElement'
 
 /**
@@ -66,7 +66,7 @@ export function createEffectTrack(
  * Execute a GSAP-based effect track.
  */
 async function executeGsapTrack(
-  gsapRealization: NonNullable<import('./effects/types').EffectPrimitive['gsap']>,
+  gsapRealization: NonNullable<import('./primitives/types').EffectPrimitive['gsap']>,
   context: EffectContext,
   options: EffectOptions
 ): Promise<void> {

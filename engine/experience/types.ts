@@ -3,7 +3,7 @@
  * Defines the context value and provider props.
  */
 import type { StoreApi } from 'zustand'
-import type { Experience, ExperienceState } from './experiences/types'
+import type { Experience, ExperienceState } from './compositions/types'
 
 // Re-export Experience types
 export type {
@@ -23,9 +23,9 @@ export type {
   PageTransitionConfig,
   TransitionTask,
   ExperienceActions,
-} from './experiences/types'
+} from './compositions/types'
 
-export { createExperienceStore } from './experiences/createExperienceStore'
+export { createExperienceStore } from './compositions/createExperienceStore'
 
 /**
  * Context value distributed by ExperienceProvider.
