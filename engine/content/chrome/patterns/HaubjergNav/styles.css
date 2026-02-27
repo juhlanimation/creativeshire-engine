@@ -1,0 +1,27 @@
+/**
+ * HaubjergNav chrome pattern styles.
+ *
+ * Responsive breakpoints for desktop/mobile nav visibility.
+ * Desktop nav links hidden on mobile; hamburger hidden on desktop.
+ * Component handles layout/colors inline — CSS only for media queries.
+ */
+
+.haubjerg-nav {
+  font-family: var(--font-heading, 'DM Sans', system-ui, sans-serif);
+}
+
+/* Desktop: show link bar, hide hamburger */
+@media (min-width: 768px) {
+  .haubjerg-nav__desktop {
+    display: flex !important;
+  }
+
+  .haubjerg-nav__hamburger {
+    display: none !important;
+  }
+
+  .haubjerg-nav {
+    padding-left: 2.5rem !important;
+    padding-right: 2.5rem !important;
+  }
+}

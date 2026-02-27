@@ -1,0 +1,67 @@
+/**
+ * ColumnFooter chrome pattern styles.
+ */
+
+.column-footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg, 2rem);
+  padding: 40px var(--spacing-lg, 2rem);
+  width: 100%;
+  min-height: 360px;
+}
+
+/* Divider line */
+.column-footer__divider {
+  height: 1px;
+  background: currentColor;
+  opacity: 0.2;
+  width: 100%;
+}
+
+/* Columns container — grid for Figma 0/33/83% distribution */
+.column-footer__columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: var(--spacing-xl, 4rem);
+  width: 100%;
+}
+
+/* Individual column */
+.column-footer__column {
+  min-width: 0;
+}
+
+/* Column heading — small, muted */
+.column-footer__heading {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.4;
+  margin-bottom: var(--spacing-sm, 0.5rem);
+}
+
+/* Column items */
+.column-footer__item {
+  opacity: 0.7;
+  transition: opacity var(--motion-normal, 400ms) var(--ease-default, ease);
+}
+
+.column-footer__item:hover {
+  opacity: 1;
+}
+
+/* Copyright line — hidden when empty */
+.column-footer__copyright:empty {
+  display: none;
+}
+
+.column-footer__copyright {
+  opacity: 0.3;
+  margin-top: var(--spacing-lg, 2rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .column-footer__item {
+    transition: none;
+  }
+}

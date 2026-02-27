@@ -19,6 +19,9 @@ import { meta as BrandFooterMeta } from './patterns/BrandFooter/meta'
 import { meta as CursorTrackerMeta } from './patterns/CursorTracker/meta'
 import { meta as FloatingContactMeta } from './patterns/FloatingContact/meta'
 import { meta as VideoModalMeta } from './patterns/VideoModal/meta'
+import { meta as GlassNavMeta } from './patterns/GlassNav/meta'
+import { meta as ColumnFooterMeta } from './patterns/ColumnFooter/meta'
+import { meta as HaubjergNavMeta } from './patterns/HaubjergNav/meta'
 
 // =============================================================================
 // Types
@@ -73,6 +76,18 @@ export const chromePatternRegistry: Record<string, ChromePatternEntry> = {
     meta: VideoModalMeta as ChromePatternMeta,
     getFactory: async () => (await import('./patterns/VideoModal')).createVideoModalOverlay,
   },
+  GlassNav: {
+    meta: GlassNavMeta as ChromePatternMeta,
+    getFactory: async () => (await import('./patterns/GlassNav')).createGlassNavRegion,
+  },
+  ColumnFooter: {
+    meta: ColumnFooterMeta as ChromePatternMeta,
+    getFactory: async () => (await import('./patterns/ColumnFooter')).createColumnFooterRegion,
+  },
+  HaubjergNav: {
+    meta: HaubjergNavMeta as ChromePatternMeta,
+    getFactory: async () => (await import('./patterns/HaubjergNav')).createHaubjergNavRegion,
+  },
 }
 
 // =============================================================================
@@ -112,6 +127,9 @@ export { createBrandFooterRegion } from './patterns/BrandFooter'
 export { createCursorTrackerOverlay } from './patterns/CursorTracker'
 export { createFloatingContactRegion } from './patterns/FloatingContact'
 export { createVideoModalOverlay } from './patterns/VideoModal'
+export { createGlassNavRegion } from './patterns/GlassNav'
+export { createColumnFooterRegion } from './patterns/ColumnFooter'
+export { createHaubjergNavRegion } from './patterns/HaubjergNav'
 
 // Re-export types for convenience
 export type { MinimalNavProps } from './patterns/MinimalNav/types'
@@ -122,3 +140,6 @@ export type { BrandFooterProps } from './patterns/BrandFooter/types'
 export type { CursorTrackerProps } from './patterns/CursorTracker/types'
 export type { FloatingContactProps } from './patterns/FloatingContact/types'
 export type { VideoModalProps } from './patterns/VideoModal/types'
+export type { GlassNavProps } from './patterns/GlassNav/types'
+export type { ColumnFooterProps } from './patterns/ColumnFooter/types'
+export type { HaubjergNavProps } from './patterns/HaubjergNav/types'

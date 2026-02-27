@@ -20,6 +20,9 @@ export type { ContactFooterProps } from './ContactFooter/types'
 export { createBrandFooterRegion } from './BrandFooter'
 export type { BrandFooterProps } from './BrandFooter/types'
 
+export { createColumnFooterRegion } from './ColumnFooter'
+export type { ColumnFooterProps } from './ColumnFooter/types'
+
 // Cursor patterns
 export { createCursorTrackerOverlay } from './CursorTracker'
 export type { CursorTrackerProps } from './CursorTracker/types'

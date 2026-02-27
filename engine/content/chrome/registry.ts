@@ -81,9 +81,12 @@ import NavTimeline from './overlays/NavTimeline'
 import { meta as navTimelineMeta } from './overlays/NavTimeline/meta'
 import FixedCard from './overlays/FixedCard'
 import { meta as fixedCardMeta } from './overlays/FixedCard/meta'
+import GrainOverlay from './overlays/GrainOverlay'
+import { meta as grainOverlayMeta } from './overlays/GrainOverlay/meta'
 
 registerChromeComponent('CursorLabel', CursorLabel, cursorLabelMeta)
 registerChromeComponent('ModalRoot', ModalRoot, modalMeta)
 registerChromeComponent('SlideIndicators', SlideIndicators, slideIndicatorsMeta)
 registerChromeComponent('NavTimeline', NavTimeline, navTimelineMeta)
 registerChromeComponent('FixedCard', FixedCard, fixedCardMeta)
+registerChromeComponent('GrainOverlay', GrainOverlay, grainOverlayMeta)

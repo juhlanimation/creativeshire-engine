@@ -1,0 +1,49 @@
+/**
+ * GlassNav chrome pattern styles.
+ * Layout only — positioning is handled by the chrome renderer wrapper.
+ */
+
+.glass-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--spacing-sm, 0.5rem) var(--spacing-lg, 2rem);
+  color: var(--text-primary);
+  transition: color var(--motion-normal, 400ms) var(--ease-default, ease);
+}
+
+.glass-nav__brand {
+  display: flex;
+  align-items: center;
+}
+
+.glass-nav__logo {
+  height: 17px;
+  width: auto;
+}
+
+.glass-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  font-size: 14px;
+}
+
+.glass-nav__link {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+  transition: opacity var(--motion-normal, 400ms) var(--ease-default, ease);
+}
+
+.glass-nav__link:hover {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-nav,
+  .glass-nav__link {
+    transition: none;
+  }
+}
