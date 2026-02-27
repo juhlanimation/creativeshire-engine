@@ -14,7 +14,6 @@
 import type { CSSProperties } from 'react'
 import type { SectionSchema, WidgetSchema, SerializableValue } from '../../../../schema'
 import { applyMetaDefaults } from '../../../../schema/settings'
-import type { TextElement } from '../../../widgets/primitives/Text/types'
 import type { HeroVideoProps } from './types'
 import { DEFAULT_HERO_STYLES } from './types'
 import { isBindingExpression } from '../utils'
@@ -53,9 +52,11 @@ export function createHeroVideoSection(rawProps?: HeroVideoProps): SectionSchema
 
   // Settings: auto-filled by applyMetaDefaults
   const bottomOffset = p.bottomOffset as number
-  const introScale = p.introScale as TextElement
-  const roleTitleScale = p.roleTitleScale as TextElement
-  const scrollIndicatorScale = p.scrollIndicatorScale as TextElement
+
+  // Typography scales: factory decisions (not CMS-configurable)
+  const introScale = 'body'
+  const roleTitleScale = 'display'
+  const scrollIndicatorScale = 'small'
 
   // Build content widgets
   const contentWidgets: WidgetSchema[] = [

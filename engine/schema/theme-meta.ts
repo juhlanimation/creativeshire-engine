@@ -239,6 +239,68 @@ export const themeMeta = defineMeta<Record<string, unknown>>({
       group: 'Section Transitions',
     },
 
+    // ── Motion ────────────────────────────────────────────────────────────
+    'motion.timing.fast': {
+      type: 'text',
+      label: 'Fast Timing',
+      default: '150ms',
+      description: 'Duration for fast interactions (hovers, toggles)',
+      validation: { maxLength: 20 },
+      group: 'Motion',
+    },
+    'motion.timing.normal': {
+      type: 'text',
+      label: 'Normal Timing',
+      default: '300ms',
+      description: 'Duration for standard transitions (fades, slides)',
+      validation: { maxLength: 20 },
+      group: 'Motion',
+    },
+    'motion.timing.slow': {
+      type: 'text',
+      label: 'Slow Timing',
+      default: '600ms',
+      description: 'Duration for dramatic reveals (page transitions, hero animations)',
+      validation: { maxLength: 20 },
+      group: 'Motion',
+    },
+    'motion.easing.default': {
+      type: 'select',
+      label: 'Default Easing',
+      default: 'ease-out',
+      description: 'Easing for most transitions',
+      choices: [
+        { value: 'ease', label: 'Ease' },
+        { value: 'ease-in', label: 'Ease In' },
+        { value: 'ease-out', label: 'Ease Out' },
+        { value: 'ease-in-out', label: 'Ease In Out' },
+        { value: 'linear', label: 'Linear' },
+      ],
+      group: 'Motion',
+    },
+    'motion.easing.expressive': {
+      type: 'text',
+      label: 'Expressive Easing',
+      default: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+      description: 'Overshooting easing for playful/bouncy feel',
+      validation: { maxLength: 60 },
+      group: 'Motion',
+    },
+    'motion.easing.smooth': {
+      type: 'select',
+      label: 'Smooth Easing',
+      default: 'ease-in-out',
+      description: 'Easing for elegant, understated motion',
+      choices: [
+        { value: 'ease', label: 'Ease' },
+        { value: 'ease-in', label: 'Ease In' },
+        { value: 'ease-out', label: 'Ease Out' },
+        { value: 'ease-in-out', label: 'Ease In Out' },
+        { value: 'linear', label: 'Linear' },
+      ],
+      group: 'Motion',
+    },
+
     // ── Container ───────────────────────────────────────────────────────────
     'container.maxWidth': {
       type: 'text',
@@ -294,6 +356,7 @@ export function getThemeGroups(): SettingsGroup[] {
     { id: 'Smooth Scroll', label: 'Smooth Scroll', icon: 'mouse' },
     { id: 'Typography', label: 'Typography', icon: 'type' },
     { id: 'Section Transitions', label: 'Section Transitions', icon: 'transition' },
+    { id: 'Motion', label: 'Motion', icon: 'zap' },
     { id: 'Container', label: 'Container', icon: 'maximize' },
   ]
 }

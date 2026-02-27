@@ -101,7 +101,7 @@ export function createProjectCompareSection(rawProps: ProjectCompareProps): Sect
       props: {
         content: props.description,
         ...(props.descriptionHtml !== false ? { html: true } : {}),
-        as: props.descriptionScale
+        as: 'body'
       },
       ...(props.descriptionColor && {
         style: { color: props.descriptionColor },

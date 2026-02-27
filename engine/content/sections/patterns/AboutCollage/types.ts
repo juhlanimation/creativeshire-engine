@@ -4,7 +4,6 @@
  * mobile uses vertical stack with alternating alignment.
  */
 
-import type { TextElement } from '../../../widgets/primitives/Text/types'
 import type { BaseSectionProps } from '../base'
 
 export interface AboutCollageProps extends BaseSectionProps {
@@ -16,10 +15,6 @@ export interface AboutCollageProps extends BaseSectionProps {
   images: string | AboutCollageImage[]
   /** CSS class applied to each image element */
   imageClassName?: string
-
-  // === Typography scale ===
-  /** Scale for text content (default: 'p') */
-  textScale?: TextElement
 }
 
 export interface AboutCollageImage {

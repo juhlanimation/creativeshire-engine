@@ -18,21 +18,6 @@ export const meta = defineSectionMeta<ProjectGalleryProps>({
   ownedFields: ['layout', 'className'],
 
   settings: {
-    logo: {
-      type: 'custom',
-      label: 'Logo',
-      default: { src: '', alt: '' },
-      group: 'Header',
-    },
-    projects: {
-      type: 'custom',
-      label: 'Projects',
-      default: [],
-      description: 'Gallery projects with thumbnails and videos',
-      validation: { required: true },
-      group: 'Content',
-      bindable: true,
-    },
     defaultActiveIndex: {
       type: 'number',
       label: 'Default Active',
@@ -65,14 +50,6 @@ export const meta = defineSectionMeta<ProjectGalleryProps>({
       description: 'CSS border around the content canvas (e.g. "2px solid #C03540")',
       group: 'Style',
       validation: { maxLength: 100 },
-    },
-    socialLinks: {
-      type: 'custom',
-      label: 'Social Links',
-      default: [],
-      description: 'Social platform links for footer bar',
-      group: 'Footer',
-      bindable: true,
     },
   },
 })

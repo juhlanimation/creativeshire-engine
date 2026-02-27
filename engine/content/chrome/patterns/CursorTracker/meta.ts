@@ -1,5 +1,7 @@
 /**
  * CursorTracker chrome pattern metadata for platform UI.
+ *
+ * Content fields (label) live in content.ts.
  */
 
 import { defineChromeMeta } from '../../../../schema/meta'
@@ -17,15 +19,6 @@ export const meta = defineChromeMeta<CursorTrackerProps>({
   providesActions: ['{key}.show', '{key}.hide'],
 
   settings: {
-    label: {
-      type: 'text',
-      label: 'Cursor Label',
-      default: 'View',
-      description: 'Text displayed on the custom cursor',
-      validation: { maxLength: 50 },
-      group: 'Content',
-      bindable: true,
-    },
     offsetX: {
       type: 'number',
       label: 'X Offset',

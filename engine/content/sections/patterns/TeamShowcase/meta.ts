@@ -18,22 +18,6 @@ export const meta = defineSectionMeta<TeamShowcaseProps>({
   ownedFields: ['layout', 'className'],
 
   settings: {
-    members: {
-      type: 'custom',
-      label: 'Members',
-      default: [],
-      description: 'Array of member items with name, video, etc.',
-      validation: { required: true },
-      group: 'Content',
-    },
-    labelText: {
-      type: 'text',
-      label: 'Label Text',
-      default: '',
-      description: 'Prefix text displayed above member names (e.g., "We are")',
-      validation: { maxLength: 100 },
-      group: 'Content',
-    },
     inactiveOpacity: {
       type: 'number',
       label: 'Inactive Opacity',
@@ -42,6 +26,7 @@ export const meta = defineSectionMeta<TeamShowcaseProps>({
       min: 0,
       max: 1,
       group: 'Style',
+      advanced: true,
     },
     backgroundColor: {
       type: 'text',

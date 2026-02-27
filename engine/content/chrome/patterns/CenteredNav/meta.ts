@@ -1,5 +1,7 @@
 /**
  * CenteredNav chrome pattern metadata for platform UI.
+ *
+ * Content fields (brandName, navLinks) live in content.ts.
  */
 
 import { defineChromeMeta } from '../../../../schema/meta'
@@ -15,23 +17,5 @@ export const meta = defineChromeMeta<CenteredNavProps>({
   tags: ['chrome', 'header', 'navigation', 'centered'],
   component: false,
 
-  settings: {
-    brandName: {
-      type: 'text',
-      label: 'Brand Name',
-      default: '',
-      description: 'Brand or site name displayed prominently in the center',
-      validation: { maxLength: 100 },
-      group: 'Brand',
-      bindable: true,
-    },
-    navLinks: {
-      type: 'custom',
-      label: 'Navigation Links',
-      default: [],
-      description: 'Links displayed below the brand name',
-      group: 'Navigation',
-      bindable: true,
-    },
-  },
+  settings: {},
 })

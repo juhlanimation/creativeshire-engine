@@ -31,9 +31,9 @@ export function createProjectStripSection(rawProps?: ProjectStripProps): Section
   const projects = rawProps?.projects ?? '{{ content.projects.other }}'
   const galleryOn = p.galleryOn ?? { click: 'modal.open' }
 
-  // Settings: auto-filled by applyMetaDefaults
-  const headingScale = p.headingScale as string
-  const yearRangeScale = p.yearRangeScale as string
+  // Typography scales (hard-coded)
+  const headingScale = 'small'
+  const yearRangeScale = 'small'
 
   const widgets: WidgetSchema[] = []
 

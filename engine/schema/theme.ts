@@ -101,6 +101,36 @@ export interface ContainerConfig {
   sectionGapScale?: number
 }
 
+/**
+ * Motion design tokens.
+ * Controls animation timing and easing across the site.
+ * Injected as CSS variables: --motion-fast, --motion-normal, --motion-slow,
+ * --ease-default, --ease-expressive, --ease-smooth.
+ *
+ * Effect CSS files consume these instead of hardcoded values,
+ * enabling "motion personality" swaps via theme alone.
+ */
+export interface MotionConfig {
+  /** Named timing presets (CSS durations) */
+  timing?: {
+    /** Fast interactions: hovers, toggles (default: '150ms') */
+    fast?: string
+    /** Standard transitions: fades, slides (default: '300ms') */
+    normal?: string
+    /** Dramatic reveals: page transitions, hero animations (default: '600ms') */
+    slow?: string
+  }
+  /** Named easing presets (CSS timing functions) */
+  easing?: {
+    /** Default easing for most transitions (default: 'ease-out') */
+    default?: string
+    /** Overshooting easing for playful/bouncy feel (default: 'cubic-bezier(0.34, 1.56, 0.64, 1)') */
+    expressive?: string
+    /** Smooth easing for elegant, understated motion (default: 'ease-in-out') */
+    smooth?: string
+  }
+}
+
 /** Color mode for named themes. */
 export type ColorMode = 'dark' | 'light'
 
@@ -119,6 +149,8 @@ export interface ThemeSchema {
   sectionTransition?: SectionTransitionConfig
   /** Site container max-width and outer background */
   container?: ContainerConfig
+  /** Motion design tokens (timing and easing presets) */
+  motion?: MotionConfig
   /** Named color theme ID (references registered ThemeDefinition) */
   colorTheme?: string
   /** Color mode override (overrides theme's defaultMode) */

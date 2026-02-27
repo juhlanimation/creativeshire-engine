@@ -3,7 +3,6 @@
  */
 
 import { defineSectionMeta } from '../../../../schema/meta'
-import { textScaleSetting } from '../../../../schema/settings-helpers'
 import type { HeroVideoProps } from './types'
 
 export const meta = defineSectionMeta<HeroVideoProps>({
@@ -19,44 +18,6 @@ export const meta = defineSectionMeta<HeroVideoProps>({
   ownedFields: ['layout', 'className'],
 
   settings: {
-    introText: {
-      type: 'text',
-      label: 'Intro Text',
-      default: '',
-      description: 'Introduction text (e.g., "I\'m Alex Morgan")',
-      validation: { maxLength: 100 },
-      group: 'Content',
-    },
-    roles: {
-      type: 'custom',
-      label: 'Role Titles',
-      default: [],
-      description: 'Array of role titles to display',
-      group: 'Content',
-    },
-    scrollIndicatorText: {
-      type: 'text',
-      label: 'Scroll Indicator',
-      default: '(SCROLL)',
-      description: 'Text for scroll indicator',
-      validation: { maxLength: 100 },
-      group: 'Content',
-    },
-    videoSrc: {
-      type: 'video',
-      label: 'Background Video',
-      default: '',
-      description: 'Background video source URL',
-      validation: { required: true },
-      group: 'Media',
-    },
-    videoPoster: {
-      type: 'image',
-      label: 'Video Poster',
-      default: '',
-      description: 'Fallback image before video loads',
-      group: 'Media',
-    },
     loopStartTime: {
       type: 'number',
       label: 'Loop Start Time',
@@ -84,10 +45,5 @@ export const meta = defineSectionMeta<HeroVideoProps>({
       max: 50,
       group: 'Layout',
     },
-
-    // Typography
-    introScale: textScaleSetting('Intro Text Scale', 'body'),
-    roleTitleScale: textScaleSetting('Role Title Scale', 'display'),
-    scrollIndicatorScale: textScaleSetting('Scroll Indicator Scale', 'small'),
   },
 })

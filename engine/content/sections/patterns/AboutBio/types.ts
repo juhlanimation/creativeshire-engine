@@ -3,7 +3,6 @@
  * Bio section with photo background and logo marquee.
  */
 
-import type { TextElement } from '../../../widgets/primitives/Text/types'
 import type { BaseSectionProps } from '../base'
 
 /**
@@ -59,9 +58,4 @@ export interface AboutBioProps extends BaseSectionProps {
   /** Vertical offset of bio content from top as % of section height (default: 0). Pushes content down. */
   bioOffset?: number
 
-  // === Typography scale ===
-  /** Scale for bio text (default: 'p') */
-  bioTextScale?: TextElement
-  /** Scale for signature text (default: 'p') */
-  signatureScale?: TextElement
 }

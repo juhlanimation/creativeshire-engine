@@ -1,0 +1,82 @@
+import type { SectionContentDeclaration } from '../../../../schema/content-field'
+import type { ProjectGalleryProps } from './types'
+
+export const content: SectionContentDeclaration<Partial<ProjectGalleryProps>> = {
+  label: 'Project Gallery',
+  description: 'Main video with selectable project thumbnails.',
+  contentFields: [
+    { path: 'logo.src', type: 'image', label: 'Logo Image', required: true },
+    { path: 'logo.alt', type: 'text', label: 'Logo Alt Text', default: 'Logo' },
+    { path: 'logo.width', type: 'number', label: 'Logo Width', default: 300 },
+    { path: 'logoFilter', type: 'text', label: 'Logo CSS Filter' },
+    { path: 'accentColor', type: 'text', label: 'Accent Color', default: 'accent' },
+    { path: 'backgroundColor', type: 'text', label: 'Background Color' },
+    {
+      path: 'projects',
+      type: 'collection',
+      label: 'Gallery Projects',
+      required: true,
+      itemFields: [
+        { path: 'thumbnail', type: 'image', label: 'Thumbnail', required: true },
+        { path: 'title', type: 'text', label: 'Title', required: true },
+        { path: 'video', type: 'text', label: 'Preview Video URL' },
+        { path: 'year', type: 'text', label: 'Year' },
+        { path: 'studio', type: 'text', label: 'Studio' },
+        { path: 'role', type: 'text', label: 'Role' },
+        { path: 'posterTime', type: 'number', label: 'Thumbnail Frame Time (s)' },
+      ],
+    },
+  ],
+  sampleContent: {
+    backgroundColor: '#C03540',
+    accentColor: 'accent',
+    logo: {
+      src: '/images/bishoy-gendi/Azuki_logo.png',
+      alt: 'Azuki',
+      width: 300,
+    },
+    logoFilter: 'brightness(0) invert(1)',
+    projects: [
+      {
+        id: 'azuki-reel',
+        thumbnail: '/videos/bishoy-gendi/azuki-elementals/azuki-reel-vimeo.webm',
+        title: 'Azuki Reel',
+        video: '/videos/bishoy-gendi/azuki-elementals/azuki-reel-vimeo.webm',
+        year: '2024',
+        studio: 'Crossroad',
+        role: 'Character Animator',
+        posterTime: 4,
+      },
+      {
+        id: 'proof-of-skate',
+        thumbnail: '/videos/bishoy-gendi/azuki-elementals/proof-of-skate.webm',
+        title: 'Proof of Skate',
+        video: '/videos/bishoy-gendi/azuki-elementals/proof-of-skate.webm',
+        year: '2022',
+        studio: 'Juhl Animation',
+        role: 'Character Animator',
+        posterTime: 3,
+      },
+      {
+        id: 'moser',
+        thumbnail: '/videos/bishoy-gendi/azuki-elementals/azukimoser.webm',
+        title: 'H. Moser & Cie',
+        video: '/videos/bishoy-gendi/azuki-elementals/azukimoser.webm',
+        year: '2025',
+        studio: 'Crossroad',
+        role: 'Character Animator',
+        posterTime: 5,
+      },
+      {
+        id: 'animecoin',
+        thumbnail: '/videos/bishoy-gendi/azuki-elementals/animecoin.webm',
+        title: 'AnimeCoin',
+        video: '/videos/bishoy-gendi/azuki-elementals/animecoin.webm',
+        year: '2025',
+        studio: 'Crossroad',
+        role: 'Character Animator',
+        posterTime: 2,
+      },
+    ],
+  },
+}

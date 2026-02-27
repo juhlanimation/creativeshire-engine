@@ -69,3 +69,78 @@ export function textSizeMultiplierSetting(
     advanced: options?.advanced,
   }
 }
+
+/**
+ * Creates a standard color setting for the Style group.
+ *
+ * @param label - Human-readable label (e.g., "Background Color")
+ * @param defaultValue - Default color value (default: '')
+ * @param options - Optional overrides (group, advanced, description)
+ */
+export function colorSetting(
+  label: string,
+  defaultValue: string = '',
+  options?: { group?: string; advanced?: boolean; description?: string }
+): SettingConfig {
+  return {
+    type: 'color',
+    label,
+    default: defaultValue,
+    description: options?.description ?? 'Color value',
+    group: options?.group ?? 'Style',
+    advanced: options?.advanced,
+  }
+}
+
+/**
+ * Creates a light/dark text color mode select setting.
+ * Useful for sections that need to toggle between light and dark text.
+ *
+ * @param defaultValue - Default color mode (default: 'light')
+ * @param options - Optional overrides (group, description)
+ */
+export function textColorModeSetting(
+  defaultValue: 'light' | 'dark' = 'light',
+  options?: { group?: string; description?: string }
+): SettingConfig {
+  return {
+    type: 'select',
+    label: 'Text Color',
+    default: defaultValue,
+    description: options?.description ?? 'Text color mode for this section',
+    choices: [
+      { value: 'light', label: 'Light' },
+      { value: 'dark', label: 'Dark' },
+    ],
+    group: options?.group ?? 'Style',
+  }
+}
+
+/**
+ * Creates a named spacing preset select setting.
+ * Provides none/tight/default/loose choices for consistent spacing control.
+ *
+ * @param label - Human-readable label (e.g., "Section Padding")
+ * @param defaultValue - Default spacing preset (default: 'default')
+ * @param options - Optional overrides (group, advanced, description)
+ */
+export function spacingPresetSetting(
+  label: string,
+  defaultValue: string = 'default',
+  options?: { group?: string; advanced?: boolean; description?: string }
+): SettingConfig {
+  return {
+    type: 'select',
+    label,
+    default: defaultValue,
+    description: options?.description ?? 'Spacing preset',
+    choices: [
+      { value: 'none', label: 'None' },
+      { value: 'tight', label: 'Tight' },
+      { value: 'default', label: 'Default' },
+      { value: 'loose', label: 'Loose' },
+    ],
+    group: options?.group ?? 'Spacing',
+    advanced: options?.advanced,
+  }
+}

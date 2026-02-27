@@ -19,7 +19,7 @@
 import React, { memo, forwardRef, useState, useCallback, useId, useMemo } from 'react'
 import type { TabbedContentProps, TabItem } from './types'
 import type { WidgetSchema } from '../../../../../../schema'
-import WidgetRenderer from '../../../../../../renderer/WidgetRenderer'
+import { useWidgetRenderer } from '../../../../../../renderer/WidgetRendererContext'
 
 /**
  * Extract tab items from widget children.
@@ -50,6 +50,7 @@ const TabbedContent = memo(forwardRef<HTMLDivElement, TabbedContentProps>(functi
   },
   ref
 ) {
+  const WidgetRenderer = useWidgetRenderer()
   // Prefer widgets (children via __repeat) over tabs prop
   const tabs = useMemo(() => {
     if (widgets && widgets.length > 0) {

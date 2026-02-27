@@ -30,9 +30,9 @@ export function createAboutBioSection(rawProps?: AboutBioProps): SectionSchema {
   const photoAlt = rawProps?.photoAlt ?? '{{ content.about.photoAlt }}'
   const clientLogos = rawProps?.clientLogos ?? '{{ content.about.clientLogos }}'
 
-  // Settings: auto-filled by applyMetaDefaults
-  const bioTextScale = p.bioTextScale as string
-  const signatureScale = p.signatureScale as string
+  // Typography scales: factory decisions (not user-configurable)
+  const bioTextScale = 'small'
+  const signatureScale = 'small'
 
   const widgets: WidgetSchema[] = []
 
@@ -92,7 +92,9 @@ export function createAboutBioSection(rawProps?: AboutBioProps): SectionSchema {
                 props: {
                   content: isBindingExpression(bioParagraphs)
                     ? bioParagraphs  // Pass binding through for runtime resolution
-                    : (bioParagraphs as string[]).join('\n\n'),
+                    : Array.isArray(bioParagraphs)
+                      ? bioParagraphs.join('\n\n')
+                      : bioParagraphs,
                   as: bioTextScale,
                   html: true,
                   lineHeight: '1.625',

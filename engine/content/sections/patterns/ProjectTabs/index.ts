@@ -7,7 +7,6 @@ import './components/TabbedContent'  // scoped widget registration
 
 import type { SectionSchema, WidgetSchema, SerializableValue } from '../../../../schema'
 import { applyMetaDefaults } from '../../../../schema/settings'
-import type { TextElement } from '../../../widgets/primitives/Text/types'
 import { isBindingExpression } from '../utils'
 import type { ProjectTabsProps, ProjectTab } from './types'
 import { meta } from './meta'
@@ -91,12 +90,12 @@ export function createProjectTabsSection(rawProps: ProjectTabsProps): SectionSch
   const props = applyMetaDefaults(meta, rawProps)
   const sectionId = props.id ?? 'project-tabs'
 
-  // Resolve text scales
+  // Typography scales: factory decisions (not user-configurable)
   const tabScales = {
-    title: props.titleScale as TextElement,
-    client: props.clientScale as TextElement,
-    studio: props.studioScale as TextElement,
-    role: props.roleScale as TextElement,
+    title: 'h3' as const,
+    client: 'body' as const,
+    studio: 'body' as const,
+    role: 'body' as const,
   }
 
   const tabBarWidgets: WidgetSchema[] = []

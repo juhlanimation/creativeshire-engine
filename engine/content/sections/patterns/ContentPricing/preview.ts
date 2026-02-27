@@ -1,4 +1,5 @@
 import type { WidgetSchema } from '../../../../schema'
+import { content } from './content'
 import type { ContentPricingProps } from './types'
 
 // =====================================================================
@@ -59,10 +60,15 @@ function buildPlanCardPreview(
   }
 }
 
+// Pull base plan data from content.ts sample, enrich with illustrations + icon features
+const samplePlans = content.sampleContent.plans ?? []
+const flexSample = samplePlans.find(p => p.id === 'flex')
+const allInSample = samplePlans.find(p => p.id === 'all-in')
+
 const flexPlan = {
-  name: 'FLEX',
-  price: '1.300 DKK',
-  description: 'Frihed og fleksibilitet.\nBetal kun for adgang, ikke for plads.',
+  name: flexSample?.name ?? 'FLEX',
+  price: flexSample?.price ?? '1.300 DKK',
+  description: flexSample?.description ?? 'Frihed og fleksibilitet.\nBetal kun for adgang, ikke for plads.',
   illustration: `${IMAGE_BASE}/FLEX_Illustration_2.webp`,
   features: [
     { name: 'Fri adgang 24/7', icon: CHECK_SVG },
@@ -78,9 +84,9 @@ const flexPlan = {
 }
 
 const allInPlan = {
-  name: 'ALL-IN',
-  price: '2.000 DKK',
-  description: 'Dit second home.\nFast plads uden krav om at rydde op.',
+  name: allInSample?.name ?? 'ALL-IN',
+  price: allInSample?.price ?? '2.000 DKK',
+  description: allInSample?.description ?? 'Dit second home.\nFast plads uden krav om at rydde op.',
   illustration: `${IMAGE_BASE}/ALL-IN_Illustration_3.webp`,
   features: [
     { name: 'Fri adgang 24/7', icon: CHECK_SVG },
@@ -95,7 +101,7 @@ const allInPlan = {
   ],
 }
 
-const PRICE_SUBTITLE = 'ex moms / måned'
+const PRICE_SUBTITLE = content.sampleContent.subtitle ?? 'ex moms / måned'
 
 export const medlemskabPreviewProps: Partial<ContentPricingProps> = {
   id: 'medlemskab',

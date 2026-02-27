@@ -43,12 +43,12 @@ export function createProjectShowcaseSection(rawProps: ProjectShowcaseProps): Se
         widgets: [
           {
             type: 'Text',
-            props: { content: props.studio, as: props.studioScale },
+            props: { content: props.studio, as: 'small' },
             className: 'project-showcase__studio'
           },
           {
             type: 'Text',
-            props: { content: props.role, as: props.roleScale },
+            props: { content: props.role, as: 'small' },
             className: 'project-showcase__role'
           }
         ]

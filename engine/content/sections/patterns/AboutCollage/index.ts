@@ -29,7 +29,6 @@ export function createAboutCollageSection(rawProps: AboutCollageProps): SectionS
     textClassName = '',
     images,
     imageClassName = '',
-    textScale,
   } = applyMetaDefaults(meta, rawProps)
 
   return {
@@ -51,7 +50,7 @@ export function createAboutCollageSection(rawProps: AboutCollageProps): SectionS
       {
         id: `${id}-text`,
         type: 'Text',
-        props: { content: text, as: textScale },
+        props: { content: text, as: 'body' },
         className: `photo-collage__text ${textClassName}`.trim(),
       },
       ...(typeof images === 'string'

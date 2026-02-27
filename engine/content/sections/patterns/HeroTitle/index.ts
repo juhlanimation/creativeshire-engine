@@ -11,7 +11,6 @@
 import type { CSSProperties } from 'react'
 import type { SectionSchema, WidgetSchema, SerializableValue } from '../../../../schema'
 import { applyMetaDefaults } from '../../../../schema/settings'
-import type { TextElement } from '../../../widgets/primitives/Text/types'
 import type { HeroTitleProps } from './types'
 import { DEFAULT_HERO_TITLE_STYLES } from './types'
 import { meta } from './meta'
@@ -47,10 +46,10 @@ export function createHeroTitleSection(rawProps?: HeroTitleProps): SectionSchema
     scrollIndicator: mergeStyles(DEFAULT_HERO_TITLE_STYLES.scrollIndicator, p.styles?.scrollIndicator),
   }
 
-  // Settings: auto-filled by applyMetaDefaults
-  const titleScale = p.titleScale as TextElement
-  const taglineScale = p.taglineScale as TextElement
-  const scrollIndicatorScale = p.scrollIndicatorScale as TextElement
+  // Typography scales: factory decisions (not CMS-configurable)
+  const titleScale = 'display'
+  const taglineScale = 'h3'
+  const scrollIndicatorScale = 'small'
   const titleSizeMultiplier = p.titleSizeMultiplier as number
 
   // When introVideo is enabled, text visibility is gated by --intro-complete CSS variable

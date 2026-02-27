@@ -6,7 +6,6 @@
  * Text colors: resolved from theme CSS variables.
  */
 
-import type { TextElement } from '../../../widgets/primitives/Text/types'
 import type { SocialLink } from '../../../widgets/interactive/ContactBar/types'
 import type { BaseSectionProps } from '../base'
 
@@ -50,7 +49,4 @@ export interface ProjectCompareProps extends BaseSectionProps {
   /** Text/icon color scheme for footer */
   textColor?: 'light' | 'dark'
 
-  // === Typography scale ===
-  /** Scale for description text (default: 'p') */
-  descriptionScale?: TextElement
 }

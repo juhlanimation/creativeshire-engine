@@ -4,7 +4,6 @@
  */
 
 import type { WidgetEventMap } from '../../../../schema/widget'
-import type { TextElement } from '../../../widgets/primitives/Text/types'
 import type { BaseSectionProps } from '../base'
 
 /**
@@ -45,10 +44,4 @@ export interface ProjectStripProps extends BaseSectionProps {
   projects?: OtherProject[] | string
   /** Event handlers for the gallery widget (e.g., { click: 'modal.open' }) */
   galleryOn?: WidgetEventMap
-
-  // === Typography scale ===
-  /** Scale for section heading (default: 'span') */
-  headingScale?: TextElement
-  /** Scale for year range text (default: 'span') */
-  yearRangeScale?: TextElement
 }

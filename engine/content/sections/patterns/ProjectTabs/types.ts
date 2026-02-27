@@ -3,7 +3,6 @@
  * Tabbed project interface (Projects I Like style).
  */
 
-import type { TextElement } from '../../../widgets/primitives/Text/types'
 import type { BaseSectionProps } from '../base'
 
 export interface TabVideo {
@@ -54,13 +53,4 @@ export interface ProjectTabsProps extends BaseSectionProps {
   /** External link in tab bar (optional) — supports binding expressions */
   externalLink?: ExternalLink | { url: string; label: string }
 
-  // === Typography scale ===
-  /** Scale for project title (default: 'h3') */
-  titleScale?: TextElement
-  /** Scale for client text (default: 'p') */
-  clientScale?: TextElement
-  /** Scale for studio text (default: 'p') */
-  studioScale?: TextElement
-  /** Scale for role text (default: 'p') */
-  roleScale?: TextElement
 }

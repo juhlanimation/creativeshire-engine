@@ -1,5 +1,7 @@
 /**
  * FloatingContact chrome pattern metadata for platform UI.
+ *
+ * Content fields (label, email) live in content.ts.
  */
 
 import { defineChromeMeta } from '../../../../schema/meta'
@@ -16,24 +18,6 @@ export const meta = defineChromeMeta<FloatingContactProps>({
   component: false,
 
   settings: {
-    label: {
-      type: 'text',
-      label: 'Label',
-      default: '',
-      description: 'Text displayed on the contact prompt',
-      validation: { maxLength: 200 },
-      group: 'Content',
-      bindable: true,
-    },
-    email: {
-      type: 'text',
-      label: 'Contact Email',
-      default: '',
-      description: 'Email address for the contact prompt',
-      validation: { maxLength: 320, pattern: '^[^@]+@[^@]+\\.[^@]+$', message: 'Please enter a valid email address' },
-      group: 'Content',
-      bindable: true,
-    },
     hoverColor: {
       type: 'select',
       label: 'Hover Color',

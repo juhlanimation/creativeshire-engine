@@ -3,7 +3,6 @@
  * Single project display with video, metadata, and optional shot navigation.
  */
 
-import type { TextElement } from '../../../widgets/primitives/Text/types'
 import type { SocialLink } from '../../../widgets/interactive/ContactBar/types'
 import type { BaseSectionProps } from '../base'
 
@@ -43,10 +42,4 @@ export interface ProjectShowcaseProps extends BaseSectionProps {
   socialLinks?: SocialLink[] | string
   /** Text/icon color scheme for footer */
   textColor?: 'light' | 'dark'
-
-  // === Typography scale ===
-  /** Scale for studio name text (default: 'span') */
-  studioScale?: TextElement
-  /** Scale for role text (default: 'span') */
-  roleScale?: TextElement
 }

@@ -1,5 +1,7 @@
 /**
  * FixedNav chrome pattern metadata for platform UI.
+ *
+ * Content fields (siteTitle, navLinks, logo) live in content.ts.
  */
 
 import { defineChromeMeta } from '../../../../schema/meta'
@@ -16,32 +18,6 @@ export const meta = defineChromeMeta<FixedNavProps>({
   component: false,
 
   settings: {
-    siteTitle: {
-      type: 'text',
-      label: 'Site Title',
-      default: '',
-      description: 'Text displayed in the header',
-      validation: { maxLength: 100 },
-      group: 'Brand',
-      bindable: true,
-    },
-    navLinks: {
-      type: 'custom',
-      label: 'Navigation Links',
-      default: [],
-      description: 'Links displayed in the header navigation',
-      group: 'Navigation',
-      bindable: true,
-    },
-    logo: {
-      type: 'text',
-      label: 'Logo URL',
-      default: '',
-      description: 'Optional logo image URL',
-      validation: { maxLength: 2048 },
-      group: 'Brand',
-      bindable: true,
-    },
     background: {
       type: 'color',
       label: 'Background',

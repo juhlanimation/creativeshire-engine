@@ -4,7 +4,6 @@
  */
 
 import type { CSSProperties } from 'react'
-import type { TextElement } from '../../../widgets/primitives/Text/types'
 import type { BaseSectionProps } from '../base'
 
 /**
@@ -72,15 +71,9 @@ export interface HeroTitleProps extends BaseSectionProps {
   /** Mark video as intro video for the intro timing system */
   introVideo?: boolean
 
-  // === Typography scale ===
-  /** Scale for centered title (default: 'display') */
-  titleScale?: TextElement
-  /** Multiplier applied to title font-size (default: 3) */
+  // === Typography ===
+  /** Multiplier applied to title font-size (default: 4) */
   titleSizeMultiplier?: number
-  /** Scale for tagline below title (default: 'h3') */
-  taglineScale?: TextElement
-  /** Scale for scroll indicator (default: 'small') */
-  scrollIndicatorScale?: TextElement
 
   // === Styles (how to display - from preset) ===
   /** Text style configuration - overrides defaults */

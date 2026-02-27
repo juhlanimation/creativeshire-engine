@@ -20,7 +20,6 @@
 
 import type { SectionSchema, WidgetSchema, SerializableValue } from '../../../../schema'
 import { applyMetaDefaults } from '../../../../schema/settings'
-import type { TextElement } from '../../../widgets/primitives/Text/types'
 import type { ContentPricingProps, PricingPlan, PricingIcons } from './types'
 import { isBindingExpression } from '../utils'
 import { meta } from './meta'
@@ -264,17 +263,17 @@ export function createContentPricingSection(rawProps: ContentPricingProps): Sect
 
   const cardShadow = props.cardShadow as boolean
 
-  // Resolve text scales
-  const subtitleScale = props.subtitleScale as string
-  const footerScale = props.footerScale as string
+  // Typography scales: factory decisions (not user-configurable)
+  const subtitleScale = 'body'
+  const footerScale = 'body'
   const scales: PricingScales = {
-    planName: props.planNameScale as TextElement,
-    price: props.priceScale as TextElement,
-    period: props.periodScale as TextElement,
-    description: props.descriptionScale as TextElement,
-    badge: props.badgeScale as TextElement,
-    featureIcon: props.featureIconScale as TextElement,
-    featureLabel: props.featureLabelScale as TextElement,
+    planName: 'h3',
+    price: 'body',
+    period: 'small',
+    description: 'body',
+    badge: 'small',
+    featureIcon: 'small',
+    featureLabel: 'small',
   }
 
   // Check if using binding expression
@@ -323,7 +322,7 @@ export function createContentPricingSection(rawProps: ContentPricingProps): Sect
         cardShadow,
       },
     })
-  } else {
+  } else if (props.plans) {
     // Static array - build card widgets
     const plans = props.plans as PricingPlan[]
     const columns = props.columns as number

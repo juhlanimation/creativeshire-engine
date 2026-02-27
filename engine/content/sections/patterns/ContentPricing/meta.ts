@@ -3,7 +3,6 @@
  */
 
 import { defineSectionMeta } from '../../../../schema/meta'
-import { textScaleSetting } from '../../../../schema/settings-helpers'
 import type { ContentPricingProps } from './types'
 
 export const meta = defineSectionMeta<ContentPricingProps>({
@@ -19,30 +18,6 @@ export const meta = defineSectionMeta<ContentPricingProps>({
   ownedFields: ['layout', 'className'],
 
   settings: {
-    subtitle: {
-      type: 'text',
-      label: 'Subtitle',
-      default: '',
-      description: 'Optional subtitle above pricing cards',
-      validation: { maxLength: 150 },
-      group: 'Content',
-    },
-    plans: {
-      type: 'custom',
-      label: 'Pricing Plans',
-      default: [],
-      description: 'Array of pricing plan objects',
-      validation: { required: true },
-      group: 'Content',
-    },
-    footerText: {
-      type: 'text',
-      label: 'Footer Text',
-      default: '',
-      description: 'Optional footer text (e.g., "All prices in USD")',
-      validation: { maxLength: 150 },
-      group: 'Content',
-    },
     columns: {
       type: 'range',
       label: 'Columns',
@@ -60,40 +35,28 @@ export const meta = defineSectionMeta<ContentPricingProps>({
       description: 'Gap between cards (CSS value)',
       validation: { maxLength: 50 },
       group: 'Layout',
+      hidden: true,
     },
     cardShadow: {
       type: 'toggle',
       label: 'Card Shadow',
       default: true,
       description: 'Show shadow on cards',
-      group: 'Styling',
+      group: 'Style',
     },
     cardBackgroundColor: {
       type: 'color',
       label: 'Card Background',
       default: '#ffffff',
       description: 'Default card background color',
-      group: 'Styling',
+      group: 'Style',
     },
     highlightedCardBackgroundColor: {
       type: 'color',
       label: 'Highlighted Card Background',
       default: '#fafafa',
       description: 'Background for highlighted/featured plans',
-      group: 'Styling',
+      group: 'Style',
     },
-
-    // Typography — main
-    subtitleScale: textScaleSetting('Subtitle Scale', 'body'),
-    planNameScale: textScaleSetting('Plan Name Scale', 'h3'),
-    priceScale: textScaleSetting('Price Scale', 'body'),
-    descriptionScale: textScaleSetting('Description Scale', 'body'),
-    footerScale: textScaleSetting('Footer Scale', 'body'),
-
-    // Typography — advanced
-    badgeScale: textScaleSetting('Badge Scale', 'small', { advanced: true }),
-    periodScale: textScaleSetting('Period Scale', 'small', { advanced: true }),
-    featureLabelScale: textScaleSetting('Feature Label Scale', 'small', { advanced: true }),
-    featureIconScale: textScaleSetting('Feature Icon Scale', 'small', { advanced: true }),
   },
 })

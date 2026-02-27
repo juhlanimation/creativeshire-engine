@@ -7,7 +7,6 @@
  */
 
 import type { CSSProperties } from 'react'
-import type { TextElement } from '../../../widgets/primitives/Text/types'
 import type { BaseSectionProps } from '../base'
 
 /**
@@ -77,14 +76,6 @@ export interface HeroVideoProps extends BaseSectionProps {
   // === Layout ===
   /** Content distance from bottom edge as % of viewport height (default: 12) */
   bottomOffset?: number
-
-  // === Typography scale ===
-  /** Scale for intro text (default: 'body') */
-  introScale?: TextElement
-  /** Scale for role title headings (default: 'display') */
-  roleTitleScale?: TextElement
-  /** Scale for scroll indicator (default: 'small') */
-  scrollIndicatorScale?: TextElement
 
   // === Styles (how to display - from preset) ===
   /** Text style configuration - overrides defaults */

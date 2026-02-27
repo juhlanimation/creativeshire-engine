@@ -1,5 +1,7 @@
 /**
  * MinimalNav chrome pattern metadata for platform UI.
+ *
+ * Content fields (navLinks, email) live in content.ts.
  */
 
 import { defineChromeMeta } from '../../../../schema/meta'
@@ -16,23 +18,6 @@ export const meta = defineChromeMeta<MinimalNavProps>({
   component: false,
 
   settings: {
-    navLinks: {
-      type: 'custom',
-      label: 'Navigation Links',
-      default: [],
-      description: 'Links displayed in the header navigation',
-      group: 'Navigation',
-      bindable: true,
-    },
-    email: {
-      type: 'text',
-      label: 'Contact Email',
-      default: '',
-      description: 'Contact email displayed in the header',
-      validation: { maxLength: 320, pattern: '^[^@]+@[^@]+\\.[^@]+$', message: 'Please enter a valid email address' },
-      group: 'Contact',
-      bindable: true,
-    },
     blendMode: {
       type: 'select',
       label: 'Blend Mode',

@@ -18,22 +18,6 @@ export const meta = defineSectionMeta<ProjectVideoGridProps>({
   ownedFields: ['layout', 'className'],
 
   settings: {
-    logo: {
-      type: 'custom',
-      label: 'Logo',
-      default: { src: '', alt: '' },
-      description: 'Project/client logo',
-      group: 'Header',
-    },
-    videos: {
-      type: 'custom',
-      label: 'Videos',
-      default: [],
-      description: 'Videos with aspect ratios (grouped by orientation)',
-      validation: { required: true },
-      group: 'Content',
-      bindable: true,
-    },
     hoverPlay: {
       type: 'toggle',
       label: 'Hover to Play',
@@ -42,15 +26,6 @@ export const meta = defineSectionMeta<ProjectVideoGridProps>({
       group: 'Behavior',
     },
 
-    // Footer
-    socialLinks: {
-      type: 'custom',
-      label: 'Social Links',
-      default: [],
-      description: 'Social platform links for footer bar',
-      group: 'Footer',
-      bindable: true,
-    },
     textColor: {
       type: 'select',
       label: 'Text Color',
