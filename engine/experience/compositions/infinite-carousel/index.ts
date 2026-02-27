@@ -3,10 +3,10 @@
  * Sections scroll continuously with snap-to-section behavior.
  */
 
-import type { Experience } from '../types'
+import type { ExperienceComposition } from '../types'
 import { InfiniteCarouselController } from '../InfiniteCarouselController'
 
-export const infiniteCarouselExperience: Experience = {
+export const infiniteCarouselComposition: ExperienceComposition = {
   id: 'infinite-carousel',
   name: 'Infinite Carousel',
   description: 'Vertical infinite scroll with momentum physics and snap-to-section.',

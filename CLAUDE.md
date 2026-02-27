@@ -8,8 +8,9 @@ This is a **library package** (`@creativeshire/engine`).
 
 - Exports components for use by creativeshire-platform
 - Does NOT know about platform (auth, routing, API)
+- Framework-agnostic — platform injects Image/Link/router via `EngineProvider`
 - React is a peer dependency (platform provides it)
-- Local development uses `app/` folder (not exported)
+- Local development uses Storybook (`npm run storybook`)
 
 ### Importing (from platform)
 
@@ -78,7 +79,7 @@ RENDERER             Site → Page → Section → Widget
 │ L1 CONTENT       │ L2 EXPERIENCE     │
 │ (renders once)   │ (animates 60fps)  │
 │                  │                   │
-│ • Primitives     │ • Experiences     │
+│ • Primitives     │ • Compositions    │
 │ • Layout         │ • Behaviours      │
 │ • Patterns       │ • Effects         │
 │ • Interactive    │                   │
@@ -150,9 +151,9 @@ engine/
 │   │   ├── EffectTimeline Parallel/sequential track orchestration
 │   │   ├── animateElement CSS class-based animation Promise wrapper
 │   │   ├── effect-track   Bridge: EffectPrimitive → EffectTimeline track
-│   │   ├── effects/       Shared effect primitives (wipe, expand, fade, overlay-fade)
+│   │   ├── primitives/    Shared effect primitives (wipe, expand, fade, overlay-fade)
 │   │   └── gsap/          GSAP reveal hook + RevealTransition component
-│   ├── experiences/       stacking, slideshow, infinite-carousel...
+│   ├── compositions/      stacking, slideshow, infinite-carousel...
 │   ├── lifecycle/         SectionLifecycleProvider
 │   ├── navigation/        Page transitions, keyboard/swipe/wheel nav
 │   ├── transitions/       Transition registry + fade config
@@ -223,6 +224,126 @@ browser_eval(action: "close")
 
 **For L2 work:** Verify through code review (CSS variables set? behaviour wired?) and ask user for feedback on motion feel. Screenshots of animations are meaningless.
 
+## Replicating a Prototype
+
+When given ANY design reference (screenshot, Figma export, reference website, or description).
+
+**Build order:** Hardcode exact copy → Visual verify each section → Page assembly → Extract to theme → L2 experience.
+
+**Media rule:** ALWAYS use actual media from the reference — real images, real videos, real text. NEVER use picsum.photos, "Lorem ipsum", or "Sample Project 1, 2, 3". Visual verification is meaningless with placeholder content.
+
+### Phase 1: Audit
+
+Run `npm run inventory:quick` to see all available bricks, then classify every element:
+
+| Design Element | Engine Brick | Where |
+|---|---|---|
+| Persistent header/footer | Chrome pattern | `chrome/patterns/` |
+| Page content block | Section pattern | `sections/patterns/` |
+| Reusable UI atom | Global widget | `widgets/` |
+| Section-specific stateful component | Scoped widget | `{Section}/components/` |
+| Scroll/hover/visibility trigger | Behaviour | `behaviours/{trigger}/` |
+| CSS animation mechanism | Effect | `effects/{mechanism}/` |
+| Section orchestration mode | Composition | `compositions/` |
+| Page enter/exit animation | Transition | `transitions/` |
+
+For each: mark as **EXISTS** / **NEEDS VARIANT** / **MISSING**.
+
+For each EXISTS section/chrome, **read its `anatomy.md`** — does it match the reference?
+
+Build any MISSING bricks via scaffolding scripts. Expand existing bricks for NEEDS VARIANT (additive only, never remove existing variants).
+
+| What to scaffold | Script |
+|---|---|
+| L1 section pattern (incl. content.ts) | `npm run create:section {Name}` |
+| L2 behaviour | `npm run create:behaviour {cat}/{name}` |
+| L2 effect CSS | `npm run create:effect {mechanism}/{name}` |
+| Chrome pattern (incl. content.ts) | `npm run create:chrome {Name} --slot {slot}` |
+| Preset (pages, contract, sample content) | `npm run create:preset {Name} [--pages home,about]` |
+| Global widget (4 files + 3 registries) | `npm run create:widget {Name} -- --category {primitives\|layout\|interactive\|repeaters}` |
+| Experience composition | `npm run create:composition {id} [-- --category scroll-driven]` |
+| Effect primitive (timeline) | `npm run create:primitive {id}` |
+| Intro sequence | `npm run create:intro {id} [-- --pattern timed]` |
+| Page transition | `npm run create:transition {id} [-- --category fade]` |
+
+Scripts auto-register in the appropriate barrel/registry files. After scaffolding, fill in the generated TODO placeholders.
+
+Each brick must be GENERIC and REUSABLE — no site-specific names, no hardcoded content.
+Content field declarations live in the section's own `content.ts`, not the preset.
+
+### Phase 2: L1 Hardcoded Copy (section by section)
+
+Work through ONE section at a time, top to bottom on the page. Do NOT move to the next section until the current one visually matches the reference.
+
+For each section:
+
+1. **Read the `anatomy.md`** — understand layout, typography scales, defaults, style override points
+2. **Extract real content** from the reference:
+   - Download/reference actual images and videos (NO placeholders)
+   - Copy actual text content (headings, body, labels, CTAs)
+   - Note actual colors, spacing, font sizes as literal values
+3. **Configure** the section factory call:
+   - Pass real content as direct props (hardcoded strings, not binding expressions yet)
+   - Use `style` overrides with hardcoded CSS values where needed (hex colors, px/rem spacing)
+   - Set meta settings (layout variants, toggles) based on anatomy.md
+4. **Render** in Storybook section story
+5. **Visual verification** (see checklist below)
+6. **Fix** discrepancies until the section matches
+7. **Sign off** — move to next section only when this one matches
+
+### Phase 3: Page Assembly
+
+1. Create preset: `npm run create:preset {Name} [--pages ...]`
+2. Wire validated sections into preset pages
+3. Configure chrome (header/footer) — also validate visually one at a time
+4. Render full page in Storybook preset story
+5. Screenshot full page → verify section flow, spacing, chrome interaction
+6. Fix page-level issues
+
+### Phase 4: Theme Extraction
+
+Mechanical find-and-replace — convert hardcoded values to theme variables. Reference each section's `anatomy.md` "Theme Variable Mapping" table.
+
+1. **Colors:** Replace hardcoded hex → `var(--text-primary)`, `var(--accent)`, etc.
+2. **Spacing:** Replace hardcoded rem/px → `var(--spacing-md)`, `var(--spacing-section-x)`, etc.
+3. **Fonts:** Replace font stacks → `var(--font-heading)`, `var(--font-paragraph)`, etc.
+4. **Motion:** Replace durations/easings → `var(--duration-normal)`, `var(--ease-default)`, etc.
+5. **Create or select** theme definition that produces the extracted values
+6. **Convert content** from hardcoded strings to binding expressions: `{{ content.section.field }}`
+7. **Build** `content-contract.ts` and `sample-content.ts` from section `content.ts` declarations
+
+**Verify:** Switch themes in Storybook toolbar → confirm output still looks correct. `npm run test:arch` → confirm architectural compliance.
+
+### Phase 5: L2 Experience (only after L1 is solid)
+
+1. Identify animations in reference (scroll, hover, intro, transitions)
+2. Map to existing behaviours (anatomy.md lists common pairings)
+3. Wire `sectionBehaviours` + `chromeBehaviours` in experience composition
+4. For motion: describe intent to user, ask for feedback (can't screenshot motion)
+
+### Visual Verification Checklist
+
+Run after EVERY section and chrome pattern. Do NOT skip this step.
+
+```
+1. Storybook running? → npm run storybook
+2. Navigate to section story → L1 Content/Sections/{Name}
+3. Screenshot via Playwright:
+   browser_eval(action: "navigate", url: "http://localhost:6006/?path=/story/...")
+   browser_eval(action: "screenshot")
+4. Compare to the SPECIFIC AREA of the reference for this section
+5. Checklist:
+   □ Font sizes match? (relative proportions, not exact pixels)
+   □ Font weights match? (bold/regular/light)
+   □ Spacing proportions match? (gaps between elements)
+   □ Alignment matches? (left/center/right)
+   □ Colors match the reference?
+   □ Media is actual reference content? (not placeholders)
+   □ Layout structure correct? (stack vs flex vs grid)
+6. Fix discrepancies → re-screenshot → re-compare
+7. Move to next section ONLY when this one matches
+```
+
 ## References
 
 | Topic | Location |
@@ -230,8 +351,29 @@ browser_eval(action: "close")
 | **Architecture** | [SKILL.md](.claude/skills/engine/SKILL.md) |
 | **All Specs** | [specs/index.spec.md](.claude/skills/engine/specs/index.spec.md) |
 | **Audit/Refactor** | [ARCHITECTURE-AUDIT.md](.claude/ARCHITECTURE-AUDIT.md) |
+| **Widget Builders** | `engine/builders/` |
+| **Content Utilities** | `engine/presets/content-utils.ts` |
 
-## Commands (Optional)
+## Agent Tooling
+
+Scaffolding scripts and utilities the agent should use automatically when building bricks. **Always scaffold before implementing** — scripts handle registration, barrel imports, and boilerplate.
+
+| Script | When to use |
+|--------|-------------|
+| `npm run create:section {Name}` | Building a new section pattern |
+| `npm run create:behaviour {cat}/{name}` | Building a new behaviour |
+| `npm run create:effect {mech}/{name}` | Building a new effect CSS file |
+| `npm run create:chrome {Name} --slot {slot}` | Building a new chrome pattern |
+| `npm run create:preset {Name} [--pages home,about]` | Building a new preset |
+| `npm run create:widget {Name} -- --category {cat}` | Building a new global widget |
+| `npm run create:composition {id} [-- --category {cat}]` | Building a new composition |
+| `npm run create:primitive {id}` | Building a new effect primitive |
+| `npm run create:intro {id} [-- --pattern {pat}]` | Building a new intro sequence |
+| `npm run create:transition {id} [-- --category {cat}]` | Building a new page transition |
+| `npm run inventory:quick` | Before building — discover existing bricks to reuse |
+| `npm run test:arch` | After building — validate structure, registration, naming |
+
+Slash commands (user-invocable):
 
 | Command | When |
 |---------|------|
@@ -304,3 +446,52 @@ browser_eval(action: "close")
    | Section-level CSS overriding widget internals | Widget's own settings/variants |
 
    **Why:** Layered CSS creates invisible coupling. When someone changes a widget's internals, the layered CSS breaks silently. Props and theme variables are the contract — CSS files are implementation details that should stay inside their widget.
+
+10. **Settings taxonomy (4 tiers):** Every meta setting must fit one of four tiers. Max 12 visible settings per brick.
+    - **Essential** (visible): Mode switches, layout choices (4-10 per section)
+    - **Style** (visible, `group: 'Style'`): Colors, shadows, spacing presets
+    - **Advanced** (`advanced: true`): Timing, offsets, multipliers — collapsed in CMS
+    - **Preset-only** (`hidden: true`): CSS values, scales, layout internals — never in CMS
+
+    Content data (text, images, collections) belongs in `content.ts`, never `meta.ts`.
+    Typography scales are factory decisions, not user settings — use `textSizeMultiplierSetting()` (Advanced) for hero titles only.
+    See: [settings-taxonomy.spec.md](.claude/skills/engine/specs/reference/settings-taxonomy.spec.md)
+
+## Blast Radius Rules
+
+**These rules protect hosted sites from agent-caused regressions.**
+
+### SAFE — Agents do freely (zero sites affected)
+
+- Create new section patterns, chrome patterns, overlays
+- Create new global widgets, behaviours, effects, experiences, transitions
+- Add new variants/choices to existing widget meta settings
+- Create new presets
+
+### REQUIRES EXPLICIT USER APPROVAL
+
+- Modify existing global widget rendering logic
+- Change existing section pattern factory output
+- Remove any widget variant, setting, or prop
+- Modify behaviour `compute()` functions that are in use
+- Change effect CSS that existing behaviours depend on
+- Modify schema types in breaking ways
+
+### NEVER
+
+- Remove a widget setting choice (breaks sites using that choice)
+- Rename a `patternId` (breaks site schemas referencing it)
+- Change widget `type` strings (breaks widget registry lookups)
+- Remove a behaviour ID (breaks presets referencing it)
+- Delete an effect data-attribute selector (breaks widgets using it)
+
+### Widget Expansion Policy
+
+| Scenario | Action |
+|---|---|
+| 2+ sections need same interactive element | Expand existing global widget with additive variant |
+| 1 section needs stateful component | Create section-scoped widget |
+| New section looks similar to existing | Create NEW section pattern, reuse same widgets |
+| Existing widget almost works | Add new `variant` choice to meta settings (additive) |
+
+**Never** make an existing section "flexible enough" to serve a different purpose. Create a new pattern.

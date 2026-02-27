@@ -38,3 +38,19 @@ Before creating:
 - Is the name generic? No widget names.
 
 Spec: [effect.spec.md](/.claude/skills/engine/specs/components/experience/effect.spec.md)
+
+## Creating a New Effect
+
+```bash
+npm run create:effect {mechanism}/{name}
+# Example: npm run create:effect transform/flip
+```
+
+This generates the CSS file and adds @import to index.css.
+
+## Effect Checklist
+
+1. Selector: `[data-effect~="{name}"]`
+2. Consume CSS variables from behaviours (var(--xxx))
+3. Define transition/animation properties (HOW it animates)
+4. Never set values — only define how values animate

@@ -9,9 +9,9 @@
  * Behaviours (like scroll/cover-progress) work normally — no bareMode.
  */
 
-import type { Experience } from '../types'
+import type { ExperienceComposition } from '../types'
 
-export const coverScrollExperience: Experience = {
+export const coverScrollComposition: ExperienceComposition = {
   id: 'cover-scroll',
   name: 'Cover Scroll',
   description:

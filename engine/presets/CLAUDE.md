@@ -42,3 +42,21 @@ export interface PresetContentSchema {
 ```
 
 Spec: [preset.spec.md](/.claude/skills/engine/specs/components/preset/preset.spec.md)
+
+## Assembling a Preset
+
+A preset wires existing engine bricks into a site template:
+
+1. **Theme:** Color, typography, spacing, scrollbar, container settings
+2. **Pages:** Import section factories, compose into PageSchema arrays
+3. **Experience:** Map section IDs to behaviour assignments
+4. **Chrome:** Wire header/footer regions + overlay configurations
+5. **Content Contract:** `buildContentContract()` from section `content.ts` imports
+6. **Sample Content:** `buildSampleContent()` from the same declarations
+
+Content declarations live in the sections, not the preset. The preset only:
+- Overrides labels (e.g. `{ ...galleryContent, label: 'Azuki Elementals' }`)
+- Adds site-level fields (head, contact) inline
+- Passes `withContentBindings(namespace, fields)` for auto-generated bindings
+
+Run `npm run inventory:quick` to see available bricks before assembling.

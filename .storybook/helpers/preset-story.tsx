@@ -39,7 +39,8 @@ import {
 } from '../../engine/experience'
 import type { BehaviourAssignment } from '../../engine/experience'
 import { ensurePresetsRegistered, getAllPresets } from '../../engine/presets'
-import type { SitePreset } from '../../engine/presets/types'
+import type { SitePreset, ExperienceComposition, ExperienceRef } from '../../engine/presets/types'
+import { isExperienceRef } from '../../engine/experience/compositions/types'
 import type { PresetIntroConfig } from '../../engine/intro/types'
 import type { IntroConfig, ExperienceConfig } from '../../engine/schema'
 import { getTheme } from '../../engine/themes'
@@ -177,6 +178,27 @@ function isInlineIntro(intro: unknown): intro is IntroConfig {
 }
 
 /**
+ * Resolve an ExperienceComposition | ExperienceRef to its inline fields.
+ * For ExperienceRef, returns base ID and override fields.
+ * For inline ExperienceComposition, returns fields directly.
+ */
+function resolveExperience(exp: ExperienceComposition | ExperienceRef | undefined) {
+  if (!exp) return { id: undefined, sectionBehaviours: undefined, intro: undefined }
+  if (isExperienceRef(exp)) {
+    return {
+      id: exp.base,
+      sectionBehaviours: exp.overrides?.sectionBehaviours,
+      intro: exp.overrides?.intro,
+    }
+  }
+  return {
+    id: exp.id,
+    sectionBehaviours: exp.sectionBehaviours,
+    intro: exp.intro,
+  }
+}
+
+/**
  * Renders a single page from a preset through SiteRenderer.
  * Experience and intro are controlled via Storybook args (dropdowns).
  *
@@ -198,17 +220,17 @@ export function PresetPageStory({
 }: PresetPageStoryProps) {
   // Read colorTheme from Storybook globals (provided by StoryGlobalsDecorator)
   const { colorTheme: globalColorTheme } = useContext(StoryGlobalsContext)
-  const colorTheme = globalColorTheme ?? preset.theme?.colorTheme ?? 'contrast'
+  const colorTheme = globalColorTheme ?? preset.theme?.theme?.colorTheme ?? 'contrast'
 
   // When user picks a different theme in Storybook, strip the preset's
   // typography overrides so the selected theme definition drives the fonts.
-  const isThemeOverridden = globalColorTheme != null && globalColorTheme !== preset.theme?.colorTheme
+  const isThemeOverridden = globalColorTheme != null && globalColorTheme !== preset.theme?.theme?.colorTheme
 
   // Sync body bg with preset's outer background so Storybook iframe matches
   // during transitions. Cleanup resets to CSS default when navigating away.
   const themeDef = getTheme(colorTheme)
   const defaultMode = themeDef?.defaultMode ?? 'dark'
-  const bgColor = preset.theme?.container?.outerBackground
+  const bgColor = preset.theme?.theme?.container?.outerBackground
     ?? themeDef?.[defaultMode]?.background
   useLayoutEffect(() => {
     if (bgColor) document.body.style.backgroundColor = bgColor
@@ -216,13 +238,14 @@ export function PresetPageStory({
   }, [bgColor])
 
   // Build experience config from selected arg
+  const resolvedExp = resolveExperience(preset.experience)
   let experience: ExperienceConfig | undefined
   if (experienceArg !== 'none') {
     experience = { id: experienceArg }
     // Carry preset's sectionBehaviours only when the selected experience
     // matches the preset's own (other experiences define their own defaults)
-    if (preset.experience && experienceArg === preset.experience.id) {
-      experience.sectionBehaviours = preset.experience.sectionBehaviours
+    if (resolvedExp.id && experienceArg === resolvedExp.id) {
+      experience.sectionBehaviours = resolvedExp.sectionBehaviours
     }
   }
 
@@ -268,10 +291,10 @@ export function PresetPageStory({
   if (introArg !== 'none') {
     if (introArg === PRESET_DEFAULT) {
       // Use preset's inline IntroConfig directly
-      if (preset.experience?.intro && isInlineIntro(preset.experience.intro)) {
-        intro = preset.experience.intro as IntroConfig
-      } else if (preset.experience?.intro && isPresetIntroRef(preset.experience.intro)) {
-        intro = resolvePresetIntro(preset.experience.intro) ?? undefined
+      if (resolvedExp.intro && isInlineIntro(resolvedExp.intro)) {
+        intro = resolvedExp.intro as IntroConfig
+      } else if (resolvedExp.intro && isPresetIntroRef(resolvedExp.intro)) {
+        intro = resolvePresetIntro(resolvedExp.intro) ?? undefined
       }
     } else {
       // Resolve from registry by sequence ID
@@ -298,12 +321,12 @@ export function PresetPageStory({
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { typography: _presetTypography, ...presetThemeRest } = preset.theme ?? {}
+  const { typography: _presetTypography, ...presetThemeRest } = preset.theme?.theme ?? {}
   const themeOverride = {
-    ...(isThemeOverridden ? presetThemeRest : preset.theme),
+    ...(isThemeOverridden ? presetThemeRest : preset.theme?.theme),
     colorTheme,
     ...(Object.keys(containerOverrides).length > 0 ? {
-      container: { ...preset.theme?.container, ...containerOverrides },
+      container: { ...preset.theme?.theme?.container, ...containerOverrides },
     } : {}),
   }
 
@@ -348,8 +371,11 @@ export function presetStoryConfig(presetId: string, name: string, preset?: SiteP
   const introIds = getAllIntroSequenceMetas().map(m => m.id)
   const introOptions = ['none', ...introIds]
 
+  // Resolve experience fields for this preset
+  const configExp = preset ? resolveExperience(preset.experience) : { id: undefined, sectionBehaviours: undefined, intro: undefined }
+
   // Detect if preset has an inline intro (not a registered sequence ref)
-  const hasInlineIntro = preset?.experience?.intro && isInlineIntro(preset.experience.intro)
+  const hasInlineIntro = configExp.intro && isInlineIntro(configExp.intro)
   if (hasInlineIntro) {
     introOptions.splice(1, 0, PRESET_DEFAULT) // after 'none'
   }
@@ -373,7 +399,7 @@ export function presetStoryConfig(presetId: string, name: string, preset?: SiteP
   // Collect section IDs from preset pages (used for pinnedSections options + {section} template expansion)
   const sectionIds: string[] = []
   if (preset) {
-    for (const page of Object.values(preset.pages)) {
+    for (const page of Object.values(preset.content.pages)) {
       for (const section of page.sections) {
         if (section.id) sectionIds.push(section.id)
       }
@@ -406,8 +432,9 @@ export function presetStoryConfig(presetId: string, name: string, preset?: SiteP
 
   // Source 2: All registered presets (covers lazy experiences + preset-supplied behaviours)
   for (const { preset: p } of getAllPresets()) {
-    if (p.experience?.sectionBehaviours) {
-      addBehaviours(p.experience.id, p.experience.sectionBehaviours as Record<string, BehaviourAssignment[]>)
+    const pExp = resolveExperience(p.experience)
+    if (pExp.id && pExp.sectionBehaviours) {
+      addBehaviours(pExp.id, pExp.sectionBehaviours as Record<string, BehaviourAssignment[]>)
     }
   }
 
@@ -441,8 +468,8 @@ export function presetStoryConfig(presetId: string, name: string, preset?: SiteP
 
   // Derive default pinned sections from preset's own cover-scroll config
   const defaultPinnedSections: string[] = []
-  if (preset?.experience?.id === 'cover-scroll' && preset.experience.sectionBehaviours) {
-    for (const [sectionId, assignments] of Object.entries(preset.experience.sectionBehaviours)) {
+  if (configExp.id === 'cover-scroll' && configExp.sectionBehaviours) {
+    for (const [sectionId, assignments] of Object.entries(configExp.sectionBehaviours)) {
       const arr = assignments as BehaviourAssignment[]
       if (arr.some(a => a.pinned)) defaultPinnedSections.push(sectionId)
     }
@@ -468,11 +495,11 @@ export function presetStoryConfig(presetId: string, name: string, preset?: SiteP
   const sectionGapOptions = ['none', 'tight', 'normal', 'loose']
 
   // Derive defaults from preset config
-  const defaultExperience = preset?.experience?.id ?? 'none'
+  const defaultExperience = configExp.id ?? 'none'
   const defaultIntro = (() => {
-    if (!preset?.experience?.intro) return 'none'
-    if (isPresetIntroRef(preset.experience.intro)) return preset.experience.intro.sequence
-    if (isInlineIntro(preset.experience.intro)) return PRESET_DEFAULT
+    if (!configExp.intro) return 'none'
+    if (isPresetIntroRef(configExp.intro)) return configExp.intro.sequence
+    if (isInlineIntro(configExp.intro)) return PRESET_DEFAULT
     return 'none'
   })()
 
@@ -482,8 +509,8 @@ export function presetStoryConfig(presetId: string, name: string, preset?: SiteP
       experience: defaultExperience,
       intro: defaultIntro,
       pinnedSections: defaultPinnedSections,
-      sectionGap: preset?.theme?.container?.sectionGap ?? 'none',
-      sectionGapScale: preset?.theme?.container?.sectionGapScale ?? 1,
+      sectionGap: preset?.theme?.theme?.container?.sectionGap ?? 'none',
+      sectionGapScale: preset?.theme?.theme?.container?.sectionGapScale ?? 1,
       ...introSettingDefaults,
       ...experienceSettingDefaults,
     },

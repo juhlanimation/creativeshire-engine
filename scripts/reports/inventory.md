@@ -1,6 +1,6 @@
 # Creativeshire Engine Inventory
 
-**Generated:** 20/02/2026, 15:03:32
+**Generated:** 26/02/2026, 10:11:33
 
 ## Summary
 
@@ -8,17 +8,18 @@
 |----------|-------|
 | Widgets: Primitives | 5 |
 | Widgets: Layout | 7 |
-| Widgets: Interactive | 3 |
+| Widgets: Interactive | 4 |
 | Sections | 14 |
 | Chrome: Patterns | 8 |
 | Chrome: Overlays | 5 |
-| Behaviours | 0 |
+| Behaviours | 21 |
 | Effects | 11 |
 | Experiences | 1 |
+| Transitions | 1 |
 | Drivers | 6 |
 | Triggers | 5 |
 | Presets | 4 |
-| **Total** | **69** |
+| **Total** | **92** |
 
 ---
 
@@ -58,8 +59,9 @@
 
 | Component | Path | index | types | meta | styles | CMS Editable |
 |-----------|------|:-----:|:-----:|:----:|:------:|:-------------|
+| **ContactBar** | `content/widgets/interactive/ContactBar` | ✅ | ✅ | ✅ | ✅ | `links` |
 | **EmailCopy** | `content/widgets/interactive/EmailCopy` | ✅ | ✅ | ✅ | ✅ | `email`, `label` |
-| **Video** | `content/widgets/interactive/Video` | ✅ | ✅ | ✅ | ✅ | `src`, `poster`, `alt`, `posterTime`, `loopStartTime`, `videoUrl` |
+| **Video** | `content/widgets/interactive/Video` | ✅ | ✅ | ✅ | ✅ | `src`, `poster`, `alt`, `posterTime`, `loopStartTime`, `overlayTitle`, `videoUrl` |
 | **VideoPlayer** | `content/widgets/interactive/VideoPlayer` | ✅ | ✅ | ✅ | ✅ | `src`, `poster`, `autoPlay`, `startTime` |
 
 ---
@@ -75,14 +77,14 @@
 | **ContentPricing** | `content/sections/patterns/ContentPricing` | ✅ | ✅ | ✅ | ✅ | `plans[]` |
 | **HeroTitle** | `content/sections/patterns/HeroTitle` | ✅ | ✅ | ✅ | ✅ | — |
 | **HeroVideo** | `content/sections/patterns/HeroVideo` | ✅ | ✅ | ✅ | ✅ | — |
-| **ProjectCompare** | `content/sections/patterns/ProjectCompare` | ✅ | ✅ | ✅ | ✅ | `beforeVideo`, `afterVideo`, `description` |
-| **ProjectExpand** | `content/sections/patterns/ProjectExpand` | ✅ | ✅ | ✅ | ✅ | `videos`, `videos[]` |
+| **ProjectCompare** | `content/sections/patterns/ProjectCompare` | ✅ | ✅ | ✅ | ✅ | — |
+| **ProjectExpand** | `content/sections/patterns/ProjectExpand` | ✅ | ✅ | ✅ | ✅ | `videos[]` |
 | **ProjectFeatured** | `content/sections/patterns/ProjectFeatured` | ✅ | ✅ | ✅ | ✅ | — |
-| **ProjectGallery** | `content/sections/patterns/ProjectGallery` | ✅ | ✅ | ✅ | ✅ | `projects`, `projects[]` |
-| **ProjectShowcase** | `content/sections/patterns/ProjectShowcase` | ✅ | ✅ | ✅ | ✅ | `studio`, `role`, `videoSrc` |
+| **ProjectGallery** | `content/sections/patterns/ProjectGallery` | ✅ | ✅ | ✅ | ✅ | `projects[]` |
+| **ProjectShowcase** | `content/sections/patterns/ProjectShowcase` | ✅ | ✅ | ✅ | ✅ | — |
 | **ProjectStrip** | `content/sections/patterns/ProjectStrip` | ✅ | ✅ | ✅ | ✅ | — |
-| **ProjectTabs** | `content/sections/patterns/ProjectTabs` | ✅ | ✅ | ✅ | ✅ | `tabs`, `tabs[]` |
-| **ProjectVideoGrid** | `content/sections/patterns/ProjectVideoGrid` | ✅ | ✅ | ✅ | ✅ | `videos`, `videos[]` |
+| **ProjectTabs** | `content/sections/patterns/ProjectTabs` | ✅ | ✅ | ✅ | ✅ | `tabs[]` |
+| **ProjectVideoGrid** | `content/sections/patterns/ProjectVideoGrid` | ✅ | ✅ | ✅ | ✅ | `videos[]` |
 | **TeamShowcase** | `content/sections/patterns/TeamShowcase` | ✅ | ✅ | ✅ | ✅ | `members[]` |
 
 ---
@@ -93,13 +95,13 @@
 
 | Component | Path | index | types | meta | styles | CMS Editable |
 |-----------|------|:-----:|:-----:|:----:|:------:|:-------------|
-| **BrandFooter** | `content/chrome/patterns/BrandFooter` | ✅ | ✅ | ✅ | ✅ | `brandName`, `navLinks`, `email`, `phone`, `phoneDisplay`, `address`, `copyright` |
-| **CenteredNav** | `content/chrome/patterns/CenteredNav` | ✅ | ✅ | ✅ | — | `brandName`, `navLinks` |
-| **ContactFooter** | `content/chrome/patterns/ContactFooter` | ✅ | ✅ | ✅ | ✅ | `navLinks`, `contactHeading`, `contactEmail`, `linkedinUrl`, `studioHeading`, `studioUrl`, `studioEmail`, `copyright` |
-| **CursorTracker** | `content/chrome/patterns/CursorTracker` | ✅ | ✅ | ✅ | — | `label` |
-| **FixedNav** | `content/chrome/patterns/FixedNav` | ✅ | ✅ | ✅ | ✅ | `siteTitle`, `navLinks`, `logo` |
-| **FloatingContact** | `content/chrome/patterns/FloatingContact` | ✅ | ✅ | ✅ | — | `label`, `email` |
-| **MinimalNav** | `content/chrome/patterns/MinimalNav` | ✅ | ✅ | ✅ | ✅ | `navLinks`, `email` |
+| **BrandFooter** | `content/chrome/patterns/BrandFooter` | ✅ | ✅ | ✅ | ✅ | — |
+| **CenteredNav** | `content/chrome/patterns/CenteredNav` | ✅ | ✅ | ✅ | — | — |
+| **ContactFooter** | `content/chrome/patterns/ContactFooter` | ✅ | ✅ | ✅ | ✅ | — |
+| **CursorTracker** | `content/chrome/patterns/CursorTracker` | ✅ | ✅ | ✅ | — | — |
+| **FixedNav** | `content/chrome/patterns/FixedNav` | ✅ | ✅ | ✅ | ✅ | — |
+| **FloatingContact** | `content/chrome/patterns/FloatingContact` | ✅ | ✅ | ✅ | — | — |
+| **MinimalNav** | `content/chrome/patterns/MinimalNav` | ✅ | ✅ | ✅ | ✅ | — |
 | **VideoModal** | `content/chrome/patterns/VideoModal` | ✅ | ✅ | ✅ | — | — |
 
 ---
@@ -122,7 +124,29 @@
 
 > L2 trigger-based behaviours (scroll/, hover/, visibility/, etc.)
 
-*No components*
+| Component | Path | index | types | meta | styles | CMS Editable |
+|-----------|------|:-----:|:-----:|:----:|:------:|:-------------|
+| **scroll/collapse** | `experience/behaviours/scroll/collapse` | ✅ | ❌ | ✅ | — | — |
+| **scroll/color-shift** | `experience/behaviours/scroll/color-shift` | ✅ | ❌ | ✅ | — | — |
+| **scroll/cover-progress** | `experience/behaviours/scroll/cover-progress` | ✅ | ❌ | ✅ | — | — |
+| **scroll/fade** | `experience/behaviours/scroll/fade` | ✅ | ❌ | ✅ | — | — |
+| **scroll/fade-out** | `experience/behaviours/scroll/fade-out` | ✅ | ❌ | ✅ | — | — |
+| **scroll/image-cycle** | `experience/behaviours/scroll/image-cycle` | ✅ | ❌ | ✅ | — | — |
+| **scroll/progress** | `experience/behaviours/scroll/progress` | ✅ | ❌ | ✅ | — | — |
+| **scroll/reveal** | `experience/behaviours/scroll/reveal` | ✅ | ❌ | ✅ | — | — |
+| **hover/expand** | `experience/behaviours/hover/expand` | ✅ | ❌ | ✅ | — | — |
+| **hover/reveal** | `experience/behaviours/hover/reveal` | ✅ | ❌ | ✅ | — | — |
+| **hover/scale** | `experience/behaviours/hover/scale` | ✅ | ❌ | ✅ | — | — |
+| **visibility/center** | `experience/behaviours/visibility/center` | ✅ | ❌ | ✅ | — | — |
+| **visibility/fade-in** | `experience/behaviours/visibility/fade-in` | ✅ | ❌ | ✅ | — | — |
+| **animation/marquee** | `experience/behaviours/animation/marquee` | ✅ | ❌ | ✅ | — | — |
+| **interaction/toggle** | `experience/behaviours/interaction/toggle` | ✅ | ❌ | ✅ | — | — |
+| **video/frame** | `experience/behaviours/video/frame` | ✅ | ❌ | ✅ | — | — |
+| **intro/chrome-reveal** | `experience/behaviours/intro/chrome-reveal` | ✅ | ❌ | ✅ | — | — |
+| **intro/content-reveal** | `experience/behaviours/intro/content-reveal` | ✅ | ❌ | ✅ | — | — |
+| **intro/scroll-indicator** | `experience/behaviours/intro/scroll-indicator` | ✅ | ❌ | ✅ | — | — |
+| **intro/step** | `experience/behaviours/intro/step` | ✅ | ❌ | ✅ | — | — |
+| **intro/text-reveal** | `experience/behaviours/intro/text-reveal` | ✅ | ❌ | ✅ | — | — |
 
 ---
 
@@ -132,9 +156,9 @@
 
 | Name | Path |
 |------|------|
-| **color-shift/color-shift** | `experience/effects/color-shift/color-shift.css` |
 | **emphasis/pulse** | `experience/effects/emphasis/pulse.css` |
 | **emphasis/spin** | `experience/effects/emphasis/spin.css` |
+| **color-shift/color-shift** | `experience/effects/color-shift/color-shift.css` |
 | **fade/fade** | `experience/effects/fade/fade.css` |
 | **marquee/marquee-scroll** | `experience/effects/marquee/marquee-scroll.css` |
 | **mask/reveal** | `experience/effects/mask/reveal.css` |
@@ -152,7 +176,17 @@
 
 | Name | Path |
 |------|------|
-| **createExperienceStore** | `experience/experiences/createExperienceStore.ts` |
+| **createExperienceStore** | `experience/compositions/createExperienceStore.ts` |
+
+---
+
+## Transitions
+
+> Page transition definitions (fade, etc.)
+
+| Component | Path | index | types | meta | styles | CMS Editable |
+|-----------|------|:-----:|:-----:|:----:|:------:|:-------------|
+| **fade** | `experience/transitions/fade` | ✅ | ❌ | ✅ | — | — |
 
 ---
 
@@ -319,6 +353,8 @@
 | `year` | `string` | ✅ | Project year |
 | `studio` | `string` | ✅ | Studio name |
 | `url` | `string` | — | External URL (optional) |
+| `role` | `string` | — | Role in the project (e.g. "Animation Lead") |
+| `posterTime` | `number` | — | Time in seconds to seek to for video poster frame |
 
 ### `IndexNavItem`
 
@@ -328,6 +364,7 @@
 |-------|------|:--------:|-------------|
 | `label` | `string` | ✅ | Display label for the button |
 | `value` | `string \| number` | — | Optional value associated with this item |
+| `videoSrc` | `string` | — | Optional video source for shot switching |
 
 ### `LogoItem`
 
@@ -450,6 +487,16 @@
 | `videoPoster` | `string` | — | Video poster/thumbnail |
 | `href` | `string` | — | External link URL (opens on click when active) |
 
+### `SocialLink`
+
+**Used by:** ContactBar
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `platform` | `SocialPlatform` | ✅ | Platform identifier — determines icon and behaviour (email = copy-to-clipboard) |
+| `url` | `string` | ✅ | URL for link platforms, or email address for 'email' platform |
+| `label` | `string` | — | Accessible label override (defaults to platform name) |
+
 ### `TabItem`
 
 **Used by:** TabbedContent
@@ -477,5 +524,47 @@
 |-------|------|:--------:|-------------|
 | `src` | `string` | ✅ | Video source URL |
 | `title` | `string` | ✅ | Video title (for hover display) |
-| `aspectRatio` | `'16:9' \| '9:16' \| '1:1'` | ✅ | Aspect ratio: '16:9' (horizontal), '9:16' (vertical), '1:1' (square) |
-| `column` | `'left' \| 'right'` | ✅ | Grid column assignment |
+| `aspectRatio` | `'16/9' \| '9/16' \| '1/1'` | ✅ | Aspect ratio in CSS-native format |
+| `poster` | `string` | — | Poster/thumbnail image shown when not hovering |
+| `posterTime` | `number` | — | Time in seconds to seek to for initial frame display (when no poster image) |
+
+## Quick Reference
+
+### Widgets: Primitives (5)
+Button, Icon, Image, Link, Text
+
+### Widgets: Layout (7)
+Box, Container, Flex, Grid, Marquee, Split, Stack
+
+### Widgets: Interactive (4)
+ContactBar, EmailCopy, Video, VideoPlayer
+
+### Sections (14)
+AboutBio, AboutCollage, ContentPricing, HeroTitle, HeroVideo, ProjectCompare, ProjectExpand, ProjectFeatured, ProjectGallery, ProjectShowcase, ProjectStrip, ProjectTabs, ProjectVideoGrid, TeamShowcase
+
+### Chrome: Patterns (8)
+BrandFooter, CenteredNav, ContactFooter, CursorTracker, FixedNav, FloatingContact, MinimalNav, VideoModal
+
+### Chrome: Overlays (5)
+CursorLabel, FixedCard, Modal, NavTimeline, SlideIndicators
+
+### Behaviours (21)
+scroll/collapse, scroll/color-shift, scroll/cover-progress, scroll/fade, scroll/fade-out, scroll/image-cycle, scroll/progress, scroll/reveal, hover/expand, hover/reveal, hover/scale, visibility/center, visibility/fade-in, animation/marquee, interaction/toggle, video/frame, intro/chrome-reveal, intro/content-reveal, intro/scroll-indicator, intro/step, intro/text-reveal
+
+### Effects (11)
+emphasis/pulse, emphasis/spin, color-shift/color-shift, fade/fade, marquee/marquee-scroll, mask/reveal, mask/wipe, overlay/overlay-darken, transform/scale, transform/slide, reveal/clip-path
+
+### Experiences (1)
+createExperienceStore
+
+### Transitions (1)
+fade
+
+### Drivers (6)
+getDriver, MomentumDriver, ScrollDriver, SmoothScrollContext, useScrollFadeDriver, useSmoothScrollContainer
+
+### Triggers (5)
+useCursorPosition, useIntersection, usePrefersReducedMotion, useScrollProgress, useViewport
+
+### Presets (4)
+loft, noir, prism, test-multipage

@@ -7,7 +7,9 @@
 import type { ComponentType } from 'react'
 import type { SerializableValue } from '../../schema/types'
 import type { IntroConfig } from '../../intro/types'
-import type { ExperienceCategory } from './registry'
+import type { CompositionCategory } from './registry'
+/** @deprecated Use CompositionCategory */
+type ExperienceCategory = CompositionCategory
 
 // =============================================================================
 // Experience State Types

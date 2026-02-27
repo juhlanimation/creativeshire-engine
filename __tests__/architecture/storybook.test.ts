@@ -134,9 +134,9 @@ async function validateStoryStructure(
       violations.push(`${name}: no named story exports (need at least one, e.g. Default)`)
     }
 
-    // 5. Must import meta from ./meta
-    if (rule.requiresMeta && !content.includes("from './meta'")) {
-      violations.push(`${name}: should import meta from './meta'`)
+    // 5. Must import meta from ./meta or ./definition (consolidated sections)
+    if (rule.requiresMeta && !content.includes("from './meta'") && !content.includes("from './definition'")) {
+      violations.push(`${name}: should import meta from './meta' or './definition'`)
     }
 
     // 6. Must import factory from ./index

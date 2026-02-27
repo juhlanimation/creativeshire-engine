@@ -13,9 +13,11 @@
 import React, { useRef, useEffect, useMemo, useLayoutEffect } from 'react'
 import type { StoreApi } from 'zustand'
 import type { ReactNode } from 'react'
-import type { Experience, ExperienceState } from '../../engine/experience/experiences/types'
-import { ExperienceProvider } from '../../engine/experience/experiences/ExperienceProvider'
+import type { Experience, ExperienceState } from '../../engine/experience/compositions/types'
+import { ExperienceProvider } from '../../engine/experience/compositions/ExperienceProvider'
 import { ContainerProvider } from '../../engine/interface/ContainerContext'
+import { WidgetRendererProvider } from '../../engine/renderer/WidgetRendererContext'
+import { WidgetRenderer } from '../../engine/renderer/WidgetRenderer'
 import { SiteContainerProvider, useSiteContainer } from '../../engine/renderer/SiteContainerContext'
 import { bareExperience } from '../mocks/context'
 import { buildThemeStyle } from '../../engine/renderer/SiteRenderer'
@@ -96,6 +98,7 @@ export function OverlayContext({
   }, [palette?.background, palette?.text])
 
   return (
+    <WidgetRendererProvider renderer={WidgetRenderer}>
     <SiteContainerProvider>
       <div ref={containerRef} data-engine-root data-site-renderer style={rootStyle}>
         <ContainerRegistrar containerRef={containerRef} />
@@ -108,5 +111,6 @@ export function OverlayContext({
         </ExperienceProvider>
       </div>
     </SiteContainerProvider>
+    </WidgetRendererProvider>
   )
 }

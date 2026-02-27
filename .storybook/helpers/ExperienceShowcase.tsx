@@ -1,5 +1,5 @@
 import React from 'react'
-import type { Experience, BehaviourAssignment } from '../../engine/experience/experiences/types'
+import type { Experience, BehaviourAssignment } from '../../engine/experience/compositions/types'
 
 interface ExperienceShowcaseProps {
   experience: Experience

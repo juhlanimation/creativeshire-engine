@@ -1,24 +1,27 @@
 /**
- * Experience registry with lazy loading support.
+ * Composition registry with lazy loading support.
  *
  * Supports two registration modes:
- * 1. Eager: Experience object registered directly (current behavior)
- * 2. Lazy: Loader function registered, experience loaded on demand
+ * 1. Eager: Composition object registered directly (current behavior)
+ * 2. Lazy: Loader function registered, composition loaded on demand
  */
 
-import type { Experience } from './types'
-
-/**
- * Experience category for organization in CMS.
- */
-export type ExperienceCategory = 'presentation' | 'scroll-driven' | 'physics' | 'simple'
+import type { ExperienceComposition } from './types'
 
 /**
- * Lightweight metadata for listing without loading full experience.
- * Used for CMS UI, experience selection, etc.
+ * Composition category for organization in CMS.
  */
-export interface ExperienceMeta {
-  /** Unique experience identifier */
+export type CompositionCategory = 'presentation' | 'scroll-driven' | 'physics' | 'simple'
+
+/** @deprecated Use CompositionCategory */
+export type ExperienceCategory = CompositionCategory
+
+/**
+ * Lightweight metadata for listing without loading full composition.
+ * Used for CMS UI, composition selection, etc.
+ */
+export interface CompositionMeta {
+  /** Unique composition identifier */
   id: string
   /** Human-readable name */
   name: string
@@ -29,58 +32,70 @@ export interface ExperienceMeta {
   /** Searchable tags */
   tags?: string[]
   /** Category for grouping in CMS */
-  category?: ExperienceCategory
+  category?: CompositionCategory
   /** Preview image URL */
   preview?: string
   /** Documentation URL */
   docs?: string
 }
 
+/** @deprecated Use CompositionMeta */
+export type ExperienceMeta = CompositionMeta
+
 /**
- * Helper function for defining type-safe experience metadata.
+ * Helper function for defining type-safe composition metadata.
  */
-export function defineExperienceMeta(meta: ExperienceMeta): ExperienceMeta {
+export function defineCompositionMeta(meta: CompositionMeta): CompositionMeta {
   return meta
 }
 
-/** Registry entry - either loaded experience or lazy loader */
-type RegistryEntry =
-  | { type: 'loaded'; experience: Experience }
-  | { type: 'lazy'; meta: ExperienceMeta; loader: () => Promise<Experience> }
+/** @deprecated Use defineCompositionMeta */
+export const defineExperienceMeta = defineCompositionMeta
 
-/** Registry of available experiences by ID */
+/** Registry entry - either loaded composition or lazy loader */
+type RegistryEntry =
+  | { type: 'loaded'; experience: ExperienceComposition }
+  | { type: 'lazy'; meta: CompositionMeta; loader: () => Promise<ExperienceComposition> }
+
+/** Registry of available compositions by ID */
 const registry = new Map<string, RegistryEntry>()
 
 /**
- * Register an experience eagerly.
- * Used by built-in experiences that auto-register on import.
+ * Register a composition eagerly.
+ * Used by built-in compositions that auto-register on import.
  */
-export function registerExperience(experience: Experience): void {
+export function registerComposition(experience: ExperienceComposition): void {
   if (registry.has(experience.id)) {
-    console.warn(`Experience "${experience.id}" is already registered. Overwriting.`)
+    console.warn(`Composition "${experience.id}" is already registered. Overwriting.`)
   }
   registry.set(experience.id, { type: 'loaded', experience })
 }
 
+/** @deprecated Use registerComposition */
+export const registerExperience = registerComposition
+
 /**
- * Register an experience lazily with metadata.
- * Experience code loads only when getExperienceAsync() is called.
+ * Register a composition lazily with metadata.
+ * Composition code loads only when getCompositionAsync() is called.
  */
-export function registerLazyExperience(
-  meta: ExperienceMeta,
-  loader: () => Promise<Experience>
+export function registerLazyComposition(
+  meta: CompositionMeta,
+  loader: () => Promise<ExperienceComposition>
 ): void {
   if (registry.has(meta.id)) {
-    console.warn(`Experience "${meta.id}" is already registered. Overwriting.`)
+    console.warn(`Composition "${meta.id}" is already registered. Overwriting.`)
   }
   registry.set(meta.id, { type: 'lazy', meta, loader })
 }
 
+/** @deprecated Use registerLazyComposition */
+export const registerLazyExperience = registerLazyComposition
+
 /**
- * Get an experience by ID (async to support lazy loading).
- * Loads and caches lazy experiences on first access.
+ * Get a composition by ID (async to support lazy loading).
+ * Loads and caches lazy compositions on first access.
  */
-export async function getExperienceAsync(id: string): Promise<Experience | undefined> {
+export async function getCompositionAsync(id: string): Promise<ExperienceComposition | undefined> {
   const entry = registry.get(id)
   if (!entry) return undefined
 
@@ -94,36 +109,45 @@ export async function getExperienceAsync(id: string): Promise<Experience | undef
   return experience
 }
 
+/** @deprecated Use getCompositionAsync */
+export const getExperienceAsync = getCompositionAsync
+
 /**
- * Get an experience synchronously.
- * Returns undefined for lazy experiences that haven't loaded yet.
- * Prefer getExperienceAsync() for new code.
+ * Get a composition synchronously.
+ * Returns undefined for lazy compositions that haven't loaded yet.
+ * Prefer getCompositionAsync() for new code.
  */
-export function getExperience(id: string): Experience | undefined {
+export function getComposition(id: string): ExperienceComposition | undefined {
   const entry = registry.get(id)
   if (!entry) return undefined
   if (entry.type === 'loaded') return entry.experience
   return undefined // Lazy not yet loaded
 }
 
-/**
- * Preload an experience (useful for route prefetching).
- */
-export async function preloadExperience(id: string): Promise<void> {
-  await getExperienceAsync(id)
-}
+/** @deprecated Use getComposition */
+export const getExperience = getComposition
 
 /**
- * Get all experience metadata (without loading lazy experiences).
+ * Preload a composition (useful for route prefetching).
  */
-export function getAllExperienceMetas(): ExperienceMeta[] {
+export async function preloadComposition(id: string): Promise<void> {
+  await getCompositionAsync(id)
+}
+
+/** @deprecated Use preloadComposition */
+export const preloadExperience = preloadComposition
+
+/**
+ * Get all composition metadata (without loading lazy compositions).
+ */
+export function getAllCompositionMetas(): CompositionMeta[] {
   return Array.from(registry.values()).map((entry) =>
     entry.type === 'loaded'
       ? {
           id: entry.experience.id,
           name: entry.experience.name,
           description: entry.experience.description,
-          // Include extended meta fields if defined on Experience
+          // Include extended meta fields if defined on composition
           ...(entry.experience.icon && { icon: entry.experience.icon }),
           ...(entry.experience.tags && { tags: entry.experience.tags }),
           ...(entry.experience.category && { category: entry.experience.category }),
@@ -132,53 +156,71 @@ export function getAllExperienceMetas(): ExperienceMeta[] {
   )
 }
 
+/** @deprecated Use getAllCompositionMetas */
+export const getAllExperienceMetas = getAllCompositionMetas
+
 /**
- * Get all registered experience IDs.
+ * Get all registered composition IDs.
  */
-export function getExperienceIds(): string[] {
+export function getCompositionIds(): string[] {
   return Array.from(registry.keys())
 }
 
+/** @deprecated Use getCompositionIds */
+export const getExperienceIds = getCompositionIds
+
 /**
- * Get all registered experiences.
- * Note: This only returns loaded experiences. Lazy experiences must be loaded first.
+ * Get all registered compositions.
+ * Note: This only returns loaded compositions. Lazy compositions must be loaded first.
  */
-export function getAllExperiences(): Experience[] {
+export function getAllCompositions(): ExperienceComposition[] {
   return Array.from(registry.values())
-    .filter((entry): entry is { type: 'loaded'; experience: Experience } => entry.type === 'loaded')
+    .filter((entry): entry is { type: 'loaded'; experience: ExperienceComposition } => entry.type === 'loaded')
     .map((entry) => entry.experience)
 }
+
+/** @deprecated Use getAllCompositions */
+export const getAllExperiences = getAllCompositions
 
 // =============================================================================
 // URL Override Helpers (Dev Mode)
 // =============================================================================
 
-/** Query param name for experience override */
-export const DEV_EXPERIENCE_PARAM = '_experience'
+/** Query param name for composition override */
+export const DEV_COMPOSITION_PARAM = '_experience'
+
+/** @deprecated Use DEV_COMPOSITION_PARAM */
+export const DEV_EXPERIENCE_PARAM = DEV_COMPOSITION_PARAM
 
 /**
- * Get current experience override from URL.
+ * Get current composition override from URL.
  */
-export function getExperienceOverride(): string | null {
+export function getCompositionOverride(): string | null {
   if (typeof window === 'undefined') return null
   const params = new URLSearchParams(window.location.search)
-  return params.get(DEV_EXPERIENCE_PARAM)
+  return params.get(DEV_COMPOSITION_PARAM)
 }
 
+/** @deprecated Use getCompositionOverride */
+export const getExperienceOverride = getCompositionOverride
+
 /**
- * Set experience override in URL without full page reload.
+ * Set composition override in URL without full page reload.
  */
-export function setExperienceOverride(id: string | null): void {
+export function setCompositionOverride(id: string | null): void {
   if (typeof window === 'undefined') return
 
   const url = new URL(window.location.href)
   if (id) {
-    url.searchParams.set(DEV_EXPERIENCE_PARAM, id)
+    url.searchParams.set(DEV_COMPOSITION_PARAM, id)
   } else {
-    url.searchParams.delete(DEV_EXPERIENCE_PARAM)
+    url.searchParams.delete(DEV_COMPOSITION_PARAM)
   }
 
   // Update URL without reload, then trigger re-render via custom event
   window.history.replaceState({}, '', url.toString())
   window.dispatchEvent(new CustomEvent('experienceOverrideChange', { detail: id }))
 }
+
+/** @deprecated Use setCompositionOverride */
+export const setExperienceOverride = setCompositionOverride

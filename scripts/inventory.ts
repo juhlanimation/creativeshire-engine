@@ -5,7 +5,8 @@
  * Generates a comprehensive report of all engine components.
  *
  * Usage:
- *   npx tsx scripts/inventory.ts
+ *   npx tsx scripts/inventory.ts          # Full report → scripts/reports/inventory.md
+ *   npx tsx scripts/inventory.ts --quick   # Quick reference → stdout
  */
 
 import fs from 'fs/promises'
@@ -319,10 +320,15 @@ async function generateInventory(): Promise<CategoryInfo[]> {
   })
 
   // Behaviours
-  const behaviourFolders = ['scroll', 'hover', 'visibility', 'animation', 'interaction']
+  // Behaviours can be either flat files (scroll/fade.ts) or folders (scroll/fade/index.ts)
+  const behaviourCategories = ['scroll', 'hover', 'visibility', 'animation', 'interaction', 'video', 'intro']
   const behaviours: ComponentInfo[] = []
-  for (const trigger of behaviourFolders) {
+  for (const trigger of behaviourCategories) {
+    // Scan for both flat .ts files and subdirectories with index.ts
     const files = await getFiles(`experience/behaviours/${trigger}/*.ts`)
+    const folders = await getFolders(`experience/behaviours/${trigger}/*`)
+
+    // Flat files (legacy pattern)
     for (const file of files) {
       if (file.endsWith('index.ts') || file.endsWith('types.ts')) continue
       const name = path.basename(file, '.ts')
@@ -337,6 +343,24 @@ async function generateInventory(): Promise<CategoryInfo[]> {
         bindingProps: [],
         bindableProps: [],
         files: [path.basename(file)],
+      })
+    }
+
+    // Folder-based behaviours (new pattern: {category}/{name}/index.ts)
+    for (const folder of folders) {
+      const name = path.basename(folder)
+      const folderFiles = await fg('*', { cwd: folder, onlyFiles: true })
+      behaviours.push({
+        name: `${trigger}/${name}`,
+        path: path.relative(ENGINE, folder).replace(/\\/g, '/'),
+        hasIndex: folderFiles.some(f => f.startsWith('index.')),
+        hasTypes: folderFiles.includes('types.ts'),
+        hasMeta: folderFiles.includes('meta.ts'),
+        hasStyles: folderFiles.some(f => f.endsWith('.css')),
+        hasDataBinding: false,
+        bindingProps: [],
+        bindableProps: [],
+        files: folderFiles,
       })
     }
   }
@@ -369,7 +393,7 @@ async function generateInventory(): Promise<CategoryInfo[]> {
   })
 
   // Experiences
-  const experiences = await getFiles('experience/experiences/*.ts')
+  const experiences = await getFiles('experience/compositions/*.ts')
   categories.push({
     category: 'Experiences',
     description: 'Experience definitions (stacking, slideshow, infinite-carousel)',
@@ -387,6 +411,22 @@ async function generateInventory(): Promise<CategoryInfo[]> {
         bindableProps: [],
         files: [path.basename(file)],
       })),
+  })
+
+  // Transitions (page transition definitions — each is a folder with index.ts + meta.ts)
+  const transitionFolders = await getFolders('experience/transitions/*')
+  categories.push({
+    category: 'Transitions',
+    description: 'Page transition definitions (fade, etc.)',
+    components: await Promise.all(
+      transitionFolders
+        .filter(f => {
+          const name = path.basename(f)
+          // Exclude infrastructure folders (configs is configuration, not a transition)
+          return name !== 'configs'
+        })
+        .map(getComponentInfo)
+    ),
   })
 
   // Drivers
@@ -601,10 +641,41 @@ function generateSchemasMarkdown(schemas: DataSchema[]): string {
   return lines.join('\n')
 }
 
+/**
+ * Generate a flat, agent-scannable quick reference summary.
+ * Comma-separated lists by category — easy to grep or feed to an LLM.
+ */
+function generateQuickReference(categories: CategoryInfo[]): string {
+  const lines: string[] = []
+
+  lines.push('## Quick Reference')
+  lines.push('')
+
+  for (const cat of categories) {
+    const count = cat.components.length
+    const names = cat.components.map(c => c.name).join(', ')
+    lines.push(`### ${cat.category} (${count})`)
+    lines.push(names)
+    lines.push('')
+  }
+
+  return lines.join('\n')
+}
+
 async function main() {
-  console.log('📦 Generating Engine Inventory...\n')
+  const quickMode = process.argv.includes('--quick')
 
   const categories = await generateInventory()
+
+  if (quickMode) {
+    // Quick mode: print quick reference to stdout and exit
+    const quickRef = generateQuickReference(categories)
+    console.log(quickRef)
+    return
+  }
+
+  console.log('📦 Generating Engine Inventory...\n')
+
   const schemas = await collectDataSchemas()
 
   let markdown = generateMarkdown(categories)
@@ -613,6 +684,9 @@ async function main() {
   if (schemas.length > 0) {
     markdown += '\n' + generateSchemasMarkdown(schemas)
   }
+
+  // Add quick reference section
+  markdown += '\n' + generateQuickReference(categories)
 
   // Write report
   const reportsDir = path.join(ROOT, 'scripts', 'reports')

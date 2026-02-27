@@ -29,3 +29,20 @@ Before creating:
 - Is the name generic? No widget names (not `project-card-hover`).
 
 Spec: [behaviour.spec.md](/.claude/skills/engine/specs/components/experience/behaviour.spec.md)
+
+## Creating a New Behaviour
+
+```bash
+npm run create:behaviour {category}/{name}
+# Example: npm run create:behaviour scroll/parallax
+```
+
+This generates index.ts + meta.ts and auto-registers in barrel exports.
+
+## Behaviour Definition Checklist
+
+1. Meta: id, name, description, category, tags
+2. requires: what state keys does compute() need?
+3. compute(): maps state → CSS variables (no DOM, no transitions)
+4. cssTemplate: optional static CSS for the element
+5. Handle prefersReducedMotion (instant values, no animation)

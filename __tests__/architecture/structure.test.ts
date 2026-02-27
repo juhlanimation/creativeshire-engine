@@ -737,20 +737,20 @@ describe('Component Structure Validation', () => {
       expect(violations).toHaveLength(0)
     })
 
-    it('all section patterns have types.ts', async () => {
+    it('all section patterns have types.ts or definition.ts', async () => {
       const folders = await getFolders('content/sections/patterns/*')
       const violations: string[] = []
 
       for (const folder of folders) {
-        const typesPath = path.join(folder, 'types.ts')
-        const exists = await fileExists(typesPath)
-        if (!exists) {
-          violations.push(`${relativePath(folder)} missing types.ts`)
+        const hasTypes = await fileExists(path.join(folder, 'types.ts'))
+        const hasDefinition = await fileExists(path.join(folder, 'definition.ts'))
+        if (!hasTypes && !hasDefinition) {
+          violations.push(`${relativePath(folder)} missing types.ts or definition.ts`)
         }
       }
 
       if (violations.length > 0) {
-        console.log('Missing types.ts files:')
+        console.log('Missing types.ts/definition.ts files:')
         violations.forEach((v) => console.log(`  - ${v}`))
       }
 

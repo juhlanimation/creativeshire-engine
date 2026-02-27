@@ -38,7 +38,7 @@ engine/experience/modes/
 │   ├── index.ts              # Mode definition
 │   └── store.ts              # Zustand store factory
 
-engine/experience/experiences/
+engine/experience/compositions/
 ├── types.ts                  # ExperienceDefinition interface
 ├── registry.ts               # Experience collection
 └── {experience-name}.ts      # Experience definition

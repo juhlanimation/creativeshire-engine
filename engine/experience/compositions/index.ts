@@ -1,14 +1,14 @@
 /**
- * Experiences - defines how sites behave and present content.
+ * Compositions - defines how sites behave and present content.
  *
- * An experience combines:
+ * A composition combines:
  * - Presentation model (stacking, slideshow, parallax, horizontal)
  * - Navigation configuration (wheel, keyboard, swipe)
  * - Behaviour defaults for sections/widgets
  * - Chrome (indicators, navigation UI)
  *
- * Experiences are registered lazily - metadata loads immediately,
- * full experience code loads on first use.
+ * Compositions are registered lazily - metadata loads immediately,
+ * full composition code loads on first use.
  */
 
 // Context provider
@@ -16,6 +16,21 @@ export { ExperienceProvider, useExperience } from './ExperienceProvider'
 
 // Registry (with lazy loading support)
 export {
+  registerComposition,
+  registerLazyComposition,
+  getComposition,
+  getCompositionAsync,
+  preloadComposition,
+  getCompositionIds,
+  getAllCompositions,
+  getAllCompositionMetas,
+  DEV_COMPOSITION_PARAM,
+  getCompositionOverride,
+  setCompositionOverride,
+  defineCompositionMeta,
+  type CompositionMeta,
+  type CompositionCategory,
+  // Deprecated aliases
   registerExperience,
   registerLazyExperience,
   getExperience,
@@ -27,10 +42,12 @@ export {
   DEV_EXPERIENCE_PARAM,
   getExperienceOverride,
   setExperienceOverride,
+  defineExperienceMeta,
   type ExperienceMeta,
+  type ExperienceCategory,
 } from './registry'
 
-// Experience metadata (lightweight, always loaded)
+// Composition metadata (lightweight, always loaded)
 import { meta as simpleMeta } from './simple/meta'
 import { meta as cinematicPortfolioMeta } from './cinematic-portfolio/meta'
 import { meta as slideshowMeta } from './slideshow/meta'
@@ -41,46 +58,56 @@ import { meta as coverScrollMeta } from './cover-scroll/meta'
 export { simpleMeta, cinematicPortfolioMeta, slideshowMeta, infiniteCarouselMeta, coverScrollMeta }
 
 // Lazy registration with dynamic imports
-import { registerLazyExperience, registerExperience } from './registry'
+import { registerLazyComposition, registerComposition } from './registry'
 
-registerLazyExperience(simpleMeta, () =>
-  import('./simple').then((m) => m.simpleExperience)
+registerLazyComposition(simpleMeta, () =>
+  import('./simple').then((m) => m.simpleComposition)
 )
-registerLazyExperience(cinematicPortfolioMeta, () =>
-  import('./cinematic-portfolio').then((m) => m.cinematicPortfolioExperience)
+registerLazyComposition(cinematicPortfolioMeta, () =>
+  import('./cinematic-portfolio').then((m) => m.cinematicPortfolioComposition)
 )
-registerLazyExperience(slideshowMeta, () =>
-  import('./slideshow').then((m) => m.slideshowExperience)
+registerLazyComposition(slideshowMeta, () =>
+  import('./slideshow').then((m) => m.slideshowComposition)
 )
 // infinite-carousel is eagerly registered below (same reason as cover-scroll)
 
-// Direct exports (eagerly imports the experience)
-// Use getExperienceAsync() for lazy loading in new code
-export { simpleExperience } from './simple'
-export { cinematicPortfolioExperience } from './cinematic-portfolio'
-export { slideshowExperience } from './slideshow'
-export { infiniteCarouselExperience } from './infinite-carousel'
-export { coverScrollExperience } from './cover-scroll'
+// Direct exports (eagerly imports the composition)
+// Use getCompositionAsync() for lazy loading in new code
+export { simpleComposition } from './simple'
+export { cinematicPortfolioComposition } from './cinematic-portfolio'
+export { slideshowComposition } from './slideshow'
+export { infiniteCarouselComposition } from './infinite-carousel'
+export { coverScrollComposition } from './cover-scroll'
+
+// Deprecated aliases for backward compatibility
+export { simpleComposition as simpleExperience } from './simple'
+export { cinematicPortfolioComposition as cinematicPortfolioExperience } from './cinematic-portfolio'
+export { slideshowComposition as slideshowExperience } from './slideshow'
+export { infiniteCarouselComposition as infiniteCarouselExperience } from './infinite-carousel'
+export { coverScrollComposition as coverScrollExperience } from './cover-scroll'
 
 // Eager registration for cover-scroll and infinite-carousel — must resolve synchronously
-// via getExperience() because presets use them as default experiences. Lazy loading would
-// cause a transient fallback to simpleExperience (bareMode: true), breaking intro triggers.
-import { coverScrollExperience } from './cover-scroll'
-import { infiniteCarouselExperience } from './infinite-carousel'
-registerExperience(coverScrollExperience)
-registerExperience(infiniteCarouselExperience)
+// via getComposition() because presets use them as default compositions. Lazy loading would
+// cause a transient fallback to simpleComposition (bareMode: true), breaking intro triggers.
+import { coverScrollComposition } from './cover-scroll'
+import { infiniteCarouselComposition } from './infinite-carousel'
+registerComposition(coverScrollComposition)
+registerComposition(infiniteCarouselComposition)
 
 /**
- * Ensures all experiences are registered.
+ * Ensures all compositions are registered.
  * Call at engine entry point to guarantee registration before lookups.
  * Lazy registration happens on module load, this function prevents tree-shaking.
  */
-export function ensureExperiencesRegistered(): void {
+export function ensureCompositionsRegistered(): void {
   // Lazy registrations already ran on import above.
   // This function exists so bundlers don't tree-shake them.
 }
 
-// Presentation wrapper (applies experience presentation config)
+/** @deprecated Use ensureCompositionsRegistered */
+export const ensureExperiencesRegistered = ensureCompositionsRegistered
+
+// Presentation wrapper (applies composition presentation config)
 export { PresentationWrapper } from './PresentationWrapper'
 export type { PresentationWrapperProps } from './PresentationWrapper'
 
@@ -93,6 +120,7 @@ export { createExperienceStore } from './createExperienceStore'
 // Types
 export type {
   Experience,
+  ExperienceComposition,
   ExperienceContextValue,
   ExperienceProviderProps,
   BehaviourAssignment,

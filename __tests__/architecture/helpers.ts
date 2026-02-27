@@ -431,7 +431,7 @@ export async function findThemeViolations(
   const globalExclusions = [
     'renderer/dev/DevToolsPanel/',
     'experience/effects/',
-    'experience/experiences/',
+    'experience/compositions/',
   ]
 
   const allSkips = [...globalExclusions, ...skipPaths]

@@ -4,9 +4,9 @@
  * This experience captures exactly what the noir preset does.
  */
 
-import type { Experience } from '../types'
+import type { ExperienceComposition } from '../types'
 
-export const cinematicPortfolioExperience: Experience = {
+export const cinematicPortfolioComposition: ExperienceComposition = {
   id: 'cinematic-portfolio',
   name: 'Cinematic Portfolio',
   description:

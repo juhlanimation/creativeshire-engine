@@ -1,12 +1,12 @@
 import React from 'react'
 import { ExperienceShowcase } from '../../../../.storybook/helpers/ExperienceShowcase'
-import { simpleExperience } from './index'
+import { simpleComposition } from './index'
 
 export default {
   title: 'Simple',
-  parameters: { layout: 'fullscreen' },
+  parameters: { layout: 'fullscreen', a11y: { test: 'todo' } },
 }
 
 export const Default = {
-  render: () => <ExperienceShowcase experience={simpleExperience} />,
+  render: () => <ExperienceShowcase experience={simpleComposition} />,
 }

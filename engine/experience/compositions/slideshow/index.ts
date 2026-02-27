@@ -3,10 +3,10 @@
  * Sections become slides. One visible at a time.
  */
 
-import type { Experience } from '../types'
+import type { ExperienceComposition } from '../types'
 import { NavigationInitializer } from '../../navigation/NavigationInitializer'
 
-export const slideshowExperience: Experience = {
+export const slideshowComposition: ExperienceComposition = {
   id: 'slideshow',
   name: 'Slideshow',
   description: 'Full-screen slides with navigation. Sections become slides.',

@@ -16,8 +16,8 @@ engine/
 │   ├── behaviours/   # Named by TRIGGER
 │   ├── effects/      # Named by MECHANISM
 │   ├── drivers/      # Continuous: CSS vars at 60fps (scroll, hover)
-│   ├── timeline/     # Discrete: play → complete (EffectTimeline, effect primitives, GSAP reveals)
-│   └── experiences/  # Experience definitions
+│   ├── timeline/     # Discrete: play → complete (EffectTimeline, primitives/, GSAP reveals)
+│   └── compositions/ # Composition definitions (stacking, slideshow, cover-scroll...)
 ├── presets/          # Templates (copied to site/)
 ├── renderer/         # Schema → React
 └── schema/           # TypeScript types

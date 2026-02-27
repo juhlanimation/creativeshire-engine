@@ -18,7 +18,7 @@ const META_GLOBS = [
   'engine/content/chrome/patterns/*/meta.ts',
   'engine/content/chrome/overlays/*/meta.ts',
   'engine/experience/behaviours/*/*/meta.ts',
-  'engine/experience/experiences/*/meta.ts',
+  'engine/experience/compositions/*/meta.ts',
 ]
 
 /**

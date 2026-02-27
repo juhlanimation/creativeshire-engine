@@ -276,12 +276,12 @@ describe('Intro Cross-Validation', () => {
   })
 
   describe('Schema integration', () => {
-    it('site.ts exports IntroConfig reference', async () => {
-      const sitePath = path.join(ENGINE, 'schema', 'site.ts')
-      const content = await readFile(sitePath)
+    it('experience.ts exports IntroConfig reference', async () => {
+      const experiencePath = path.join(ENGINE, 'schema', 'experience.ts')
+      const content = await readFile(experiencePath)
 
-      expect(content, 'site.ts should import IntroConfig').toContain('IntroConfig')
-      expect(content, 'site.ts should have intro field').toContain('intro?')
+      expect(content, 'experience.ts should import IntroConfig').toContain('IntroConfig')
+      expect(content, 'experience.ts should have intro field').toContain('intro?')
     })
 
     it('page.ts allows disabled intro override', async () => {
@@ -305,7 +305,7 @@ describe('Intro Cross-Validation', () => {
       const hookPath = path.join(ENGINE, 'renderer', 'hooks', 'useResolvedIntro.ts')
       const content = await readFile(hookPath)
 
-      expect(content, 'useResolvedIntro should import Experience type').toContain("from '../../experience/experiences/types'")
+      expect(content, 'useResolvedIntro should import Experience type').toContain("from '../../experience/compositions/types'")
     })
 
     it('SiteRenderer uses IntroProvider in render tree', async () => {

@@ -179,7 +179,7 @@
 
 | Concept | Location | Purpose | User Selects |
 |---------|----------|---------|--------------|
-| **Experience** | `experience/experiences/` | Wrapping rules + appended sections + constraints | Yes |
+| **Experience** | `experience/compositions/` | Wrapping rules + appended sections + constraints | Yes |
 | **Mode** | `experience/modes/` | Animation configuration (state provider) | No |
 | **Behaviour** | `experience/behaviours/` | Compute function for one effect | No |
 
@@ -245,7 +245,7 @@ Every component folder has a `meta.ts` file that provides platform UI hints:
 | Add chrome overlay | `engine/content/chrome/overlays/{Name}.tsx` |
 | Add intro pattern | `engine/intro/patterns/{name}/` |
 | Add intro trigger | `engine/intro/triggers/use{Name}.ts` |
-| Add experience definition | `engine/experience/experiences/{name}.ts` |
+| Add experience definition | `engine/experience/compositions/{name}.ts` |
 | Add animation mode | `engine/experience/modes/{name}/` |
 | Add behaviour | `engine/experience/behaviours/{name}/` |
 | Add trigger | `engine/experience/triggers/use{Name}.ts` |

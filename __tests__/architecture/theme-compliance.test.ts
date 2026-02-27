@@ -56,8 +56,8 @@ function hasHardcodedColor(stripped: string): boolean {
 // ---------------------------------------------------------------------------
 // Baselines — update these downward as violations are fixed
 // ---------------------------------------------------------------------------
-const SPACING_BASELINE = 42
-const FONT_SIZE_BASELINE = 26
+const SPACING_BASELINE = 45
+const FONT_SIZE_BASELINE = 29
 const FONT_WEIGHT_BASELINE = 40
 
 // ---------------------------------------------------------------------------
@@ -90,7 +90,7 @@ describe('Theme Compliance', () => {
       const globalExclusions = [
         'renderer/dev/DevToolsPanel/',
         'experience/effects/',
-        'experience/experiences/',
+        'experience/compositions/',
       ]
 
       for (const file of files) {

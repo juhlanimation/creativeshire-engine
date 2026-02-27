@@ -399,7 +399,7 @@ export type { InfiniteCarouselPresetProps } from "./infinite-carousel.preset";
 ```tsx
 "use client";
 
-import { InfiniteCarouselExperience } from "@/engine/experience/experiences/infinite-carousel";
+import { InfiniteCarouselExperience } from "@/engine/experience/compositions/infinite-carousel";
 import { StackBehaviour } from "@/engine/experience/behaviours/section/stack";
 import { NavTimelineChrome } from "@/engine/content/chrome/regions";
 import type { Section } from "@/types/section";

@@ -100,6 +100,10 @@ Read the relevant spec before implementing any component.
 
 When the user designs a section in Figma and asks you to implement it, follow this workflow.
 
+### 0. Check existing sections first
+
+Before creating a new section, check if an existing section matches. Read `anatomy.md` files in `engine/content/sections/patterns/*/` to find sections with matching layouts. Each anatomy doc describes the section's visual structure, widget composition, and configuration options.
+
 ### 1. Read the Figma frame
 
 Use the Figma MCP tools (`get_design_context`, `get_screenshot`) to inspect the frame. Identify the overall layout, visual hierarchy, and content elements.

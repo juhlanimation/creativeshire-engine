@@ -1,7 +1,9 @@
 import type { StorybookConfig } from '@storybook/react-vite'
+import tailwindcss from '@tailwindcss/vite'
 import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { saveDefaultsPlugin } from './plugins/save-defaults.ts'
+import { exportSitePlugin } from './plugins/export-site.ts'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -38,9 +40,34 @@ const config: StorybookConfig = {
       titlePrefix: 'L2 Experience/Behaviours',
     },
     {
-      directory: '../engine/experience/experiences',
+      directory: '../engine/experience/effects',
       files: '**/*.stories.tsx',
-      titlePrefix: 'L2 Experience/Experiences',
+      titlePrefix: 'L2 Experience/Effects',
+    },
+    {
+      directory: '../engine/experience/timeline',
+      files: '**/*.stories.tsx',
+      titlePrefix: 'L2 Experience/Timeline',
+    },
+    {
+      directory: '../engine/experience/transitions',
+      files: '**/*.stories.tsx',
+      titlePrefix: 'L2 Experience/Transitions',
+    },
+    {
+      directory: '../engine/experience/drivers',
+      files: '**/*.stories.tsx',
+      titlePrefix: 'Infrastructure',
+    },
+    {
+      directory: '../engine/experience/triggers',
+      files: '**/*.stories.tsx',
+      titlePrefix: 'Infrastructure',
+    },
+    {
+      directory: '../engine/experience/compositions',
+      files: '**/*.stories.tsx',
+      titlePrefix: 'L2 Experience/Compositions',
     },
     {
       directory: '../engine/intro/sequences',
@@ -69,18 +96,11 @@ const config: StorybookConfig = {
     // Match tsconfig paths: @/* -> ./*
     aliases['@'] = root
 
-    // Mock Next.js modules (widgets use next/link, next/image, next/navigation)
-    aliases['next/link'] = resolve(__dirname, 'mocks/next-link.tsx')
-    aliases['next/image'] = resolve(__dirname, 'mocks/next-image.tsx')
-    aliases['next/navigation'] = resolve(__dirname, 'mocks/next-navigation.ts')
-
-    // Polyfill `process` for Next.js internals that leak through
-    config.define ??= {}
-    config.define['process.env'] = JSON.stringify({})
-
     // Save-as-defaults plugin for writing control changes back to meta.ts
     config.plugins ??= []
+    config.plugins.push(tailwindcss())
     config.plugins.push(saveDefaultsPlugin())
+    config.plugins.push(exportSitePlugin())
 
     return config
   },

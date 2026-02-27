@@ -6,8 +6,9 @@
 
 - `types.ts` - EngineInput, EngineController, EngineEvents, etc.
 - `EngineStore.ts` - Zustand store for schema state
-- `EngineProvider.tsx` - Root provider exposing controller
-- `useEngineController.ts` - Hook for platform to access controller
+- `EngineProvider.tsx` - Root provider exposing controller + framework components
+- `FrameworkComponents.tsx` - Image, Link, router abstraction (platform injects implementations)
+- `ContainerContext.tsx` - Fullpage vs contained mode awareness
 - `validation/` - Constraint validators
 - `index.ts` - Barrel exports
 
@@ -23,7 +24,7 @@
 ```
 Platform (CMS UI)
        │
-       │ Passes: EngineInput
+       │ Passes: EngineInput + framework components
        ▼
 EngineProvider
        │
@@ -33,6 +34,9 @@ EngineProvider
        ├─► EngineController
        │     └─ updateSection, addSection, removeSection...
        │
+       ├─► FrameworkProvider
+       │     └─ Image, Link, useRouter (defaults: plain HTML)
+       │
        └─► ExperienceProvider (nested)
              └─ Children (SiteRenderer, etc.)
 ```
@@ -40,7 +44,11 @@ EngineProvider
 ## Usage
 
 ```typescript
-// Platform wraps engine
+// Platform wraps engine (Next.js example)
+import NextImage from 'next/image'
+import NextLink from 'next/link'
+import { useRouter } from 'next/navigation'
+
 <EngineProvider
   input={{
     site: siteConfig,
@@ -51,6 +59,7 @@ EngineProvider
       onError: (e) => console.error(e),
     },
   }}
+  framework={{ Image: NextImage, Link: NextLink, useRouter }}
 >
   <SiteRenderer site={site} page={page} />
 </EngineProvider>

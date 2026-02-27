@@ -3,9 +3,9 @@
  * Loaded eagerly for UI listings without loading full experience.
  */
 
-import { defineExperienceMeta } from '../registry'
+import { defineCompositionMeta } from '../registry'
 
-export const meta = defineExperienceMeta({
+export const meta = defineCompositionMeta({
   id: 'slideshow',
   name: 'Slideshow',
   description: 'Full-screen slides with navigation. Sections become slides.',

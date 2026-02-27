@@ -179,7 +179,7 @@ An Experience defines:
 3. **Constraints** - required sections, position locks, behaviour override permissions
 
 ```typescript
-// experience/experiences/types.ts
+// experience/compositions/types.ts
 interface ExperienceDefinition {
   id: string
   name: string

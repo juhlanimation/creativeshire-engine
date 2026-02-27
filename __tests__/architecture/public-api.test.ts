@@ -143,7 +143,7 @@ describe('Public API Validation', () => {
       const RE_EXPORTED_BY_PARENT: Record<string, string> = {
         // experience sub-barrels → re-exported by ./experience
         'experience/drivers': './experience',
-        'experience/experiences': './experience',
+        'experience/compositions': './experience',
         'experience/lifecycle': './experience',
         'experience/navigation': './experience',
         'experience/transitions': './experience',
@@ -167,7 +167,7 @@ describe('Public API Validation', () => {
         // timeline sub-barrels
         'experience/timeline': './experience',
         'experience/timeline/gsap': './experience',
-        'experience/timeline/effects': './experience',
+        'experience/timeline/primitives': './experience',
         'experience/transitions/configs': './experience',
       }
 

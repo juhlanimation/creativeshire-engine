@@ -3,9 +3,9 @@
  * No animations. Sections stack vertically. For testing layout.
  */
 
-import type { Experience } from '../types'
+import type { ExperienceComposition } from '../types'
 
-export const simpleExperience: Experience = {
+export const simpleComposition: ExperienceComposition = {
   id: 'simple',
   name: 'Simple',
   description: 'No animations. Sections stack vertically. For testing layout.',

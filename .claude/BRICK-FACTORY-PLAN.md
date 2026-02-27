@@ -34,7 +34,7 @@ A "brick" is any engine capability:
 | Scoped widget | `engine/content/sections/patterns/{Section}/components/` | `registerScopedWidget()` |
 | Behaviour | `engine/experience/behaviours/{category}/{name}/` | `registerBehaviour()` auto |
 | Effect | `engine/experience/effects/{mechanism}/{name}.css` | `effects/index.css` @import |
-| Experience | `engine/experience/experiences/{name}.ts` | `registerExperience()` |
+| Experience | `engine/experience/compositions/{name}.ts` | `registerComposition()` |
 | Page transition | `engine/experience/transitions/{name}/` | `registerPageTransition()` |
 
 Every section and chrome pattern carries its own **content declaration** (`content.ts`) — the CMS field definitions and sample data that describe what content the brick needs. When assembling a preset, content contracts and sample content are auto-derived from the bricks you compose. No manual re-declaration.
@@ -102,9 +102,9 @@ Builders, raw `WidgetSchema`, and content declarations all produce identical out
 
 ### Phase 0: Prerequisites
 
-- [ ] Read and understand this document fully
-- [ ] Verify `npm run test:arch` passes on current main branch
-- [ ] Verify `npm run inventory` runs and generates `scripts/reports/inventory.md`
+- [x] Read and understand this document fully
+- [x] Verify `npm run test:arch` passes on current main branch
+- [x] Verify `npm run inventory` runs and generates `scripts/reports/inventory.md`
 
 ---
 
@@ -116,7 +116,7 @@ Builders, raw `WidgetSchema`, and content declarations all produce identical out
 
 The existing script already covers L1 components well. It needs L2 coverage and a quick-reference summary format.
 
-- [ ] **1.1** Add transitions section to inventory
+- [x] **1.1** Add transitions section to inventory
 
   The script currently covers: widgets, sections, chrome, behaviours, effects, experiences, drivers, triggers, presets. Missing: **page transitions**.
 
@@ -128,7 +128,7 @@ The existing script already covers L1 components well. It needs L2 coverage and 
 
   **File:** `scripts/inventory.ts` — add a `Transitions` category block (same pattern as Experiences block at line ~371)
 
-- [ ] **1.2** Add quick-reference summary to inventory output
+- [x] **1.2** Add quick-reference summary to inventory output
 
   After the table summary, add a flat list format that agents can scan instantly:
 
@@ -165,7 +165,7 @@ The existing script already covers L1 components well. It needs L2 coverage and 
 
   **File:** `scripts/inventory.ts` — add `generateQuickReference()` function, called from `main()`, appended to output
 
-- [ ] **1.3** Add `--quick` flag for agent-friendly compact output
+- [x] **1.3** Add `--quick` flag for agent-friendly compact output
 
   ```bash
   npm run inventory -- --quick   # Only prints the Quick Reference to stdout
@@ -174,7 +174,7 @@ The existing script already covers L1 components well. It needs L2 coverage and 
   **File:** `scripts/inventory.ts` — check `process.argv` for `--quick`, print to stdout instead of file
   **File:** `package.json` — add script: `"inventory:quick": "npx tsx scripts/inventory.ts --quick"`
 
-- [ ] **1.4** Verify inventory output is accurate by running it and comparing to actual file system
+- [x] **1.4** Verify inventory output is accurate by running it and comparing to actual file system
 
 ---
 
@@ -188,7 +188,7 @@ The existing script already covers L1 components well. It needs L2 coverage and 
 
 Before scaffolding can generate `content.ts`, we need the types it exports.
 
-- [ ] **2.0.1** Create `engine/schema/content-field.ts`
+- [x] **2.0.1** Create `engine/schema/content-field.ts`
 
   Types live in `schema/` (not `presets/`) so sections can import without a content→preset dependency direction.
 
@@ -229,7 +229,7 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
   }
   ```
 
-- [ ] **2.0.2** Re-export from `engine/presets/types.ts`
+- [x] **2.0.2** Re-export from `engine/presets/types.ts`
 
   Add to bottom:
   ```typescript
@@ -240,7 +240,7 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
 
 #### 2.1: Section Scaffolding
 
-- [ ] **2.1.1** Create `scripts/create-section.ts`
+- [x] **2.1.1** Create `scripts/create-section.ts`
 
   ```bash
   npm run create:section ProjectHero
@@ -411,7 +411,7 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
   }
   ```
 
-- [ ] **2.1.2** Auto-register section in `sections/registry.ts`
+- [x] **2.1.2** Auto-register section in `sections/registry.ts`
 
   The script must append to three locations in `engine/content/sections/registry.ts`:
 
@@ -435,17 +435,17 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
   **File:** `scripts/create-section.ts` — add registry update logic
   **Target:** `engine/content/sections/registry.ts`
 
-- [ ] **2.1.3** Add npm script
+- [x] **2.1.3** Add npm script
 
   **File:** `package.json` — add: `"create:section": "npx tsx scripts/create-section.ts"`
 
-- [ ] **2.1.4** Test: run `npm run create:section TestSection`, verify files created (including content.ts), registry updated, `npm run test:arch` passes, then delete TestSection and revert registry
+- [x] **2.1.4** Test: run `npm run create:section TestSection`, verify files created (including content.ts), registry updated, `npm run test:arch` passes, then delete TestSection and revert registry
 
 ---
 
 #### 2.2: Behaviour Scaffolding
 
-- [ ] **2.2.1** Create `scripts/create-behaviour.ts`
+- [x] **2.2.1** Create `scripts/create-behaviour.ts`
 
   ```bash
   npm run create:behaviour scroll/parallax
@@ -516,7 +516,7 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
   export default {camelName}
   ```
 
-- [ ] **2.2.2** Auto-register behaviour in barrel exports
+- [x] **2.2.2** Auto-register behaviour in barrel exports
 
   The script must update two files:
 
@@ -531,17 +531,17 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
 
   **Files:** `scripts/create-behaviour.ts`, target barrels
 
-- [ ] **2.2.3** Add npm script
+- [x] **2.2.3** Add npm script
 
   **File:** `package.json` — add: `"create:behaviour": "npx tsx scripts/create-behaviour.ts"`
 
-- [ ] **2.2.4** Test: create test behaviour, verify registration, test:arch, cleanup
+- [x] **2.2.4** Test: create test behaviour, verify registration, test:arch, cleanup
 
 ---
 
 #### 2.3: Effect Scaffolding
 
-- [ ] **2.3.1** Create `scripts/create-effect.ts`
+- [x] **2.3.1** Create `scripts/create-effect.ts`
 
   ```bash
   npm run create:effect transform/flip
@@ -575,23 +575,23 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
   }
   ```
 
-- [ ] **2.3.2** Auto-register in `effects/index.css`
+- [x] **2.3.2** Auto-register in `effects/index.css`
 
   Append `@import './{mechanism}/{name}.css';` under the correct mechanism section header.
 
   **File:** `scripts/create-effect.ts`, target: `engine/experience/effects/index.css`
 
-- [ ] **2.3.3** Add npm script
+- [x] **2.3.3** Add npm script
 
   **File:** `package.json` — add: `"create:effect": "npx tsx scripts/create-effect.ts"`
 
-- [ ] **2.3.4** Test: create test effect, verify import added, test:arch, cleanup
+- [x] **2.3.4** Test: create test effect, verify import added, test:arch, cleanup
 
 ---
 
 #### 2.4: Chrome Pattern Scaffolding
 
-- [ ] **2.4.1** Create `scripts/create-chrome.ts`
+- [x] **2.4.1** Create `scripts/create-chrome.ts`
 
   ```bash
   npm run create:chrome StickyNav --slot header
@@ -668,7 +668,7 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
   }
   ```
 
-- [ ] **2.4.2** Auto-register in `chrome/pattern-registry.ts`
+- [x] **2.4.2** Auto-register in `chrome/pattern-registry.ts`
 
   The script must update `engine/content/chrome/pattern-registry.ts`:
 
@@ -693,11 +693,11 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
 
   **File:** `scripts/create-chrome.ts`, target: `engine/content/chrome/pattern-registry.ts`
 
-- [ ] **2.4.3** Add npm script
+- [x] **2.4.3** Add npm script
 
   **File:** `package.json` — add: `"create:chrome": "npx tsx scripts/create-chrome.ts"`
 
-- [ ] **2.4.4** Test: create test chrome pattern, verify registration, test:arch, cleanup
+- [x] **2.4.4** Test: create test chrome pattern, verify registration, test:arch, cleanup
 
 ---
 
@@ -707,9 +707,9 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
 > **Dependency:** Phase 2.0 (content field types)
 > **Files:** `engine/builders/`, `engine/presets/content-utils.ts`
 
-- [ ] **3.1** Create `engine/builders/index.ts` — barrel export
+- [x] **3.1** Create `engine/builders/index.ts` — barrel export
 
-- [ ] **3.2** Create primitive builders
+- [x] **3.2** Create primitive builders
 
   **File:** `engine/builders/primitives.ts`
 
@@ -762,7 +762,7 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
   - `button(options)` → Button WidgetSchema (`label`, `variant`, `href`)
   - `link(options)` → Link WidgetSchema (`content`, `href`, `variant`)
 
-- [ ] **3.3** Create layout builders
+- [x] **3.3** Create layout builders
 
   **File:** `engine/builders/layouts.ts`
 
@@ -806,7 +806,7 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
   - `container(options, children)` → Container WidgetSchema
   - `box(options, children)` → Box WidgetSchema
 
-- [ ] **3.4** Create interactive builders
+- [x] **3.4** Create interactive builders
 
   **File:** `engine/builders/interactive.ts`
 
@@ -814,7 +814,7 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
   - `videoPlayer(options)` → VideoPlayer WidgetSchema
   - `emailCopy(options)` → EmailCopy WidgetSchema
 
-- [ ] **3.5** Create `bind()` helper
+- [x] **3.5** Create `bind()` helper
 
   **File:** `engine/builders/helpers.ts`
 
@@ -829,7 +829,7 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
   }
   ```
 
-- [ ] **3.6** Export everything from barrel
+- [x] **3.6** Export everything from barrel
 
   **File:** `engine/builders/index.ts`
 
@@ -840,16 +840,16 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
   export { bind } from './helpers'
   ```
 
-- [ ] **3.7** Add subpath export to `package.json`
+- [x] **3.7** Add subpath export to `package.json`
 
   **File:** `package.json` — add to `exports`:
   ```json
   "./builders": "./engine/builders/index.ts"
   ```
 
-- [ ] **3.8** Test: write a small section factory using builders, verify it produces valid WidgetSchema, test:arch passes
+- [x] **3.8** Test: write a small section factory using builders, verify it produces valid WidgetSchema, test:arch passes
 
-- [ ] **3.9** Create content aggregation utilities
+- [x] **3.9** Create content aggregation utilities
 
   **File:** `engine/presets/content-utils.ts` (new)
 
@@ -950,7 +950,7 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
   }
   ```
 
-- [ ] **3.10** Test content utilities: write unit test that builds a contract from 2 declarations and verifies absolute paths, section IDs, and sample content structure
+- [x] **3.10** Test content utilities: write unit test that builds a contract from 2 declarations and verifies absolute paths, section IDs, and sample content structure
 
 ---
 
@@ -961,7 +961,7 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
 
 #### 4.1: Root CLAUDE.md
 
-- [ ] **4.1.1** Add "Replicating a Prototype" workflow section
+- [x] **4.1.1** Add "Replicating a Prototype" workflow section
 
   Add after the "How to Work" section. This is the primary workflow agents follow:
 
@@ -1018,18 +1018,18 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
   Run `npm run test:arch` before committing.
   ```
 
-- [ ] **4.1.2** Add "Blast Radius Rules" section
+- [x] **4.1.2** Add "Blast Radius Rules" section
 
   Add after "Rules" section. Paste the blast radius rules from the top of this document.
 
-- [ ] **4.1.3** Add widget builders to references table
+- [x] **4.1.3** Add widget builders to references table
 
   ```markdown
   | **Widget Builders** | `engine/builders/` |
   | **Content Utilities** | `engine/presets/content-utils.ts` |
   ```
 
-- [ ] **4.1.4** Add scaffolding commands to Commands table
+- [x] **4.1.4** Add scaffolding commands to Commands table
 
   ```markdown
   | `npm run create:section {Name}` | Scaffold new section pattern |
@@ -1045,7 +1045,7 @@ Before scaffolding can generate `content.ts`, we need the types it exports.
 
 These files already exist. Add scaffolding references and builder info where relevant.
 
-- [ ] **4.2.1** `engine/content/sections/CLAUDE.md` — Add scaffolding + content.ts reference
+- [x] **4.2.1** `engine/content/sections/CLAUDE.md` — Add scaffolding + content.ts reference
 
   Append:
   ```markdown
@@ -1082,7 +1082,7 @@ These files already exist. Add scaffolding references and builder info where rel
   ```
   ```
 
-- [ ] **4.2.2** `engine/experience/behaviours/CLAUDE.md` — Add scaffolding command reference
+- [x] **4.2.2** `engine/experience/behaviours/CLAUDE.md` — Add scaffolding command reference
 
   Append:
   ```markdown
@@ -1104,7 +1104,7 @@ These files already exist. Add scaffolding references and builder info where rel
   5. Handle prefersReducedMotion (instant values, no animation)
   ```
 
-- [ ] **4.2.3** `engine/experience/effects/CLAUDE.md` — Add scaffolding command reference
+- [x] **4.2.3** `engine/experience/effects/CLAUDE.md` — Add scaffolding command reference
 
   Append:
   ```markdown
@@ -1125,7 +1125,7 @@ These files already exist. Add scaffolding references and builder info where rel
   4. Never set values — only define how values animate
   ```
 
-- [ ] **4.2.4** `engine/content/chrome/CLAUDE.md` — Add scaffolding command reference
+- [x] **4.2.4** `engine/content/chrome/CLAUDE.md` — Add scaffolding command reference
 
   Append:
   ```markdown
@@ -1139,7 +1139,7 @@ These files already exist. Add scaffolding references and builder info where rel
   This generates factory files (including content.ts) and registers in pattern-registry.ts.
   ```
 
-- [ ] **4.2.5** `engine/presets/CLAUDE.md` — Add assembly workflow reference
+- [x] **4.2.5** `engine/presets/CLAUDE.md` — Add assembly workflow reference
 
   Append:
   ```markdown
@@ -1169,17 +1169,17 @@ These files already exist. Add scaffolding references and builder info where rel
 > **Goal:** Ensure scaffolded bricks pass all architecture tests from creation.
 > **Dependency:** Phases 1-4
 
-- [ ] **5.1** Run `npm run test:arch` — verify all existing tests still pass
-- [ ] **5.2** Run `npm run inventory` — verify output includes all categories
-- [ ] **5.3** Scaffold one brick of each type using the scripts:
+- [x] **5.1** Run `npm run test:arch` — verify all existing tests still pass
+- [x] **5.2** Run `npm run inventory` — verify output includes all categories
+- [x] **5.3** Scaffold one brick of each type using the scripts:
   - `npm run create:section TestVerify`
   - `npm run create:behaviour scroll/test-verify`
   - `npm run create:effect transform/test-verify`
   - `npm run create:chrome TestVerifyNav --slot header`
-- [ ] **5.4** Verify scaffolded section has `content.ts` with valid structure
-- [ ] **5.5** Run `npm run test:arch` — verify scaffolded bricks pass
-- [ ] **5.6** Delete test bricks and revert registry changes
-- [ ] **5.7** Final `npm run test:arch` — verify clean state
+- [x] **5.4** Verify scaffolded section has `content.ts` with valid structure
+- [x] **5.5** Run `npm run test:arch` — verify scaffolded bricks pass
+- [x] **5.6** Delete test bricks and revert registry changes
+- [x] **5.7** Final `npm run test:arch` — verify clean state
 
 ---
 
@@ -1222,23 +1222,23 @@ Every section pattern gets a `content.ts`. Extract content field declarations + 
 | `TeamShowcase/content.ts` | `team` |
 | `ContentPricing/content.ts` | `pricing` |
 
-- [ ] **6.1.1** Create `content.ts` for prism sections (6 files)
-- [ ] **6.1.2** Create `content.ts` for noir sections (4 files)
-- [ ] **6.1.3** Create `content.ts` for loft sections (4 files)
+- [x] **6.1.1** Create `content.ts` for prism sections (6 files)
+- [x] **6.1.2** Create `content.ts` for noir sections (4 files)
+- [x] **6.1.3** Create `content.ts` for loft sections (4 files)
 
 **Content vs. style split:** Only content props (media, text, collections) go in `contentFields`/`sampleContent`. Style/layout props (`sectionTheme`, `thumbnailBorder`, `textColor`, `colorMode`) stay at preset level — they are preset assembly decisions, not section content.
 
 #### 6.2: Create `content.ts` for chrome patterns
 
-- [ ] **6.2.1** `ContactFooter/content.ts` — nav links, contact email, headings
-- [ ] **6.2.2** `FixedNav/content.ts` — site title, nav links, logo
-- [ ] **6.2.3** Any other chrome patterns used across presets
+- [x] **6.2.1** `ContactFooter/content.ts` — nav links, contact email, headings
+- [x] **6.2.2** `FixedNav/content.ts` — site title, nav links, logo
+- [x] **6.2.3** Any other chrome patterns used across presets
 
 #### 6.3: Migrate each preset
 
 Each preset's content-contract.ts → thin aggregation, sample-content.ts → derived, page templates → withContentBindings().
 
-- [ ] **6.3.1** Migrate **prism** preset
+- [x] **6.3.1** Migrate **prism** preset
 
   ```typescript
   // content-contract.ts (183 lines → ~30 lines)
@@ -1265,9 +1265,9 @@ Each preset's content-contract.ts → thin aggregation, sample-content.ts → de
   Update `sample-content.ts` → `buildSampleContent(declarations)`.
   Update `pages/home.ts` → `withContentBindings()`.
 
-- [ ] **6.3.2** Migrate **noir** preset (285-line contract → thin aggregation)
-- [ ] **6.3.3** Migrate **loft** preset (136-line contract → thin aggregation)
-- [ ] **6.3.4** Migrate **test-multipage** preset (50-line contract → thin aggregation)
+- [x] **6.3.2** Migrate **noir** preset (285-line contract → thin aggregation)
+- [x] **6.3.3** Migrate **loft** preset (136-line contract → thin aggregation)
+- [x] **6.3.4** Migrate **test-multipage** preset (50-line contract → thin aggregation)
 
 #### 6.4: Simplify section `preview.ts` files
 
@@ -1282,20 +1282,20 @@ export const previewProps: Partial<ProjectGalleryProps> = {
 }
 ```
 
-- [ ] **6.4.1** Update prism section preview files (6)
-- [ ] **6.4.2** Update noir section preview files (4)
-- [ ] **6.4.3** Update loft section preview files (4)
+- [x] **6.4.1** Update prism section preview files (6)
+- [x] **6.4.2** Update noir section preview files (4)
+- [x] **6.4.3** Update loft section preview files (4)
 
 #### 6.5: Verification
 
-- [ ] **6.5.1** Parity test: verify each preset's `buildContentContract()` output matches its old hand-written contract (field-by-field, ignoring order). Migration safety net — remove after verification.
-- [ ] **6.5.2** Architecture test: add content declaration validation to `__tests__/architecture/registration.test.ts`:
+- [x] **6.5.1** ~~Parity test~~ N/A — old hand-written contracts already removed; `buildContentContract()` is the only path. Architecture test (6.5.2) validates structural correctness going forward.
+- [x] **6.5.2** Architecture test: add content declaration validation to `__tests__/architecture/registration.test.ts`:
   - Sections with `content.ts` export valid `SectionContentDeclaration`
   - Content field paths are relative (no namespace prefixes)
   - Content field types are valid `ContentSourceFieldType`
-- [ ] **6.5.3** `npm run test:arch` passes
-- [ ] **6.5.4** Storybook renders all sections with content from `content.ts`
-- [ ] **6.5.5** Dev server resolves bindings from derived sample content
+- [x] **6.5.3** `npm run test:arch` passes
+- [x] **6.5.4** Storybook renders all sections with content from `content.ts`
+- [x] **6.5.5** Dev server resolves bindings from derived sample content
 
 ---
 

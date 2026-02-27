@@ -21,3 +21,12 @@ Action system:
 Specs:
 - [chrome.spec.md](/.claude/skills/engine/specs/components/content/chrome.spec.md)
 - [action-system.spec.md](/.claude/skills/engine/specs/components/content/action-system.spec.md)
+
+## Creating a New Chrome Pattern
+
+```bash
+npm run create:chrome {Name} --slot header   # header/footer region
+npm run create:chrome {Name} --slot overlay   # modal/floating overlay
+```
+
+This generates factory files (including content.ts) and registers in pattern-registry.ts.

@@ -9,6 +9,7 @@
 | Folder | Purpose |
 |--------|---------|
 | `core/` | Foundational concepts everyone must understand |
+| `architecture/` | High-level architectural models and composition patterns |
 | `layers/` | How the system is organized into layers |
 | `components/` | Contracts for building specific component types |
 | `patterns/` | Proven solutions and what to avoid |
@@ -30,6 +31,12 @@
 | [extension.spec.md](core/extension.spec.md) | Check → Extend → Create: reuse before invention |
 | [platform.spec.md](core/platform.spec.md) | Creativeshire platform wrapper relationship, engine scope |
 | [versioning.spec.md](core/versioning.spec.md) | Schema versioning, compatibility rules, migration triggers |
+
+### architecture/ — Architectural Models
+
+| File | Describes |
+|------|-----------|
+| [composable-containers.spec.md](architecture/composable-containers.spec.md) | Composable site model: L1 Content + L2 Experience + Theme containers |
 
 ### layers/ — System Organization
 
@@ -166,6 +173,7 @@
 
 | I need to... | Read |
 |--------------|------|
+| Understand composable site model | [composable-containers.spec.md](architecture/composable-containers.spec.md) |
 | Understand the core rules | [philosophy.spec.md](core/philosophy.spec.md) |
 | Understand platform vs engine | [platform.spec.md](core/platform.spec.md) |
 | Know what a layer can/cannot do | [contracts.spec.md](core/contracts.spec.md) |

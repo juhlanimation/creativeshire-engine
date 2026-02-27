@@ -425,25 +425,28 @@ describe('ComponentMeta Validation', () => {
   })
 
   describe('Section meta.ts files', () => {
-    it('every section pattern has meta.ts', async () => {
+    it('every section pattern has meta.ts or definition.ts', async () => {
       const componentDirs = await getFiles('content/sections/patterns/*/')
       const missing: string[] = []
 
       for (const dir of componentDirs) {
-        const metaPath = path.join(dir, 'meta.ts')
-        if (!(await fileExists(metaPath))) {
+        const hasMetaTs = await fileExists(path.join(dir, 'meta.ts'))
+        const hasDefinitionTs = await fileExists(path.join(dir, 'definition.ts'))
+        if (!hasMetaTs && !hasDefinitionTs) {
           missing.push(relativePath(dir))
         }
       }
 
-      expect(missing, `Section patterns missing meta.ts:\n${missing.join('\n')}`).toHaveLength(0)
+      expect(missing, `Section patterns missing meta.ts or definition.ts:\n${missing.join('\n')}`).toHaveLength(0)
     })
 
     it('section patterns use defineSectionMeta', async () => {
       const metaFiles = await getFiles('content/sections/patterns/*/meta.ts')
+      const definitionFiles = await getFiles('content/sections/patterns/*/definition.ts')
+      const allFiles = [...metaFiles, ...definitionFiles]
       const violations: string[] = []
 
-      for (const file of metaFiles) {
+      for (const file of allFiles) {
         const content = await readFile(file)
         if (!content.includes('defineSectionMeta')) {
           violations.push(relativePath(file))
@@ -455,9 +458,11 @@ describe('ComponentMeta Validation', () => {
 
     it('section patterns have sectionCategory field', async () => {
       const metaFiles = await getFiles('content/sections/patterns/*/meta.ts')
+      const definitionFiles = await getFiles('content/sections/patterns/*/definition.ts')
+      const allFiles = [...metaFiles, ...definitionFiles]
       const violations: string[] = []
 
-      for (const file of metaFiles) {
+      for (const file of allFiles) {
         const content = await readFile(file)
         if (!content.includes('sectionCategory:')) {
           violations.push(relativePath(file))
@@ -469,9 +474,11 @@ describe('ComponentMeta Validation', () => {
 
     it('section patterns have unique field', async () => {
       const metaFiles = await getFiles('content/sections/patterns/*/meta.ts')
+      const definitionFiles = await getFiles('content/sections/patterns/*/definition.ts')
+      const allFiles = [...metaFiles, ...definitionFiles]
       const violations: string[] = []
 
-      for (const file of metaFiles) {
+      for (const file of allFiles) {
         const content = await readFile(file)
         if (!content.includes('unique:')) {
           violations.push(relativePath(file))
@@ -487,9 +494,11 @@ describe('ComponentMeta Validation', () => {
       ]
 
       const metaFiles = await getFiles('content/sections/patterns/*/meta.ts')
+      const definitionFiles = await getFiles('content/sections/patterns/*/definition.ts')
+      const allFiles = [...metaFiles, ...definitionFiles]
       const violations: string[] = []
 
-      for (const file of metaFiles) {
+      for (const file of allFiles) {
         const content = await readFile(file)
         const match = content.match(/sectionCategory:\s*['"](\w+)['"]/)
 
@@ -674,11 +683,13 @@ describe('ComponentMeta Validation', () => {
   describe('Meta structure validation', () => {
     it('all meta.ts files export a const', async () => {
       const metaFiles = await getFiles('{content,schema,experience}/**/meta.ts')
+      // Consolidated section definitions also contain meta
+      const definitionFiles = await getFiles('content/sections/patterns/*/definition.ts')
       // Exclude utility files that define helper functions, not meta objects
       const UTILITY_META_FILES = ['schema/meta.ts']
       const violations: string[] = []
 
-      for (const file of metaFiles) {
+      for (const file of [...metaFiles, ...definitionFiles]) {
         const rel = relativePath(file)
         if (UTILITY_META_FILES.includes(rel)) continue
 
@@ -695,12 +706,13 @@ describe('ComponentMeta Validation', () => {
 
     it('all meta.ts files have required fields', async () => {
       const metaFiles = await getFiles('{content,schema,experience}/**/meta.ts')
+      const definitionFiles = await getFiles('content/sections/patterns/*/definition.ts')
       const UTILITY_META_FILES = ['schema/meta.ts']
       const violations: string[] = []
 
       const requiredFields = ['id:', 'name:', 'description:', 'category:']
 
-      for (const file of metaFiles) {
+      for (const file of [...metaFiles, ...definitionFiles]) {
         const rel = relativePath(file)
         if (UTILITY_META_FILES.includes(rel)) continue
 
@@ -735,13 +747,14 @@ describe('ComponentMeta Validation', () => {
         // Experience categories (presentation models)
         'scroll-driven', 'physics', 'simple', 'presentation',
         // Transition categories (mechanisms)
-        'fade',
+        'fade', 'directional', 'none',
       ]
 
       const metaFiles = await getFiles('{content,schema,experience}/**/meta.ts')
+      const definitionFiles = await getFiles('content/sections/patterns/*/definition.ts')
       const violations: string[] = []
 
-      for (const file of metaFiles) {
+      for (const file of [...metaFiles, ...definitionFiles]) {
         const content = await readFile(file)
 
         // Extract category value: category: 'xxx' or category: "xxx"
@@ -882,9 +895,11 @@ describe('ComponentMeta Validation', () => {
       const schemaMetas = await getFiles('schema/*-meta.ts')
       const transitionMetas = await getFiles('experience/transitions/*/meta.ts')
       const behaviourMetas = await getFiles('experience/behaviours/*/*/meta.ts')
-      const experienceMetas = await getFiles('experience/experiences/*/meta.ts')
+      const experienceMetas = await getFiles('experience/compositions/*/meta.ts')
       const introMetas = await getFiles('intro/patterns/*/meta.ts')
-      const allMetas = [...contentMetas, ...schemaMetas, ...transitionMetas, ...behaviourMetas, ...experienceMetas, ...introMetas]
+      // Consolidated section definitions also contain settings
+      const definitionMetas = await getFiles('content/sections/patterns/*/definition.ts')
+      const allMetas = [...contentMetas, ...schemaMetas, ...transitionMetas, ...behaviourMetas, ...experienceMetas, ...introMetas, ...definitionMetas]
 
       const violations: string[] = []
 
@@ -917,18 +932,18 @@ describe('ComponentMeta Validation', () => {
       expect(violations, `Behaviour metas not using defineBehaviourMeta():\n${violations.join('\n')}`).toHaveLength(0)
     })
 
-    it('experience meta.ts files use defineExperienceMeta()', async () => {
-      const metaFiles = await getFiles('experience/experiences/*/meta.ts')
+    it('composition meta.ts files use defineCompositionMeta()', async () => {
+      const metaFiles = await getFiles('experience/compositions/*/meta.ts')
       const violations: string[] = []
 
       for (const file of metaFiles) {
         const content = await readFile(file)
-        if (!content.includes('defineExperienceMeta')) {
+        if (!content.includes('defineCompositionMeta')) {
           violations.push(relativePath(file))
         }
       }
 
-      expect(violations, `Experience metas not using defineExperienceMeta():\n${violations.join('\n')}`).toHaveLength(0)
+      expect(violations, `Composition metas not using defineCompositionMeta():\n${violations.join('\n')}`).toHaveLength(0)
     })
 
     it('transition meta.ts files use definePageTransitionMeta()', async () => {
@@ -990,9 +1005,10 @@ describe('ComponentMeta Validation', () => {
         .map(m => m[1])
 
       const metaFiles = await getFiles('content/sections/patterns/*/meta.ts')
+      const definitionFiles = await getFiles('content/sections/patterns/*/definition.ts')
       const violations: string[] = []
 
-      for (const file of metaFiles) {
+      for (const file of [...metaFiles, ...definitionFiles]) {
         const content = await readFile(file)
         const overlaysMatch = content.match(/requiredOverlays:\s*\[([^\]]*)\]/)
         if (!overlaysMatch) continue
@@ -1020,6 +1036,7 @@ describe('ComponentMeta Validation', () => {
         ...await getFiles('content/widgets/interactive/*/meta.ts'),
         ...await getFiles('content/widgets/repeaters/*/meta.ts'),
         ...await getFiles('content/sections/patterns/*/meta.ts'),
+        ...await getFiles('content/sections/patterns/*/definition.ts'),
         ...await getFiles('content/sections/patterns/*/components/*/meta.ts'),
       ]
 
@@ -1060,9 +1077,10 @@ describe('ComponentMeta Validation', () => {
       const schemaMetas = await getFiles('schema/*-meta.ts')
       const transitionMetas = await getFiles('experience/transitions/*/meta.ts')
       const behaviourMetas = await getFiles('experience/behaviours/*/*/meta.ts')
-      const experienceMetas = await getFiles('experience/experiences/*/meta.ts')
+      const experienceMetas = await getFiles('experience/compositions/*/meta.ts')
       const introMetas = await getFiles('intro/patterns/*/meta.ts')
-      const allMetas = [...contentMetas, ...schemaMetas, ...transitionMetas, ...behaviourMetas, ...experienceMetas, ...introMetas]
+      const definitionMetas = await getFiles('content/sections/patterns/*/definition.ts')
+      const allMetas = [...contentMetas, ...schemaMetas, ...transitionMetas, ...behaviourMetas, ...experienceMetas, ...introMetas, ...definitionMetas]
 
       // Skip utility meta files
       const UTILITY_META_FILES = ['schema/meta.ts']
