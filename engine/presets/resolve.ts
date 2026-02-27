@@ -14,6 +14,9 @@ import type { ChromeSchema } from '../schema/chrome'
 import type { SiteSchema, PageSchema, SectionSchema, ExperienceConfig, ThemeSchema } from '../schema'
 import type { IntroConfig } from '../intro/types'
 import type { PresetChromeConfig, SitePreset } from './types'
+import type { Experience } from '../experience/compositions/types'
+import { isExperienceRef } from '../experience/compositions/types'
+import { getExperience } from '../experience/compositions/registry'
 import { resolvePresetIntro } from '../intro/registry'
 
 /**
@@ -117,6 +120,67 @@ export function resolvePageBindings(page: PageSchema, content: Record<string, un
 }
 
 // =============================================================================
+// Experience Resolution
+// =============================================================================
+
+/**
+ * Resolve the preset's experience input to a full Experience object.
+ * Handles both inline ExperienceComposition and ExperienceRef (base + overrides).
+ */
+function resolveExperience(preset: SitePreset): Experience | undefined {
+  const input = preset.experience
+  if (!input) return undefined
+
+  if (isExperienceRef(input)) {
+    // ExperienceRef: look up base from registry, deep-merge overrides
+    const base = getExperience(input.base)
+    if (!base) {
+      console.warn(`Experience base "${input.base}" not found in registry.`)
+      return undefined
+    }
+    if (!input.overrides) return base
+    // Shallow merge top-level, spread nested objects where overrides exist
+    return {
+      ...base,
+      ...input.overrides,
+      // Preserve base fields that overrides don't touch
+      id: input.overrides.id ?? base.id,
+      name: input.overrides.name ?? base.name,
+      description: input.overrides.description ?? base.description,
+      // Merge behaviour maps (overrides win per key)
+      sectionBehaviours: {
+        ...base.sectionBehaviours,
+        ...input.overrides.sectionBehaviours,
+      },
+      ...(base.chromeBehaviours || input.overrides.chromeBehaviours
+        ? {
+            chromeBehaviours: {
+              ...base.chromeBehaviours,
+              ...input.overrides.chromeBehaviours,
+            },
+          }
+        : {}),
+    }
+  }
+
+  // Inline ExperienceComposition — it IS the Experience
+  return input
+}
+
+/**
+ * Extract ExperienceConfig (schema-level) from a resolved Experience.
+ */
+function extractExperienceConfig(experience: Experience): ExperienceConfig {
+  return {
+    id: experience.id,
+    sectionBehaviours: experience.sectionBehaviours,
+    ...(experience.chromeBehaviours && { chromeBehaviours: experience.chromeBehaviours }),
+    ...(experience.intro && { intro: experience.intro }),
+    ...(experience.transition && { transition: experience.transition }),
+  }
+}
+
+// =============================================================================
 // Shared Preset → SiteSchema Conversion
 // =============================================================================
 
@@ -157,45 +221,62 @@ export function buildSiteSchemaFromPreset(
   } = options
 
   // Chrome: transform preset regions → schema, then resolve bindings
-  let chrome: ChromeSchema = transformPresetChrome(preset.chrome)
+  let chrome: ChromeSchema = transformPresetChrome(preset.content.chrome)
   if (content) {
     chrome = resolveChromeBindings(chrome, content)
   }
 
-  // Experience: use override, or map preset experience (strip extra fields)
-  const experience: ExperienceConfig | undefined =
-    experienceOverride !== undefined
-      ? experienceOverride
-      : preset.experience
-        ? { id: preset.experience.id, sectionBehaviours: preset.experience.sectionBehaviours }
-        : undefined
-
-  // Intro: resolve from preset's experience.intro reference
-  let intro: IntroConfig | undefined
-  if (introOverride !== undefined) {
-    intro = introOverride ?? undefined
-  } else if (includeIntro && preset.experience?.intro) {
-    const presetIntro = preset.experience.intro
-    if ('pattern' in presetIntro) {
-      // Inline IntroConfig
-      intro = presetIntro as IntroConfig
-    } else if ('sequence' in presetIntro) {
-      // PresetIntroConfig reference → resolve from registry
-      intro = resolvePresetIntro(presetIntro) ?? undefined
+  // Experience: resolve ExperienceRef if needed, then extract ExperienceConfig
+  let experience: ExperienceConfig | undefined
+  if (experienceOverride !== undefined) {
+    experience = experienceOverride
+  } else {
+    const resolved = resolveExperience(preset)
+    if (resolved) {
+      experience = extractExperienceConfig(resolved)
     }
-    if (intro && content) {
-      intro = resolveIntroBindings(intro, content)
+  }
+
+  // Intro: resolve from experience config's intro reference
+  if (experience) {
+    let intro: IntroConfig | undefined
+    if (introOverride !== undefined) {
+      intro = introOverride ?? undefined
+    } else if (includeIntro && experience.intro) {
+      const presetIntro = experience.intro
+      if ('pattern' in presetIntro) {
+        // Inline IntroConfig
+        intro = presetIntro as IntroConfig
+      } else if ('sequence' in presetIntro) {
+        // PresetIntroConfig reference → resolve from registry
+        intro = resolvePresetIntro(presetIntro) ?? undefined
+      }
+      if (intro && content) {
+        intro = resolveIntroBindings(intro, content)
+      }
+    }
+
+    // Strip intro from experience if not included, or replace with resolved version
+    if (!includeIntro) {
+      const { intro: _stripped, ...rest } = experience
+      experience = rest
+    } else if (intro) {
+      experience = { ...experience, intro }
+    }
+
+    // Strip transition from experience if not included
+    if (!includeTransition) {
+      const { transition: _stripped, ...rest } = experience
+      experience = rest
     }
   }
 
   return {
     id: presetId,
-    theme: themeOverride ?? preset.theme,
+    theme: themeOverride ?? preset.theme.theme,
     chrome,
-    pages: Object.values(preset.pages).map(p => ({ id: p.id, slug: p.slug })),
+    pages: Object.values(preset.content.pages).map(p => ({ id: p.id, slug: p.slug })),
     ...(experience && { experience }),
-    ...(intro && { intro }),
-    ...(includeTransition && preset.transition && { transition: preset.transition }),
   }
 }
 
@@ -209,8 +290,8 @@ export function buildPageFromPreset(
   content?: Record<string, unknown>,
 ): PageSchema | undefined {
   // Try direct key lookup first, then slug match
-  const page = preset.pages[pageKeyOrSlug]
-    ?? Object.values(preset.pages).find(p => p.slug === pageKeyOrSlug)
+  const page = preset.content.pages[pageKeyOrSlug]
+    ?? Object.values(preset.content.pages).find(p => p.slug === pageKeyOrSlug)
 
   if (!page) return undefined
   return content ? resolvePageBindings(page, content) : page

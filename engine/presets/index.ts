@@ -11,6 +11,8 @@ export { noirPreset, noirMeta, noirContentContract } from './noir'
 export { prismPreset, prismMeta, prismContentContract } from './prism'
 export { testMultipagePreset, testMultipageMeta, testMultipageContentContract } from './test-multipage'
 export { loftPreset, loftMeta, loftContentContract } from './loft'
+export { reelPreset, reelMeta, reelContentContract } from './reel'
+export { haubjergPreset, haubjergMeta, haubjergContentContract } from './haubjerg'
 
 /**
  * Ensures all presets are registered.
@@ -21,6 +23,20 @@ export function ensurePresetsRegistered(): void {
   // Registration already ran on import above.
   // This function exists so bundlers don't tree-shake them.
 }
+
+// Resolution utilities
+export {
+  buildSiteSchemaFromPreset,
+  buildPageFromPreset,
+  type BuildSiteSchemaOptions,
+} from './resolve'
+
+// Content utilities
+export {
+  buildContentContract,
+  buildSampleContent,
+  withContentBindings,
+} from './content-utils'
 
 // Registry exports
 export {
@@ -48,4 +64,9 @@ export type {
   ContentSourceFieldType,
   ContentSection,
   ContentPreprocessor,
+  ContentComposition,
+  ThemeComposition,
 } from './types'
+
+export type { ExperienceComposition, ExperienceRef } from '../experience/compositions/types'
+export { isExperienceRef } from '../experience/compositions/types'

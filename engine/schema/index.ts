@@ -73,6 +73,7 @@ export type {
   TypographyConfig,
   SectionTransitionConfig,
   ContainerConfig,
+  MotionConfig,
   FontProvider,
   ColorMode,
 } from './theme'
@@ -129,3 +130,6 @@ export {
 
 // Setting helpers
 export { textScaleSetting } from './settings-helpers'
+
+// Content field types (for section/chrome content declarations)
+export type { SectionContentField, SectionContentDeclaration } from './content-field'

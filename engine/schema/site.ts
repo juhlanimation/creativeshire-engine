@@ -5,10 +5,8 @@
 
 import type { ChromeSchema } from './chrome'
 import type { ExperienceConfig } from './experience'
-import type { IntroConfig } from '../intro/types'
 import type { PageSchema } from './page'
 import type { ThemeSchema } from './theme'
-import type { TransitionConfig } from './transition'
 
 // =============================================================================
 // Site Metadata
@@ -86,12 +84,8 @@ export interface SiteSchema {
   metadata?: SiteMetadata
   /** Theme configuration (scrollbar, colors, fonts) */
   theme?: ThemeSchema
-  /** Intro sequence configuration (runs before experience) */
-  intro?: IntroConfig
-  /** Experience configuration (modes, behaviours) */
+  /** Experience configuration (modes, behaviours, intro, transition) */
   experience?: ExperienceConfig
-  /** Page transition configuration */
-  transition?: TransitionConfig
   /** Site-level chrome (header, footer, overlays) */
   chrome: ChromeSchema
   /** List of pages in this site */

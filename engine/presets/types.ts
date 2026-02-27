@@ -13,7 +13,10 @@ import type { WidgetSchema } from '../schema/widget'
 import type { RegionLayout } from '../schema/chrome'
 import type { ThemeSchema } from '../schema/theme'
 import type { PresetIntroConfig } from '../intro/types'
-import type { TransitionConfig } from '../schema/transition'
+import type { ExperienceComposition, ExperienceRef } from '../experience/compositions/types'
+
+// Re-export content field types for convenience
+export type { SectionContentField, SectionContentDeclaration } from '../schema/content-field'
 
 /**
  * Data type of a source field in the platform CMS.
@@ -92,6 +95,7 @@ export type ContentPreprocessor = (content: Record<string, unknown>) => Record<s
 
 /**
  * Experience configuration for a preset.
+ * @deprecated Use ExperienceRef instead. Will be removed in next major version.
  */
 export interface PresetExperienceConfig {
   /** Experience identifier (e.g., 'stacking', 'cinematic-portfolio') */
@@ -99,9 +103,9 @@ export interface PresetExperienceConfig {
   /** Human-readable label for this experience configuration */
   name?: string
   /** Per-section behaviour overrides. Keys are section IDs. */
-  sectionBehaviours?: Record<string, import('../experience/experiences/types').BehaviourAssignment[]>
+  sectionBehaviours?: Record<string, import('../experience/compositions/types').BehaviourAssignment[]>
   /** Per-chrome-region behaviour overrides. Keys are region IDs (header, footer). */
-  chromeBehaviours?: Record<string, import('../experience/experiences/types').BehaviourAssignment[]>
+  chromeBehaviours?: Record<string, import('../experience/compositions/types').BehaviourAssignment[]>
   /** Intro reference + overrides (resolved to IntroConfig at runtime) */
   intro?: PresetIntroConfig
 }
@@ -163,21 +167,53 @@ export interface PresetChromeConfig {
 }
 
 /**
+ * L1 Content Composition — structural arrangement of content.
+ * Pages, chrome, content-contract, and sample content.
+ * Purely structural: no behaviours, no animations, no theme.
+ */
+export interface ContentComposition {
+  /** Unique identifier for this content composition */
+  id: string
+  /** Human-readable name */
+  name: string
+  /** Page templates keyed by page ID */
+  pages: Record<string, PageSchema>
+  /** Chrome regions and overlays */
+  chrome: PresetChromeConfig
+  /** CMS field declarations aggregated from sections + chrome */
+  contentContract: ContentContract
+  /** Preview data for dev/Storybook */
+  sampleContent: Record<string, unknown>
+}
+
+/**
+ * Theme Composition — visual language tokens.
+ * Wraps ThemeSchema with identification for registry/selection.
+ */
+export interface ThemeComposition {
+  /** Unique identifier for this theme composition */
+  id: string
+  /** Human-readable name */
+  name: string
+  /** Theme configuration (colors, typography, spacing, scrollbar) */
+  theme: ThemeSchema
+}
+
+/**
  * Complete site preset definition.
- * Bundles theme, experience, chrome, and pages into a ready-to-use configuration.
- * Behaviour defaults now live in the Experience definition (not in preset).
+ * Composes three independent containers: content (L1), experience (L2), and theme.
+ * Each container can be built from scratch or referenced from a registry.
  */
 export interface SitePreset {
   /** Human-readable display name for this preset */
   name?: string
-  /** Theme configuration (scrollbar, smooth scroll, colors) */
-  theme?: ThemeSchema
-  /** Experience configuration (references an Experience by ID) */
-  experience?: PresetExperienceConfig
-  /** Page transition configuration */
-  transition?: TransitionConfig
-  /** Chrome regions and overlays */
-  chrome: PresetChromeConfig
-  /** Page templates keyed by page ID */
-  pages: Record<string, PageSchema>
+  /** L1: Content composition (pages, chrome, content-contract, sample content) */
+  content: ContentComposition
+  /** L2: Experience composition (behaviours, transitions, intro, presentation, navigation) */
+  experience: ExperienceComposition | ExperienceRef
+  /** Theme composition (colors, typography, spacing) */
+  theme: ThemeComposition
 }
+
+// Re-export L2 composition types for convenience
+export type { ExperienceComposition, ExperienceRef } from '../experience/compositions/types'

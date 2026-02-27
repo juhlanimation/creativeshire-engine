@@ -70,9 +70,11 @@ export interface ExperienceConfig {
   /** Experience ID (e.g., 'stacking', 'cinematic-portfolio') */
   id: string
   /** Per-section behaviour overrides. Keys are section IDs. */
-  sectionBehaviours?: Record<string, import('../experience/experiences/types').BehaviourAssignment[]>
+  sectionBehaviours?: Record<string, import('../experience/compositions/types').BehaviourAssignment[]>
   /** Per-chrome-region behaviour overrides. Keys are region IDs (header, footer). */
-  chromeBehaviours?: Record<string, import('../experience/experiences/types').BehaviourAssignment[]>
+  chromeBehaviours?: Record<string, import('../experience/compositions/types').BehaviourAssignment[]>
   /** Intro sequence overrides (merged into preset intro config at runtime) */
   intro?: import('../intro/types').PresetIntroConfig | import('../intro/types').IntroConfig
+  /** Page transition configuration */
+  transition?: import('./transition').TransitionConfig
 }

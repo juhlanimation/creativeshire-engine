@@ -32,12 +32,11 @@ export interface PresetMeta {
 }
 
 /**
- * Registry entry - full preset + metadata + optional content contract
+ * Registry entry - full preset + metadata
  */
 interface RegistryEntry {
   meta: PresetMeta
   preset: SitePreset
-  contentContract?: ContentContract
   preprocessor?: ContentPreprocessor
 }
 
@@ -49,13 +48,14 @@ interface RegistryEntry {
 const registry = new Map<string, RegistryEntry>()
 
 /**
- * Register a preset with metadata and optional content contract.
+ * Register a preset with metadata.
+ * Content contract is read from preset.content.contentContract.
  * Called by preset modules on import.
  */
 export function registerPreset(
   meta: PresetMeta,
   preset: SitePreset,
-  options?: { contentContract?: ContentContract; preprocessor?: ContentPreprocessor }
+  options?: { preprocessor?: ContentPreprocessor }
 ): void {
   if (registry.has(meta.id)) {
     console.warn(`Preset "${meta.id}" is already registered. Overwriting.`)
@@ -63,7 +63,6 @@ export function registerPreset(
   registry.set(meta.id, {
     meta,
     preset,
-    contentContract: options?.contentContract,
     preprocessor: options?.preprocessor,
   })
 }
@@ -109,9 +108,10 @@ export function getAllPresets(): Array<{ meta: PresetMeta; preset: SitePreset }>
 
 /**
  * Get the content contract for a preset by ID.
+ * Reads from the preset's content composition.
  */
 export function getPresetContentContract(id: string): ContentContract | undefined {
-  return registry.get(id)?.contentContract
+  return registry.get(id)?.preset.content.contentContract
 }
 
 /**
