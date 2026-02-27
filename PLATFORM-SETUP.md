@@ -7,7 +7,7 @@ Instructions for creating `creativeshire-platform`, the Next.js application that
 ```
 creativeshire-engine/          # This repo (library)
 ├── engine/                    # The exportable library
-├── app/                       # Local testing only (not exported)
+├── .storybook/                # Local testing via Storybook
 └── package.json
 
 creativeshire-platform/        # New repo (application)
@@ -201,6 +201,32 @@ const siteConfig: SiteSchema = {
 ### Font Variable Fallbacks
 
 Engine CSS now includes fallbacks (`system-ui, -apple-system, sans-serif`), so components will render even without custom fonts. But for proper branding, always define your fonts.
+
+### Framework Components (Required for Next.js)
+
+The engine is framework-agnostic. By default, Image renders as `<img>` and Link renders as `<a>`. To get Next.js optimizations (image optimization, prefetching), pass framework components via `EngineProvider`:
+
+```tsx
+// src/app/providers.tsx
+'use client'
+
+import NextImage from 'next/image'
+import NextLink from 'next/link'
+import { useRouter } from 'next/navigation'
+import { EngineProvider } from '@creativeshire/engine/interface'
+
+const framework = { Image: NextImage, Link: NextLink, useRouter }
+
+export function SiteProviders({ input, children }) {
+  return (
+    <EngineProvider input={input} framework={framework}>
+      {children}
+    </EngineProvider>
+  )
+}
+```
+
+Without this, the engine works fine but without Next.js image optimization or client-side navigation prefetching.
 
 ---
 
