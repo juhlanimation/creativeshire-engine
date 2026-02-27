@@ -16,8 +16,8 @@
 import { useMemo, useSyncExternalStore } from 'react'
 import type { StoreApi } from 'zustand'
 import { useExperience } from '../../../../experience'
-import type { InfiniteCarouselState } from '../../../../experience/experiences/types'
-import { WidgetRenderer } from '../../../../renderer/WidgetRenderer'
+import type { InfiniteCarouselState } from '../../../../experience/compositions/types'
+import { useWidgetRenderer } from '../../../../renderer/WidgetRendererContext'
 import type { FixedCardProps } from './types'
 
 /**
@@ -90,6 +90,7 @@ export function FixedCard({
   cards,
   centerGap = 90,
 }: FixedCardProps) {
+  const WidgetRenderer = useWidgetRenderer()
   const { store } = useExperience()
 
   // Cast to infinite carousel store for scrollProgress access

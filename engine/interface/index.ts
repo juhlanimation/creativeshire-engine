@@ -5,6 +5,18 @@
 // Provider and hooks
 export { EngineProvider, useEngineController, useEngineState, useEngineStore } from './EngineProvider'
 
+// Framework components (Image, Link, router) — platform injects implementations
+export {
+  FrameworkProvider,
+  useFrameworkImage,
+  useFrameworkLink,
+  useFrameworkRouter,
+  type FrameworkComponentsConfig,
+  type FrameworkImageProps,
+  type FrameworkLinkProps,
+  type FrameworkRouter,
+} from './FrameworkComponents'
+
 // Container context for contained/preview mode
 export {
   ContainerProvider,

@@ -13,7 +13,7 @@ import { StoryGlobalsDecorator, StoryGlobalsContext } from '../../../../../.stor
 import { extractDefaults } from '../../../../schema/settings'
 import { settingsToArgTypes } from '../../../../../.storybook/helpers/controls-adapter'
 import type { SettingConfig } from '../../../../schema/settings'
-import type { Experience } from '../../../../experience/experiences/types'
+import type { Experience } from '../../../../experience/compositions/types'
 
 const settings = (meta.settings ?? {}) as Record<string, SettingConfig>
 

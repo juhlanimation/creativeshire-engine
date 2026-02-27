@@ -9,7 +9,7 @@ import { useEffect, useRef, useSyncExternalStore } from 'react'
 import { gsap } from 'gsap'
 import type { StoreApi } from 'zustand'
 import { useExperience } from '../../../../experience'
-import type { InfiniteCarouselState } from '../../../../experience/experiences/types'
+import type { InfiniteCarouselState } from '../../../../experience/compositions/types'
 import type { NavTimelineProps } from './types'
 
 // =============================================================================

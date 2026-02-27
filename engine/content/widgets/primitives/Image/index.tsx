@@ -6,11 +6,11 @@
  */
 
 import React, { memo, forwardRef, useMemo, type CSSProperties } from 'react'
-import NextImage from 'next/image'
+import { useFrameworkImage } from '../../../../interface/FrameworkComponents'
 import type { ImageProps } from './types'
 
 /**
- * Image component renders an image via next/image.
+ * Image component renders an image via framework-provided Image primitive.
  * Supports CSS variable animation via var() fallbacks in styles.css.
  */
 const Image = memo(forwardRef<HTMLImageElement, ImageProps>(function Image(
@@ -32,6 +32,8 @@ const Image = memo(forwardRef<HTMLImageElement, ImageProps>(function Image(
   },
   ref
 ) {
+  const FrameworkImage = useFrameworkImage()
+
   const computedStyle = useMemo<CSSProperties>(() => ({
     ...style,
     ...(aspectRatio ? { aspectRatio } : {}),
@@ -41,7 +43,7 @@ const Image = memo(forwardRef<HTMLImageElement, ImageProps>(function Image(
   }), [style, aspectRatio, objectFit, objectPosition, filter])
 
   return (
-    <NextImage
+    <FrameworkImage
       ref={ref}
       id={id}
       className={className ? `image-widget ${className}` : 'image-widget'}

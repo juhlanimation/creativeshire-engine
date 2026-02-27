@@ -9,10 +9,11 @@ import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'r
 import { useStore, type StoreApi } from 'zustand'
 import { createEngineStore, createSnapshot } from './EngineStore'
 import { ExperienceProvider, getExperience, simpleExperience, ensureExperiencesRegistered } from '../experience'
-import { createExperienceStore } from '../experience/experiences/createExperienceStore'
+import { createExperienceStore } from '../experience/compositions/createExperienceStore'
 
 // Ensure all experiences are registered before any lookups
 ensureExperiencesRegistered()
+import { FrameworkProvider, type FrameworkComponentsConfig } from './FrameworkComponents'
 import type {
   EngineInput,
   EngineState,
@@ -41,6 +42,8 @@ const EngineContext = createContext<EngineContextValue | null>(null)
 interface EngineProviderProps {
   /** Input configuration from platform */
   input: EngineInput
+  /** Framework-specific components (Image, Link, router). Defaults to plain HTML. */
+  framework?: Partial<FrameworkComponentsConfig>
   /** Child components (SiteRenderer, etc.) */
   children: ReactNode
 }
@@ -53,7 +56,7 @@ interface EngineProviderProps {
  * EngineProvider - root provider for the engine.
  * Wraps ExperienceProvider and provides controller access.
  */
-export function EngineProvider({ input, children }: EngineProviderProps) {
+export function EngineProvider({ input, framework, children }: EngineProviderProps) {
   // Create store with events
   const store = useMemo(
     () => createEngineStore(input, input.events),
@@ -90,9 +93,11 @@ export function EngineProvider({ input, children }: EngineProviderProps) {
 
   return (
     <EngineContext.Provider value={{ store, controller }}>
-      <ExperienceProvider experience={resolvedExperience} store={experienceStore}>
-        {children}
-      </ExperienceProvider>
+      <FrameworkProvider components={framework}>
+        <ExperienceProvider experience={resolvedExperience} store={experienceStore}>
+          {children}
+        </ExperienceProvider>
+      </FrameworkProvider>
     </EngineContext.Provider>
   )
 }

@@ -9,7 +9,7 @@ import type {
   ExperienceState,
   InfiniteCarouselState,
   NavigableExperienceState,
-} from '../../engine/experience/experiences/types'
+} from '../../engine/experience/compositions/types'
 
 /**
  * Bare experience — bareMode disables all behaviours.

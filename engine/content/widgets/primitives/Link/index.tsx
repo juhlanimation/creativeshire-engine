@@ -4,7 +4,7 @@
  * Link widget - renders a navigation link with CSS variable support.
  * Content Layer (L1) - no scroll listeners or viewport units.
  *
- * Uses Next.js Link for internal routes (href starts with /),
+ * Uses framework-provided Link for internal routes (href starts with /),
  * native <a> element for external URLs.
  *
  * Supports page transitions via PageTransitionContext (EffectTimeline):
@@ -15,8 +15,7 @@
  */
 
 import React, { memo, forwardRef, useCallback, useRef, type MouseEvent } from 'react'
-import NextLink from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useFrameworkLink, useFrameworkRouter } from '../../../../interface/FrameworkComponents'
 import { usePageTransition } from '../../../../experience/navigation/PageTransitionContext'
 import { prefersReducedMotion } from '../../../../experience/timeline/animateElement'
 import type { LinkProps } from './types'
@@ -102,7 +101,8 @@ const Link = memo(forwardRef<HTMLAnchorElement, LinkProps>(function Link(
   },
   ref
 ) {
-  const router = useRouter()
+  const FrameworkLink = useFrameworkLink()
+  const router = useFrameworkRouter()
   const transitionContext = usePageTransition()
 
   // Version counter — incremented on each click so stale async
@@ -206,19 +206,17 @@ const Link = memo(forwardRef<HTMLAnchorElement, LinkProps>(function Link(
     'data-effect': dataEffect,
   }
 
-  // Use Next.js Link for internal navigation
+  // Use framework Link for internal navigation
   if (isInternalLink(href)) {
-    // Note: We don't modify the href attribute here to avoid hydration mismatch.
-    // Dev query params (_preset, _experience, _intro, _transition) are added in handleClick instead.
     return (
-      <NextLink
+      <FrameworkLink
         ref={ref}
         href={href}
         onClick={handleClick}
         {...commonProps}
       >
         {children}
-      </NextLink>
+      </FrameworkLink>
     )
   }
 

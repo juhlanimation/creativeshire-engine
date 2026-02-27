@@ -9,8 +9,10 @@
 
 import React, { useLayoutEffect, useMemo } from 'react'
 import type { Decorator } from '@storybook/react'
-import { ExperienceProvider } from '../../engine/experience/experiences/ExperienceProvider'
+import { ExperienceProvider } from '../../engine/experience/compositions/ExperienceProvider'
 import { ContainerProvider } from '../../engine/interface/ContainerContext'
+import { WidgetRendererProvider } from '../../engine/renderer/WidgetRendererContext'
+import { WidgetRenderer } from '../../engine/renderer/WidgetRenderer'
 import { bareExperience, createNoopStore } from '../mocks/context'
 import { buildThemeStyle } from '../../engine/renderer/SiteRenderer'
 import { getTheme, ensureThemesRegistered } from '../../engine/themes'
@@ -76,6 +78,7 @@ export const EngineDecorator: Decorator = (Story, context) => {
   } as React.CSSProperties), [palette, isNoTheme])
 
   return (
+    <WidgetRendererProvider renderer={WidgetRenderer}>
     <div data-engine-root style={rootStyle}>
       <div data-site-renderer style={themeStyle}>
         <ExperienceProvider experience={bareExperience} store={store}>
@@ -87,5 +90,6 @@ export const EngineDecorator: Decorator = (Story, context) => {
         </ExperienceProvider>
       </div>
     </div>
+    </WidgetRendererProvider>
   )
 }

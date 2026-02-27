@@ -2,7 +2,7 @@
  * Link widget props interface.
  * Link renders a navigation link and reads CSS variables for animation.
  *
- * Uses Next.js Link for internal routes, native <a> for external URLs.
+ * Uses framework-provided Link for internal routes, native <a> for external URLs.
  */
 
 import type { CSSProperties, ReactNode } from 'react'
