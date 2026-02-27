@@ -13,7 +13,7 @@
 import { createPortal } from 'react-dom'
 import { useSyncExternalStore } from 'react'
 import { getChromeComponent } from '../content/chrome/registry'
-import type { ExperienceChrome } from '../experience/experiences/types'
+import type { ExperienceChrome } from '../experience/compositions/types'
 import { useContainer } from '../interface/ContainerContext'
 import { useSiteContainer } from './SiteContainerContext'
 

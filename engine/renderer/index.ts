@@ -9,6 +9,7 @@ export { WidgetRenderer } from './WidgetRenderer'
 export { ChromeRenderer } from './ChromeRenderer'
 export { ExperienceChromeRenderer } from './ExperienceChromeRenderer'
 export { ErrorBoundary } from './ErrorBoundary'
+export { WidgetRendererProvider, useWidgetRenderer } from './WidgetRendererContext'
 
 // Binding resolution
 export {

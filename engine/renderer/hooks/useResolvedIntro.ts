@@ -1,14 +1,14 @@
 /**
  * Resolves the active intro configuration for a site+page+experience.
  *
- * Resolution chain: _intro=none → page.intro → site.intro → experience.intro
+ * Resolution chain: _intro=none → page.intro → site.experience.intro → experience.intro
  * Handles: dev override, overlay component resolution.
  */
 
 import { type ComponentType, useMemo } from 'react'
 import { getIntroOverride, getIntroSequence, resolvePresetIntro } from '../../intro'
 import type { IntroConfig, PresetIntroConfig } from '../../intro'
-import type { Experience } from '../../experience/experiences/types'
+import type { Experience } from '../../experience/compositions/types'
 import { getChromeComponent } from '../../content/chrome/registry'
 import { useDevOverride } from './useDevOverride'
 import type { SiteSchema, PageSchema } from '../../schema'
@@ -28,7 +28,7 @@ export function useResolvedIntro(
   const introOverrideId = useDevOverride(getIntroOverride)
 
   // Resolve intro config:
-  // Priority: _intro=none → _intro=<sequence-id> → page.intro → site.intro → experience.intro
+  // Priority: _intro=none → _intro=<sequence-id> → page.intro → site.experience.intro → experience.intro
   let introConfig: IntroConfig | null
   if (introOverrideId === 'none') {
     introConfig = null
@@ -37,7 +37,7 @@ export function useResolvedIntro(
   } else {
     const raw = page.intro === 'disabled'
       ? null
-      : (page.intro ?? site.intro ?? experience.intro) ?? null
+      : (page.intro ?? site.experience?.intro ?? experience.intro) ?? null
     // Resolve PresetIntroConfig (sequence ref) to IntroConfig
     introConfig = raw && 'sequence' in raw
       ? resolvePresetIntro(raw as PresetIntroConfig)

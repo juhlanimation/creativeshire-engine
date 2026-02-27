@@ -28,8 +28,8 @@ import { useThemeContext } from './ThemeProvider'
 import { getTheme, paletteToCSS } from '../themes'
 import { capitalize } from './utils'
 import type { SectionSchema } from '../schema'
-import type { BehaviourAssignment } from '../experience/experiences/types'
-import type { NavigableExperienceState } from '../experience/experiences/types'
+import type { BehaviourAssignment } from '../experience/compositions/types'
+import type { NavigableExperienceState } from '../experience/compositions/types'
 
 interface SectionRendererProps {
   section: SectionSchema

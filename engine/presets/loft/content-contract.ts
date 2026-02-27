@@ -1,136 +1,114 @@
 /**
  * Loft Preset Content Contract
  *
- * Declares every CMS source field the loft preset reads.
- * Each sourceField.path EXACTLY matches a {{ content.xxx }} binding
- * expression found in the preset's page templates and chrome config.
- * The platform uses this contract to seed the database and build CMS forms.
+ * Thin aggregation: imports section and chrome content declarations
+ * and builds the contract via buildContentContract(). The pricing and
+ * contact sections use custom field layouts, so they are declared inline.
  */
 
-import type { ContentContract } from '../types'
+import { buildContentContract } from '../content-utils'
+import { content as heroTitleContent } from '../../content/sections/patterns/HeroTitle/content'
+import { content as aboutCollageContent } from '../../content/sections/patterns/AboutCollage/content'
+import { content as teamShowcaseContent } from '../../content/sections/patterns/TeamShowcase/content'
+import { content as brandFooterContent } from '../../content/chrome/patterns/BrandFooter/content'
 
-export const loftContentContract: ContentContract = {
-  sections: [
-    { id: 'header', label: 'Header', description: 'Header brand and navigation' },
-    { id: 'hero', label: 'Hero', description: 'Full-screen video hero with title' },
-    { id: 'about', label: 'Om PORT12', description: 'About section with scattered photo collage' },
-    { id: 'team', label: 'Medlemmer', description: 'Team member video showcase' },
-    { id: 'pricing', label: 'Medlemskab', description: 'Membership pricing plans' },
-    { id: 'contact', label: 'Kontakt', description: 'Contact information' },
-    { id: 'nav', label: 'Navigation', description: 'Site navigation links' },
-    { id: 'footer', label: 'Footer', description: 'Footer content' },
-  ],
+export const loftContentContract = buildContentContract({
+  // ── Site-level (inline) ───────────────────────────────────────────────
+  header: {
+    label: 'Header',
+    description: 'Header brand and navigation',
+    contentFields: [
+      { path: 'brandName', type: 'text', label: 'Brand Name', required: true, default: 'PORT12' },
+    ],
+    sampleContent: { brandName: 'PORT12' },
+  },
 
-  sourceFields: [
-    // ── Header ────────────────────────────────────────────────────────────
-    { path: 'header.brandName', type: 'text', label: 'Brand Name', section: 'header', required: true, default: 'PORT12' },
+  // ── Section-level (imported from section content.ts) ──────────────────
+  hero: { ...heroTitleContent, label: 'Hero', description: 'Full-screen video hero with title' },
+  about: { ...aboutCollageContent, label: 'Om PORT12', description: 'About section with scattered photo collage' },
+  team: { ...teamShowcaseContent, label: 'Medlemmer', description: 'Team member video showcase' },
 
-    // ── Hero ───────────────────────────────────────────────────────────────
-    { path: 'hero.title', type: 'text', label: 'Title', section: 'hero', required: true, default: 'PORT12' },
-    { path: 'hero.tagline', type: 'text', label: 'Tagline', section: 'hero', default: 'DRØM • DEL • SKAB' },
-    { path: 'hero.videoSrc', type: 'text', label: 'Hero Video URL', section: 'hero', required: true },
-    { path: 'hero.loopStartTime', type: 'number', label: 'Loop Start Time (s)', section: 'hero', default: 3.4 },
-    { path: 'hero.textRevealTime', type: 'number', label: 'Text Reveal Time (s)', section: 'hero', default: 3.2 },
-    { path: 'hero.scrollIndicatorText', type: 'text', label: 'Scroll Indicator Text', section: 'hero', default: '(SCROLL)' },
+  // ── Pricing (custom layout — inline) ──────────────────────────────────
+  pricing: {
+    label: 'Medlemskab',
+    description: 'Membership pricing plans',
+    contentFields: [
+      { path: 'priceSubtitle', type: 'text', label: 'Price Subtitle', default: 'ex moms / måned' },
 
-    // ── About ─────────────────────────────────────────────────────────────
-    { path: 'about.text', type: 'textarea', label: 'About Text', section: 'about', required: true },
-    {
-      path: 'about.images',
-      type: 'collection',
-      label: 'About Images',
-      section: 'about',
-      required: true,
-      itemFields: [
-        { path: 'src', type: 'image', label: 'Image', section: 'about', required: true },
-        { path: 'alt', type: 'text', label: 'Alt Text', section: 'about', default: '' },
+      // Flex plan
+      { path: 'flex.name', type: 'text', label: 'Flex Plan Name', required: true, default: 'FLEX' },
+      { path: 'flex.price', type: 'text', label: 'Flex Price', required: true, default: '1.300 DKK' },
+      { path: 'flex.description', type: 'textarea', label: 'Flex Description' },
+      { path: 'flex.illustration', type: 'image', label: 'Flex Illustration' },
+      {
+        path: 'flex.features',
+        type: 'collection',
+        label: 'Flex Features',
+        itemFields: [
+          { path: 'name', type: 'text', label: 'Feature Name', required: true },
+          { path: 'icon', type: 'text', label: 'Icon SVG', required: true },
+        ],
+      },
+
+      // All-In plan
+      { path: 'allIn.name', type: 'text', label: 'All-In Plan Name', required: true, default: 'ALL-IN' },
+      { path: 'allIn.price', type: 'text', label: 'All-In Price', required: true, default: '2.000 DKK' },
+      { path: 'allIn.description', type: 'textarea', label: 'All-In Description' },
+      { path: 'allIn.illustration', type: 'image', label: 'All-In Illustration' },
+      {
+        path: 'allIn.features',
+        type: 'collection',
+        label: 'All-In Features',
+        itemFields: [
+          { path: 'name', type: 'text', label: 'Feature Name', required: true },
+          { path: 'icon', type: 'text', label: 'Icon SVG', required: true },
+        ],
+      },
+    ],
+    sampleContent: {
+      priceSubtitle: 'ex moms / måned',
+      flex: { name: 'FLEX', price: '1.300 DKK' },
+      allIn: { name: 'ALL-IN', price: '2.000 DKK' },
+    },
+  },
+
+  // ── Contact (custom layout — inline) ──────────────────────────────────
+  contact: {
+    label: 'Kontakt',
+    description: 'Contact information',
+    contentFields: [
+      { path: 'title', type: 'text', label: 'Contact Title', default: 'KONTAKT OS' },
+      { path: 'lines', type: 'string-list', label: 'Contact Lines' },
+      { path: 'email', type: 'text', label: 'Email', required: true },
+      { path: 'illustration', type: 'image', label: 'Contact Illustration' },
+    ],
+    sampleContent: { title: 'KONTAKT OS', email: 'info@example.com' },
+  },
+
+  // ── Navigation (site-level — inline) ──────────────────────────────────
+  nav: {
+    label: 'Navigation',
+    description: 'Site navigation links',
+    contentFields: [
+      {
+        path: 'links',
+        type: 'collection',
+        label: 'Navigation Links',
+        itemFields: [
+          { path: 'href', type: 'text', label: 'Link URL', required: true },
+          { path: 'label', type: 'text', label: 'Link Label', required: true },
+        ],
+      },
+    ],
+    sampleContent: {
+      links: [
+        { href: '#about', label: 'About' },
+        { href: '#team', label: 'Team' },
+        { href: '#pricing', label: 'Pricing' },
       ],
     },
+  },
 
-    // ── Team ──────────────────────────────────────────────────────────────
-    { path: 'team.labelText', type: 'text', label: 'Team Label', section: 'team', default: 'Vi er' },
-    {
-      path: 'team.members',
-      type: 'collection',
-      label: 'Team Members',
-      section: 'team',
-      required: true,
-      itemFields: [
-        { path: 'name', type: 'text', label: 'Name', section: 'team', required: true },
-        { path: 'videoSrc', type: 'text', label: 'Video URL', section: 'team' },
-        { path: 'portfolioUrl', type: 'text', label: 'Portfolio URL', section: 'team' },
-      ],
-    },
-
-    // ── Pricing ───────────────────────────────────────────────────────────
-    { path: 'pricing.priceSubtitle', type: 'text', label: 'Price Subtitle', section: 'pricing', default: 'ex moms / måned' },
-
-    // Flex plan
-    { path: 'pricing.flex.name', type: 'text', label: 'Flex Plan Name', section: 'pricing', required: true, default: 'FLEX' },
-    { path: 'pricing.flex.price', type: 'text', label: 'Flex Price', section: 'pricing', required: true, default: '1.300 DKK' },
-    { path: 'pricing.flex.description', type: 'textarea', label: 'Flex Description', section: 'pricing' },
-    { path: 'pricing.flex.illustration', type: 'image', label: 'Flex Illustration', section: 'pricing' },
-    {
-      path: 'pricing.flex.features',
-      type: 'collection',
-      label: 'Flex Features',
-      section: 'pricing',
-      itemFields: [
-        { path: 'name', type: 'text', label: 'Feature Name', section: 'pricing', required: true },
-        { path: 'icon', type: 'text', label: 'Icon SVG', section: 'pricing', required: true },
-      ],
-    },
-
-    // All-In plan
-    { path: 'pricing.allIn.name', type: 'text', label: 'All-In Plan Name', section: 'pricing', required: true, default: 'ALL-IN' },
-    { path: 'pricing.allIn.price', type: 'text', label: 'All-In Price', section: 'pricing', required: true, default: '2.000 DKK' },
-    { path: 'pricing.allIn.description', type: 'textarea', label: 'All-In Description', section: 'pricing' },
-    { path: 'pricing.allIn.illustration', type: 'image', label: 'All-In Illustration', section: 'pricing' },
-    {
-      path: 'pricing.allIn.features',
-      type: 'collection',
-      label: 'All-In Features',
-      section: 'pricing',
-      itemFields: [
-        { path: 'name', type: 'text', label: 'Feature Name', section: 'pricing', required: true },
-        { path: 'icon', type: 'text', label: 'Icon SVG', section: 'pricing', required: true },
-      ],
-    },
-
-    // ── Contact ───────────────────────────────────────────────────────────
-    { path: 'contact.title', type: 'text', label: 'Contact Title', section: 'contact', default: 'KONTAKT OS' },
-    { path: 'contact.lines', type: 'string-list', label: 'Contact Lines', section: 'contact' },
-    { path: 'contact.email', type: 'text', label: 'Email', section: 'contact', required: true },
-    { path: 'contact.illustration', type: 'image', label: 'Contact Illustration', section: 'contact' },
-
-    // ── Nav ───────────────────────────────────────────────────────────────
-    {
-      path: 'nav.links',
-      type: 'collection',
-      label: 'Navigation Links',
-      section: 'nav',
-      itemFields: [
-        { path: 'href', type: 'text', label: 'Link URL', section: 'nav', required: true },
-        { path: 'label', type: 'text', label: 'Link Label', section: 'nav', required: true },
-      ],
-    },
-
-    // ── Footer ────────────────────────────────────────────────────────────
-    { path: 'footer.brandName', type: 'text', label: 'Brand Name', section: 'footer', default: 'PORT12' },
-    { path: 'footer.copyright', type: 'text', label: 'Copyright Text', section: 'footer' },
-    {
-      path: 'footer.navLinks',
-      type: 'collection',
-      label: 'Footer Nav Links',
-      section: 'footer',
-      itemFields: [
-        { path: 'href', type: 'text', label: 'Link URL', section: 'footer', required: true },
-        { path: 'label', type: 'text', label: 'Link Label', section: 'footer', required: true },
-      ],
-    },
-    { path: 'footer.email', type: 'text', label: 'Footer Email', section: 'footer' },
-    { path: 'footer.phone', type: 'text', label: 'Phone Number', section: 'footer' },
-    { path: 'footer.phoneDisplay', type: 'text', label: 'Phone Display Text', section: 'footer' },
-    { path: 'footer.address', type: 'text', label: 'Address', section: 'footer' },
-  ],
-}
+  // ── Chrome-level (imported from chrome content.ts) ────────────────────
+  footer: { ...brandFooterContent, label: 'Footer', description: 'Footer content' },
+})

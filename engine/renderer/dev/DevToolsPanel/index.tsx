@@ -18,7 +18,7 @@
  * Only renders in development mode, not in iframes.
  */
 
-import { useState, useCallback, useMemo, useSyncExternalStore, type ReactNode, type PropsWithChildren } from 'react'
+import { useState, useCallback, useEffect, useMemo, useRef, useSyncExternalStore, type ReactNode, type PropsWithChildren } from 'react'
 import { createPortal } from 'react-dom'
 import { useStore } from 'zustand'
 import { useSiteContainer } from '../../SiteContainerContext'
@@ -97,7 +97,7 @@ function DevToolsPanelInner({ currentIds, sections, siteChrome }: DevToolsPanelP
   // Check if the active preset is multi-page
   const isMultiPage = useMemo(() => {
     const preset = getPreset(activePresetId)
-    return preset ? Object.keys(preset.pages).length > 1 : false
+    return preset ? Object.keys(preset.content.pages).length > 1 : false
   }, [activePresetId])
 
   // Items for each dropdown
@@ -173,6 +173,9 @@ function DevToolsPanelInner({ currentIds, sections, siteChrome }: DevToolsPanelP
           override={presetOverride}
           items={presetItems}
         />
+
+        {/* Export Site */}
+        <ExportSiteSection presetId={activePresetId} />
 
         {/* Transition (only if multi-page) */}
         {isMultiPage && (
@@ -302,6 +305,189 @@ function PresetSection({ activeId, defaultId, override, items }: PresetSectionPr
             </button>
           )}
         </div>
+      </div>
+    </CollapsibleSection>
+  )
+}
+
+// =============================================================================
+// ExportSiteSection
+// =============================================================================
+
+type ExportStatus = 'idle' | 'exporting' | 'success' | 'error'
+
+const FRAMEWORKS = [
+  { id: 'nextjs', name: 'Next.js' },
+] as const
+
+function ExportSiteSection({ presetId }: { presetId: string }) {
+  const [outputDir, setOutputDir] = useState('')
+  const [framework, setFramework] = useState<string>('nextjs')
+  const [status, setStatus] = useState<ExportStatus>('idle')
+  const [message, setMessage] = useState('')
+  const [isUpdate, setIsUpdate] = useState(false)
+  const [existingPresetId, setExistingPresetId] = useState<string | null>(null)
+  const checkTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const placeholder = `../exports/${presetId}-site`
+  const effectiveDir = outputDir.trim() || placeholder
+
+  // Debounced check: probe whether the output path has an existing export
+  const checkPath = useCallback((dir: string) => {
+    if (checkTimerRef.current) clearTimeout(checkTimerRef.current)
+    checkTimerRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch('/__export-site-check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ outputDir: dir }),
+        })
+        const data = await res.json()
+        setIsUpdate(data.exists ?? false)
+        setExistingPresetId(data.presetId ?? null)
+      } catch {
+        setIsUpdate(false)
+        setExistingPresetId(null)
+      }
+    }, 300)
+  }, [])
+
+  // Re-check when output path or preset changes
+  useEffect(() => {
+    checkPath(effectiveDir)
+  }, [effectiveDir, checkPath])
+
+  // Also re-check after a successful export (path now has .engine.json)
+  const handleExport = useCallback(async () => {
+    setStatus('exporting')
+    setMessage('')
+
+    try {
+      const res = await fetch('/__export-site', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ presetId, outputDir: effectiveDir }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok || data.error) {
+        setStatus('error')
+        setMessage(data.error || 'Export failed')
+        return
+      }
+
+      setStatus('success')
+      const mode = data.isUpdate ? 'Updated' : 'Exported'
+      setMessage(`${mode} to ${data.outputDir}`)
+
+      // Re-check path so button updates to "Update" for next click
+      checkPath(effectiveDir)
+    } catch (err) {
+      setStatus('error')
+      setMessage(String(err))
+    }
+  }, [presetId, effectiveDir, checkPath])
+
+  const statusColor =
+    status === 'success' ? '#4ade80' :
+    status === 'error' ? '#f87171' :
+    'rgba(255,255,255,0.4)'
+
+  // Different preset warning
+  const presetMismatch = isUpdate && existingPresetId && existingPresetId !== presetId
+
+  // Button label
+  const buttonLabel =
+    status === 'exporting' ? (isUpdate ? 'Updating...' : 'Exporting...') :
+    isUpdate ? 'Update Site' : 'Export Site'
+
+  // Button color: blue for export, green-ish for update
+  const UPDATE_ACCENT = '34,197,94'
+  const btnAccent = isUpdate ? UPDATE_ACCENT : PANEL_ACCENT
+
+  return (
+    <CollapsibleSection label="Export Site">
+      <div style={{ padding: '4px 12px 8px' }}>
+        {/* Framework */}
+        <div style={{ marginBottom: 6 }}>
+          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10, marginBottom: 2 }}>Framework</div>
+          <select
+            value={framework}
+            onChange={(e) => setFramework(e.target.value)}
+            className="dt-settings__select"
+            style={{ width: '100%' }}
+          >
+            {FRAMEWORKS.map((fw) => (
+              <option key={fw.id} value={fw.id}>{fw.name}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Output path */}
+        <div style={{ marginBottom: 6 }}>
+          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10, marginBottom: 2 }}>Output path</div>
+          <input
+            type="text"
+            value={outputDir}
+            onChange={(e) => setOutputDir(e.target.value)}
+            placeholder={placeholder}
+            className="dt-settings__select"
+            style={{
+              width: '100%',
+              fontFamily: 'ui-monospace, monospace',
+              fontSize: 11,
+            }}
+          />
+        </div>
+
+        {/* Update hint */}
+        {isUpdate && !presetMismatch && (
+          <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 10, marginBottom: 4, fontStyle: 'italic' }}>
+            Existing site detected — content.json will be preserved
+          </div>
+        )}
+
+        {/* Preset mismatch warning */}
+        {presetMismatch && (
+          <div style={{ color: '#facc15', fontSize: 10, marginBottom: 4 }}>
+            Warning: existing site uses preset "{existingPresetId}"
+          </div>
+        )}
+
+        {/* Export / Update button */}
+        <button
+          onClick={handleExport}
+          disabled={status === 'exporting'}
+          style={{
+            width: '100%',
+            padding: '6px 12px',
+            background: status === 'exporting'
+              ? 'rgba(255,255,255,0.1)'
+              : `rgba(${btnAccent}, 0.3)`,
+            border: `1px solid rgba(${btnAccent}, 0.5)`,
+            borderRadius: 4,
+            color: status === 'exporting' ? 'rgba(255,255,255,0.4)' : '#fff',
+            fontSize: 11,
+            fontWeight: 600,
+            cursor: status === 'exporting' ? 'wait' : 'pointer',
+            letterSpacing: '0.5px',
+          }}
+        >
+          {buttonLabel}
+        </button>
+
+        {/* Status message */}
+        {message && (
+          <div style={{
+            color: statusColor,
+            fontSize: 10,
+            marginTop: 4,
+            wordBreak: 'break-all',
+          }}>
+            {message}
+          </div>
+        )}
       </div>
     </CollapsibleSection>
   )

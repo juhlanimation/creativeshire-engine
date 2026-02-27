@@ -32,7 +32,7 @@ import type { ChromeSchema, PageChromeOverrides, RegionSchema, RegionLayout, Ove
 import { getChromeComponent } from '../content/chrome/registry'
 import { BehaviourWrapper } from '../experience/behaviours'
 import { useExperience } from '../experience'
-import type { BehaviourAssignment } from '../experience/experiences/types'
+import type { BehaviourAssignment } from '../experience/compositions/types'
 import { useDevChromeBehaviourAssignments } from './dev/devSettingsStore'
 import { WidgetRenderer } from './WidgetRenderer'
 import { useContainer } from '../interface/ContainerContext'

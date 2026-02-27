@@ -18,145 +18,163 @@ import { registerPreset, type PresetMeta } from '../registry'
 import { createBrandFooterRegion } from '../../content/chrome/patterns/BrandFooter'
 import { homePageTemplate } from './pages/home'
 import { loftContentContract } from './content-contract'
+import { loftSampleContent } from './sample-content'
 
+/**
+ * Loft preset metadata for UI display.
+ */
 export const loftMeta: PresetMeta = {
   id: 'loft',
   name: 'Business Landing - Loft',
   description: 'Danish coworking space — single-page with video hero and team showcase.',
 }
 
+/**
+ * Loft preset - complete business landing site configuration.
+ * Includes hero video, about, team showcase, pricing, and contact sections.
+ */
 export const loftPreset: SitePreset = {
-  theme: {
-    colorTheme: 'muted',
-    smoothScroll: {
-      enabled: true,
-      provider: 'lenis',
-      lenis: {
-        duration: 0.8,
-        touchMultiplier: 1.5,
+  content: {
+    id: 'loft-content',
+    name: 'Loft',
+    pages: {
+      home: homePageTemplate,
+    },
+    chrome: {
+      regions: {
+        header: {
+          overlay: true,
+          style: { mixBlendMode: 'difference' },
+          layout: {
+            justify: 'between',
+            align: 'start',
+            padding: 'var(--spacing-md, 1.25rem) var(--spacing-lg, 2rem)',
+          },
+          widgets: [
+            {
+              id: 'brand-logo',
+              type: 'Text',
+              props: { content: '{{ content.header.brandName }}', as: 'div' },
+              className: 'brand-text',
+              behaviour: {
+                id: 'scroll/reveal',
+                options: { sourceVar: '--hero-cover-progress' },
+              },
+            },
+            {
+              id: 'minimal-nav',
+              type: 'Flex',
+              props: {},
+              className: 'minimal-nav minimal-nav--hover-underline',
+              widgets: [
+                {
+                  id: 'nav-links',
+                  type: 'Flex',
+                  props: {},
+                  className: 'minimal-nav__links',
+                  widgets: [{
+                    id: 'nav-link',
+                    type: 'Link',
+                    __repeat: '{{ content.nav.links }}',
+                    __key: 'label',
+                    props: {
+                      href: '{{ item.href }}',
+                      children: '{{ item.label }}',
+                      variant: 'hover-underline',
+                    },
+                    className: 'minimal-nav__link',
+                  }],
+                },
+                {
+                  id: 'nav-divider',
+                  type: 'Box',
+                  props: {},
+                  className: 'minimal-nav__divider',
+                  widgets: [],
+                },
+                {
+                  id: 'nav-email',
+                  type: 'Link',
+                  props: {
+                    href: 'mailto:{{ content.footer.email }}',
+                    children: '{{ content.footer.email }}',
+                    variant: 'default',
+                  },
+                  className: 'minimal-nav__email',
+                },
+              ],
+            },
+          ],
+        },
+        footer: {
+          ...createBrandFooterRegion({
+            brandName: '{{ content.footer.brandName }}',
+            navLinks: '{{ content.footer.navLinks }}',
+            email: '{{ content.footer.email }}',
+            phone: '{{ content.footer.phone }}',
+            phoneDisplay: '{{ content.footer.phoneDisplay }}',
+            address: '{{ content.footer.address }}',
+            copyright: '{{ content.footer.copyright }}',
+          }),
+          colorMode: 'dark',
+          style: {
+            backgroundColor: 'var(--site-outer-bg)',
+          },
+        },
       },
     },
-    typography: {
-      title: '"BBH Sans Hegarty", system-ui, sans-serif',
-      paragraph: 'var(--font-plus-jakarta), system-ui, sans-serif',
-    },
-    container: {},
+    contentContract: loftContentContract,
+    sampleContent: loftSampleContent,
   },
   experience: {
-    id: 'cover-scroll',
-    sectionBehaviours: {
-      'hero-title': [{
-        behaviour: 'scroll/cover-progress',
-        options: {
-          propagateToRoot: '--hero-cover-progress',
-          propagateContentEdge: '--hero-content-edge',
-          targetTop: 0,
-          targetBottom: 0.5,
-        },
-        pinned: true,
-      }],
-    },
-    intro: {
-      sequence: 'video-gate',
-      settings: {
-        targetTime: 3.2,
-        revealDuration: 50,
-        contentVisible: true,
-      },
-    },
-  },
-  chrome: {
-    regions: {
-      header: {
-        overlay: true,
-        style: { mixBlendMode: 'difference' },
-        layout: {
-          justify: 'between',
-          align: 'start',
-          padding: 'var(--spacing-md, 1.25rem) var(--spacing-lg, 2rem)',
-        },
-        widgets: [
-          {
-            id: 'brand-logo',
-            type: 'Text',
-            props: { content: '{{ content.header.brandName }}', as: 'div' },
-            className: 'brand-text',
-            behaviour: {
-              id: 'scroll/reveal',
-              options: { sourceVar: '--hero-cover-progress' },
-            },
+    base: 'cover-scroll',
+    overrides: {
+      sectionBehaviours: {
+        'hero-title': [{
+          behaviour: 'scroll/cover-progress',
+          options: {
+            propagateToRoot: '--hero-cover-progress',
+            propagateContentEdge: '--hero-content-edge',
+            targetTop: 0,
+            targetBottom: 0.5,
           },
-          {
-            id: 'minimal-nav',
-            type: 'Flex',
-            props: {},
-            className: 'minimal-nav minimal-nav--hover-underline',
-            widgets: [
-              {
-                id: 'nav-links',
-                type: 'Flex',
-                props: {},
-                className: 'minimal-nav__links',
-                widgets: [{
-                  id: 'nav-link',
-                  type: 'Link',
-                  __repeat: '{{ content.nav.links }}',
-                  __key: 'label',
-                  props: {
-                    href: '{{ item.href }}',
-                    children: '{{ item.label }}',
-                    variant: 'hover-underline',
-                  },
-                  className: 'minimal-nav__link',
-                }],
-              },
-              {
-                id: 'nav-divider',
-                type: 'Box',
-                props: {},
-                className: 'minimal-nav__divider',
-                widgets: [],
-              },
-              {
-                id: 'nav-email',
-                type: 'Link',
-                props: {
-                  href: 'mailto:{{ content.footer.email }}',
-                  children: '{{ content.footer.email }}',
-                  variant: 'default',
-                },
-                className: 'minimal-nav__email',
-              },
-            ],
-          },
-        ],
+          pinned: true,
+        }],
       },
-      footer: {
-        ...createBrandFooterRegion({
-          brandName: '{{ content.footer.brandName }}',
-          navLinks: '{{ content.footer.navLinks }}',
-          email: '{{ content.footer.email }}',
-          phone: '{{ content.footer.phone }}',
-          phoneDisplay: '{{ content.footer.phoneDisplay }}',
-          address: '{{ content.footer.address }}',
-          copyright: '{{ content.footer.copyright }}',
-        }),
-        colorMode: 'dark',
-        style: {
-          backgroundColor: 'var(--site-outer-bg)',
+      intro: {
+        sequence: 'video-gate',
+        settings: {
+          targetTime: 3.2,
+          revealDuration: 50,
+          contentVisible: true,
         },
       },
     },
   },
-  pages: {
-    home: homePageTemplate,
+  theme: {
+    id: 'loft-theme',
+    name: 'Loft Muted',
+    theme: {
+      colorTheme: 'muted',
+      smoothScroll: {
+        enabled: true,
+        provider: 'lenis',
+        lenis: {
+          duration: 0.8,
+          touchMultiplier: 1.5,
+        },
+      },
+      typography: {
+        title: '"BBH Sans Hegarty", system-ui, sans-serif',
+        paragraph: 'var(--font-plus-jakarta), system-ui, sans-serif',
+      },
+      container: {},
+    },
   },
 }
 
 // Auto-register on module load
-registerPreset(loftMeta, loftPreset, {
-  contentContract: loftContentContract,
-})
+registerPreset(loftMeta, loftPreset)
 
 // Content contract export
 export { loftContentContract } from './content-contract'

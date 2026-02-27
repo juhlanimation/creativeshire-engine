@@ -26,7 +26,7 @@ import {
   PageTransitionWrapper,
   PageTransitionProvider,
 } from '../experience/navigation'
-import { ExperienceChoreographer } from '../experience/ExperienceChoreographer'
+import { ExperienceChoreographer } from '../experience/compositions/ExperienceChoreographer'
 import {
   ensurePageTransitionsRegistered,
 } from '../experience/transitions'
@@ -43,6 +43,8 @@ import { ViewportPortalProvider, ViewportPortalRegistrar } from './ViewportPorta
 import { ThemeProvider } from './ThemeProvider'
 import { ExperienceChromeRenderer } from './ExperienceChromeRenderer'
 import { SectionChromeProvider } from './SectionChromeContext'
+import { WidgetRendererProvider } from './WidgetRendererContext'
+import { WidgetRenderer } from './WidgetRenderer'
 import type { SiteSchema, PageSchema, ThemeSchema } from '../schema'
 import { toCssGap } from '../content/widgets/layout/utils'
 import { getBreakpointValue, type BreakpointValue } from '../config/breakpoints'
@@ -127,6 +129,14 @@ export function buildThemeStyle(theme?: ThemeSchema): React.CSSProperties {
   }
   if (theme?.sectionTransition?.fadeDuration) vars['--section-fade-duration'] = theme.sectionTransition.fadeDuration
   if (theme?.sectionTransition?.fadeEasing) vars['--section-fade-easing'] = theme.sectionTransition.fadeEasing
+
+  // Motion tokens (timing + easing presets)
+  if (theme?.motion?.timing?.fast) vars['--motion-fast'] = theme.motion.timing.fast
+  if (theme?.motion?.timing?.normal) vars['--motion-normal'] = theme.motion.timing.normal
+  if (theme?.motion?.timing?.slow) vars['--motion-slow'] = theme.motion.timing.slow
+  if (theme?.motion?.easing?.default) vars['--ease-default'] = theme.motion.easing.default
+  if (theme?.motion?.easing?.expressive) vars['--ease-expressive'] = theme.motion.easing.expressive
+  if (theme?.motion?.easing?.smooth) vars['--ease-smooth'] = theme.motion.easing.smooth
 
   return vars as React.CSSProperties
 }
@@ -213,6 +223,7 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
   const themeStyle = buildThemeStyle(site.theme)
 
   return (
+    <WidgetRendererProvider renderer={WidgetRenderer}>
     <SiteContainerProvider>
     <ViewportPortalProvider>
     <div data-engine-root style={themeStyle}>
@@ -346,6 +357,7 @@ export function SiteRenderer({ site, page, presetId }: SiteRendererProps) {
     </div>
     </ViewportPortalProvider>
     </SiteContainerProvider>
+    </WidgetRendererProvider>
   )
 }
 

@@ -12,7 +12,7 @@ import {
   findTransitionConfigIdBySchemaConfig,
 } from '../../experience/transitions'
 import type { TransitionConfig } from '../../schema/transition'
-import type { PageTransitionConfig } from '../../experience/experiences/types'
+import type { PageTransitionConfig } from '../../experience/compositions/types'
 import { useDevOverride } from './useDevOverride'
 import type { SiteSchema, PageSchema } from '../../schema'
 
@@ -37,7 +37,7 @@ function resolveTransitionConfig(
   if (pageTransition?.default) return pageTransition.default
 
   // 2. Site default
-  return site.transition
+  return site.experience?.transition
 }
 
 export function useResolvedTransition(site: SiteSchema, page: PageSchema): ResolvedTransition {

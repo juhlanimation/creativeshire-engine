@@ -5,7 +5,7 @@
  */
 
 import { createStore, useStore } from 'zustand'
-import type { BehaviourAssignment } from '../../experience/experiences/types'
+import type { BehaviourAssignment } from '../../experience/compositions/types'
 
 // =============================================================================
 // Types

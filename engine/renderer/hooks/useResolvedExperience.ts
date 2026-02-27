@@ -12,10 +12,10 @@ import {
   getExperienceAsync,
   simpleExperience,
 } from '../../experience'
-import type { Experience, ExperienceChrome, ExperienceState, BehaviourAssignment } from '../../experience/experiences/types'
+import type { Experience, ExperienceChrome, ExperienceState, BehaviourAssignment } from '../../experience/compositions/types'
 import { getExperienceOverride } from '../../experience'
 import { useDevOverride } from './useDevOverride'
-import { createExperienceStore } from '../../experience/experiences/createExperienceStore'
+import { createExperienceStore } from '../../experience/compositions/createExperienceStore'
 import type { SiteSchema, PageSchema } from '../../schema'
 
 export interface ResolvedExperience {

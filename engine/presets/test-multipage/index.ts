@@ -39,31 +39,46 @@ export const testMultipageMeta: PresetMeta = {
  * Includes home and about pages with header navigation.
  */
 export const testMultipagePreset: SitePreset = {
+  content: {
+    id: 'test-multipage-content',
+    name: 'Test Multipage',
+    pages: {
+      home: homePageTemplate,
+      about: aboutPageTemplate,
+    },
+    chrome: {
+      regions: {
+        header: createFixedNavRegion({
+          siteTitle: 'Test Site',
+          navLinks: [
+            { label: 'Home', href: '/' },
+            { label: 'About', href: '/about' },
+          ],
+          background: 'rgba(255, 255, 255, 0.95)',
+          color: '#000000',
+        }),
+        footer: 'hidden',
+      },
+    },
+    contentContract: testMultipageContentContract,
+    sampleContent: {},
+  },
+  experience: {
+    base: 'simple',
+    overrides: {
+      transition: { id: 'fade' },
+    },
+  },
   theme: {
-    scrollbar: {
-      width: 6,
-      thumb: '#333333',
-      track: '#f0f0f0',
+    id: 'test-multipage-theme',
+    name: 'Test',
+    theme: {
+      scrollbar: {
+        width: 6,
+        thumb: '#333333',
+        track: '#f0f0f0',
+      },
     },
-  },
-  transition: { id: 'fade' },
-  chrome: {
-    regions: {
-      header: createFixedNavRegion({
-        siteTitle: 'Test Site',
-        navLinks: [
-          { label: 'Home', href: '/' },
-          { label: 'About', href: '/about' },
-        ],
-        background: 'rgba(255, 255, 255, 0.95)',
-        color: '#000000',
-      }),
-      footer: 'hidden',
-    },
-  },
-  pages: {
-    home: homePageTemplate,
-    about: aboutPageTemplate,
   },
 }
 
@@ -71,6 +86,4 @@ export const testMultipagePreset: SitePreset = {
 export { testMultipageContentContract } from './content-contract'
 
 // Auto-register on module load
-registerPreset(testMultipageMeta, testMultipagePreset, {
-  contentContract: testMultipageContentContract,
-})
+registerPreset(testMultipageMeta, testMultipagePreset)
