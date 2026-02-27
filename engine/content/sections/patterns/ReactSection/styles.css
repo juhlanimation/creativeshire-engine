@@ -1,0 +1,10 @@
+/**
+ * ReactSection styles — minimal.
+ * The wrapped component handles its own styling.
+ * Only section-level concerns go here.
+ */
+
+.section-react-section {
+  /* Component fills the section by default */
+  width: 100%;
+}

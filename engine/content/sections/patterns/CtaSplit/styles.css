@@ -1,0 +1,66 @@
+/**
+ * CtaSplit section styles.
+ */
+
+.section-cta-split__heading {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  line-height: 0.875;
+  letter-spacing: 0.02em;
+  white-space: pre-line;
+}
+
+.section-cta-split__body {
+  max-width: 437px;
+}
+
+/* ── Featured layout: CSS Grid with 4 areas ── */
+
+.section-cta-split__grid {
+  display: grid;
+  grid-template-columns: 46% 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "heading ."
+    "heading body"
+    "collage action";
+  gap: 48px;
+  min-height: 60cqh;
+}
+
+.section-cta-split__heading-area {
+  grid-area: heading;
+  align-self: start;
+  max-width: 667px;
+}
+
+.section-cta-split__body-area {
+  grid-area: body;
+  align-self: start;
+}
+
+.section-cta-split__collage {
+  grid-area: collage;
+  align-self: end;
+}
+
+.section-cta-split__collage-img {
+  max-width: 100%;
+  height: auto;
+}
+
+.section-cta-split__action-area {
+  grid-area: action;
+  align-self: end;
+  justify-self: start;
+}
+
+/* CTA label text in swap variant */
+.section-cta-split--featured .section-cta-split__arrow-link {
+  font-size: 32px;
+  line-height: 1.25;
+}
+
+.section-cta-split__arrow-link {
+  margin-top: var(--spacing-md, 1rem);
+}

@@ -1,0 +1,15 @@
+/**
+ * HaubjergContact section styles.
+ *
+ * Available theme variables:
+ *   var(--text-primary), var(--text-secondary)
+ *   var(--bg-primary), var(--bg-secondary)
+ *   var(--spacing-sm), var(--spacing-md), var(--spacing-lg), var(--spacing-xl)
+ *   var(--font-heading), var(--font-body)
+ *
+ * Use cqw/cqh units, NOT vw/vh.
+ */
+
+.section-haubjerg-contact {
+  font-family: var(--font-body, sans-serif);
+}

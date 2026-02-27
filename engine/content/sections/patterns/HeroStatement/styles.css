@@ -1,0 +1,27 @@
+/**
+ * HeroStatement section styles.
+ */
+
+.section-hero-statement__heading {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  line-height: 0.88;
+  letter-spacing: 0.1em;
+}
+
+.section-hero-statement__grid {
+  align-items: start;
+}
+
+.section-hero-statement__collage {
+  align-items: flex-end;
+}
+
+.section-hero-statement__collage-img {
+  max-width: 100%;
+  border-radius: var(--radius-sm, 4px);
+}
+
+.section-hero-statement__body {
+  margin-top: var(--spacing-lg, 2rem);
+}

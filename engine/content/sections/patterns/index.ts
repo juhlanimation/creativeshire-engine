@@ -46,3 +46,21 @@ export type { ContentPricingProps, PricingPlan, PricingFeature, PricingIcons } f
 
 export { createAboutCollageSection } from './AboutCollage'
 export type { AboutCollageProps, AboutCollageImage } from './AboutCollage/types'
+
+export { createProjectScrollSection } from './ProjectScroll'
+export type { ProjectScrollProps, ProjectItem } from './ProjectScroll/types'
+
+export { createHeroImageSection } from './HeroImage'
+export type { HeroImageProps } from './HeroImage/types'
+
+export { createIntroStatementSection } from './IntroStatement'
+export type { IntroStatementProps } from './IntroStatement/types'
+
+export { createCtaSplitSection } from './CtaSplit'
+export type { CtaSplitProps } from './CtaSplit/types'
+
+export { createHeroStatementSection } from './HeroStatement'
+export type { HeroStatementProps } from './HeroStatement/types'
+
+export { createTeamBioSection } from './TeamBio'
+export type { TeamBioProps } from './TeamBio/types'

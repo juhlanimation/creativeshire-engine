@@ -24,6 +24,18 @@ import { meta as ProjectTabsMeta } from './patterns/ProjectTabs/meta'
 import { meta as TeamShowcaseMeta } from './patterns/TeamShowcase/meta'
 import { meta as ContentPricingMeta } from './patterns/ContentPricing/meta'
 import { meta as AboutCollageMeta } from './patterns/AboutCollage/meta'
+import { meta as HeroImageMeta } from './patterns/HeroImage/meta'
+import { meta as IntroStatementMeta } from './patterns/IntroStatement/meta'
+import { meta as CtaSplitMeta } from './patterns/CtaSplit/meta'
+import { meta as HeroStatementMeta } from './patterns/HeroStatement/meta'
+import { meta as TeamBioMeta } from './patterns/TeamBio/meta'
+import { meta as ProjectScrollMeta } from './patterns/ProjectScroll/meta'
+import { meta as ReactSectionMeta } from './patterns/ReactSection/meta'
+import { meta as HaubjergHomeMeta } from './patterns/HaubjergHome/meta'
+import { meta as HaubjergPeopleMeta } from './patterns/HaubjergPeople/meta'
+import { meta as HaubjergWorkshopsMeta } from './patterns/HaubjergWorkshops/meta'
+import { meta as HaubjergContactMeta } from './patterns/HaubjergContact/meta'
+import { meta as HaubjergProjectMeta } from './patterns/HaubjergProject/meta'
 
 // =============================================================================
 // Types
@@ -99,6 +111,30 @@ export const sectionRegistry: Record<string, SectionPatternEntry> = {
     async () => (await import('./patterns/ContentPricing')).createContentPricingSection),
   AboutCollage: createEntry('AboutCollage', AboutCollageMeta as SectionMeta,
     async () => (await import('./patterns/AboutCollage')).createAboutCollageSection),
+  HeroImage: createEntry('HeroImage', HeroImageMeta as SectionMeta,
+    async () => (await import('./patterns/HeroImage')).createHeroImageSection),
+  IntroStatement: createEntry('IntroStatement', IntroStatementMeta as SectionMeta,
+    async () => (await import('./patterns/IntroStatement')).createIntroStatementSection),
+  CtaSplit: createEntry('CtaSplit', CtaSplitMeta as SectionMeta,
+    async () => (await import('./patterns/CtaSplit')).createCtaSplitSection),
+  HeroStatement: createEntry('HeroStatement', HeroStatementMeta as SectionMeta,
+    async () => (await import('./patterns/HeroStatement')).createHeroStatementSection),
+  TeamBio: createEntry('TeamBio', TeamBioMeta as SectionMeta,
+    async () => (await import('./patterns/TeamBio')).createTeamBioSection),
+  ProjectScroll: createEntry('ProjectScroll', ProjectScrollMeta as SectionMeta,
+    async () => (await import('./patterns/ProjectScroll')).createProjectScrollSection),
+  ReactSection: createEntry('ReactSection', ReactSectionMeta as SectionMeta,
+    async () => (await import('./patterns/ReactSection')).createReactSection),
+  HaubjergHome: createEntry('HaubjergHome', HaubjergHomeMeta as SectionMeta,
+    async () => (await import('./patterns/HaubjergHome')).createHaubjergHomeSection),
+  HaubjergPeople: createEntry('HaubjergPeople', HaubjergPeopleMeta as SectionMeta,
+    async () => (await import('./patterns/HaubjergPeople')).createHaubjergPeopleSection),
+  HaubjergWorkshops: createEntry('HaubjergWorkshops', HaubjergWorkshopsMeta as SectionMeta,
+    async () => (await import('./patterns/HaubjergWorkshops')).createHaubjergWorkshopsSection),
+  HaubjergContact: createEntry('HaubjergContact', HaubjergContactMeta as SectionMeta,
+    async () => (await import('./patterns/HaubjergContact')).createHaubjergContactSection),
+  HaubjergProject: createEntry('HaubjergProject', HaubjergProjectMeta as SectionMeta,
+    async () => (await import('./patterns/HaubjergProject')).createHaubjergProjectSection),
 }
 
 // =============================================================================
@@ -159,6 +195,18 @@ export { createProjectTabsSection } from './patterns/ProjectTabs'
 export { createTeamShowcaseSection } from './patterns/TeamShowcase'
 export { createContentPricingSection } from './patterns/ContentPricing'
 export { createAboutCollageSection } from './patterns/AboutCollage'
+export { createHeroImageSection } from './patterns/HeroImage'
+export { createIntroStatementSection } from './patterns/IntroStatement'
+export { createCtaSplitSection } from './patterns/CtaSplit'
+export { createHeroStatementSection } from './patterns/HeroStatement'
+export { createTeamBioSection } from './patterns/TeamBio'
+export { createProjectScrollSection } from './patterns/ProjectScroll'
+export { createReactSection } from './patterns/ReactSection'
+export { createHaubjergHomeSection } from './patterns/HaubjergHome'
+export { createHaubjergPeopleSection } from './patterns/HaubjergPeople'
+export { createHaubjergWorkshopsSection } from './patterns/HaubjergWorkshops'
+export { createHaubjergContactSection } from './patterns/HaubjergContact'
+export { createHaubjergProjectSection } from './patterns/HaubjergProject'
 
 // Re-export types for convenience
 export type { HeroVideoProps } from './patterns/HeroVideo/types'
@@ -175,3 +223,10 @@ export type { ProjectTabsProps } from './patterns/ProjectTabs/types'
 export type { TeamShowcaseProps, MemberItem } from './patterns/TeamShowcase/types'
 export type { ContentPricingProps, PricingPlan, PricingFeature } from './patterns/ContentPricing/types'
 export type { AboutCollageProps } from './patterns/AboutCollage/types'
+export type { HeroImageProps } from './patterns/HeroImage/types'
+export type { IntroStatementProps } from './patterns/IntroStatement/types'
+export type { CtaSplitProps } from './patterns/CtaSplit/types'
+export type { HeroStatementProps } from './patterns/HeroStatement/types'
+export type { TeamBioProps } from './patterns/TeamBio/types'
+export type { ProjectScrollProps } from './patterns/ProjectScroll/types'
+export type { ReactSectionProps } from './patterns/ReactSection/types'

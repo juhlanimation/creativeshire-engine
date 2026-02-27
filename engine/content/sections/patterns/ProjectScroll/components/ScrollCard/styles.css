@@ -1,0 +1,94 @@
+/**
+ * ScrollCard scoped widget styles.
+ */
+
+.scroll-card {
+  position: relative;
+  cursor: pointer;
+  font-family: var(--font-paragraph);
+}
+
+.scroll-card--bordered {
+  border-bottom: var(--border-width, 1px) var(--border-style, solid) var(--border-color, currentColor);
+  padding-bottom: var(--spacing-lg, 2rem);
+  margin-bottom: var(--spacing-lg, 2rem);
+}
+
+/* Media container — Figma ratio 668:420 */
+.scroll-card__media {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-sm, 4px);
+  aspect-ratio: 668 / 420;
+  border: var(--border-width, 1px) var(--border-style, solid) var(--border-color, currentColor);
+}
+
+.scroll-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--motion-normal, 400ms) var(--ease-default, ease);
+}
+
+.scroll-card--hovered .scroll-card__image {
+  transform: scale(1.03);
+}
+
+.scroll-card__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--motion-normal, 400ms) var(--ease-default, ease);
+}
+
+.scroll-card--hovered .scroll-card__video {
+  opacity: 1;
+}
+
+/* Description — always visible */
+.scroll-card__description {
+  padding: var(--spacing-sm, 0.5rem) 0;
+  max-width: 553px;
+}
+
+.scroll-card__description-text {
+  margin: 0;
+}
+
+/* Footer: title — divider — client (caption scale, muted) */
+.scroll-card__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 0.5rem);
+  padding-top: var(--spacing-xs, 0.25rem);
+  font-size: 12px;
+  line-height: 1.5;
+  opacity: 0.4;
+}
+
+.scroll-card__title {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.scroll-card__divider {
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.3;
+}
+
+.scroll-card__client {
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-card__image,
+  .scroll-card__video {
+    transition: none;
+  }
+}

@@ -1,0 +1,24 @@
+/**
+ * IntroStatement section styles.
+ */
+
+.section-intro-statement__heading {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  line-height: 0.875;
+  letter-spacing: 0.02em;
+}
+
+.section-intro-statement__body {
+  max-width: 437px;
+}
+
+.section-intro-statement__marquee {
+  margin-top: var(--spacing-xl, 4rem);
+  position: relative;
+}
+
+.section-intro-statement__marquee--edge-fade {
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+}

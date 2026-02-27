@@ -1,0 +1,30 @@
+/**
+ * TeamBio section styles.
+ */
+
+.section-team-bio__member {
+  position: relative;
+}
+
+.section-team-bio__portrait {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: var(--radius-sm, 4px);
+}
+
+.section-team-bio__name {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  line-height: 0.88;
+  letter-spacing: 0.1em;
+}
+
+.section-team-bio__bio {
+  max-width: 480px;
+  opacity: 0.8;
+}
+
+.section-team-bio__links {
+  opacity: 0.6;
+}

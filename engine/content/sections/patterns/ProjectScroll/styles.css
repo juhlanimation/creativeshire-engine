@@ -1,0 +1,50 @@
+/**
+ * ProjectScroll section styles.
+ */
+
+.section-project-scroll__layout {
+  min-height: 80cqh;
+}
+
+.section-project-scroll__sidebar {
+  position: sticky;
+  top: var(--spacing-xl, 4rem);
+  align-self: flex-start;
+}
+
+.section-project-scroll__title {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  opacity: 0.4;
+  line-height: 1;
+}
+
+.section-project-scroll__intro {
+  opacity: 0.4;
+  max-width: 300px;
+}
+
+.section-project-scroll__index-item {
+  opacity: 0.4;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: opacity var(--motion-normal, 400ms) var(--ease-default, ease);
+}
+
+.section-project-scroll__index-item:hover {
+  opacity: 1;
+}
+
+/* Fade-to-black overlay on cards column */
+.section-project-scroll__cards--fade {
+  mask-image: linear-gradient(to bottom, black 0%, black 70%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 70%, transparent 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-project-scroll__index-item {
+    transition: none;
+  }
+}
